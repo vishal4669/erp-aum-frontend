@@ -16,28 +16,44 @@ import Recoverpw from "../pages/AuthenticationInner/Recoverpw"
 import LockScreen from "../pages/AuthenticationInner/auth-lock-screen"
 
 // Masters
+//Group Master
 import ListGroups from "../pages/Masters/ListGroups"
 import AddGroup from "../pages/Masters/AddGroup"
 import EditGroup from "../pages/Masters/EditGroup"
+//Comapny Master
 import ListCompany from "../pages/Masters/ListCompany"
 import AddCompany from "../pages/Masters/AddCompany"
 import EditCompany from "../pages/Masters/EditCompany"
+//Branch Master
 import ListBranch from "../pages/Masters/ListBranch"
 import AddBranch from "../pages/Masters/AddBranch"
 import ViewBranch from "../pages/Masters/ViewBranch"
 import EditBranch from "../pages/Masters/EditBranch"
+//Department Master
 import ListDepartment from "../pages/Masters/ListDepartment"
 import AddDepartment from "../pages/Masters/AddDepartment"
 import EditDepartment from "../pages/Masters/EditDepartment"
+//Position Master
 import ListPosition from "../pages/Masters/ListPosition"
 import AddPosition from "../pages/Masters/AddPosition"
 import EditPosition from "../pages/Masters/EditPosition"
+//Ledger Master
 import ListLedger from "../pages/Masters/ListLedger"
 import AddLedger from "../pages/Masters/AddLedger"
 import EditLedger from "../pages/Masters/EditLedger"
+//Category Master
 import ListCategory from "../pages/Masters/ListCategory"
 import AddCategory from "../pages/Masters/AddCategory"
 import EditCategory from "../pages/Masters/EditCategory"
+//Bank Account Master
+import ListBankAccount from "../pages/Masters/ListBankAccount"
+import AddBankAccount from "../pages/Masters/AddBankAccount"
+import EditBankAccount from "../pages/Masters/EditBankAccount"
+//Material Master
+import ListMaterial from "../pages/Masters/ListMaterial"
+import AddMaterial from "../pages/Masters/AddMaterial"
+import EditMaterial from "../pages/Masters/EditMaterial"
+//Masters End
 //HR
 import ListEmployee from "../pages/HR/ListEmployee"
 import AddEmployee from "../pages/HR/AddEmployee"
@@ -110,15 +126,26 @@ const authRoutes = [
     { path: "/add-position", component:AddPosition},
     { path: "/edit-position", component:EditPosition},
 
+    //Ledger Master
     { path: "/ledger", component:ListLedger},
     { path: "/all-ledger", component:ListLedger},
     { path: "/add-ledger", component:AddLedger},
     { path: "/edit-ledger", component:EditLedger},
-
+    //Category Master
     { path: "/category", component:ListCategory},
     { path: "/all-category", component:ListCategory},
     { path: "/add-category", component:AddCategory},
     { path: "/edit-category", component:EditCategory},
+    //Bank Account Master
+    { path: "/bankaccount" ,component: ListBankAccount},
+    { path: "/all-bankaccount" ,component: ListBankAccount},
+    { path: "/add-bank-account" ,component: AddBankAccount},
+    { path: "/edit-bank-account" ,component: EditBankAccount},
+    //Material Master
+    { path: "/material" ,component: ListMaterial},
+    { path: "/all-material" ,component: ListMaterial},
+    { path: "/add-material" ,component: AddMaterial},
+    { path: "/edit-material" ,component: EditMaterial},
 
 ]
 

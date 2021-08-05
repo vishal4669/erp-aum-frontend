@@ -13,7 +13,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb"
 import HorizontalLayout from "../../components/HorizontalLayout"
 
 
-const AddPhramacopiea = () => {
+const AddBooking = () => {
   const [customchk, setcustomchk] = useState(true)
   const [toggleSwitch, settoggleSwitch] = useState(true)
   const [toggleSwitchSize, settoggleSwitchSize] = useState(true)
@@ -897,4 +897,4 @@ const AddPhramacopiea = () => {
   )
 }
 
-export default AddPhramacopiea
+export default AddBooking

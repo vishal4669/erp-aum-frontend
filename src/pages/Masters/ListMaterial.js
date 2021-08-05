@@ -20,8 +20,9 @@ import * as XLSX from 'xlsx';
 import jsPDF from "jspdf";
 import html2canvas from 'html2canvas'; 
 import $ from "jquery";
+import Moment from 'moment';
 
-class ListBranch extends Component {
+class ListMaterial extends Component {
     constructor(props) {
 
       super(props);
@@ -29,7 +30,6 @@ class ListBranch extends Component {
           posts: [],
           tableRows: [],
           loading: false,
-          PharmacopieaData: [],
           count :0
         };
       const headers = {
@@ -42,18 +42,18 @@ class ListBranch extends Component {
         }; 
 
       {/*Delete Branch data from list*/}
-        this.deleteBranch = (branch_id) =>{
+        this.deleteMaterial = (material_id) =>{
           this.setState({ loading: true }, () => {
-             axios.post(`${process.env.REACT_APP_BASE_APIURL}deleteBranch/`+branch_id,null, { headers: del_headers})
+             axios.post(`${process.env.REACT_APP_BASE_APIURL}deleteMaterial/`+material_id,null, { headers: del_headers})
             .then(response => {
                     if(response.data.success == true){
                       //need to refresh page after delete
-                      props.history.push('/all-branch');
-                       props.history.push('/branch');
+                      props.history.push('/all-material');
+                       props.history.push('/material');
                       toastr.success(response.data.message);
                       this.setState({loading: false});
                   }else{
-                    props.history.push('/branch');
+                    props.history.push('/material');
                     toastr.error(response.data.message);
                     this.setState({loading: false});
                   }
@@ -67,7 +67,7 @@ class ListBranch extends Component {
 
 
       this.setState({ loading: true }, () => {
-         axios.get(`${process.env.REACT_APP_BASE_APIURL}listBranch`, { headers: headers})
+         axios.get(`${process.env.REACT_APP_BASE_APIURL}listMaterial`, { headers: headers})
 
           .then(response => {
               if(response.data.success == true){
@@ -97,15 +97,18 @@ class ListBranch extends Component {
           return (
             {
               srno: this.state.count,
-              branchname: post.branch_name,
-              companyname: post.company_name,
-              branchtype : post.branch_type,
-              action : <div><Link className="btn btn-primary" to={"/edit-branch/"+base64_encode(post.id)}>
+              material_type: post.material_type,
+              material_name: post.material_name,
+              parent_category_name : post.parent_category_name,
+              sub_category_name : post.sub_category_name,
+              sub_sub_category_name : post.sub_sub_category_name,
+              material_amount : post.material_amount,
+              material_use_before_date: Moment(post.material_use_before_date).format('DD-MM-YYYY'),
+              action : <div><Link className="btn btn-primary" to={"/edit-material/"+base64_encode(post.id)}>
               <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Branch?')){ this.deleteBranch(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-              &nbsp;&nbsp;
-              <Link className="btn btn-info" to={"/view-branch/"+base64_encode(post.id)}> <i className="fa fa-eye"></i></Link>
-              </div>
+              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Material Data?')){ this.deleteMaterial(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+              &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-material/"+base64_encode(post.id)}>
+              <i className="fa fa-eye"></i></Link></div>
               ,
 
             }
@@ -131,16 +134,32 @@ const { data, loading } = this.state;
 
       },
       {
-        label: "Branch Name",
-        field: "branchname",
+        label: "Material Type",
+        field: "material_type",
+      },
+     {
+        label: "Material Name",
+        field: "material_name",
       },
       {
-        label: "Company Name",
-        field: "companyname",
+        label: "Category",
+        field: "parent_category_name",
       },
       {
-        label: "Branch Type",
-        field: "branchtype",
+        label: "Sub Sub Category",
+        field: "sub_category_name",
+      },
+      {
+        label: "Sub Sub Category",
+        field: "sub_sub_category_name",
+      },
+      {
+        label: "Amount",
+        field: "material_amount",
+      },
+      {
+        label: "Use Before Date",
+        field: "material_use_before_date",
       },
       {
         label: "Action",
@@ -159,13 +178,13 @@ const { data, loading } = this.state;
                 <ol className="breadcrumb m-0">
                     <li className="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
                     <li className="breadcrumb-item">Masters</li>
-                    <li className="breadcrumb-item active">Branch</li>
+                    <li className="breadcrumb-item active">Materials</li>
                 </ol>
             </div>
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                     <li> 
-                      <Link to="/add-branch" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Branch</Link>
+                      <Link to="/add-material" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Material</Link>
                     </li>&nbsp;
                 </ol>
             </div>        
@@ -190,4 +209,4 @@ const { data, loading } = this.state;
   )
 }
 }
-export default ListBranch
+export default ListMaterial

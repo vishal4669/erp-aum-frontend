@@ -127,7 +127,7 @@ useEffect(() => {
                     <li className="breadcrumb-item"><a href="#!">Home</a></li>
                     <li className="breadcrumb-item">Masters</li>
                     <li className="breadcrumb-item"><Link to="/category">Category</Link></li>
-                    <li className="breadcrumb-item active">Add Category</li>
+                    <li className="breadcrumb-item active">Edit Category</li>
                 </ol>
             </div>
 
