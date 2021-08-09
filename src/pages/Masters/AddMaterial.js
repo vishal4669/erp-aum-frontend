@@ -38,13 +38,14 @@ function AddMaterial(props) {
   const [data, setData] = useState([]); 
   const [data1, setData1] = useState([]); 
   const [data2, setData2] = useState([]); 
-  const [material, setmaterial] = useState({ material_type: '', material_name: '',material_purchase_rate:'',material_code:'',
+  const [unit, setUnitData] = useState([]); 
+  const [material, setmaterial] = useState({ material_type: 'Solid', material_name: '',material_purchase_rate:'',material_code:'',
   category_id : '',sub_category_id:'',sub_sub_category_id:'',material_rate:'',material_amount:'',material_qty:'',mst_units_id:'',
   material_use_before_date:'',material_case_number:''});  
 useEffect(() => {  
 
     ParentCategoryList();
-         
+    UnitList();     
         }, []); 
 
 const ParentCategoryList = ()=>{
@@ -62,21 +63,68 @@ const ParentCategoryList = ()=>{
               })
 }
 
+const UnitList = ()=>{
+
+    {setLoading1(true)};
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}listUnit?is_dropdown=1`,{headers})
+            .then(response => {
+                     setUnitData(response.data.data);
+                     {setLoading1(false)} 
+               })
+              .catch((error) => {
+                  toastr.error(error.response.data.message);
+                  {setLoading1(false)}    
+              })
+}
+
+const getSubCategory = ()=>{
+        var category_id = document.getElementById("category_id").value;
+
+        // {setLoading1(true)};
+              axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubCategory/`+category_id,{headers})
+                .then(response => {
+                         setData1(response.data.data);
+                   })
+                  .catch((error) => {
+                      toastr.error(error.response.data.message);   
+                  })
+    }
+
+    const getSubSubCategory = ()=>{
+        var sub_category_id = document.getElementById("sub_category_id").value;
+
+        // {setLoading1(true)};
+              axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubSubCategory/`+sub_category_id,{headers})
+                .then(response => {
+                         setData2(response.data.data);
+                   })
+                  .catch((error) => {
+                      toastr.error(error.response.data.message);   
+                  })
+    }
+
 const InsertMaterial = (e)=>{
          e.preventDefault();
-
+         var cat_id = document.getElementById('category_id').value;
+         var sub_cat_id = document.getElementById('sub_category_id').value;
         {setLoading(true)};
-        const data = { //category_name:category.category_name, parent_category_id: category.parent_category_id
+        const data = { material_type: material.material_type, material_name:  material.material_name,
+        material_purchase_rate: material.material_purchase_rate,material_code: material.material_code,
+        category_id :  cat_id,sub_category_id: sub_cat_id,
+        sub_sub_category_id: material.sub_sub_category_id,material_rate: material.material_rate,
+        material_amount: material.material_amount,material_qty: material.material_qty,
+        mst_units_id: material.mst_units_id,material_use_before_date: material.material_use_before_date,
+        material_case_number: material.material_case_number
         }; 
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}addCategory`, data, {headers} )
+         axios.post( `${process.env.REACT_APP_BASE_APIURL}addMaterial`, data, {headers} )
 
                 .then(response => {
                     if(response.data.success == true){
-                        props.history.push('/category');
+                        props.history.push('/material');
                         toastr.success(response.data.message);
                         {setLoading(false)}; 
                     }else{
-                        props.history.push('/add-category');
+                        props.history.push('/add-material');
                         toastr.error(response.data.message);
                         {setLoading(false)};   
                     }
@@ -88,14 +136,37 @@ const InsertMaterial = (e)=>{
      
       }
 
-
 const ResetMaterial = () => { 
   document.getElementById("AddMaterial").reset();
 }
 
-  const onChange = (e) => {  
-    e.persist();  
-    setmaterial({...material, [e.target.name]: e.target.value});  
+const onChange = (e) => {  
+        e.persist();  
+        setmaterial({...material, [e.target.name]: e.target.value});  
+
+        var category_id = document.getElementById("category_id").value;
+
+        // {setLoading1(true)};
+              axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubCategory/`+category_id,{headers})
+                .then(response => {
+                         setData1(response.data.data);
+                   })
+                  .catch((error) => {
+                      toastr.error(error.response.data.message);   
+                  })
+
+
+        var sub_category_id = document.getElementById("sub_category_id").value;
+
+        // {setLoading1(true)};
+              axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubSubCategory/`+sub_category_id,{headers})
+                .then(response => {
+                         setData2(response.data.data);
+                   })
+                  .catch((error) => {
+                      toastr.error(error.response.data.message);   
+                  })
+
   } 
   
 
@@ -142,7 +213,7 @@ return(
                                                 <div className="row">
                                                     <div className="col-md-4">
                                                         <label>Type</label>
-                                                        <select className="form-select" name="type">
+                                                        <select className="form-select" name="material_type" onChange={ onChange }>
                                                             <option value="Solid">Solid</option>
                                                             <option value="Liquid">Liquid</option>
                                                             <option value="Other">Other</option>
@@ -150,12 +221,12 @@ return(
                                                     </div>  
                                                     <div className="col-md-4">  
                                                         <label>Material Name</label>
-                                                        <input className="form-control" type="text" name="material_name" placeholder="Enter Material Name"/>
+                                                        <input className="form-control" type="text" name="material_name" placeholder="Enter Material Name" onChange={ onChange }/>
                                                     </div>  
 
                                                     <div className="col-md-4">  
                                                         <label>Purchase Rate</label>
-                                                        <input className="form-control" type="text" name="purchase_rate" placeholder="Enter Purchase Rate"/>
+                                                        <input className="form-control" type="text" name="material_purchase_rate" placeholder="Enter Purchase Rate" onChange={ onChange }/>
                                                     </div>  
                                                 </div>  
                                             </div>  
@@ -166,31 +237,33 @@ return(
                                                 <div className="row">
                                                     <div className="col-md-3">
                                                         <label>Code</label>
-                                                        <input className="form-control" type="text" name="material_code" placeholder="Enter Material Code"/>
+                                                        <input className="form-control" type="text" name="material_code" placeholder="Enter Material Code" onChange={ onChange }/>
                                                     </div>  
                                                     <div className="col-md-3">  
                                                         <label>Category</label> {/*Need to fetch dynamically According to category selection sub category will displayed*/}
-                                                        {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="parent_category_id" name="parent_category_id" onChange={ onChange } >
+                                                       <select className="form-select" id="category_id"  name="category_id" onChange={onChange} onChange={getSubCategory}>
                                                              <option value="">Select Category</option>
                                                             { data.map((option, key) => <option value={option.id} key={key} >{option.category_name}</option>) }
                                                             
-                                                         </select> } 
+                                                         </select>
                                                     </div>  
                                                     <div className="col-md-3">
                                                         <label>Sub Category</label>{/*Need to fetch dynamically According to sub category selection sub sub category will displayed*/}
-                                                        <select className="form-select" name="sub_category">
-                                                            <option value="Solid - Production">Solid - Production</option>
-                                                            <option value="Liquid - Production">Liquid - Production</option>
-                                                            <option value="Saftey Equipments">Saftey Equipments</option>
-                                                        </select>
+                                                      
+                                                         <select className="form-select" id="sub_category_id" name="sub_category_id" onChange={ onChange } onChange={getSubSubCategory}> 
+                                                             <option value="">Select Sub Category</option>
+                                                            { data1.map((option, key) => <option value={option.id} key={key} >{option.category_name}</option>) }
+                                                            
+                                                         </select> 
+
                                                     </div>  
                                                     <div className="col-md-3">  
                                                         <label>Sub Sub Category</label>{/*Need to fetch dynamically*/}
-                                                        <select className="form-select" name="sub_sub_category">
-                                                            <option value="Catetory 1">Catetory 1</option>
-                                                            <option value="Catetory 2">Catetory 2</option>
-                                                            <option value="Catetory 3">Catetory 3</option>
-                                                        </select>
+                                                        <select className="form-select" id="sub_sub_category_id" name="sub_sub_category_id" onChange={ onChange }>
+                                                             <option value="">Select Sub Sub Category</option>
+                                                            { data2.map((option, key) => <option value={option.id} key={key} >{option.category_name}</option>) }
+                                                            
+                                                         </select>
                                                     </div>      
                                                 </div>  
                                             </div>
@@ -201,16 +274,16 @@ return(
                                                 <div className="row">
                                                     <div className="col-md-4">
                                                         <label>Rate</label>
-                                                        <input className="form-control" type="text" name="rate" placeholder="Enter Rate"/>
+                                                        <input className="form-control" type="text" name="material_rate" placeholder="Enter Rate" onChange={ onChange }/>
                                                     </div>  
                                                     <div className="col-md-4">  
                                                         <label>Amount</label>
-                                                        <input className="form-control" type="text" name="amount" placeholder="Enter Amount"/>
+                                                        <input className="form-control" type="text" name="material_amount" placeholder="Enter Amount" onChange={ onChange }/>
                                                     </div>      
 
                                                     <div className="col-md-4">  
                                                         <label>Qty</label>
-                                                        <input className="form-control" type="text" name="qty" placeholder="Enter Qty"/>
+                                                        <input className="form-control" type="text" name="material_qty" placeholder="Enter Qty" onChange={ onChange }/>
                                                     </div>  
                                                 </div>  
                                             </div>
@@ -223,17 +296,21 @@ return(
 
                                                     <div className="col-md-4">  
                                                         <label>Unit</label>
-                                                        <select name="unit" className="form-select"><option value="">None</option><option value="%">%</option><option value="% V/V">% V/V</option><option value="% W/V">% W/V</option><option value="% W/W">% W/W</option><option value="%RH">%RH</option><option value="°C">°C</option><option value="µg/gm">µg/gm</option><option value="µg/mg">µg/mg</option><option value="µm">µm</option><option value="µS">µS</option><option value="µS/Cm">µS/Cm</option><option value="Billion Spores">Billion Spores</option><option value="Billion Spores/gm">Billion Spores/gm</option><option value="Bottle">Bottle</option><option value="cfu/gm">cfu/gm</option><option value="cfu/ml">cfu/ml</option><option value="cm">cm</option><option value="cps">cps</option><option value="EU/Gm">EU/Gm</option><option value="EU/mg">EU/mg</option><option value="EU/ml">EU/ml</option><option value="EU/Unit">EU/Unit</option><option value="GM">GM</option><option value="Gm/ml">Gm/ml</option><option value="IU">IU</option><option value="IU/gm">IU/gm</option><option value="IU/Kg">IU/Kg</option><option value="IU/mg">IU/mg</option><option value="KG">KG</option><option value="Kg/cm²">Kg/cm²</option><option value="Kgs.">Kgs.</option><option value="kp">kp</option><option value="Liter">Liter</option><option value="Litre (Ltr)">Litre (Ltr)</option><option value="M (Molarity)">M (Molarity)</option><option value="mcg">mcg</option><option value="mEq">mEq</option><option value="mg">mg</option><option value="Million Spores">Million Spores</option><option value="Million Spores/gm">Million Spores/gm</option><option value="ml">ml</option><option value="mm">mm</option><option value="mol/Liter">mol/Liter</option><option value="mPs">mPs</option><option value="N ( Newton)">N ( Newton)</option><option value="N ( Normality)">N ( Normality)</option><option value="Nos.">Nos.</option><option value="ppm">ppm</option><option value="Spores">Spores</option><option value="Spores/gm">Spores/gm</option><option value="Unit/gm">Unit/gm</option><option value="Unit/mg">Unit/mg</option></select>
+                                                       {loading1 ? <LoadingSpinner /> : <select className="form-select" name="mst_units_id" onChange={ onChange }>
+                                                             <option value="">Select Unit</option>
+                                                            { unit.map((option, key) => <option value={option.id} key={key} >{option.unit_name}</option>) }
+                                                            
+                                                         </select>}
                                                     </div>
 
                                                     <div className="col-md-4">  
                                                         <label>Use Before Date</label>
-                                                        <input className="form-control" type="date" name="use_before_date"/>
+                                                        <input className="form-control" type="date" name="material_use_before_date" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-4">  
                                                         <label>Case Number</label>
-                                                        <input className="form-control" type="text" name="case_number" placeholder="Enter Case Number"/>
+                                                        <input className="form-control" type="text" name="material_case_number" placeholder="Enter Case Number" onChange={ onChange }/>
                                                     </div>
 
 

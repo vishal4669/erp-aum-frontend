@@ -44,9 +44,6 @@ const edit_bank_account_id =url.substring(url.lastIndexOf('/') + 1)
         const EditBankAccount = (event)=>{
          event.preventDefault();
          const data = {
-          //category_name: category.category_name,
-          //parent_category_id :category.parent_category_id,
-
           bank_name : bankaccount.bank_name,
           branch_name : bankaccount.branch_name,
           customer_id : bankaccount.customer_id,

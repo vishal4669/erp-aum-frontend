@@ -40,8 +40,8 @@ const headers = {
 const url = window.location.href
 const category_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
 const edit_category_id =url.substring(url.lastIndexOf('/') + 1)
-        const EditCategory = (event)=>{
-         event.preventDefault();
+        const EditCategory = (e)=>{
+         e.preventDefault();
          const data = {
           category_name: category.category_name,
           parent_category_id :category.parent_category_id,
@@ -118,7 +118,7 @@ useEffect(() => {
       <div className="page-content">
         <Container fluid={true}>
         <Form onSubmit={ (e) => {
-           EditCategory(e) }} method="POST" id="AddLedger">
+           EditCategory(e) }} method="POST" id="EditCategory">
 
         <div className="page-title-box d-flex align-items-center justify-content-between">
 
@@ -149,7 +149,7 @@ useEffect(() => {
                      <h5> <Alert color="success" role="alert">
                      <i className="fa fa-comment">&nbsp;Basic Info</i>
                     </Alert></h5>
-{loading1 ? <LoadingSpinner /> : 
+{loading1 ? <center><LoadingSpinner /></center> : 
                     <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
@@ -163,7 +163,7 @@ useEffect(() => {
                                                         <label>Category Parent</label>
                                                         
                                                         {loading1 ? <LoadingSpinner /> :  <select className="form-select" name="parent_category_id" value={category.parent_category_id} onChange={logChange}>
-
+                                                              <option value="">Select Category</option>                  
                                                             { data.map((option, key) => <option value={option.id} key={key} >{option.category_name}</option>) }
                                                             
                                                          </select> }

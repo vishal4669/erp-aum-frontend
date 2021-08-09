@@ -53,6 +53,19 @@ import EditBankAccount from "../pages/Masters/EditBankAccount"
 import ListMaterial from "../pages/Masters/ListMaterial"
 import AddMaterial from "../pages/Masters/AddMaterial"
 import EditMaterial from "../pages/Masters/EditMaterial"
+import ViewMaterial from "../pages/Masters/ViewMaterial"
+//Material Master
+import ListLocation from "../pages/Masters/ListLocation"
+import AddLocation from "../pages/Masters/AddLocation"
+import EditLocation from "../pages/Masters/EditLocation"
+//Machine Master
+import ListMachine from "../pages/Masters/ListMachine"
+import AddMachine from "../pages/Masters/AddMachine"
+import EditMachine from "../pages/Masters/EditMachine"
+//Unit Master
+import ListUnit from "../pages/Masters/ListUnit"
+import AddUnit from "../pages/Masters/AddUnit"
+import EditUnit from "../pages/Masters/EditUnit"
 //Masters End
 //HR
 import ListEmployee from "../pages/HR/ListEmployee"
@@ -146,6 +159,22 @@ const authRoutes = [
     { path: "/all-material" ,component: ListMaterial},
     { path: "/add-material" ,component: AddMaterial},
     { path: "/edit-material" ,component: EditMaterial},
+    { path: "/view-material" ,component: ViewMaterial},
+    //Location Master
+    { path: "/location" ,component: ListLocation},
+    { path: "/all-location" ,component: ListLocation},
+    { path: "/add-location" ,component: AddLocation},
+    { path: "/edit-location" ,component: EditLocation},
+    //Machine Master
+    { path: "/machine" ,component: ListMachine},
+    { path: "/all-machine" ,component: ListMachine},
+    { path: "/add-machine" ,component: AddMachine},
+    { path: "/edit-machine" ,component: EditMachine},
+    //Unit Master
+    { path: "/unit" ,component: ListUnit},
+    { path: "/all-unit" ,component: ListUnit},
+    { path: "/add-unit" ,component: AddUnit},
+    { path: "/edit-unit" ,component: EditUnit},
 
 ]
 
