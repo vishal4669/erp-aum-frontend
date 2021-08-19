@@ -76,7 +76,7 @@ return(
                     <li className="breadcrumb-item"><a href="#!">Home</a></li>
                     <li className="breadcrumb-item">Masters</li>
                     <li className="breadcrumb-item"><Link to="/material">Material</Link></li>
-                    <li className="breadcrumb-item active">Edit Material</li>
+                    <li className="breadcrumb-item active">View Material</li>
                 </ol>
             </div>
 

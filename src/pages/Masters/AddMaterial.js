@@ -57,8 +57,7 @@ const ParentCategoryList = ()=>{
                      {setLoading1(false)} 
                })
               .catch((error) => {
-                  toastr.error(error.response.data.message);
-
+                  //toastr.error(error.response.data.message);
                    {setLoading1(false)}   
               })
 }
@@ -78,29 +77,43 @@ const UnitList = ()=>{
 }
 
 const getSubCategory = ()=>{
+
         var category_id = document.getElementById("category_id").value;
 
-        // {setLoading1(true)};
+            if(category_id !='') {
               axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubCategory/`+category_id,{headers})
                 .then(response => {
+
+                        console.log(response.data.data);
+
                          setData1(response.data.data);
                    })
                   .catch((error) => {
-                      toastr.error(error.response.data.message);   
+                    console.log(error);
+                      //toastr.error(error.response.data.message);   
                   })
+              }else{
+                    //Else condition
+                    //alert(11);
+
+
+              }
     }
 
     const getSubSubCategory = ()=>{
         var sub_category_id = document.getElementById("sub_category_id").value;
 
-        // {setLoading1(true)};
-              axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubSubCategory/`+sub_category_id,{headers})
-                .then(response => {
-                         setData2(response.data.data);
-                   })
-                  .catch((error) => {
-                      toastr.error(error.response.data.message);   
-                  })
+        if(sub_category_id != "") {
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubSubCategory/`+sub_category_id,{headers})
+            .then(response => {
+                     setData2(response.data.data);
+               })
+              .catch((error) => {
+                  //console.log(error);
+                  toastr.error(error.response.data.message);   
+              })
+          }
+
     }
 
 const InsertMaterial = (e)=>{
@@ -146,7 +159,8 @@ const onChange = (e) => {
 
         var category_id = document.getElementById("category_id").value;
 
-        // {setLoading1(true)};
+        if(category_id != "") {
+            // {setLoading1(true)};
               axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubCategory/`+category_id,{headers})
                 .then(response => {
                          setData1(response.data.data);
@@ -155,17 +169,20 @@ const onChange = (e) => {
                       toastr.error(error.response.data.message);   
                   })
 
+        }
 
         var sub_category_id = document.getElementById("sub_category_id").value;
 
-        // {setLoading1(true)};
-              axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubSubCategory/`+sub_category_id,{headers})
-                .then(response => {
-                         setData2(response.data.data);
-                   })
-                  .catch((error) => {
-                      toastr.error(error.response.data.message);   
-                  })
+        if(sub_category_id != "" ) {
+
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubSubCategory/`+sub_category_id,{headers})
+            .then(response => {
+                     setData2(response.data.data);
+               })
+              .catch((error) => {
+                  toastr.error(error.response.data.message);   
+              })
+          }
 
   } 
   
