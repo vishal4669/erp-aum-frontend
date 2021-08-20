@@ -164,6 +164,18 @@ this.deleteMaterial = (material_id) =>{
                        }
                      
                        </tbody>
+                       <tfoot>
+                         <tr>
+                           <th scope="col">SR No</th>
+                           <th scope="col">Material Type</th>
+                           <th scope="col">Material Name</th>
+                           <th scope="col">Parent Category Name</th>
+                           <th scope="col">Sub Category Name</th>
+                           <th scope="col">Sub Sub Category Name</th>
+                           <th scope="col">Material Amount</th>
+                           <th scope="col">Actions</th>
+                         </tr>
+                       </tfoot>
                     </table>
                      }
                     <div>

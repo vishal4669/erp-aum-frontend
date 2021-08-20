@@ -60,3 +60,7 @@
 	  fill: #adb5bd !important;
 	}
   }
+
+  .dataTables_length.bs-select {
+    visibility: hidden;
+}
