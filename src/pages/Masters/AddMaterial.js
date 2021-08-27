@@ -90,14 +90,9 @@ const getSubCategory = ()=>{
                    })
                   .catch((error) => {
                     console.log(error);
-                      //toastr.error(error.response.data.message);   
+                      toastr.error(error.response.data.message);   
                   })
-              }else{
-                    //Else condition
-                    //alert(11);
-
-
-              }
+                }
     }
 
     const getSubSubCategory = ()=>{

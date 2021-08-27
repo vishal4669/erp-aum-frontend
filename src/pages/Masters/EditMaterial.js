@@ -101,14 +101,13 @@ const onLoadGetSubCategory = ()=>{
 
 const onLoadgetSubSubCategory = ()=>{
     var sub_category_id = document.getElementById("sub_category_id").value;
-    {setLoading1(true)};
          axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubSubCategory/`+sub_cat_id,{headers})
             .then(response => {
                      setData2(response.data.data);
                })
               .catch((error) => {
                   toastr.error(error.response.data.message);   
-              })
+              })            
 }
 
 const UnitList = ()=>{
@@ -165,6 +164,7 @@ const EditMaterial = (event)=>{
   const onChange = (e) => {  
 
      var category_id = document.getElementById("category_id").value;
+     if(category_id != "") {
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubCategory/`+category_id,{headers})
             .then(response => {
                    setData1(response.data.data);
@@ -172,8 +172,9 @@ const EditMaterial = (event)=>{
               .catch((error) => {
                   toastr.error(error.response.data.message);   
               })
-
+      }        
      var sub_category_id = document.getElementById("sub_category_id").value;
+     if(sub_category_id != "" ) {
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listSubSubCategory/`+sub_category_id,{headers})
             .then(response => {
                      setData2(response.data.data);
@@ -181,6 +182,7 @@ const EditMaterial = (event)=>{
               .catch((error) => {
                   toastr.error(error.response.data.message);   
               }) 
+     }
     e.persist();  
     setmaterial({...material, [e.target.name]: e.target.value}); 
   } 

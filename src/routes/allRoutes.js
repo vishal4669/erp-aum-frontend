@@ -67,6 +67,10 @@ import ListUnit from "../pages/Masters/ListUnit"
 import AddUnit from "../pages/Masters/AddUnit"
 import EditUnit from "../pages/Masters/EditUnit"
 //Masters End
+
+//Sales Module
+//Customer 
+import AddCustomer from "../pages/Sales/AddCustomer"
 //HR
 import ListEmployee from "../pages/HR/ListEmployee"
 import AddEmployee from "../pages/HR/AddEmployee"
@@ -175,7 +179,8 @@ const authRoutes = [
     { path: "/all-unit" ,component: ListUnit},
     { path: "/add-unit" ,component: AddUnit},
     { path: "/edit-unit" ,component: EditUnit},
-
+    //Customer
+    { path: "/add-customer" ,component: AddCustomer},
 ]
 
 export { userRoutes, authRoutes }
