@@ -1,4 +1,4 @@
-import React, { useState, useEffect,Component } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Card,
@@ -27,46 +27,59 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import Dropzone from "react-dropzone"
 
-class AddCustomer extends Component {
+function AddCustomer(props) {    
 
-    constructor(props){
-
-         super(props);
-          this.state ={
-            image: ''
-          }
-
-        const headers = {
-          'content-type': "multipart/form-data",
+  const headers = {
+          //'content-type': "multipart/form-data",
           'Authorization' : "Bearer "+localStorage.getItem('token')
         }
 
-          const [loading, setLoading] = useState(false);
-          const [loading1, setLoading1] = useState(false);
-          const [data, setData] = useState([]);
-          const [data1, setData1] = useState([]); 
-          const [data3, setData3] = useState([]);
-          const [data4, setData4] = useState([]); 
+  const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
+  const [data, setData] = useState([]);
+  const [data1, setData1] = useState([]); 
+  const [data3, setData3] = useState([]);
+  const [data4, setData4] = useState([]);  
+  const [selectedFiles, setselectedFiles] = useState(null)
+  const [customer, setCustomer] = useState({ company_name: '', gst_no: '',contact_person_name:'',tally_alias_name:'',
+  username:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',active_inactive:'1',logo:'',
+  homestreet:'',homestreet2:'',area:'',city:'',pincode:'',state_id:'',country_id:'',landline:'',admin_contact:'',
+  qc_contact:'',admin_email:'',pancard_no:'',street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
+  corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:'',education_details:'',prev_details:'',
+  tin_no:'',service_tax_no:'',customer_discount:''});  
+  const [inputList, setInputList]  = useState([{ contact_person_name: "", contact_person_mobile: "", 
+    contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
+    function handleAcceptedFiles(files) {
+        //console.log(files)
+    files.map(file =>
+      Object.assign(file, {
+        preview: URL.createObjectURL(file),
+        formattedSize: formatBytes(file.size),
+      })
+    ) 
+    setselectedFiles(files)
+  }
+    /**
+   * Formats the size
+   */
+  function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return "0 Bytes"
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
 
-        const [customer, setCustomer] = useState({ company_name: '', gst_no: '',contact_person_name:'',tally_alias_name:'',
-       username:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',active_inactive:'1',logo:'',
-       homestreet:'',homestreet2:'',area:'',city:'',pincode:'',state_id:'',country_id:'',landline:'',admin_contact:'',
-       qc_contact:'',admin_email:'',pancard_no:'',street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
-       corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:'',education_details:'',prev_details:'',
-       tin_no:'',service_tax_no:'',customer_discount:''});  
-       
-       const [inputList, setInputList]  = useState([{ contact_person_name: "", contact_person_mobile: "", 
-       contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i]
+  }
 
+useEffect(() => {  
+         fetchCountry();
+         fetchStates();
+         fetchPosition();
+         fetchDepartment();
+        }, []); 
 
-        this.componentDidMount = () => {
-            this.fetchCountry();
-            this.fetchStates();
-            this.fetchPosition();
-            this.fetchDepartment();
-          }
-
-           this.fetchCountry = () => {
+        const fetchCountry = () => {
              {setLoading1(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
             .then(response => {
@@ -80,7 +93,7 @@ class AddCustomer extends Component {
               })
         } 
 
-        this.fetchStates = () => {
+        const fetchStates = () => {
              {setLoading1(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listStates`,{headers})
             .then(response => {
@@ -94,7 +107,7 @@ class AddCustomer extends Component {
               })
         }
 
-        this.fetchPosition = () => {
+        const fetchPosition = () => {
              {setLoading1(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listPosition?is_dropdown=1`,{headers})
             .then(response => {
@@ -108,7 +121,7 @@ class AddCustomer extends Component {
               })
         } 
 
-        this.fetchDepartment = () => {
+        const fetchDepartment = () => {
              {setLoading1(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listDepartment?is_dropdown=1`,{headers})
             .then(response => {
@@ -122,7 +135,8 @@ class AddCustomer extends Component {
               })
         } 
 
-        this.InsertCustomer = (e)=>{
+
+const InsertCustomer = (e)=>{
          e.preventDefault();
 
          const contact_person_data = inputList;
@@ -208,55 +222,39 @@ class AddCustomer extends Component {
      
       }
 
-      this.ResetCustomer = () => { 
-        document.getElementById("AddCustomer").reset();
-      }
 
-    this.onChange = (e) => {  
-        e.persist();  
-        setCustomer({...customer, [e.target.name]: e.target.value});  
-      } 
+const ResetCustomer = () => { 
+  document.getElementById("AddCustomer").reset();
+}
 
-    this.onImageChange = (e) => {
-          let files = e.target.files || e.dataTransfer.files;
-          if (!files.length)
-                return;
-          this.createImage(files[0]);
-        }
+  const onChange = (e) => {  
+    e.persist();  
+    setCustomer({...customer, [e.target.name]: e.target.value});  
+  } 
 
-    this.createImage = (file) => {
-          let reader = new FileReader();
-          reader.onload = (e) => {
-            this.setState({
-              image: e.target.result
-            })
-          };
-          reader.readAsDataURL(file);
-        }
+  // handle click event of the Add button
+const handleAddClick = () => {
+  setInputList([...inputList, { contact_person_name: "", contact_person_mobile: "", 
+    contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
+};
 
-      // handle click event of the Add button
-    this.handleAddClick = () => {
-      setInputList([...inputList, { contact_person_name: "", contact_person_mobile: "", 
-        contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
-    };
+  // handle input change for Degree Details
+const handleInputChange = (e, index) => {
+  const { name, value } = e.target;
+  const list = [...inputList];
+  list[index][name] = value;
+  setInputList(list);
+};
+ 
+// handle click event of the Remove button
+const handleRemoveClick = index => {
+  const list = [...inputList];
+  list.splice(index, 1);
+  setInputList(list);
+};
 
-      // handle input change for Degree Details
-    this.handleInputChange = (e, index) => {
-      const { name, value } = e.target;
-      const list = [...inputList];
-      list[index][name] = value;
-      setInputList(list);
-    };
-     
-    // handle click event of the Remove button
-    this.handleRemoveClick = index => {
-      const list = [...inputList];
-      list.splice(index, 1);
-      setInputList(list);
-    };
-    }    
 
-render() {
+return(
  <React.Fragment>
       <HorizontalLayout/>
 
@@ -392,7 +390,60 @@ render() {
                                                 <div className="row">
                                                     <div className="col-md-12">  
                                                         <label>Logo</label>
-                                                        <input type="file" name="logo" onChange={this.onImageChange}/> 
+                                                        <Dropzone
+                                                          onDrop={acceptedFiles => {
+                                                            handleAcceptedFiles(acceptedFiles)
+                                                          }} onChange={(e) => setselectedFiles(e.target.files[0])} >
+                                                          {({ getRootProps, getInputProps }) => (
+                                                            <div className="dropzone">
+                                                              <div
+                                                                className="dz-message needsclick"
+                                                                {...getRootProps()}
+                                                              >
+                                                                <input {...getInputProps()} name="logo"/>
+                                                                <div className="mb-3">
+                                                                  <i className="display-4 text-muted uil uil-cloud-upload"/>
+                                                                </div>
+                                                                <h4>Drop files here or click to upload.</h4>
+                                                              </div>
+                                                            </div>
+                                                          )}
+                                                        </Dropzone>
+                      {/*<div className="dropzone-previews mt-3" id="file-previews">
+                      {selectedFiles.map((f, i) => {
+                        return (
+                          <Card
+                            className="mt-1 mb-0 shadow-none border dz-processing dz-image-preview dz-success dz-complete"
+                            key={i + "-file"}
+                          >
+                            <div className="p-2">
+                              <Row className="align-items-center">
+                                <Col className="col-auto">
+                                  <img
+                                    data-dz-thumbnail=""
+                                    height="80"
+                                    className="avatar-sm rounded bg-light"
+                                    alt={f.name}
+                                    src={f.preview}
+                                  />
+                                </Col>
+                                <Col>
+                                  <Link
+                                    to="#"
+                                    className="text-muted font-weight-bold"
+                                  >
+                                    {f.name}
+                                  </Link>
+                                  <p className="mb-0">
+                                    <strong>{f.formattedSize}</strong>
+                                  </p>
+                                </Col>
+                              </Row>
+                            </div>
+                          </Card>
+                        )
+                      })}
+                    </div>*/}
                                                     </div>     
 
                                                     
@@ -622,7 +673,7 @@ render() {
                     </div>
                 </div>
     </React.Fragment>
-  }
+  )
 }
 
 export default AddCustomer  
