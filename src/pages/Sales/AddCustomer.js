@@ -140,7 +140,7 @@ useEffect(() => {
 const InsertCustomer = (e)=>{
          e.preventDefault();
 
-       // const contact_person_data = inputList;
+       const contact_person_data = inputList;
         {setLoading(true)};
         /*const data = 
         { 
@@ -199,8 +199,6 @@ const InsertCustomer = (e)=>{
             }, "customer_contact_person": contact_person_data,
         }; */
         const data1 = new FormData();
-        const contact_person_data = new FormData();
-
         //Customer Details
         data1.append('company_name', customer.company_name);
         data1.append('gst_number', customer.gst_no);
@@ -261,25 +259,57 @@ const InsertCustomer = (e)=>{
       // data1.append('customer_contact_person', contact_person_data);
 
  //currently it is storing all the keys as seperate enrty
-         inputList.forEach(function(contact,index){
+        /* inputList.forEach(function(contact,index){
                   data1.append('customer_contact_person[index][contact_person_name]', inputList[index].contact_person_name);
                   data1.append('customer_contact_person[index][contact_person_mobile]', inputList[index].contact_person_mobile);
                   data1.append('customer_contact_person[index][contact_person_email]', inputList[index].contact_person_email);
                   data1.append('customer_contact_person[index][mst_departments_id]', inputList[index].mst_departments_id);
                   data1.append('customer_contact_person[index][mst_positions_id]', inputList[index].mst_positions_id);     
              
-             })
+             })*/
 
-         const final_data = [...data1];
-        console.log(final_data);
+        // const final_data = [...data1];
+       // console.log(final_data);
             //console.log(contact_person_data); 
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}addCustomer`, final_data, {headers} )
+
+           /*  const final_data = {
+                         "customer_contact_person": contact_person_data,
+                         "customer_id" : response.data.data.id
+                       } */
+         axios.post( `${process.env.REACT_APP_BASE_APIURL}addCustomer`, data1, {headers} )
                 .then(response => {
                     if(response.data.success == true){
-                        props.history.push('/customer');
-                        toastr.success(response.data.message);
-                        {setLoading(false)}; 
-                    }else{
+
+                       //  props.history.push('/customer');
+                         //toastr.success(response.data.message);
+                        // {setLoading(false)}; 
+
+                        const customer_id =  response.data.data.id;
+                       
+                       const contact_details = {
+                         "customer_contact_person": contact_person_data,
+                         "customer_id" : response.data.data.id
+                       }
+
+                       //console.log(contact_details)
+                       axios.post( `${process.env.REACT_APP_BASE_APIURL}addCustomerContactPerson`, 
+                     {contact_person_data,customer_id}, {headers} )
+                       .then(response => {
+                            if(response.data.success == true){
+                                props.history.push('/customer');
+                                toastr.success(response.data.message);
+                                {setLoading(false)}; 
+                              }
+                            else{
+                                props.history.push('/add-customer');
+                                toastr.error(response.data.message);
+                                {setLoading(false)};   
+                            } 
+                        })
+                       
+                       //console.log(response.data.data.id);
+                    } 
+                    else{
                         props.history.push('/add-customer');
                         toastr.error(response.data.message);
                         {setLoading(false)};   

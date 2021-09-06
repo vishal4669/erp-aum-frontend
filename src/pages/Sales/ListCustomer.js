@@ -44,7 +44,6 @@ class ListCustomer extends Component{
 
               .then(response => {
                   if(response.data.success == true){
-                    console.log(response.data.data.per_page)
                     this.setState({customer:response.data.data.data,
                       itemsCountPerPage : response.data.data.per_page,
                       totalItemsCount: response.data.data.total,
