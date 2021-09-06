@@ -1,4 +1,4 @@
-import React, { useState, useEffect,Component } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Card,
@@ -25,124 +25,124 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import { ToastContainer} from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
-import Dropzone from "react-dropzone"
 
-class AddCustomer extends Component {
+function AddCustomer(props) {    
 
-    constructor(props){
-
-         super(props);
-          this.state ={
-            image: '',
-            loading:'',
-            loading1:'',
-            data:'',
-            data1:'',
-            data3:'',
-            data4:'',
-            customer : '',
-            inputList :''
-          }
-
-        const headers = {
-          'content-type': "multipart/form-data",
+  const headers = {
+          //'content-type': 'multipart/form-data', 
           'Authorization' : "Bearer "+localStorage.getItem('token')
         }
 
-          //const [loading, setLoading] = useState(false);
-          //const [loading1, setLoading1] = useState(false);
-         // const [data, setData] = useState([]);
-          //const [data1, setData1] = useState([]); 
-          //const [data3, setData3] = useState([]);
-          //const [data4, setData4] = useState([]); 
+  const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
+  const [data, setData] = useState([]);
+  const [data1, setData1] = useState([]); 
+  const [data3, setData3] = useState([]);
+  const [data4, setData4] = useState([]);  
+  const [selectedFiles, setselectedFiles] = useState(null)
+  const [customer, setCustomer] = useState({ company_name: '', gst_no: '',contact_person_name:'',tally_alias_name:'',
+  username:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',active_inactive:'1',logo:'',
+  homestreet:'',homestreet2:'',area:'',city:'',pincode:'',state_id:'',country_id:'',landline:'',admin_contact:'',
+  qc_contact:'',admin_email:'',pancard_no:'',street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
+  corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:'',education_details:'',prev_details:'',
+  tin_no:'',service_tax_no:'',customer_discount:''});  
+  const [inputList, setInputList]  = useState([{ contact_person_name: "", contact_person_mobile: "", 
+    contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
+  const [selectedFile, setSelectedFile] = useState(false);
+  const [isFilePicked, setIsFilePicked] = useState(false);
+  const [selectedPanFile, setSelectedPanFile] = useState(false);
+  const [isPanFilePicked, setIsPanFilePicked] = useState(false);
 
-        const [customer, setCustomer] = this.state[{ company_name: '', gst_no: '',contact_person_name:'',tally_alias_name:'',
-       username:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',active_inactive:'1',logo:'',
-       homestreet:'',homestreet2:'',area:'',city:'',pincode:'',state_id:'',country_id:'',landline:'',admin_contact:'',
-       qc_contact:'',admin_email:'',pancard_no:'',street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
-       corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:'',education_details:'',prev_details:'',
-       tin_no:'',service_tax_no:'',customer_discount:''}];  
-       
-       const [inputList, setInputList]  = this.state[{ contact_person_name: "", contact_person_mobile: "", 
-       contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}];
+    const changeHandler = event => {
+        setSelectedFile(event.target.files[0]);
+        setIsFilePicked(true);
+    };
 
+    const changePanHandler = event => {
+        setSelectedPanFile(event.target.files[0]);
+        setIsPanFilePicked(true);
+    };
 
-        this.componentDidMount = () => {
-            this.fetchCountry();
-            this.fetchStates();
-            this.fetchPosition();
-            this.fetchDepartment();
-          }
+useEffect(() => {  
+         fetchCountry();
+         fetchStates();
+         fetchPosition();
+         fetchDepartment();
+        }, []); 
 
-           this.fetchCountry = () => {
-            this.setState({ loading1: true }, () => {
-              axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
-                .then(response => {
-                         this.setState({data:response.data.data});
-                         //setData(response.data.data);
-                         this.setState({loading1: false});  
-                   })
-                  .catch((error) => {
-                      toastr.error(error.response.data.message);
-                       this.setState({loading1: false});   
-                  })
-            })
-        } 
-
-        this.fetchStates = () => {
-         this.setState({ loading1: true }, () => {
-              axios.get(`${process.env.REACT_APP_BASE_APIURL}listStates`,{headers})
-                .then(response => {
-                         //setData1(response.data.data);
-                         this.setState({data1:response.data.data});
-                         this.setState({loading1: false});
-                   })
-                  .catch((error) => {
-                      toastr.error(error.response.data.message);
-                       this.setState({loading1: false});   
-                  })
-            })
-        }
-
-        this.fetchPosition = () => {
-         this.setState({ loading1: true }, () => {
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}listPosition?is_dropdown=1`,{headers})
+        const fetchCountry = () => {
+             {setLoading1(true)};
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
             .then(response => {
-                     //setData3(response.data.data);
-                     this.setState({data3:response.data.data});
-                     this.setState({loading1: false});
+                     setData(response.data.data);
+                     {setLoading1(false)} 
                })
               .catch((error) => {
                   toastr.error(error.response.data.message);
 
-                   this.setState({loading1: false});   
+                   {setLoading1(false)}   
               })
-         })
         } 
 
-        this.fetchDepartment = () => {
-            this.setState({ loading1: true }, () => {
-              axios.get(`${process.env.REACT_APP_BASE_APIURL}listDepartment?is_dropdown=1`,{headers})
-                .then(response => {
-                         //setData4(response.data.data);
-                         this.setState({data4:response.data.data});
-                         this.setState({loading1: false});
-                   })
-                  .catch((error) => {
-                      toastr.error(error.response.data.message);
+        const fetchStates = () => {
+             {setLoading1(true)};
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}listStates`,{headers})
+            .then(response => {
+                     setData1(response.data.data);
+                     {setLoading1(false)} 
+               })
+              .catch((error) => {
+                  toastr.error(error.response.data.message);
 
-                       this.setState({loading1: false});   
-                  })
-            })
+                   {setLoading1(false)}   
+              })
+        }
+
+        const fetchPosition = () => {
+             {setLoading1(true)};
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}listPosition?is_dropdown=1`,{headers})
+            .then(response => {
+                     setData3(response.data.data);
+                     {setLoading1(false)} 
+               })
+              .catch((error) => {
+                  toastr.error(error.response.data.message);
+
+                   {setLoading1(false)}   
+              })
         } 
 
-        this.InsertCustomer = (e)=>{
+        const fetchDepartment = () => {
+             {setLoading1(true)};
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}listDepartment?is_dropdown=1`,{headers})
+            .then(response => {
+                     setData4(response.data.data);
+                     {setLoading1(false)} 
+               })
+              .catch((error) => {
+                  toastr.error(error.response.data.message);
+
+                   {setLoading1(false)}   
+              })
+        } 
+
+
+       const copy_data = () => {
+        console.log("here")
+        var copy_home_street = document.getElementById('homestreet').value;
+        console.log(copy_home_street);
+        document.getElementById('street').innerHTML = copy_home_street;
+        console.log(document.getElementById('street').innerHTML = copy_home_street);
+        console.log(customer.street)
+       }
+
+
+const InsertCustomer = (e)=>{
          e.preventDefault();
 
-         const contact_person_data = inputList;
-
-        this.setState({ loading: true }, () => {
-        const data = 
+       // const contact_person_data = inputList;
+        {setLoading(true)};
+        /*const data = 
         { 
             company_name:customer.company_name, 
             gst_number: customer.gst_no,
@@ -155,7 +155,6 @@ class AddCustomer extends Component {
             priority: customer.priority,
             notes: customer.notes,
             is_active: customer.active_inactive,
-            //logo:setselectedFiles,
             education_details:customer.education_details,
             prev_details:customer.prev_details,
             company_tin_no: customer.tin_no,
@@ -180,7 +179,7 @@ class AddCustomer extends Component {
                     }
                 ],
                 "other_contact_info":[
-                     /*Correspondence Address - Address Type 2*/
+                     Correspondence Address - Address Type 2
                        {
                         street_1:customer.street,
                         street_2:customer.street2,
@@ -198,98 +197,140 @@ class AddCustomer extends Component {
                        }
                 ]
             }, "customer_contact_person": contact_person_data,
-        }; 
-        //console.log(setselectedFiles)
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}addCustomer`, data, {headers} )
+        }; */
+        const data1 = new FormData();
+        const contact_person_data = new FormData();
+
+        //Customer Details
+        data1.append('company_name', customer.company_name);
+        data1.append('gst_number', customer.gst_no);
+        data1.append('contact_person_name', customer.contact_person_name);
+        data1.append('tally_alias_name', customer.tally_alias_name);
+        data1.append('user_name', customer.username);
+        data1.append('password', customer.password);
+        data1.append('birth_date', customer.birth_date);
+        data1.append('contact_type', customer.contact_type);
+        data1.append('priority', customer.priority);
+        data1.append('notes', customer.notes);
+        data1.append('logo', selectedFile);
+        data1.append('is_active', customer.active_inactive);
+
+        //History & Other Details
+        data1.append('education_details', customer.education_details);
+        data1.append('prev_details', customer.prev_details);
+
+        //Company Info Details
+        data1.append('company_tin_no', customer.tin_no);
+        data1.append('company_service_tax_no', customer.service_tax_no);
+        data1.append('company_cust_discount', customer.customer_discount);
+
+        //Home Address Details
+        data1.append('customer_contact_info[home_contact_info][0][street_1]', customer.homestreet);
+        data1.append('customer_contact_info[home_contact_info][0][street_2]', customer.homestreet2);
+        data1.append('customer_contact_info[home_contact_info][0][area]', customer.area);
+        data1.append('customer_contact_info[home_contact_info][0][city]', customer.city);
+        data1.append('customer_contact_info[home_contact_info][0][pin]', customer.pincode);
+        data1.append('customer_contact_info[home_contact_info][0][state]', customer.state_id);
+        data1.append('customer_contact_info[home_contact_info][0][country]', customer.country_id);
+        data1.append('customer_contact_info[home_contact_info][0][home_landline]', customer.landline);
+        data1.append('customer_contact_info[home_contact_info][0][contact_no]', customer.admin_contact);
+        data1.append('customer_contact_info[home_contact_info][0][home_qc_contact_no]', customer.qc_contact);
+        data1.append('customer_contact_info[home_contact_info][0][email]', customer.admin_email);
+        data1.append('customer_contact_info[home_contact_info][0][home_pan_card]', customer.pancard_no);
+        data1.append('customer_contact_info[home_contact_info][0][contact_info_type]', 1);
+
+        //Correspondence Address Details
+        data1.append('customer_contact_info[other_contact_info][0][street_1]', customer.street);
+        data1.append('customer_contact_info[other_contact_info][0][street_2]', customer.street2);
+        data1.append('customer_contact_info[other_contact_info][0][area]', customer.area1);
+        data1.append('customer_contact_info[other_contact_info][0][city]', customer.city1);
+        data1.append('customer_contact_info[other_contact_info][0][pin]', customer.pincode1);
+        data1.append('customer_contact_info[other_contact_info][0][state]', customer.corr_state_id);
+        data1.append('customer_contact_info[other_contact_info][0][country]', customer.corr_country_id);
+        data1.append('customer_contact_info[other_contact_info][0][other_website]', customer.website);
+        data1.append('customer_contact_info[other_contact_info][0][contact_no]', customer.qa_contact);
+        data1.append('customer_contact_info[other_contact_info][0][other_qc_email]', customer.qc_email);
+        data1.append('customer_contact_info[other_contact_info][0][email]', customer.qa_email);
+        data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', selectedPanFile);
+        data1.append('customer_contact_info[other_contact_info][0][contact_info_type]', 2);
+
+        //Contact Person Details
+
+        //console.log(contact_person_data);
+
+      // data1.append('customer_contact_person', contact_person_data);
+
+ //currently it is storing all the keys as seperate enrty
+         inputList.forEach(function(contact,index){
+                  data1.append('customer_contact_person[index][contact_person_name]', inputList[index].contact_person_name);
+                  data1.append('customer_contact_person[index][contact_person_mobile]', inputList[index].contact_person_mobile);
+                  data1.append('customer_contact_person[index][contact_person_email]', inputList[index].contact_person_email);
+                  data1.append('customer_contact_person[index][mst_departments_id]', inputList[index].mst_departments_id);
+                  data1.append('customer_contact_person[index][mst_positions_id]', inputList[index].mst_positions_id);     
+             
+             })
+
+         const final_data = [...data1];
+        console.log(final_data);
+            //console.log(contact_person_data); 
+         axios.post( `${process.env.REACT_APP_BASE_APIURL}addCustomer`, final_data, {headers} )
                 .then(response => {
                     if(response.data.success == true){
                         props.history.push('/customer');
                         toastr.success(response.data.message);
-                        this.setState({loading: false});
+                        {setLoading(false)}; 
                     }else{
                         props.history.push('/add-customer');
                         toastr.error(response.data.message);
-                        this.setState({loading: false});  
+                        {setLoading(false)};   
                     }
                 })
                 .catch((error) => {
-                 this.setState({loading: false});
+                 {setLoading(false)};
                  toastr.error(error.response.data.message);
                 })
-        })
-      }
-
-      this.ResetCustomer = () => { 
-        document.getElementById("AddCustomer").reset();
-      }
-
-    this.onChange = (e) => {  
-        e.persist();  
-        setCustomer({...customer, [e.target.name]: e.target.value});  
-      } 
-
-    this.onImageChange = (e) => {
-          let files = e.target.files || e.dataTransfer.files;
-          if (!files.length)
-                return;
-          this.createImage(files[0]);
-        }
-
-    this.createImage = (file) => {
-          let reader = new FileReader();
-          reader.onload = (e) => {
-            this.setState({
-              image: e.target.result
-            })
-          };
-          reader.readAsDataURL(file);
-        }
-
-      // handle click event of the Add button
-    this.handleAddClick = () => {
-      setInputList([...inputList, { contact_person_name: "", contact_person_mobile: "", 
-        contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
-    };
-
-      // handle input change for Degree Details
-    this.handleInputChange = (e, index) => {
-      const { name, value } = e.target;
-      const list = [...inputList];
-      list[index][name] = value;
-      setInputList(list);
-    };
      
-    // handle click event of the Remove button
-    this.handleRemoveClick = index => {
-      const list = [...inputList];
-      list.splice(index, 1);
-      setInputList(list);
-    };
-    }    
+      }
 
-render() {
-    const { data5, loading } = this.state;
-    const { data6, loading1 } = this.state;
-    const { setData, data } = this.state;
-    const { setData1, data1 } = this.state;
-    const { setData3, data3} = this.state;
-    const { setData4, data4} = this.state;
-    const {customer, setCustomer} = this.state({ company_name: '', gst_no: '',contact_person_name:'',tally_alias_name:'',
-       username:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',active_inactive:'1',logo:'',
-       homestreet:'',homestreet2:'',area:'',city:'',pincode:'',state_id:'',country_id:'',landline:'',admin_contact:'',
-       qc_contact:'',admin_email:'',pancard_no:'',street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
-       corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:'',education_details:'',prev_details:'',
-       tin_no:'',service_tax_no:'',customer_discount:''});  
-       
-       const {inputList, setInputList}  = this.state[{ contact_person_name: "", contact_person_mobile: "", 
-       contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}];
-return (
+
+const ResetCustomer = () => { 
+  document.getElementById("AddCustomer").reset();
+}
+
+  const onChange = (e) => {  
+    e.persist();  
+    setCustomer({...customer, [e.target.name]: e.target.value});  
+  } 
+
+  // handle click event of the Add button
+const handleAddClick = () => {
+  setInputList([...inputList, { contact_person_name: "", contact_person_mobile: "", 
+    contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
+};
+
+  // handle input change for Degree Details
+const handleInputChange = (e, index) => {
+  const { name, value } = e.target;
+  const list = [...inputList];
+  list[index][name] = value;
+  setInputList(list);
+};
+ 
+// handle click event of the Remove button
+const handleRemoveClick = index => {
+  const list = [...inputList];
+  list.splice(index, 1);
+  setInputList(list);
+};
+
+
+return(
  <React.Fragment>
       <HorizontalLayout/>
 
                 <div className="page-content">
                     <div className="container-fluid">
-                     <Form onSubmit={this.InsertCustomer} method="POST" id="AddCustomer">
+                     <Form onSubmit={InsertCustomer} method="POST" id="AddCustomer">
                         <div className="row">
                             <div className="col-12">
                                 <div className="page-title-box d-flex align-items-center justify-content-between">
@@ -298,19 +339,21 @@ return (
                                         <ol className="breadcrumb m-0">
                                             <li className="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
                                             <li className="breadcrumb-item">Sales</li>
-                                            <li className="breadcrumb-item"><a href="view_customer_list.php">Customers</a></li>
+                                            <li className="breadcrumb-item"><a href="/customer">Customers</a></li>
                                             <li className="breadcrumb-item active">Add Customers</li>
                                         </ol>
                                     </div>
 
                                     <div className="page-title-right">
                                         <ol className="breadcrumb m-0">
-                                            <li><a href="view_customer_list.php" className="btn btn-primary btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></a></li>&nbsp;
-                                            <li><button type="reset" onClick = {this.ResetCustomer} className="btn btn-primary btn-sm"><i className="fa fa-reply">&nbsp;Reset</i></button></li>
+                                            <li><a href="/customer" className="btn btn-primary btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></a></li>&nbsp;
+                                            <li><button type="reset" onClick = {ResetCustomer} className="btn btn-primary btn-sm"><i className="fa fa-reply">&nbsp;Reset</i></button></li>
                                             &nbsp;
-                                            { loading ? <center><LoadingSpinner /></center> :<li>
+                                            { loading ? <center><LoadingSpinner /></center> :
+                                                <li>
                                                <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Submit</i></button>
-                                            </li>}
+                                            </li>
+                                           }
                                         </ol>
                                     </div>
 
@@ -329,21 +372,21 @@ return (
                                                 <div className="row">
                                                     <div className="col-md-3">
                                                         <label>Company Name</label>
-                                                        <input className="form-control" type="text" placeholder="Enter Company Name" id="example-text-input" name="company_name" onChange={ this.onChange }/>
+                                                        <input className="form-control" type="text" placeholder="Enter Company Name" id="example-text-input" name="company_name" onChange={ onChange }/>
                                                     </div>  
 
                                                     <div className="col-md-3">
                                                         <label>GST No</label>
-                                                        <input className="form-control" type="text" placeholder="Enter GST No" id="example-text-input" name="gst_no" onChange={ this.onChange }/>
+                                                        <input className="form-control" type="text" placeholder="Enter GST No" id="example-text-input" name="gst_no" onChange={ onChange }/>
                                                     </div>  
 
                                                     <div className="col-md-3">
                                                         <label>Contact Person Name</label>
-                                                        <input className="form-control" type="text" name="contact_person_name" placeholder="Enter Contact Person Name" onChange={ this.onChange }/>
+                                                        <input className="form-control" type="text" name="contact_person_name" placeholder="Enter Contact Person Name" onChange={ onChange }/>
                                                     </div>  
                                                     <div className="col-md-3">  
                                                         <label>Tally Alias Name</label>
-                                                        <input className="form-control" type="text"  name="tally_alias_name" placeholder="Enter Tally Alias Name" onChange={ this.onChange }/>
+                                                        <input className="form-control" type="text"  name="tally_alias_name" placeholder="Enter Tally Alias Name" onChange={ onChange }/>
                                                     </div>      
                                                 </div>  
                                             </div>
@@ -354,30 +397,19 @@ return (
                                             <div className="form-group">
                                                 <div className="row">
 
-                                                    <div className="col-md-3">
+                                                    <div className="col-md-4">
                                                         <label>Username</label>
-                                                        <input className="form-control" type="text" name="username" placeholder="Enter Username" onChange={ this.onChange }/>
+                                                        <input className="form-control" type="text" name="username" placeholder="Enter Username" onChange={ onChange }/>
                                                     </div>  
-                                                    <div className="col-md-3">  
+                                                    <div className="col-md-4">  
                                                         <label>Password</label>
-                                                        <input className="form-control" type="password"  name="password" placeholder="Enter Password" onChange={ this.onChange }/>
+                                                        <input className="form-control" type="password"  name="password" placeholder="Enter Password" onChange={ onChange }/>
                                                     </div>      
 
-                                                    <div className="col-md-3">  
+                                                    <div className="col-md-4">  
                                                         <label>Birth Date</label>
-                                                        <input className="form-control" type="date"  id="example-date-input" name="birth_date" onChange={ this.onChange }/>
+                                                        <input className="form-control" type="date"  id="example-date-input" name="birth_date" onChange={ onChange }/>
                                                     </div>    
-
-                                                    <div className="col-md-3">  
-                                                        <label>Contact Type</label>
-                                                        <select className="form-select" name="contact_type" onChange={ this.onChange }>
-                                                            <option value="Customer">Customer</option>
-                                                            <option value="Supplier">Supplier</option>
-                                                            <option value="Service Provider">Service Provider</option>
-                                                            <option value="Other">Other</option>
-                                                            <option value="Ledger">Ledger</option>
-                                                        </select>
-                                                    </div>  
                                                 </div>  
                                             </div>  
                                         </div>    
@@ -386,25 +418,30 @@ return (
                                         <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
+
+                                                    <div className="col-md-4">  
+                                                        <label>Contact Type</label>
+                                                        <select className="form-select" name="contact_type" onChange={ onChange }>
+                                                            <option value="Customer">Customer</option>
+                                                            <option value="Supplier">Supplier</option>
+                                                            <option value="Service Provider">Service Provider</option>
+                                                            <option value="Other">Other</option>
+                                                            <option value="Ledger">Ledger</option>
+                                                        </select>
+                                                    </div>  
                                                     <div className="col-md-4">  
                                                         <label>Priority</label>
-                                                        <select className="form-select" name="priority" onChange={ this.onChange }>
+                                                        <select className="form-select" name="priority" onChange={ onChange }>
                                                             <option value="High">High</option>
                                                             <option value="Medium">Medium</option>
                                                             <option value="Low">Low</option>
                                                           
                                                         </select>
-                                                    </div>  
-
-                                                    <div className="col-md-4">  
-                                                        <label>Notes</label>
-                                                        <textarea name="notes" className="form-control" placeholder="Enter Notes" onChange={ this.onChange }></textarea>
-                                                    </div>   
-
+                                                    </div> 
                                                     
                                                      <div className="col-md-4">  
                                                         <label>Active/Inactive</label>
-                                                        <select className="form-select" name="status" onChange={ this.onChange }>
+                                                        <select className="form-select" name="status" onChange={ onChange }>
                                                             <option value="1">Active</option>
                                                             <option value="0">Inactive</option>
                                                         </select>
@@ -417,9 +454,15 @@ return (
                                         <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
-                                                    <div className="col-md-12">  
+                                                    <div className="col-md-8">  
+                                                        <label>Notes</label>
+                                                        <textarea name="notes" className="form-control" placeholder="Enter Notes" onChange={ onChange }></textarea>
+                                                    </div>   
+
+                                                    <div className="col-md-4">  
                                                         <label>Logo</label>
-                                                        <input type="file" name="logo" onChange={this.onImageChange}/> 
+                                                        <input className="form-control" type="file" name="logo" onChange={ changeHandler }/>
+                                                         
                                                     </div>     
 
                                                     
@@ -438,35 +481,35 @@ return (
                                                              <div className="row">
                                                                 <div className="col-md-6">
                                                                     <label>Home Street</label>
-                                                                    <input className="form-control" type="text" name="homestreet" placeholder="Enter Homestreet" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" id="homestreet" name="homestreet" placeholder="Enter Homestreet" onChange={ onChange }/><br/>
                                                                     <label>Area</label>
-                                                                    <input className="form-control" type="text" name="area" placeholder="Enter Area" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="area" placeholder="Enter Area" onChange={ onChange }/><br/>
                                                                     <label>Pincode</label>
-                                                                    <input className="form-control" type="text" name="pincode" placeholder="Enter Pincode" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="pincode" placeholder="Enter Pincode" onChange={ onChange }/><br/>
                                                                     <label>Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="country_id" name="country_id" onChange={ this.onChange } >
+                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="country_id" name="country_id" onChange={ onChange } >
                                                                     <option value="">Select Country</option>
                                                                     { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
                                                                     <label>Account/Admin Contact No</label>
-                                                                    <input className="form-control" type="text" name="admin_contact" placeholder="Enter Account/Admin Contact No" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="admin_contact" placeholder="Enter Account/Admin Contact No" onChange={ onChange }/><br/>
                                                                     <label>Account/Admin E-mail</label>
-                                                                    <input className="form-control" type="text" name="admin_email" placeholder="Enter Account/Admin E-mail" onChange={ this.onChange }/>
+                                                                    <input className="form-control" type="text" name="admin_email" placeholder="Enter Account/Admin E-mail" onChange={ onChange }/>
                                                                 </div> 
                                                                 <div className="col-md-6">
                                                                     <label>Home Street2</label>
-                                                                    <input className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChange }/><br/>
                                                                     <label>City</label>
-                                                                    <input className="form-control" type="text" name="city" placeholder="Enter City" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="city" placeholder="Enter City" onChange={ onChange }/><br/>
                                                                     <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="state_id" name="state_id" onChange={ this.onChange } >
+                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="state_id" name="state_id" onChange={ onChange } >
                                                                     <option value="">Select State</option>
                                                                     { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
                                                                     <label>LandLine</label>
-                                                                    <input className="form-control" type="text" name="landline" placeholder="Enter Landline" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="landline" placeholder="Enter Landline" onChange={ onChange }/><br/>
                                                                     <label>QC Contact No</label>
-                                                                    <input className="form-control" type="text" name="qc_contact" placeholder="Enter QC Contact No" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="qc_contact" placeholder="Enter QC Contact No" onChange={ onChange }/><br/>
                                                                     <label>Pancard No</label>
-                                                                    <input className="form-control" type="text" name="pancard_no" placeholder="Enter Pancard No" onChange={ this.onChange }/>
+                                                                    <input className="form-control" type="text" name="pancard_no" placeholder="Enter Pancard No" onChange={ onChange }/>
                                                                 </div>
                                                               </div>
                                                          </div> 
@@ -478,35 +521,35 @@ return (
                                                              <div className="row">
                                                                 <div className="col-md-6">
                                                                     <label>Street</label>
-                                                                    <input className="form-control" type="text" name="street" placeholder="Enter Street" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" id="street" name="street" placeholder="Enter Street" onChange={ onChange }/><br/>
                                                                     <label>Area</label>
-                                                                    <input className="form-control" type="text" name="area1" placeholder="Enter Area" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="area1" placeholder="Enter Area" onChange={ onChange }/><br/>
                                                                     <label>Pincode</label>
-                                                                    <input className="form-control" type="text" name="pincode1" placeholder="Enter Pincode" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="pincode1" placeholder="Enter Pincode" onChange={ onChange }/><br/>
                                                                     <label>Country</label>
-                                                                   {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="corr_country_id" name="corr_country_id" onChange={ this.onChange } >
+                                                                   {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChange } >
                                                                     <option value="">Select Country</option>
                                                                     { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
                                                                     <label>QA Contact No</label>
-                                                                    <input className="form-control" type="text" name="qa_contact" placeholder="Enter QA Contact No" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="qa_contact" placeholder="Enter QA Contact No" onChange={ onChange }/><br/>
                                                                     <label>QA E-mail</label>
-                                                                    <input className="form-control" type="text" name="qa_email" placeholder="Enter QA E-mail" onChange={ this.onChange }/>
+                                                                    <input className="form-control" type="text" name="qa_email" placeholder="Enter QA E-mail" onChange={ onChange }/>
                                                                 </div> 
                                                                 <div className="col-md-6">
                                                                     <label>Street2</label>
-                                                                    <input className="form-control" type="text" name="street2" placeholder="Enter Street2" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="street2" placeholder="Enter Street2" onChange={ onChange }/><br/>
                                                                     <label>City</label>
-                                                                    <input className="form-control" type="text" name="city1" placeholder="Enter City" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="city1" placeholder="Enter City" onChange={ onChange }/><br/>
                                                                     <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="corr_state_id" name="corr_state_id" onChange={ this.onChange } >
+                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChange } >
                                                                     <option value="">Select State</option>
                                                                     { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
                                                                     <label>Website</label>
-                                                                    <input className="form-control" type="text" name="website" placeholder="Enter Website" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="website" placeholder="Enter Website" onChange={ onChange }/><br/>
                                                                     <label>QC E-mail</label>
-                                                                    <input className="form-control" type="text" name="qc_email" placeholder="Enter QC E-mail" onChange={ this.onChange }/><br/>
+                                                                    <input className="form-control" type="text" name="qc_email" placeholder="Enter QC E-mail" onChange={ onChange }/><br/>
                                                                     <label>Pancard Copy</label>
-                                                                    <input className="form-control" type="file" name="pancard_copy" onChange={ this.onChange }/>
+                                                                    <input className="form-control" type="file" name="other_pan_card_copy" onChange={ changePanHandler }/>
                                                                 </div>
                                                               </div>
                                                          </div> 
@@ -519,7 +562,7 @@ return (
                                             <div className="form-group">
                                                 <div className="row">
                                                     <div className="col-md-6">
-                                                        <button name="copy_details" type="button" className="btn btn-primary form-control">Copy Details</button>
+                                                        <button name="copy_details" type="button" onClick={copy_data} className="btn btn-primary form-control">Copy Details</button>
                                                     </div>
                                                 </div>
                                             </div>        
@@ -533,12 +576,12 @@ return (
                                                   
                                                     <div className="col-md-6">  
                                                         <label>Education Details</label>
-                                                        <textarea name="education_details" className="form-control" placeholder="Enter Education Details" onChange={ this.onChange }></textarea>
+                                                        <textarea name="education_details" className="form-control" placeholder="Enter Education Details" onChange={ onChange }></textarea>
                                                     </div>   
                                                     
                                                     <div className="col-md-6">  
                                                         <label>Prev. Details</label>
-                                                        <textarea name="prev_details" className="form-control" placeholder="Enter Previous Details" onChange={ this.onChange }></textarea>
+                                                        <textarea name="prev_details" className="form-control" placeholder="Enter Previous Details" onChange={ onChange }></textarea>
                                                     </div>   
                                                    
                                                 </div>  
@@ -552,26 +595,26 @@ return (
                                                     <div className="row">
                                                         {/*<div className="col-md-3">
                                                             <label>VAT No</label>
-                                                            <input className="form-control" type="text" placeholder="Enter VAT No" name="vat_no" onChange={ this.onChange }/>
+                                                            <input className="form-control" type="text" placeholder="Enter VAT No" name="vat_no" onChange={ onChange }/>
                                                         </div>  */}
 
                                                         <div className="col-md-4">
                                                             <label>TIN No</label>
-                                                            <input className="form-control" type="text" placeholder="Enter TIN No" name="tin_no" onChange={ this.onChange }/>
+                                                            <input className="form-control" type="text" placeholder="Enter TIN No" name="tin_no" onChange={ onChange }/>
                                                         </div>  
 
                                                         <div className="col-md-4">
                                                             <label>Service Tax No</label>
-                                                            <input className="form-control" type="text" name="service_tax_no" placeholder="Enter Service Tax No" onChange={ this.onChange }/>
+                                                            <input className="form-control" type="text" name="service_tax_no" placeholder="Enter Service Tax No" onChange={ onChange }/>
                                                         </div>  
                                                         {/*<div className="col-md-2">  
                                                             <label>CST No</label>
-                                                            <input className="form-control" type="text"  name="cst_no" placeholder="Enter CST No" onChange={ this.onChange }/>
+                                                            <input className="form-control" type="text"  name="cst_no" placeholder="Enter CST No" onChange={ onChange }/>
                                                         </div> */}
 
                                                         <div className="col-md-4">  
                                                             <label>Customer Discount</label>
-                                                            <input className="form-control" type="text"  name="customer_discount" placeholder="Enter Customer Discount" onChange={ this.onChange }/>
+                                                            <input className="form-control" type="text"  name="customer_discount" placeholder="Enter Customer Discount" onChange={ onChange }/>
                                                         </div>        
                                                     </div>  
                                                 </div>
@@ -585,22 +628,22 @@ return (
                                                     <div className="row">
                                                         <div className="col-md-2">
                                                             <label>Name</label>
-                                                            <input className="form-control" type="text" placeholder="Enter Name" value={x.contact_person_name} name="contact_person_name" onChange={e => this.handleInputChange(e, i)}/>
+                                                            <input className="form-control" type="text" placeholder="Enter Name" value={x.contact_person_name} name="contact_person_name" onChange={e => handleInputChange(e, i)}/>
                                                         </div>  
 
                                                         <div className="col-md-2">
                                                             <label>Mobile</label>
-                                                            <input className="form-control" type="text" placeholder="Enter Mobile" value={x.contact_person_mobile} name="contact_person_mobile" onChange={e => this.handleInputChange(e, i)}/>
+                                                            <input className="form-control" type="text" placeholder="Enter Mobile" value={x.contact_person_mobile} name="contact_person_mobile" onChange={e => handleInputChange(e, i)}/>
                                                         </div>  
 
                                                         <div className="col-md-3">
                                                             <label>E-mail</label>
-                                                            <input className="form-control" type="text" name="contact_person_email" value={x.contact_person_email} placeholder="Enter E-mail" onChange={e => this.handleInputChange(e, i)}/>
+                                                            <input className="form-control" type="text" name="contact_person_email" value={x.contact_person_email} placeholder="Enter E-mail" onChange={e => handleInputChange(e, i)}/>
                                                         </div>  
                                                         <div className="col-md-2">  
                                                             <label>Department</label>
                                                             {loading1 ? <LoadingSpinner /> :  
-                                                          <select className="form-select" id="mst_departments_id" name="mst_departments_id" value={x.mst_departments_id} onChange={e => this.handleInputChange(e, i)}>
+                                                          <select className="form-select" id="mst_departments_id" name="mst_departments_id" value={x.mst_departments_id} onChange={e => handleInputChange(e, i)}>
                                                              <option value="">Select Department</option>
                                                             { data4.map((option, key) => <option value={option.id} key={key} >{option.department_name}</option>) }
                                                         </select> } 
@@ -609,7 +652,7 @@ return (
                                                         <div className="col-md-2">  
                                                             <label>Position</label>
                                                            {loading1 ? <LoadingSpinner /> :  
-                                                        <select className="form-select" id="mst_positions_id" name="mst_positions_id" value={x.mst_positions_id} onChange={e => this.handleInputChange(e, i)}>
+                                                        <select className="form-select" id="mst_positions_id" name="mst_positions_id" value={x.mst_positions_id} onChange={e => handleInputChange(e, i)}>
                                                              <option value="">Select Position</option>
                                                             { data3.map((option, key) => <option value={option.id} key={key} >{option.position_title}</option>) }
                                                          </select> }
@@ -619,7 +662,7 @@ return (
                                                             <label style={{ visibility:'hidden' }}>Delete</label>
                                                             {inputList.length !== 1 && <button
                                                           className="mr10"
-                                                          onClick={() => this.handleRemoveClick(i)} className="btn btn-primary">Delete</button>}
+                                                          onClick={() => handleRemoveClick(i)} className="btn btn-primary">Delete</button>}
                                                         </div>             
                                                     </div>  
                                                 </div>
@@ -631,7 +674,7 @@ return (
                                                    <center> 
                                                         <div className="col-md-2">
 
-                                                        {inputList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={this.handleAddClick}>Add More</button>}
+                                                        {inputList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
                                                         
                                                         </div>
                                                     </center>
@@ -649,8 +692,7 @@ return (
                     </div>
                 </div>
     </React.Fragment>
-)
-  }
+  )
 }
 
 export default AddCustomer  

@@ -17,12 +17,12 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import axios from 'axios'
 import Moment from 'moment';
 import Pagination from "react-js-pagination";
-class ListMaterial extends Component{
+class ListCustomer extends Component{
 
   constructor(props){
     super(props);
     this.state= {
-      material: [],
+      customer: [],
       activePage: 1,
       itemsCountPerPage: 10,
       totalItemsCount: 1,
@@ -40,11 +40,12 @@ class ListMaterial extends Component{
  this.componentDidMount = () => { 
   this.setState({ loading: true }, () => {
 
-     axios.get(`${process.env.REACT_APP_BASE_APIURL}listMaterial`, { headers: headers})
+     axios.get(`${process.env.REACT_APP_BASE_APIURL}listCustomer`, { headers: headers})
 
               .then(response => {
                   if(response.data.success == true){
-                    this.setState({material:response.data.data.data,
+                    console.log(response.data.data.per_page)
+                    this.setState({customer:response.data.data.data,
                       itemsCountPerPage : response.data.data.per_page,
                       totalItemsCount: response.data.data.total,
                       activePage:response.data.data.current_page});
@@ -58,18 +59,18 @@ class ListMaterial extends Component{
    })
   }  
 
-this.deleteMaterial = (material_id) =>{
+this.deleteMaterial = (customer_id) =>{
             this.setState({ loading: true }, () => {
-               axios.post(`${process.env.REACT_APP_BASE_APIURL}deleteMaterial/`+material_id,null, { headers: del_headers})
+               axios.post(`${process.env.REACT_APP_BASE_APIURL}deleteCustomer/`+customer_id,null, { headers: del_headers})
               .then(response => {
                       if(response.data.success == true){
                         //need to refresh page after delete
-                        props.history.push('/all-material');
-                        props.history.push('/material');
+                        props.history.push('/all-customer');
+                        props.history.push('/customer');
                         toastr.success(response.data.message);
                         this.setState({loading: false});
                     }else{
-                      props.history.push('/material');
+                      props.history.push('/customer');
                       toastr.error(response.data.message);
                       this.setState({loading: false});
                     }
@@ -80,11 +81,11 @@ this.deleteMaterial = (material_id) =>{
    this.setState({ loading: true }, () => {
     this.handlePageChange.bind(this)
     //this.setState({activePage: pageNumber});
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}listMaterial?page=`+pageNumber, { headers: headers})
+    axios.get(`${process.env.REACT_APP_BASE_APIURL}listCustomer?page=`+pageNumber, { headers: headers})
 
           .then(response => {
               if(response.data.success == true){
-                this.setState({material:response.data.data.data,
+                this.setState({customer:response.data.data.data,
                       itemsCountPerPage : response.data.data.per_page,
                       totalItemsCount: response.data.data.total,
                       activePage:response.data.data.current_page});
@@ -108,14 +109,14 @@ this.deleteMaterial = (material_id) =>{
             <div className="page-title">
                 <ol className="breadcrumb m-0">
                     <li className="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                    <li className="breadcrumb-item">Masters</li>
-                    <li className="breadcrumb-item active">Materials</li>
+                    <li className="breadcrumb-item">Sales</li>
+                    <li className="breadcrumb-item active">Customer</li>
                 </ol>
             </div>
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                     <li> 
-                      <Link to="/add-material" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Material</Link>
+                      <Link to="/add-customer" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Customer</Link>
                     </li>&nbsp;
                 </ol>
             </div>        
@@ -130,32 +131,32 @@ this.deleteMaterial = (material_id) =>{
                        <thead>
                          <tr>
                            <th scope="col">SR No</th>
-                           <th scope="col">Material Type</th>
-                           <th scope="col">Material Name</th>
-                           <th scope="col">Parent Category Name</th>
-                           <th scope="col">Sub Category Name</th>
-                           <th scope="col">Sub Sub Category Name</th>
-                           <th scope="col">Material Amount</th>
+                           <th scope="col">Comapny Name</th>
+                           <th scope="col">Contact Person Name</th>
+                           <th scope="col">Contact Type</th>
+                           <th scope="col">Tally Alias Name</th>
+                           <th scope="col">Contact No</th>
+                           <th scope="col">Status</th>
                            <th scope="col">Actions</th>
                          </tr>
                        </thead>
                        <tbody>
                        {
-                         this.state.material.map((post,index)=>{ 
+                         this.state.customer.map((post,index)=>{ 
 
                             return(
                               <tr>
                                 <th scope="row">{index+1}</th>
-                                <td>{post.material_type}</td>
-                                <td>{post.material_name}</td>
-                                <td>{post.parent_category_name}</td>
-                                <td>{post.sub_category_name}</td>
-                                <td>{post.sub_sub_category_name}</td>
-                                <td>{post.material_amount}</td>
-                                <td><div><Link className="btn btn-primary" to={"/edit-material/"+base64_encode(post.id+"/"+post.category_id+"/"+post.sub_category_id)}>
+                                <td>{post.company_name}</td>
+                                <td>{post.contact_person_name}</td>
+                                <td>{post.contact_type}</td>
+                                <td>{post.tally_alias_name}</td>
+                                <td>{post.contact_no}</td>
+                                <td>{post.is_active ? ("Active") : ("Deactivated")}</td>
+                                <td><div><Link className="btn btn-primary" to={"/edit-customer/"+base64_encode(post.id)}>
                                   <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-                                  <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Material Data?')){ this.deleteMaterial(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-                                  &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-material/"+base64_encode(post.id)}>
+                                  <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Customer Data?')){ this.deleteCustomer(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+                                  &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-customer/"+base64_encode(post.id)}>
                                   <i className="fa fa-eye"></i></Link></div></td>
                               </tr>
                             )
@@ -200,4 +201,4 @@ this.deleteMaterial = (material_id) =>{
   )
 }
 }
-export default ListMaterial
+export default ListCustomer
