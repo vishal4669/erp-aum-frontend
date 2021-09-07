@@ -25,6 +25,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import { ToastContainer} from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
+import $ from 'jquery'
 
 function AddCustomer(props) {    
 
@@ -127,13 +128,25 @@ useEffect(() => {
         } 
 
 
-       const copy_data = () => {
-        console.log("here")
-        var copy_home_street = document.getElementById('homestreet').value;
-        console.log(copy_home_street);
-        document.getElementById('street').innerHTML = copy_home_street;
-        console.log(document.getElementById('street').innerHTML = copy_home_street);
+       const copy_data = (e) => {
+        const copy_street1 = customer.homestreet;
+        const copy_street2 = customer.homestreet2;
+        const copy_area = customer.area;
+        const copy_city = customer.city;
+
+         //$('#street').val(copy_street1);
+        // $('#street2').val(copy_street2);
+
+        // console.log(customer.street)
+
+        document.CustomerData.street.value = copy_street1;
+        document.CustomerData.street2.value = copy_street2;
+
+        customer.homestreet = customer.street;
+        customer.homestreet2 = customer.street2;
+
         console.log(customer.street)
+        console.log(customer.street2)
        }
 
 
@@ -210,7 +223,15 @@ const InsertCustomer = (e)=>{
         data1.append('contact_type', customer.contact_type);
         data1.append('priority', customer.priority);
         data1.append('notes', customer.notes);
-        data1.append('logo', selectedFile);
+
+        if(selectedFile != false)
+        {
+            data1.append('logo', selectedFile);
+        }
+        else{
+            data1.append('logo', '');
+        }
+
         data1.append('is_active', customer.active_inactive);
 
         //History & Other Details
@@ -249,17 +270,18 @@ const InsertCustomer = (e)=>{
         data1.append('customer_contact_info[other_contact_info][0][contact_no]', customer.qa_contact);
         data1.append('customer_contact_info[other_contact_info][0][other_qc_email]', customer.qc_email);
         data1.append('customer_contact_info[other_contact_info][0][email]', customer.qa_email);
-        data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', selectedPanFile);
+        if(selectedPanFile != false)
+        {
+            data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', selectedPanFile);
+        }
+        else{
+            data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', '');
+        }
         data1.append('customer_contact_info[other_contact_info][0][contact_info_type]', 2);
 
-        //Contact Person Details
+        data1.append('contact_person_data', JSON.stringify(contact_person_data));
 
-        //console.log(contact_person_data);
-
-      // data1.append('customer_contact_person', contact_person_data);
-
- //currently it is storing all the keys as seperate enrty
-        /* inputList.forEach(function(contact,index){
+                 /*inputList.forEach(function(contact,index){
                   data1.append('customer_contact_person[index][contact_person_name]', inputList[index].contact_person_name);
                   data1.append('customer_contact_person[index][contact_person_mobile]', inputList[index].contact_person_mobile);
                   data1.append('customer_contact_person[index][contact_person_email]', inputList[index].contact_person_email);
@@ -268,32 +290,27 @@ const InsertCustomer = (e)=>{
              
              })*/
 
-        // const final_data = [...data1];
+         //const final_data = [...data1];
        // console.log(final_data);
-            //console.log(contact_person_data); 
 
-           /*  const final_data = {
-                         "customer_contact_person": contact_person_data,
-                         "customer_id" : response.data.data.id
-                       } */
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addCustomer`, data1, {headers} )
                 .then(response => {
                     if(response.data.success == true){
 
-                       //  props.history.push('/customer');
-                         //toastr.success(response.data.message);
-                        // {setLoading(false)}; 
-
-                        const customer_id =  response.data.data.id;
+                       props.history.push('/customer');
+                      toastr.success(response.data.message);
+                      {setLoading(false)}; 
                        
-                       const contact_details = {
+                       /*const contact_details = {
                          "customer_contact_person": contact_person_data,
                          "customer_id" : response.data.data.id
                        }
 
+
+   // if contact person not empty then otherwise not
                        //console.log(contact_details)
                        axios.post( `${process.env.REACT_APP_BASE_APIURL}addCustomerContactPerson`, 
-                     {contact_person_data,customer_id}, {headers} )
+                     contact_details, {headers} )
                        .then(response => {
                             if(response.data.success == true){
                                 props.history.push('/customer');
@@ -306,8 +323,8 @@ const InsertCustomer = (e)=>{
                                 {setLoading(false)};   
                             } 
                         })
-                       
-                       //console.log(response.data.data.id);
+                       {setLoading(false)};
+                       //console.log(response.data.data.id);*/
                     } 
                     else{
                         props.history.push('/add-customer');
@@ -360,7 +377,7 @@ return(
 
                 <div className="page-content">
                     <div className="container-fluid">
-                     <Form onSubmit={InsertCustomer} method="POST" id="AddCustomer">
+                     <Form onSubmit={InsertCustomer} method="POST" id="AddCustomer" name="CustomerData">
                         <div className="row">
                             <div className="col-12">
                                 <div className="page-title-box d-flex align-items-center justify-content-between">
@@ -567,7 +584,7 @@ return(
                                                                 </div> 
                                                                 <div className="col-md-6">
                                                                     <label>Street2</label>
-                                                                    <input className="form-control" type="text" name="street2" placeholder="Enter Street2" onChange={ onChange }/><br/>
+                                                                    <input className="form-control" id="street2" type="text" name="street2" placeholder="Enter Street2" onChange={ onChange }/><br/>
                                                                     <label>City</label>
                                                                     <input className="form-control" type="text" name="city1" placeholder="Enter City" onChange={ onChange }/><br/>
                                                                     <label>State</label>
