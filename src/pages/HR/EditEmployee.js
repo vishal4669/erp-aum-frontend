@@ -88,7 +88,6 @@ function EditEmployee (props) {
         {setLoading1(true)} 
           axios.get(`${process.env.REACT_APP_BASE_APIURL}getEmployee/`+employee_id,{headers})  
               .then(response => {  
-                console.log(response.data.data.company[0])
                   setemployee(response.data.data);
                   setemployeeaddress1(response.data.data.address[0]);  // setting Permenant address 
                   setemployeeaddress2(response.data.data.address[1]);
@@ -299,7 +298,7 @@ const editEmployee = (e)=>{
                         toastr.success(response.data.message);
                         {setLoading(false)}; 
                     }else{
-                        props.history.push('/add-employee');
+                        props.history.push('/edit-employee'+edit_employee_id);
                         toastr.error(response.data.message);
                         {setLoading(false)};   
                     }
@@ -395,7 +394,7 @@ const handleAddClick1 = () => {
                     <li><a href="/employee" className="btn btn-primary btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></a></li>&nbsp;
                    
                     { loading ? <center><LoadingSpinner /></center> :<li>
-                       <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Submit</i></button>
+                       <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
                     </li>}
                     
                 </ol>

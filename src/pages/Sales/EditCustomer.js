@@ -25,12 +25,20 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import { ToastContainer} from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
-function AddCustomer(props) {    
+function EditCustomer(props) {    
 
   const headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
         }
+
+  const url = window.location.href
+  const customer_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
+  const edit_customer_id =url.substring(url.lastIndexOf('/') + 1)
+
+  var logo_path = "https://erpaum-api.divineinfosyshosting.com/public/images/customers/logo/";
+  var pancard_copy_path = "https://erpaum-api.divineinfosyshosting.com/public/images/customers/pancard_copy/";
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
@@ -41,10 +49,17 @@ function AddCustomer(props) {
   const [selectedFiles, setselectedFiles] = useState(null)
   const [customer, setCustomer] = useState({ company_name: '', gst_no: '',contact_person_name:'',tally_alias_name:'',
   username:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',active_inactive:'1',logo:'',
+  education_details:'',prev_details:'',tin_no:'',service_tax_no:'',customer_discount:''});  
+
+  const [pass, setPassword] = useState();
+
+  const [address1, setCustomerAddress1] = useState({ 
   homestreet:'',homestreet2:'',area:'',city:'',pincode:'',state_id:'',country_id:'',landline:'',admin_contact:'',
-  qc_contact:'',admin_email:'',pancard_no:'',street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
-  corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:'',education_details:'',prev_details:'',
-  tin_no:'',service_tax_no:'',customer_discount:''});  
+  qc_contact:'',admin_email:'',pancard_no:''}); 
+
+   const [address2, setCustomerAddress2] = useState({street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
+  corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:''}); 
+
   const [inputList, setInputList]  = useState([{ contact_person_name: "", contact_person_mobile: "", 
     contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
   const [selectedFile, setSelectedFile] = useState(false);
@@ -67,7 +82,27 @@ useEffect(() => {
          fetchStates();
          fetchPosition();
          fetchDepartment();
+         GetCustomerData();
         }, []); 
+
+const GetCustomerData=()=>{ 
+        {setLoading1(true)} 
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}getCustomer/`+customer_id,{headers})  
+              .then(response => {  
+                  setCustomer(response.data.data);
+                  setCustomerAddress1(response.data.data.contact_info[0]);  // setting Permenant address 
+                  setCustomerAddress2(response.data.data.contact_info[1]);
+                  setInputList(response.data.data.contact_person);
+                  setPassword(response.data.data.password);
+                  {setLoading1(false)}; 
+      
+              })  
+              .catch((error) => {  
+                  {setLoading1(false)} 
+                  toastr.error(error.response.data.message);
+                  this.setState({loading: false}); 
+              })  
+        }  
 
         const fetchCountry = () => {
              {setLoading1(true)};
@@ -128,13 +163,13 @@ useEffect(() => {
 
        const copy_data = () => {
 
-        const copy_street1 = customer.homestreet;
-        const copy_street2 = customer.homestreet2;
-        const copy_area = customer.area;
-        const copy_city = customer.city;
-        const copy_pincode = customer.pincode;
-        const copy_state_id = customer.state_id;
-        const copy_country_id = customer.country_id;
+        const copy_street1 = address1.homestreet;
+        const copy_street2 = address1.homestreet2;
+        const copy_area = address1.area;
+        const copy_city = address1.city;
+        const copy_pincode = address1.pincode;
+        const copy_state_id = address1.state_id;
+        const copy_country_id = address1.country_id;
 
         //show data in textboxes / field
 
@@ -148,77 +183,21 @@ useEffect(() => {
 
         // set value
 
-        customer.street = document.CustomerData.street.value;
-        customer.street2 = document.CustomerData.street2.value;
-        customer.area1 = document.CustomerData.area1.value;
-        customer.city1 = document.CustomerData.city1.value;
-        customer.pincode1 = document.CustomerData.pincode1.value;
-        customer.corr_state_id = document.CustomerData.corr_state_id.value;
-        customer.corr_country_id = document.CustomerData.corr_country_id.value;
+        address2.street = document.CustomerData.street.value;
+        address2.street2 = document.CustomerData.street2.value;
+        address2.area1 = document.CustomerData.area1.value;
+        address2.city1 = document.CustomerData.city1.value;
+        address2.pincode1 = document.CustomerData.pincode1.value;
+        address2.corr_state_id = document.CustomerData.corr_state_id.value;
+        address2.corr_country_id = document.CustomerData.corr_country_id.value;
        }
 
 
-const InsertCustomer = (e)=>{
+const EditCustomer = (e)=>{
          e.preventDefault();
 
        const contact_person_data = inputList;
         {setLoading(true)};
-        /*const data = 
-        { 
-            company_name:customer.company_name, 
-            gst_number: customer.gst_no,
-            contact_person_name: customer.contact_person_name,
-            tally_alias_name: customer.tally_alias_name,
-            user_name: customer.username,
-            password: customer.password,
-            birth_date: customer.birth_date,
-            contact_type: customer.contact_type,
-            priority: customer.priority,
-            notes: customer.notes,
-            is_active: customer.active_inactive,
-            education_details:customer.education_details,
-            prev_details:customer.prev_details,
-            company_tin_no: customer.tin_no,
-            company_service_tax_no :customer.service_tax_no,
-            company_cust_discount:customer.customer_discount,
-            "customer_contact_info" : {
-                "home_contact_info":[
-                   {
-                        street_1:customer.homestreet,
-                        street_2:customer.homestreet2,
-                        area:customer.area,
-                        city:customer.city,
-                        pin:customer.pincode,
-                        state:customer.state_id,
-                        country:customer.country_id,
-                        home_landline:customer.landline,
-                        contact_no:customer.admin_contact,   //Admin OR Account Contact No
-                        home_qc_contact_no:customer.qc_contact,
-                        email:customer.admin_email, // Account OR Admin Email
-                        home_pan_card:customer.pancard_no,
-                        "contact_info_type" : 1,
-                    }
-                ],
-                "other_contact_info":[
-                     Correspondence Address - Address Type 2
-                       {
-                        street_1:customer.street,
-                        street_2:customer.street2,
-                        area:customer.area1,
-                        city:customer.city1,
-                        pin:customer.pincode1,
-                        state:customer.corr_state_id,
-                        country:customer.corr_country_id,
-                        other_website:customer.website,
-                        contact_no:customer.qa_contact, //QA Contact No
-                        other_qc_email:customer.qc_email,
-                        email: customer.qa_email,//QA Email
-                        other_pan_card_copy:"",
-                        "contact_info_type" : 2,
-                       }
-                ]
-            }, "customer_contact_person": contact_person_data,
-        }; */
         const data1 = new FormData();
         //Customer Details
         data1.append('company_name', customer.company_name);
@@ -226,7 +205,11 @@ const InsertCustomer = (e)=>{
         data1.append('contact_person_name', customer.contact_person_name);
         data1.append('tally_alias_name', customer.tally_alias_name);
         data1.append('user_name', customer.username);
-        data1.append('password', customer.password);
+        if(customer.password !== pass){
+            data1.append('password', customer.password);
+        } else {
+            data1.append('password', pass);
+        }
         data1.append('birth_date', customer.birth_date);
         data1.append('contact_type', customer.contact_type);
         data1.append('priority', customer.priority);
@@ -235,11 +218,9 @@ const InsertCustomer = (e)=>{
         if(selectedFile != false)
         {
             data1.append('logo', selectedFile);
+        } else {
+            data1.append('logo', customer.logo);
         }
-        else{
-            data1.append('logo', '');
-        }
-
         data1.append('is_active', customer.active_inactive);
 
         //History & Other Details
@@ -252,54 +233,41 @@ const InsertCustomer = (e)=>{
         data1.append('company_cust_discount', customer.customer_discount);
 
         //Home Address Details
-        data1.append('customer_contact_info[home_contact_info][0][street_1]', customer.homestreet);
-        data1.append('customer_contact_info[home_contact_info][0][street_2]', customer.homestreet2);
-        data1.append('customer_contact_info[home_contact_info][0][area]', customer.area);
-        data1.append('customer_contact_info[home_contact_info][0][city]', customer.city);
-        data1.append('customer_contact_info[home_contact_info][0][pin]', customer.pincode);
-        data1.append('customer_contact_info[home_contact_info][0][state]', customer.state_id);
-        data1.append('customer_contact_info[home_contact_info][0][country]', customer.country_id);
-        data1.append('customer_contact_info[home_contact_info][0][home_landline]', customer.landline);
-        data1.append('customer_contact_info[home_contact_info][0][contact_no]', customer.admin_contact);
-        data1.append('customer_contact_info[home_contact_info][0][home_qc_contact_no]', customer.qc_contact);
-        data1.append('customer_contact_info[home_contact_info][0][email]', customer.admin_email);
-        data1.append('customer_contact_info[home_contact_info][0][home_pan_card]', customer.pancard_no);
+        data1.append('customer_contact_info[home_contact_info][0][street_1]', address1.homestreet);
+        data1.append('customer_contact_info[home_contact_info][0][street_2]', address1.homestreet2);
+        data1.append('customer_contact_info[home_contact_info][0][area]', address1.area);
+        data1.append('customer_contact_info[home_contact_info][0][city]', address1.city);
+        data1.append('customer_contact_info[home_contact_info][0][pin]', address1.pincode);
+        data1.append('customer_contact_info[home_contact_info][0][state]', address1.state_id);
+        data1.append('customer_contact_info[home_contact_info][0][country]', address1.country_id);
+        data1.append('customer_contact_info[home_contact_info][0][home_landline]', address1.landline);
+        data1.append('customer_contact_info[home_contact_info][0][contact_no]', address1.admin_contact);
+        data1.append('customer_contact_info[home_contact_info][0][home_qc_contact_no]', address1.qc_contact);
+        data1.append('customer_contact_info[home_contact_info][0][email]', address1.admin_email);
+        data1.append('customer_contact_info[home_contact_info][0][home_pan_card]', address1.pancard_no);
         data1.append('customer_contact_info[home_contact_info][0][contact_info_type]', 1);
 
         //Correspondence Address Details
-        data1.append('customer_contact_info[other_contact_info][0][street_1]', customer.street);
-        data1.append('customer_contact_info[other_contact_info][0][street_2]', customer.street2);
-        data1.append('customer_contact_info[other_contact_info][0][area]', customer.area1);
-        data1.append('customer_contact_info[other_contact_info][0][city]', customer.city1);
-        data1.append('customer_contact_info[other_contact_info][0][pin]', customer.pincode1);
-        data1.append('customer_contact_info[other_contact_info][0][state]', customer.corr_state_id);
-        data1.append('customer_contact_info[other_contact_info][0][country]', customer.corr_country_id);
-        data1.append('customer_contact_info[other_contact_info][0][other_website]', customer.website);
-        data1.append('customer_contact_info[other_contact_info][0][contact_no]', customer.qa_contact);
-        data1.append('customer_contact_info[other_contact_info][0][other_qc_email]', customer.qc_email);
-        data1.append('customer_contact_info[other_contact_info][0][email]', customer.qa_email);
+        data1.append('customer_contact_info[other_contact_info][0][street_1]', address2.street);
+        data1.append('customer_contact_info[other_contact_info][0][street_2]', address2.street2);
+        data1.append('customer_contact_info[other_contact_info][0][area]', address2.area1);
+        data1.append('customer_contact_info[other_contact_info][0][city]', address2.city1);
+        data1.append('customer_contact_info[other_contact_info][0][pin]', address2.pincode1);
+        data1.append('customer_contact_info[other_contact_info][0][state]', address2.corr_state_id);
+        data1.append('customer_contact_info[other_contact_info][0][country]', address2.corr_country_id);
+        data1.append('customer_contact_info[other_contact_info][0][other_website]', address2.website);
+        data1.append('customer_contact_info[other_contact_info][0][contact_no]', address2.qa_contact);
+        data1.append('customer_contact_info[other_contact_info][0][other_qc_email]', address2.qc_email);
+        data1.append('customer_contact_info[other_contact_info][0][email]', address2.qa_email);
         if(selectedPanFile != false)
         {
             data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', selectedPanFile);
-        }
-        else{
-            data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', '');
+        } else {
+            data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', address2.pancard_copy);
         }
         data1.append('customer_contact_info[other_contact_info][0][contact_info_type]', 2);
 
         data1.append('contact_person_data', JSON.stringify(contact_person_data));
-
-                 /*inputList.forEach(function(contact,index){
-                  data1.append('customer_contact_person[index][contact_person_name]', inputList[index].contact_person_name);
-                  data1.append('customer_contact_person[index][contact_person_mobile]', inputList[index].contact_person_mobile);
-                  data1.append('customer_contact_person[index][contact_person_email]', inputList[index].contact_person_email);
-                  data1.append('customer_contact_person[index][mst_departments_id]', inputList[index].mst_departments_id);
-                  data1.append('customer_contact_person[index][mst_positions_id]', inputList[index].mst_positions_id);     
-             
-             })*/
-
-         //const final_data = [...data1];
-       // console.log(final_data);
 
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addCustomer`, data1, {headers} )
                 .then(response => {
@@ -308,34 +276,9 @@ const InsertCustomer = (e)=>{
                        props.history.push('/customer');
                       toastr.success(response.data.message);
                       {setLoading(false)}; 
-                       
-                       /*const contact_details = {
-                         "customer_contact_person": contact_person_data,
-                         "customer_id" : response.data.data.id
-                       }
-
-
-   // if contact person not empty then otherwise not
-                       //console.log(contact_details)
-                       axios.post( `${process.env.REACT_APP_BASE_APIURL}addCustomerContactPerson`, 
-                     contact_details, {headers} )
-                       .then(response => {
-                            if(response.data.success == true){
-                                props.history.push('/customer');
-                                toastr.success(response.data.message);
-                                {setLoading(false)}; 
-                              }
-                            else{
-                                props.history.push('/add-customer');
-                                toastr.error(response.data.message);
-                                {setLoading(false)};   
-                            } 
-                        })
-                       {setLoading(false)};
-                       //console.log(response.data.data.id);*/
                     } 
                     else{
-                        props.history.push('/add-customer');
+                        props.history.push('/edit-customer/'+edit_customer_id);
                         toastr.error(response.data.message);
                         {setLoading(false)};   
                     }
@@ -348,14 +291,20 @@ const InsertCustomer = (e)=>{
       }
 
 
-const ResetCustomer = () => { 
-  document.getElementById("AddCustomer").reset();
-}
-
   const onChange = (e) => {  
     e.persist();  
     setCustomer({...customer, [e.target.name]: e.target.value});  
   } 
+
+  const onChangeAddress1 = (e) => {  
+    e.persist();  
+    setCustomerAddress1({...address1, [e.target.name]: e.target.value});  
+  } 
+
+  const onChangeAddress2 = (e) => {  
+        e.persist();  
+        setCustomerAddress2({...address2, [e.target.name]: e.target.value});  
+    } 
 
   // handle click event of the Add button
 const handleAddClick = () => {
@@ -385,7 +334,7 @@ return(
 
                 <div className="page-content">
                     <div className="container-fluid">
-                     <Form onSubmit={InsertCustomer} method="POST" id="AddCustomer" name="CustomerData">
+                     <Form onSubmit={EditCustomer} method="POST" id="EditCustomer" name="CustomerData">
                         <div className="row">
                             <div className="col-12">
                                 <div className="page-title-box d-flex align-items-center justify-content-between">
@@ -395,18 +344,17 @@ return(
                                             <li className="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
                                             <li className="breadcrumb-item">Sales</li>
                                             <li className="breadcrumb-item"><a href="/customer">Customers</a></li>
-                                            <li className="breadcrumb-item active">Add Customers</li>
+                                            <li className="breadcrumb-item active">Edit Customers</li>
                                         </ol>
                                     </div>
 
                                     <div className="page-title-right">
                                         <ol className="breadcrumb m-0">
                                             <li><a href="/customer" className="btn btn-primary btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></a></li>&nbsp;
-                                            <li><button type="reset" onClick = {ResetCustomer} className="btn btn-primary btn-sm"><i className="fa fa-reply">&nbsp;Reset</i></button></li>
                                             &nbsp;
                                             { loading ? <center><LoadingSpinner /></center> :
                                                 <li>
-                                               <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Submit</i></button>
+                                               <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
                                             </li>
                                            }
                                         </ol>
@@ -427,21 +375,21 @@ return(
                                                 <div className="row">
                                                     <div className="col-md-3">
                                                         <label>Company Name</label>
-                                                        <input className="form-control" type="text" placeholder="Enter Company Name" id="example-text-input" name="company_name" onChange={ onChange }/>
+                                                        <input className="form-control" value={customer.company_name} type="text" placeholder="Enter Company Name" id="example-text-input" name="company_name" onChange={ onChange }/>
                                                     </div>  
 
                                                     <div className="col-md-3">
                                                         <label>GST No</label>
-                                                        <input className="form-control" type="text" placeholder="Enter GST No" id="example-text-input" name="gst_no" onChange={ onChange }/>
+                                                        <input className="form-control" value={customer.gst_number} type="text" placeholder="Enter GST No" id="example-text-input" name="gst_no" onChange={ onChange }/>
                                                     </div>  
 
                                                     <div className="col-md-3">
                                                         <label>Contact Person Name</label>
-                                                        <input className="form-control" type="text" name="contact_person_name" placeholder="Enter Contact Person Name" onChange={ onChange }/>
+                                                        <input className="form-control" value={customer.contact_person_name} type="text" name="contact_person_name" placeholder="Enter Contact Person Name" onChange={ onChange }/>
                                                     </div>  
                                                     <div className="col-md-3">  
                                                         <label>Tally Alias Name</label>
-                                                        <input className="form-control" type="text"  name="tally_alias_name" placeholder="Enter Tally Alias Name" onChange={ onChange }/>
+                                                        <input className="form-control" value={customer.tally_alias_name} type="text"  name="tally_alias_name" placeholder="Enter Tally Alias Name" onChange={ onChange }/>
                                                     </div>      
                                                 </div>  
                                             </div>
@@ -454,16 +402,17 @@ return(
 
                                                     <div className="col-md-4">
                                                         <label>Username</label>
-                                                        <input className="form-control" type="text" name="username" placeholder="Enter Username" onChange={ onChange }/>
+                                                        <input className="form-control" value={customer.user_name} type="text" name="username" placeholder="Enter Username" onChange={ onChange }/>
                                                     </div>  
                                                     <div className="col-md-4">  
                                                         <label>Password</label>
-                                                        <input className="form-control" type="password"  name="password" placeholder="Enter Password" onChange={ onChange }/>
+                                                        <input className="form-control" value={customer.password} type="password"  name="password" placeholder="Enter Password" onChange={ onChange }/>
+                                                        <input className="form-control" value={pass} type="hidden"/>
                                                     </div>      
 
                                                     <div className="col-md-4">  
                                                         <label>Birth Date</label>
-                                                        <input className="form-control" type="date"  id="example-date-input" name="birth_date" onChange={ onChange }/>
+                                                        <input className="form-control" value={customer.birth_date} type="date"  id="example-date-input" name="birth_date" onChange={ onChange }/>
                                                     </div>    
                                                 </div>  
                                             </div>  
@@ -476,7 +425,7 @@ return(
 
                                                     <div className="col-md-4">  
                                                         <label>Contact Type</label>
-                                                        <select className="form-select" name="contact_type" onChange={ onChange }>
+                                                        <select value={customer.contact_type} className="form-select" name="contact_type" onChange={ onChange }>
                                                             <option value="Customer">Customer</option>
                                                             <option value="Supplier">Supplier</option>
                                                             <option value="Service Provider">Service Provider</option>
@@ -486,7 +435,7 @@ return(
                                                     </div>  
                                                     <div className="col-md-4">  
                                                         <label>Priority</label>
-                                                        <select className="form-select" name="priority" onChange={ onChange }>
+                                                        <select value={customer.priority} className="form-select" name="priority" onChange={ onChange }>
                                                             <option value="High">High</option>
                                                             <option value="Medium">Medium</option>
                                                             <option value="Low">Low</option>
@@ -496,7 +445,7 @@ return(
                                                     
                                                      <div className="col-md-4">  
                                                         <label>Active/Inactive</label>
-                                                        <select className="form-select" name="status" onChange={ onChange }>
+                                                        <select value={customer.is_active} className="form-select" name="status" onChange={ onChange }>
                                                             <option value="1">Active</option>
                                                             <option value="0">Inactive</option>
                                                         </select>
@@ -511,12 +460,14 @@ return(
                                                 <div className="row">
                                                     <div className="col-md-8">  
                                                         <label>Notes</label>
-                                                        <textarea name="notes" className="form-control" placeholder="Enter Notes" onChange={ onChange }></textarea>
+                                                        <textarea value={customer.notes} name="notes" className="form-control" placeholder="Enter Notes" onChange={ onChange }></textarea>
                                                     </div>   
 
                                                     <div className="col-md-4">  
                                                         <label>Logo</label>
                                                         <input className="form-control" type="file" name="logo" onChange={ changeHandler }/>
+                                                        <input className="form-control" type="hidden" value={customer.logo}/>
+                                                        <img src={logo_path+customer.logo} width="70px" height="50px"/>
                                                          
                                                     </div>     
 
@@ -536,35 +487,35 @@ return(
                                                              <div className="row">
                                                                 <div className="col-md-6">
                                                                     <label>Home Street</label>
-                                                                    <input className="form-control" type="text" id="homestreet" name="homestreet" placeholder="Enter Homestreet" onChange={ onChange }/><br/>
+                                                                    <input value={address1.street_1} className="form-control" type="text" id="homestreet" name="homestreet" placeholder="Enter Homestreet" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Area</label>
-                                                                    <input className="form-control" type="text" name="area" placeholder="Enter Area" onChange={ onChange }/><br/>
+                                                                    <input value={address1.area} className="form-control" type="text" name="area" placeholder="Enter Area" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Pincode</label>
-                                                                    <input className="form-control" type="text" name="pincode" placeholder="Enter Pincode" onChange={ onChange }/><br/>
+                                                                    <input value={address1.pin} className="form-control" type="text" name="pincode" placeholder="Enter Pincode" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="country_id" name="country_id" onChange={ onChange } >
+                                                                    {loading1 ? <LoadingSpinner /> :  <select value={address1.country} className="form-select" id="country_id" name="country_id" onChange={ onChangeAddress1 } >
                                                                     <option value="">Select Country</option>
                                                                     { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
                                                                     <label>Account/Admin Contact No</label>
-                                                                    <input className="form-control" type="text" name="admin_contact" placeholder="Enter Account/Admin Contact No" onChange={ onChange }/><br/>
+                                                                    <input value={address1.contact_no} className="form-control" type="text" name="admin_contact" placeholder="Enter Account/Admin Contact No" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Account/Admin E-mail</label>
-                                                                    <input className="form-control" type="text" name="admin_email" placeholder="Enter Account/Admin E-mail" onChange={ onChange }/>
+                                                                    <input value={address1.email} className="form-control" type="text" name="admin_email" placeholder="Enter Account/Admin E-mail" onChange={ onChangeAddress1 }/>
                                                                 </div> 
                                                                 <div className="col-md-6">
                                                                     <label>Home Street2</label>
-                                                                    <input className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChange }/><br/>
+                                                                    <input value={address1.street_2} className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>City</label>
-                                                                    <input className="form-control" type="text" name="city" placeholder="Enter City" onChange={ onChange }/><br/>
+                                                                    <input value={address1.city} className="form-control" type="text" name="city" placeholder="Enter City" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="state_id" name="state_id" onChange={ onChange } >
+                                                                    {loading1 ? <LoadingSpinner /> :  <select value={address1.state} className="form-select" id="state_id" name="state_id" onChange={ onChangeAddress1 } >
                                                                     <option value="">Select State</option>
                                                                     { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
                                                                     <label>LandLine</label>
-                                                                    <input className="form-control" type="text" name="landline" placeholder="Enter Landline" onChange={ onChange }/><br/>
+                                                                    <input value={address1.home_landline} className="form-control" type="text" name="landline" placeholder="Enter Landline" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>QC Contact No</label>
-                                                                    <input className="form-control" type="text" name="qc_contact" placeholder="Enter QC Contact No" onChange={ onChange }/><br/>
+                                                                    <input value={address1.home_qc_contact_no} className="form-control" type="text" name="qc_contact" placeholder="Enter QC Contact No" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Pancard No</label>
-                                                                    <input className="form-control" type="text" name="pancard_no" placeholder="Enter Pancard No" onChange={ onChange }/>
+                                                                    <input value={address1.home_pan_card} className="form-control" type="text" name="pancard_no" placeholder="Enter Pancard No" onChange={ onChangeAddress1 }/>
                                                                 </div>
                                                               </div>
                                                          </div> 
@@ -576,35 +527,37 @@ return(
                                                              <div className="row">
                                                                 <div className="col-md-6">
                                                                     <label>Street</label>
-                                                                    <input className="form-control" type="text" id="street" name="street" placeholder="Enter Street" onChange={ onChange }/><br/>
+                                                                    <input value={address2.street_1} className="form-control" type="text" id="street" name="street" placeholder="Enter Street" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>Area</label>
-                                                                    <input className="form-control" type="text" name="area1" placeholder="Enter Area" onChange={ onChange }/><br/>
+                                                                    <input value={address2.area} className="form-control" type="text" name="area1" placeholder="Enter Area" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>Pincode</label>
-                                                                    <input className="form-control" type="text" name="pincode1" placeholder="Enter Pincode" onChange={ onChange }/><br/>
+                                                                    <input value={address2.pin} className="form-control" type="text" name="pincode1" placeholder="Enter Pincode" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>Country</label>
-                                                                   {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChange } >
+                                                                   {loading1 ? <LoadingSpinner /> :  <select value={address2.country} className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChangeAddress2 } >
                                                                     <option value="">Select Country</option>
                                                                     { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
                                                                     <label>QA Contact No</label>
-                                                                    <input className="form-control" type="text" name="qa_contact" placeholder="Enter QA Contact No" onChange={ onChange }/><br/>
+                                                                    <input value={address2.qa_contact_no} className="form-control" type="text" name="qa_contact" placeholder="Enter QA Contact No" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>QA E-mail</label>
-                                                                    <input className="form-control" type="text" name="qa_email" placeholder="Enter QA E-mail" onChange={ onChange }/>
+                                                                    <input value={address2.email} className="form-control" type="text" name="qa_email" placeholder="Enter QA E-mail" onChange={ onChangeAddress2 }/>
                                                                 </div> 
                                                                 <div className="col-md-6">
                                                                     <label>Street2</label>
-                                                                    <input className="form-control" id="street2" type="text" name="street2" placeholder="Enter Street2" onChange={ onChange }/><br/>
+                                                                    <input value={address2.street_2} className="form-control" id="street2" type="text" name="street2" placeholder="Enter Street2" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>City</label>
-                                                                    <input className="form-control" type="text" name="city1" placeholder="Enter City" onChange={ onChange }/><br/>
+                                                                    <input value={address2.city} className="form-control" type="text" name="city1" placeholder="Enter City" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChange } >
+                                                                    {loading1 ? <LoadingSpinner /> :  <select value={address2.state} className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChangeAddress2 } >
                                                                     <option value="">Select State</option>
                                                                     { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
                                                                     <label>Website</label>
-                                                                    <input className="form-control" type="text" name="website" placeholder="Enter Website" onChange={ onChange }/><br/>
+                                                                    <input value={address2.other_website} className="form-control" type="text" name="website" placeholder="Enter Website" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>QC E-mail</label>
-                                                                    <input className="form-control" type="text" name="qc_email" placeholder="Enter QC E-mail" onChange={ onChange }/><br/>
+                                                                    <input value={address2.other_qc_email} className="form-control" type="text" name="qc_email" placeholder="Enter QC E-mail" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>Pancard Copy</label>
                                                                     <input className="form-control" type="file" name="other_pan_card_copy" onChange={ changePanHandler }/>
+                                                                    <input className="form-control" type="hidden" value={address2.other_pan_card_copy}/>
+                                                                   
                                                                 </div>
                                                               </div>
                                                          </div> 
@@ -618,6 +571,9 @@ return(
                                                 <div className="row">
                                                     <div className="col-md-6">
                                                         <button name="copy_details" type="button" onClick={copy_data} className="btn btn-primary form-control">Copy Details</button>
+                                                    </div>
+                                                    <div className="col-md-6 align-items-center">
+                                                        <a href={pancard_copy_path+address2.other_pan_card_copy} class="btn btn-primary form-control" target="_blank">Click To Open PanCard Copy</a>
                                                     </div>
                                                 </div>
                                             </div>        
@@ -750,4 +706,4 @@ return(
   )
 }
 
-export default AddCustomer  
+export default EditCustomer  

@@ -72,6 +72,7 @@ import EditUnit from "../pages/Masters/EditUnit"
 //Customer 
 import AddCustomer from "../pages/Sales/AddCustomer"
 import ListCustomer from "../pages/Sales/ListCustomer"
+import EditCustomer from "../pages/Sales/EditCustomer"
 //HR
 import ListEmployee from "../pages/HR/ListEmployee"
 import AddEmployee from "../pages/HR/AddEmployee"
@@ -184,6 +185,7 @@ const authRoutes = [
     { path: "/add-customer" ,component: AddCustomer},
     { path: "/customer" ,component: ListCustomer},
     { path: "/all-customer" ,component: ListCustomer},
+    { path: "/edit-customer" ,component: EditCustomer},
 ]
 
 export { userRoutes, authRoutes }
