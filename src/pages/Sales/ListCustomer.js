@@ -140,27 +140,27 @@ this.deleteCustomer = async(customer_id) =>{
                            </tr>
                          </thead>
                          <tbody>
-                         {
-                              this.state.customer.map((post,index)=>{ 
+                           {
+                                this.state.customer.map((post,index)=>{ 
 
-                                return(
-                                  <tr>
-                                    <th scope="row">{index+1}</th>
-                                    <td>{post.company_name}</td>
-                                    <td>{post.contact_person_name}</td>
-                                    <td>{post.contact_type}</td>
-                                    <td>{post.tally_alias_name}</td>
-                                    <td>{post.contact_no}</td>
-                                    <td>{post.is_active ? ("Active") : ("Deactivated")}</td>
-                                    <td><div><Link className="btn btn-primary" to={"/edit-customer/"+base64_encode(post.id)}>
-                                      <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-                                      <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Customer Data?')){ this.deleteCustomer(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-                                      &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-customer/"+base64_encode(post.id)}>
-                                      <i className="fa fa-eye"></i></Link></div></td>
-                                  </tr>
-                                )
-                             })
-                           }
+                                  return(
+                                    <tr>
+                                      <th scope="row">{index+1}</th>
+                                      <td>{post.company_name}</td>
+                                      <td>{post.contact_person_name}</td>
+                                      <td>{post.contact_type}</td>
+                                      <td>{post.tally_alias_name}</td>
+                                      <td>{post.contact_no}</td>
+                                      <td>{post.is_active ? ("Active") : ("Inactive")}</td>
+                                      <td><div><Link className="btn btn-primary" to={"/edit-customer/"+base64_encode(post.id)}>
+                                        <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
+                                        <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Customer Data?')){ this.deleteCustomer(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+                                        &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-customer/"+base64_encode(post.id)}>
+                                        <i className="fa fa-eye"></i></Link></div></td>
+                                    </tr>
+                                  )
+                               })
+                             }
                          </tbody>
                          <tfoot>
                            <tr>

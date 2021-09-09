@@ -40,7 +40,7 @@ function AddCustomer(props) {
   const [data4, setData4] = useState([]);  
   const [selectedFiles, setselectedFiles] = useState(null)
   const [customer, setCustomer] = useState({ company_name: '', gst_no: '',contact_person_name:'',tally_alias_name:'',
-  username:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',active_inactive:'1',logo:'',
+  username:'',password:'',birth_date:'',contact_type:'',priority:'',notes:'',active_inactive:'',logo:'',
   homestreet:'',homestreet2:'',area:'',city:'',pincode:'',state_id:'',country_id:'',landline:'',admin_contact:'',
   qc_contact:'',admin_email:'',pancard_no:'',street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
   corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:'',education_details:'',prev_details:'',
@@ -161,7 +161,7 @@ useEffect(() => {
 const InsertCustomer = (e)=>{
          e.preventDefault();
 
-       const contact_person_data = inputList;
+       //const contact_person_datas = inputList;
         {setLoading(true)};
         /*const data = 
         { 
@@ -287,7 +287,17 @@ const InsertCustomer = (e)=>{
         }
         data1.append('customer_contact_info[other_contact_info][0][contact_info_type]', 2);
 
-        data1.append('contact_person_data', JSON.stringify(contact_person_data));
+        var object = {};
+        inputList.forEach(function(value, key){
+            object[key] = value;
+        });
+        var contact_person_data = JSON.stringify(object);
+
+        //console.log(json)
+
+        //contact_person_datas.forEach(contact_person_data => data1.append('contact_person_data[]', JSON.stringify(contact_person_data)))
+
+        data1.append('contact_person_data', contact_person_data);
 
                  /*inputList.forEach(function(contact,index){
                   data1.append('customer_contact_person[index][contact_person_name]', inputList[index].contact_person_name);

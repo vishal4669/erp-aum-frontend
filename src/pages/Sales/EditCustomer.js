@@ -26,19 +26,20 @@ import { ToastContainer} from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
+import {commonpath} from '../../commonPath'
 
 function EditCustomer(props) {    
 
   const headers = {
+           'Content-Type': "application/json",
           'Authorization' : "Bearer "+localStorage.getItem('token')
         }
 
   const url = window.location.href
   const customer_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
   const edit_customer_id =url.substring(url.lastIndexOf('/') + 1)
-
-  var logo_path = "https://erpaum-api.divineinfosyshosting.com/public/images/customers/logo/";
-  var pancard_copy_path = "https://erpaum-api.divineinfosyshosting.com/public/images/customers/pancard_copy/";
+  var logo_path = commonpath.logo_path;
+  var pancard_copy_path = commonpath.pancard_copy_path;
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
@@ -47,9 +48,9 @@ function EditCustomer(props) {
   const [data3, setData3] = useState([]);
   const [data4, setData4] = useState([]);  
   const [selectedFiles, setselectedFiles] = useState(null)
-  const [customer, setCustomer] = useState({ company_name: '', gst_no: '',contact_person_name:'',tally_alias_name:'',
-  username:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',active_inactive:'1',logo:'',
-  education_details:'',prev_details:'',tin_no:'',service_tax_no:'',customer_discount:''});  
+  const [customer, setCustomer] = useState({ company_name: '', gst_number: '',contact_person_name:'',tally_alias_name:'',
+  user_name:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',is_active:'1',logo:'',
+  education_details:'',prev_details:'',company_tin_no:'',company_service_tax_no:'',company_cust_discount:''});  
 
   const [pass, setPassword] = useState();
 
@@ -113,7 +114,6 @@ const GetCustomerData=()=>{
                })
               .catch((error) => {
                   toastr.error(error.response.data.message);
-
                    {setLoading1(false)}   
               })
         } 
@@ -196,15 +196,21 @@ const GetCustomerData=()=>{
 const EditCustomer = (e)=>{
          e.preventDefault();
 
-       const contact_person_data = inputList;
+         console.log(customer.admin_email)
+
+       //const contact_person_data = inputList;
         {setLoading(true)};
         const data1 = new FormData();
         //Customer Details
         data1.append('company_name', customer.company_name);
-        data1.append('gst_number', customer.gst_no);
+        if(customer.gst_number !== null){
+        data1.append('gst_number', customer.gst_number);
+        } else {
+            data1.append('gst_number', '');
+        }
         data1.append('contact_person_name', customer.contact_person_name);
         data1.append('tally_alias_name', customer.tally_alias_name);
-        data1.append('user_name', customer.username);
+        data1.append('user_name', customer.user_name);
         if(customer.password !== pass){
             data1.append('password', customer.password);
         } else {
@@ -219,18 +225,27 @@ const EditCustomer = (e)=>{
         {
             data1.append('logo', selectedFile);
         } else {
-            data1.append('logo', customer.logo);
+            if(customer.logo !== '' || customer.logo !== null){
+
+                data1.append('logo', customer.logo);
+            } else {
+                data1.append('logo', '');
+            }
         }
-        data1.append('is_active', customer.active_inactive);
+        data1.append('is_active', customer.is_active);
 
         //History & Other Details
         data1.append('education_details', customer.education_details);
         data1.append('prev_details', customer.prev_details);
 
         //Company Info Details
-        data1.append('company_tin_no', customer.tin_no);
-        data1.append('company_service_tax_no', customer.service_tax_no);
-        data1.append('company_cust_discount', customer.customer_discount);
+        if(customer.company_tin_no !== null){
+        data1.append('company_tin_no', customer.company_tin_no);
+        } else {
+            data1.append('company_tin_no', '');
+        }
+        data1.append('company_service_tax_no', customer.company_service_tax_no);
+        data1.append('company_cust_discount', customer.company_cust_discount);
 
         //Home Address Details
         data1.append('customer_contact_info[home_contact_info][0][street_1]', address1.homestreet);
@@ -263,13 +278,23 @@ const EditCustomer = (e)=>{
         {
             data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', selectedPanFile);
         } else {
-            data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', address2.pancard_copy);
+            if(address2.pancard_copy !== '' || address2.pancard_copy !== null){
+              data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', address2.pancard_copy);
+            } else {
+                 data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', '');
+            }
         }
         data1.append('customer_contact_info[other_contact_info][0][contact_info_type]', 2);
 
-        data1.append('contact_person_data', JSON.stringify(contact_person_data));
+         var object = {};
+        inputList.forEach(function(value, key){
+            object[key] = value;
+        });
+        var contact_person_data = JSON.stringify(object);
 
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}addCustomer`, data1, {headers} )
+        data1.append('contact_person_data', contact_person_data);
+
+         axios.post( `${process.env.REACT_APP_BASE_APIURL}editCustomer/`+customer_id, data1, {headers} )
                 .then(response => {
                     if(response.data.success == true){
 
@@ -365,6 +390,7 @@ return(
                         </div>
                          <div className="row">
                             <div className="col-12">
+                             {loading1 ? <center><LoadingSpinner /></center> : 
                                 <div className="card">
                                     <div className="card-body">
         
@@ -380,7 +406,7 @@ return(
 
                                                     <div className="col-md-3">
                                                         <label>GST No</label>
-                                                        <input className="form-control" value={customer.gst_number} type="text" placeholder="Enter GST No" id="example-text-input" name="gst_no" onChange={ onChange }/>
+                                                        <input className="form-control" value={customer.gst_number} type="text" placeholder="Enter GST No" id="example-text-input" name="gst_number" onChange={ onChange }/>
                                                     </div>  
 
                                                     <div className="col-md-3">
@@ -402,7 +428,7 @@ return(
 
                                                     <div className="col-md-4">
                                                         <label>Username</label>
-                                                        <input className="form-control" value={customer.user_name} type="text" name="username" placeholder="Enter Username" onChange={ onChange }/>
+                                                        <input className="form-control" value={customer.user_name} type="text" name="user_name" placeholder="Enter Username" onChange={ onChange }/>
                                                     </div>  
                                                     <div className="col-md-4">  
                                                         <label>Password</label>
@@ -445,7 +471,7 @@ return(
                                                     
                                                      <div className="col-md-4">  
                                                         <label>Active/Inactive</label>
-                                                        <select value={customer.is_active} className="form-select" name="status" onChange={ onChange }>
+                                                        <select value={customer.is_active} className="form-select" name="is_active" onChange={ onChange }>
                                                             <option value="1">Active</option>
                                                             <option value="0">Inactive</option>
                                                         </select>
@@ -487,35 +513,35 @@ return(
                                                              <div className="row">
                                                                 <div className="col-md-6">
                                                                     <label>Home Street</label>
-                                                                    <input value={address1.street_1} className="form-control" type="text" id="homestreet" name="homestreet" placeholder="Enter Homestreet" onChange={ onChangeAddress1 }/><br/>
+                                                                    <input value={address1.homestreet} className="form-control" type="text" name="homestreet" placeholder="Enter Homestreet" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Area</label>
                                                                     <input value={address1.area} className="form-control" type="text" name="area" placeholder="Enter Area" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Pincode</label>
-                                                                    <input value={address1.pin} className="form-control" type="text" name="pincode" placeholder="Enter Pincode" onChange={ onChangeAddress1 }/><br/>
+                                                                    <input value={address1.pincode} className="form-control" type="text" name="pincode" placeholder="Enter Pincode" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select value={address1.country} className="form-select" id="country_id" name="country_id" onChange={ onChangeAddress1 } >
+                                                                    {loading1 ? <LoadingSpinner /> :  <select value={address1.country_id} className="form-select" id="country_id" name="country_id" onChange={ onChangeAddress1 } >
                                                                     <option value="">Select Country</option>
                                                                     { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
                                                                     <label>Account/Admin Contact No</label>
-                                                                    <input value={address1.contact_no} className="form-control" type="text" name="admin_contact" placeholder="Enter Account/Admin Contact No" onChange={ onChangeAddress1 }/><br/>
+                                                                    <input value={address1.admin_contact} className="form-control" type="text" name="admin_contact" placeholder="Enter Account/Admin Contact No" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Account/Admin E-mail</label>
-                                                                    <input value={address1.email} className="form-control" type="text" name="admin_email" placeholder="Enter Account/Admin E-mail" onChange={ onChangeAddress1 }/>
+                                                                    <input value={address1.admin_email} className="form-control" type="text" name="admin_email" placeholder="Enter Account/Admin E-mail" onChange={ onChangeAddress1 }/>
                                                                 </div> 
                                                                 <div className="col-md-6">
                                                                     <label>Home Street2</label>
-                                                                    <input value={address1.street_2} className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChangeAddress1 }/><br/>
+                                                                    <input value={address1.homestreet2} className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>City</label>
                                                                     <input value={address1.city} className="form-control" type="text" name="city" placeholder="Enter City" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select value={address1.state} className="form-select" id="state_id" name="state_id" onChange={ onChangeAddress1 } >
+                                                                    {loading1 ? <LoadingSpinner /> :  <select value={address1.state_id} className="form-select" id="state_id" name="state_id" onChange={ onChangeAddress1 } >
                                                                     <option value="">Select State</option>
                                                                     { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
                                                                     <label>LandLine</label>
-                                                                    <input value={address1.home_landline} className="form-control" type="text" name="landline" placeholder="Enter Landline" onChange={ onChangeAddress1 }/><br/>
+                                                                    <input value={address1.landline} className="form-control" type="text" name="landline" placeholder="Enter Landline" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>QC Contact No</label>
-                                                                    <input value={address1.home_qc_contact_no} className="form-control" type="text" name="qc_contact" placeholder="Enter QC Contact No" onChange={ onChangeAddress1 }/><br/>
+                                                                    <input value={address1.qc_contact} className="form-control" type="text" name="qc_contact" placeholder="Enter QC Contact No" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Pancard No</label>
-                                                                    <input value={address1.home_pan_card} className="form-control" type="text" name="pancard_no" placeholder="Enter Pancard No" onChange={ onChangeAddress1 }/>
+                                                                    <input value={address1.pancard_no} className="form-control" type="text" name="pancard_no" placeholder="Enter Pancard No" onChange={ onChangeAddress1 }/>
                                                                 </div>
                                                               </div>
                                                          </div> 
@@ -527,33 +553,33 @@ return(
                                                              <div className="row">
                                                                 <div className="col-md-6">
                                                                     <label>Street</label>
-                                                                    <input value={address2.street_1} className="form-control" type="text" id="street" name="street" placeholder="Enter Street" onChange={ onChangeAddress2 }/><br/>
+                                                                    <input value={address2.street} className="form-control" type="text" id="street" name="street" placeholder="Enter Street" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>Area</label>
-                                                                    <input value={address2.area} className="form-control" type="text" name="area1" placeholder="Enter Area" onChange={ onChangeAddress2 }/><br/>
+                                                                    <input value={address2.area1} className="form-control" type="text" name="area1" placeholder="Enter Area" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>Pincode</label>
-                                                                    <input value={address2.pin} className="form-control" type="text" name="pincode1" placeholder="Enter Pincode" onChange={ onChangeAddress2 }/><br/>
+                                                                    <input value={address2.pincode1} className="form-control" type="text" name="pincode1" placeholder="Enter Pincode" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>Country</label>
-                                                                   {loading1 ? <LoadingSpinner /> :  <select value={address2.country} className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChangeAddress2 } >
+                                                                   {loading1 ? <LoadingSpinner /> :  <select value={address2.corr_country_id} className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChangeAddress2 } >
                                                                     <option value="">Select Country</option>
                                                                     { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
                                                                     <label>QA Contact No</label>
-                                                                    <input value={address2.qa_contact_no} className="form-control" type="text" name="qa_contact" placeholder="Enter QA Contact No" onChange={ onChangeAddress2 }/><br/>
+                                                                    <input value={address2.qa_contact} className="form-control" type="text" name="qa_contact" placeholder="Enter QA Contact No" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>QA E-mail</label>
-                                                                    <input value={address2.email} className="form-control" type="text" name="qa_email" placeholder="Enter QA E-mail" onChange={ onChangeAddress2 }/>
+                                                                    <input value={address2.qa_email} className="form-control" type="text" name="qa_email" placeholder="Enter QA E-mail" onChange={ onChangeAddress2 }/>
                                                                 </div> 
                                                                 <div className="col-md-6">
                                                                     <label>Street2</label>
-                                                                    <input value={address2.street_2} className="form-control" id="street2" type="text" name="street2" placeholder="Enter Street2" onChange={ onChangeAddress2 }/><br/>
+                                                                    <input value={address2.street2} className="form-control" id="street2" type="text" name="street2" placeholder="Enter Street2" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>City</label>
-                                                                    <input value={address2.city} className="form-control" type="text" name="city1" placeholder="Enter City" onChange={ onChangeAddress2 }/><br/>
+                                                                    <input value={address2.city1} className="form-control" type="text" name="city1" placeholder="Enter City" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select value={address2.state} className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChangeAddress2 } >
+                                                                    {loading1 ? <LoadingSpinner /> :  <select value={address2.corr_state_id} className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChangeAddress2 } >
                                                                     <option value="">Select State</option>
                                                                     { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
                                                                     <label>Website</label>
-                                                                    <input value={address2.other_website} className="form-control" type="text" name="website" placeholder="Enter Website" onChange={ onChangeAddress2 }/><br/>
+                                                                    <input value={address2.website} className="form-control" type="text" name="website" placeholder="Enter Website" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>QC E-mail</label>
-                                                                    <input value={address2.other_qc_email} className="form-control" type="text" name="qc_email" placeholder="Enter QC E-mail" onChange={ onChangeAddress2 }/><br/>
+                                                                    <input value={address2.qc_email} className="form-control" type="text" name="qc_email" placeholder="Enter QC E-mail" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>Pancard Copy</label>
                                                                     <input className="form-control" type="file" name="other_pan_card_copy" onChange={ changePanHandler }/>
                                                                     <input className="form-control" type="hidden" value={address2.other_pan_card_copy}/>
@@ -587,12 +613,12 @@ return(
                                                   
                                                     <div className="col-md-6">  
                                                         <label>Education Details</label>
-                                                        <textarea name="education_details" className="form-control" placeholder="Enter Education Details" onChange={ onChange }></textarea>
+                                                        <textarea value={customer.education_details} name="education_details" className="form-control" placeholder="Enter Education Details" onChange={ onChange }></textarea>
                                                     </div>   
                                                     
                                                     <div className="col-md-6">  
                                                         <label>Prev. Details</label>
-                                                        <textarea name="prev_details" className="form-control" placeholder="Enter Previous Details" onChange={ onChange }></textarea>
+                                                        <textarea value={customer.prev_details} name="prev_details" className="form-control" placeholder="Enter Previous Details" onChange={ onChange }></textarea>
                                                     </div>   
                                                    
                                                 </div>  
@@ -611,12 +637,12 @@ return(
 
                                                         <div className="col-md-4">
                                                             <label>TIN No</label>
-                                                            <input className="form-control" type="text" placeholder="Enter TIN No" name="tin_no" onChange={ onChange }/>
+                                                            <input value={customer.company_tin_no} className="form-control" type="text" placeholder="Enter TIN No" name="company_tin_no" onChange={ onChange }/>
                                                         </div>  
 
                                                         <div className="col-md-4">
                                                             <label>Service Tax No</label>
-                                                            <input className="form-control" type="text" name="service_tax_no" placeholder="Enter Service Tax No" onChange={ onChange }/>
+                                                            <input value={customer.company_service_tax_no} className="form-control" type="text" name="company_service_tax_no" placeholder="Enter Service Tax No" onChange={ onChange }/>
                                                         </div>  
                                                         {/*<div className="col-md-2">  
                                                             <label>CST No</label>
@@ -625,7 +651,7 @@ return(
 
                                                         <div className="col-md-4">  
                                                             <label>Customer Discount</label>
-                                                            <input className="form-control" type="text"  name="customer_discount" placeholder="Enter Customer Discount" onChange={ onChange }/>
+                                                            <input value={customer.company_cust_discount} className="form-control" type="text"  name="company_cust_discount" placeholder="Enter Customer Discount" onChange={ onChange }/>
                                                         </div>        
                                                     </div>  
                                                 </div>
@@ -649,7 +675,7 @@ return(
 
                                                         <div className="col-md-3">
                                                             <label>E-mail</label>
-                                                            <input className="form-control" type="text" name="contact_person_email" value={x.contact_person_email} placeholder="Enter E-mail" onChange={e => handleInputChange(e, i)}/>
+                                                            <input className="form-control" type="email" name="contact_person_email" value={x.contact_person_email} placeholder="Enter E-mail" onChange={e => handleInputChange(e, i)}/>
                                                         </div>  
                                                         <div className="col-md-2">  
                                                             <label>Department</label>
@@ -697,6 +723,7 @@ return(
                                         ))}
                                     </div>
                                 </div>
+                              }
                             </div> 
                         </div>
                      </Form>
