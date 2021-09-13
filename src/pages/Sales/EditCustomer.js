@@ -194,10 +194,7 @@ const GetCustomerData=()=>{
 
 
 const EditCustomer = (e)=>{
-         e.preventDefault();
-
-         console.log(customer.admin_email)
-
+         e.preventDefault();        
        //const contact_person_data = inputList;
         {setLoading(true)};
         const data1 = new FormData();
@@ -225,10 +222,16 @@ const EditCustomer = (e)=>{
         {
             data1.append('logo', selectedFile);
         } else {
-            if(customer.logo !== '' || customer.logo !== null){
+            if(customer.logo !== '' || customer.logo !== null && customer.logo !== undefined){
 
                 data1.append('logo', customer.logo);
-            } else {
+               
+            } 
+            else if(customer.logo == undefined)
+                {
+                data1.append('logo', '');
+                }
+            else{
                 data1.append('logo', '');
             }
         }
@@ -278,12 +281,37 @@ const EditCustomer = (e)=>{
         {
             data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', selectedPanFile);
         } else {
-            if(address2.pancard_copy !== '' || address2.pancard_copy !== null){
+            if(address2.pancard_copy !== '' || address2.pancard_copy !== null && customer.pancard_copy !== undefined){
               data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', address2.pancard_copy);
-            } else {
+            } else if(address2.pancard_copy == undefined){
+                 data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', '');
+            }
+         else{
                  data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', '');
             }
         }
+        //console.log("=====",address2.street);
+        // if(selectedFile != false)
+        // {
+        //     data1.append('logo', selectedFile);
+        // } else {
+        //     if(customer.logo !== '' || customer.logo !== null && customer.logo !== undefined){
+
+        //         data1.append('logo', customer.logo);
+
+        //         console.log("null===",customer.logo)
+               
+        //     } 
+        //     else if(customer.logo == undefined)
+        //         {
+        //         data1.append('logo', '');
+        //         console.log("undef===",customer.logo)
+        //         }
+        //     else{
+        //         data1.append('logo', '');
+        //         console.log("else===",customer.logo)
+        //     }
+        // }
         data1.append('customer_contact_info[other_contact_info][0][contact_info_type]', 2);
 
          var object = {};
@@ -293,6 +321,8 @@ const EditCustomer = (e)=>{
         var contact_person_data = JSON.stringify(object);
 
         data1.append('contact_person_data', contact_person_data);
+
+        console.log(customer.company_name)
 
          axios.post( `${process.env.REACT_APP_BASE_APIURL}editCustomer/`+customer_id, data1, {headers} )
                 .then(response => {
