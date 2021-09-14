@@ -139,6 +139,7 @@ this.deleteCustomer = async(customer_id) =>{
                              <th scope="col">Actions</th>
                            </tr>
                          </thead>
+                         {this.state.customer.length >=1 ?
                          <tbody>
                            {
                                 this.state.customer.map((post,index)=>{ 
@@ -162,6 +163,7 @@ this.deleteCustomer = async(customer_id) =>{
                                })
                              }
                          </tbody>
+                        : <tr><td colspan="8"><p>No matching records found</p></td></tr>}
                          <tfoot>
                            <tr>
                              <th scope="col">SR No</th>

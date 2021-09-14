@@ -348,9 +348,9 @@ return(
                                                                     <label>QC E-mail</label>
                                                                     <input value={address2.qc_email} className="form-control" type="text" name="qc_email" placeholder="Enter QC E-mail" readOnly/><br/>
                                                                     <label>Pancard Copy</label>
-                                                                    
+                                                                    {address2.other_pan_card_copy !== null ?
                                                                    <a href={pancard_copy_path+address2.other_pan_card_copy} class="btn btn-primary form-control" target="_blank">Click To Open PanCard Copy</a>
-                                                                   
+                                                                   : <span class="btn btn-primary form-control">No Pancard Copy Uploaded</span>}
                                                                 </div>
                                                               </div>
                                                          </div> 

@@ -205,8 +205,16 @@ const EditCustomer = (e)=>{
         } else {
             data1.append('gst_number', '');
         }
+        if(customer.contact_person_name !== null){
         data1.append('contact_person_name', customer.contact_person_name);
+        } else{
+             data1.append('contact_person_name', '');
+        } 
+        if(customer.tally_alias_name !== null){
         data1.append('tally_alias_name', customer.tally_alias_name);
+        } else {
+            data1.append('tally_alias_name', '');
+        }
         data1.append('user_name', customer.user_name);
         if(customer.password !== pass){
             data1.append('password', customer.password);
@@ -216,7 +224,11 @@ const EditCustomer = (e)=>{
         data1.append('birth_date', customer.birth_date);
         data1.append('contact_type', customer.contact_type);
         data1.append('priority', customer.priority);
-        data1.append('notes', customer.notes);
+        if(customer.notes !== null){
+         data1.append('notes', customer.notes);
+        } else {
+            data1.append('notes', '');
+        }
 
         if(selectedFile != false)
         {
@@ -238,8 +250,16 @@ const EditCustomer = (e)=>{
         data1.append('is_active', customer.is_active);
 
         //History & Other Details
+        if(customer.education_details !== null){
         data1.append('education_details', customer.education_details);
-        data1.append('prev_details', customer.prev_details);
+        } else {
+            data1.append('education_details', '');
+        }
+        if(customer.prev_details !== null){
+          data1.append('prev_details', customer.prev_details);
+        } else {
+          data1.append('prev_details', '');
+        } 
 
         //Company Info Details
         if(customer.company_tin_no !== null){
@@ -247,8 +267,16 @@ const EditCustomer = (e)=>{
         } else {
             data1.append('company_tin_no', '');
         }
-        data1.append('company_service_tax_no', customer.company_service_tax_no);
-        data1.append('company_cust_discount', customer.company_cust_discount);
+        if(customer.company_service_tax_no !== null){
+         data1.append('company_service_tax_no', customer.company_service_tax_no);
+        } else {
+            data1.append('company_service_tax_no', '');
+        }
+        if(customer.company_cust_discount !== null){
+         data1.append('company_cust_discount', customer.company_cust_discount);
+        } else {
+            data1.append('company_cust_discount', '');
+        }
 
         //Home Address Details
         data1.append('customer_contact_info[home_contact_info][0][street_1]', address1.homestreet);
@@ -629,7 +657,9 @@ return(
                                                         <button name="copy_details" type="button" onClick={copy_data} className="btn btn-primary form-control">Copy Details</button>
                                                     </div>
                                                     <div className="col-md-6 align-items-center">
+                                                    {address2.other_pan_card_copy !== null ?
                                                         <a href={pancard_copy_path+address2.other_pan_card_copy} class="btn btn-primary form-control" target="_blank">Click To Open PanCard Copy</a>
+                                                    : <span class="btn btn-primary form-control">No Pancard Copy Uploaded</span>}
                                                     </div>
                                                 </div>
                                             </div>        
@@ -705,7 +735,7 @@ return(
 
                                                         <div className="col-md-3">
                                                             <label>E-mail</label>
-                                                            <input className="form-control" type="email" name="contact_person_email" value={x.contact_person_email} placeholder="Enter E-mail" onChange={e => handleInputChange(e, i)}/>
+                                                            <input className="form-control" type="text" name="contact_person_email" value={x.contact_person_email} placeholder="Enter E-mail" onChange={e => handleInputChange(e, i)}/>
                                                         </div>  
                                                         <div className="col-md-2">  
                                                             <label>Department</label>
@@ -751,6 +781,19 @@ return(
                                         
                                         </React.Fragment>
                                         ))}
+                                        <div className="mb-3 row">
+                                            <div className="form-group">
+                                                <div className="row">
+                                                   <center> 
+                                                        <div className="col-md-2">
+
+                                                        {inputList.length === 0 && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
+                                                        
+                                                        </div>
+                                                    </center>
+                                                 </div>
+                                            </div>
+                                        </div>   
                                     </div>
                                 </div>
                               }

@@ -464,7 +464,7 @@ return(
 
                                                     <div className="col-md-4">
                                                         <label>Username</label>
-                                                        <input className="form-control" type="text" name="username" placeholder="Enter Username" onChange={ onChange }/>
+                                                        <input className="form-control" type="text" name="username" placeholder="Enter Valid Email" onChange={ onChange }/>
                                                     </div>  
                                                     <div className="col-md-4">  
                                                         <label>Password</label>
