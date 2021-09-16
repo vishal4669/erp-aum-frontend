@@ -112,7 +112,7 @@ const AddProduct = () => {
                     <div class="form-group">
                         <div class="row">
 
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <label>Generic Name</label>
                                 <input className="form-control" list="generic_list" id="exampleDataList" placeholder="Type to search..."/>
                                 <datalist id="generic_list">
@@ -126,6 +126,14 @@ const AddProduct = () => {
                             <div class="col-md-2">  
                                 <label style={{visibility: 'hidden'}}>Copy From Generic</label>
                                 <button type="button" name="copy_generic" className="form-control btn btn-primary">Copy From Generic</button>
+                            </div> 
+
+                            <div class="col-md-1">  
+                                <label>Is Generic?</label>
+                                <select className="form-select" name="is_generic">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
                             </div>      
 
                             <div class="col-md-5">  
