@@ -43,7 +43,7 @@ function AddProduct(props)  {
   const [data4, setData4] = useState([]);
   const [product, setProduct] = useState({product_name:'',product_generic:'Finished Product',marker_specification:'',
     pharmocopiea: '',is_generic:'0',packing_detail:'',sample_description:'',hsn_code:'' });  
-  const [inputList, setInputList]  = useState([{ by_pass: "", parent: "", 
+  const [inputList, setInputList]  = useState([{ by_pass: "2", parent: "", 
     parameter_list: "", label_claim:"", min_limit: "", max_limit: "",amount: "", method: "", description: "",
     division: "", nabl: "", formula: ""}]);
   const[genericProduct,setGenericProduct] = useState({generic_name:''})
@@ -121,8 +121,8 @@ const copyFormGeneric = () => {
      {setLoading1(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/`+generic_product_id,{headers})
             .then(response => {
-                     setData4(response.data.data);
-                     console.log(response.data.data)
+                     setInputList(response.data.data.sample_details);
+                     console.log(response.data.data.sample_details)
                      {setLoading1(false)} 
                })
               .catch((error) => {
@@ -169,7 +169,7 @@ const ResetProduct = () => {
 
 const InsertProduct = (e)=>{
          e.preventDefault();
-         console.log(product.product_name)
+         console.log(inputList)
 }
 
   return (
@@ -326,10 +326,10 @@ const InsertProduct = (e)=>{
                                     </tr>
                                 </thead>
                                 <tbody>    
-
+{loading1 ? <LoadingSpinner /> :  
                                     <tr>
                                         <td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
-                                                    <td class="col-1"><select value={x.by_pass} onChange={e => handleInputChange(e, i)} className="form-select" name="by_pass" style={{width:'70px !important'}}><option value="No">No</option><option value="Yes">Yes</option></select></td>
+                                                    <td class="col-1"><select value={x.by_pass} onChange={e => handleInputChange(e, i)} className="form-select" name="by_pass" style={{width:'70px !important'}}><option value="2">No</option><option value="1">Yes</option></select></td>
                                                     <td class="col-2">
                                                        <select value={x.parent} onChange={e => handleInputChange(e, i)} name="parent" className="form-select" style={{width:'100px !important'}}>
                                                            <option value="">Select Parent</option>
@@ -357,6 +357,7 @@ const InsertProduct = (e)=>{
                                                           className="mr10"
                                                           onClick={() => handleRemoveClick(i)} className="btn btn-primary">Delete</button>}</td>
                                     </tr>
+                                                       }  
                                 </tbody>    
                             </Table> 
                     </div>
@@ -380,7 +381,6 @@ const InsertProduct = (e)=>{
     </React.Fragment>
                     ))} 
 
-                     
                     
                 </CardBody>
               </Card>
