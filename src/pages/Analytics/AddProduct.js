@@ -43,7 +43,7 @@ function AddProduct(props)  {
   const [data4, setData4] = useState([]);
   const [product, setProduct] = useState({product_name:'',product_generic:'Finished Product',marker_specification:'',
     pharmocopiea: '',is_generic:'0',packing_detail:'',sample_description:'',hsn_code:'' });  
-  const [inputList, setInputList]  = useState([{ by_pass: "2", parent: "", 
+  const [inputList, setInputList]  = useState([{ by_pass: "2", 
     parameter_list: "", label_claim:"", min_limit: "", max_limit: "",amount: "", method: "", description: "",
     division: "", nabl: "", formula: ""}]);
   const[genericProduct,setGenericProduct] = useState({generic_name:''})
@@ -113,16 +113,30 @@ const fetchparamsList = () => {
         } 
 
 const copyFormGeneric = () => {
-    
-   // console.log(genericProduct.generic_name.value)
 
     const generic_product_id = genericProduct.generic_name.value;
 
      {setLoading1(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/`+generic_product_id,{headers})
             .then(response => {
-                     setInputList(response.data.data.sample_details);
-                     console.log(response.data.data.sample_details)
+
+                const samples_data = response.data.samples.map(d => ({
+                        "by_pass" : d.by_pass,
+                        "parent" : d.parent.id,
+                        "parameter_list" : d.parameter.parameter_name,
+                        "label_claim" :d.label_claim,
+                        "min_limit" : d.min_limit,
+                        "max_limit" : d.max_limit,
+                        "amount": d.amount,
+                        "method" : d.method,
+                        "description" : d.description,
+                        "division" : d.division,
+                        "nabl": d.nabl,
+                        "formula" : d.formula
+
+                      }))
+
+                     setInputList(samples_data);
                      {setLoading1(false)} 
                })
               .catch((error) => {
@@ -143,7 +157,7 @@ const copyFormGeneric = () => {
 
     // handle click event of the Add button
 const handleAddClick = () => {
-  setInputList([...inputList, { by_pass: "", parent: "", 
+  setInputList([...inputList, { by_pass: "2", parent: "", 
     parameter_list: "", label_claim:"", min_limit: "", max_limit: "",amount: "", method: "", description: "",
     division: "", nabl: "", formula: ""}]);
 };
@@ -170,6 +184,8 @@ const ResetProduct = () => {
 const InsertProduct = (e)=>{
          e.preventDefault();
          console.log(inputList)
+         console.log(genericProduct)
+         console.log(product)
 }
 
   return (
