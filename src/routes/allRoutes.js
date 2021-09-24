@@ -80,12 +80,17 @@ import AddEmployee from "../pages/HR/AddEmployee"
 import EditEmployee from "../pages/HR/EditEmployee"
 import ViewEmployee from "../pages/HR/ViewEmployee"
 //Analytics
+//Pharmacopiea
 import ListPharmacopiea from "../pages/Analytics/ListPharmacopiea"
 import AddPhramacopiea from "../pages/Analytics/AddPharmacopiea"
 import EditPharmacopiea from "../pages/Analytics/EditPharmacopiea"
 import ExportPdf from "../pages/Analytics/ExportPdf"
+//Product
 import ListProduct from "../pages/Analytics/ListProduct"
 import AddProduct from "../pages/Analytics/AddProduct"
+import EditProduct from "../pages/Analytics/EditProduct"
+import ViewProduct from "../pages/Analytics/ViewProduct"
+//Booking
 import ListBooking from "../pages/Analytics/ListBooking"
 import AddBooking from "../pages/Analytics/AddBooking"
 
@@ -105,10 +110,6 @@ const authRoutes = [
   { path: "/register", component: Register },
 
     // Authentication Inner
-    { path: "/pages-login", component: Login1 },
-    { path: "/pages-register", component: Register1 },
-    { path: "/page-recoverpw", component: Recoverpw },
-    { path: "/auth-lock-screen", component: LockScreen },
 
     { path: "/dashboard", component: Dashboard },
     { path: "/group", component: ListGroups},
@@ -124,8 +125,13 @@ const authRoutes = [
     { path: "/add-pharmacopiea", component:AddPhramacopiea},
     { path: "/edit-pharmacopiea", component:EditPharmacopiea},
     { path: "/export-pdf-pharmacopiea", component:ExportPdf},
+
     { path: "/products", component:ListProduct},
     { path: "/add-product", component:AddProduct},
+    { path: "/all-products", component: ListProduct},
+    { path: "/view-product", component: ViewProduct},
+    { path: "/edit-product", component: EditProduct},
+
     { path: "/company", component: ListCompany},
     { path: "/add-company", component: AddCompany},
     { path: "/all-company", component: ListCompany},

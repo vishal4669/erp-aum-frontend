@@ -409,11 +409,12 @@ return(
                                                         </div>        
                                                     </div>  
                                                 </div>
-                                              </div>
-                                        
-                                        <h5 className="alert alert-danger"><i className="fa fa-comment">&nbsp;Contact Person</i></h5>
-                                        {inputList.map((x, i) => (
+                                              </div>  
+                                               
+                   <h5 className="alert alert-danger"><i className="fa fa-comment">&nbsp;Contact Person</i></h5>
+                                        {inputList && inputList.length ? inputList.map((x, i) => (
                                          <React.Fragment key={x}>
+
                                             <div className="mb-3 row">
                                                 <div className="form-group">
                                                     <div className="row">
@@ -449,10 +450,11 @@ return(
                                                     </div>  
                                                 </div>
                                             </div>
-                                        
+                                         
                                         </React.Fragment>
-                                        ))}
-                                    </div>
+                                        ))
+                                          : <h6><center>No Contact Person Details Found</center></h6>}
+                                        </div>
                                 </div>
                               }
                             </div> 

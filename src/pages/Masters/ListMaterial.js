@@ -2,7 +2,7 @@ import React, { useState, Component } from "react"
 import { Row, Col, Card, CardBody, CardTitle, CardSubtitle,Dropdown,
     DropdownMenu,
     Dropdownpost,
-    DropdownToggle,Table,
+    DropdownToggle,
     ButtonDropdown,Button } from "reactstrap"
 import { withRouter, Link } from "react-router-dom"
 import { DropdownButton } from 'react-bootstrap';
@@ -126,7 +126,7 @@ this.deleteMaterial = (material_id) =>{
                 <CardBody>
                   <div>
                   {loading ?  <center><LoadingSpinner /></center> :
-                    <table className="table table-striped">
+                    <table className="table table-bordered table-striped dataTable">
                        <thead>
                          <tr>
                            <th scope="col">SR No</th>

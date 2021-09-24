@@ -87,15 +87,18 @@ const del_headers = {
       if(response.data.status === 200 && response.data.success === true) {
 
                   window.location.href = '/dashboard';
+                  document.getElementById('home_contianer').style.display = 'none';
               }
-     if(response.data.status === 401 && response.data.success === true) {
+     if(response.data.status == 401 && response.data.success == true) {
         document.getElementById('home_contianer').style.display = 'block';
       }
+
+      console.log("here")
     })
 
 
     .catch((error) => {  
-      toast.error(error.response.data.message);
+      //toast.error(error.response.data.message);
       document.getElementById('home_contianer').style.display = 'block'; 
       this.setState({loading: false});
     }) 
@@ -143,7 +146,7 @@ render() {
         </Link>
       </div>
       {loading ? <center style={{marginTop:'300px'}}><h5><LoadingSpinner/></h5></center> :
-      <div className="account-pages my-3 pt-sm-5" id="home_contianer" style={{display:"none"}}>
+      <div className="account-pages my-3 pt-sm-5" id="home_contianer">
                         <ToastContainer autoClose={1500}/>
         <Container>
           <Row>

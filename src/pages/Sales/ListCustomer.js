@@ -126,7 +126,7 @@ this.deleteCustomer = async(customer_id) =>{
                 <CardBody>
                   <div>
                   {loading ?  <center><LoadingSpinner /></center> :
-                      <table className="table table-striped">
+                      <table className="table table-bordered table-striped dataTable">
                          <thead>
                            <tr>
                              <th scope="col">SR No</th>

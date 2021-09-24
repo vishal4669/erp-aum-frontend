@@ -1,88 +1,134 @@
-import React, { useState } from "react"
-import { MDBDataTable } from "mdbreact"
+import React, { useState, Component } from "react"
 import { Row, Col, Card, CardBody, CardTitle, CardSubtitle,Dropdown,
-    DropdownMenu,
-    DropdownItem,
+    DropdownMenu,DropdownItem,
+    Dropdownpost,
     DropdownToggle,
     ButtonDropdown,Button } from "reactstrap"
 import { withRouter, Link } from "react-router-dom"
-//Import Breadcrumb
+import { DropdownButton } from 'react-bootstrap';
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import "../Tables/datatables.scss"
 import HorizontalLayout from "../../components/HorizontalLayout"
-const ListProduct = () => {
-    const [drop_align, setDrop_align] = useState(false)
-    const [drop_align1, setDrop_align1] = useState(false)
-  const data = {
-    columns: [
-      {
-        label: "SR No",
-        field: "srno",
-        sort: "asc",
-        width: 150,
-      },
-      {
-        label: "Pharmacopiea",
-        field: "pharmacopiea",
-        sort: "asc",
-        width: 270,
-      },
-      {
-        label: "Product Name",
-        field: "productname",
-        sort: "asc",
-        width: 200,
-      },
-      {
-        label: "FP/RM/G",
-        field: "fprmg",
-        sort: "asc",
-        width: 100,
-      },
-      {
-        label: "Generic Name",
-        field: "genericname",
-        sort: "asc",
-        width: 100,
-      },
-      {
-        label: "Sample Description",
-        field: "sampledescription",
-        sort: "asc",
-        width: 100,
-      },
-      {
-        label: "Unit",
-        field: "unit",
-        sort: "asc",
-        width: 100,
-      },
-      {
-        label: "Action",
-        field: "action",
-        sort: "asc",
-        width: 150,
-      },
-    ],
-    rows: [
-      {
-        srno: "1",
-        pharmacopiea: "IHS",
-        productname: "Curie Hand & Body Lotion",
-        fprmg: "Finsihed Product",
-        genericname: "Curie Hand & Body Lotion",
-        sampledescription: "Clear colourless lotion.",
-        unit: "Kg",
-        action: <div><Link className="btn btn-primary" to="">
-              <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-              <button class=" btn btn-danger"><i class="fas fa-trash-alt"></i></button>&nbsp;&nbsp;
-              <Link className="btn btn-info" to="">
-              <i className="fa fa-eye"></i></Link></div>,
-      },
-      
-    ],
+import { ToastContainer} from "react-toastr";
+import toastr from 'toastr'
+import 'toastr/build/toastr.min.css'
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import axios from 'axios'
+import Moment from 'moment';
+import Pagination from "react-js-pagination";
+import * as XLSX from 'xlsx';
+
+class ListProduct extends Component{
+
+  constructor(props){
+    super(props);
+    this.state= {
+      product: [],
+      activePage: 1,
+      itemsCountPerPage: 10,
+      totalItemsCount: 1,
+    }
+    //this.handlePageChange = this.handlePageChange.bind(this);
+     const headers = {
+    'Content-Type': 'application/json',
+    'Authorization' : 'Bearer '+localStorage.getItem('token')
+    };
+
+    const del_headers = {
+      'Authorization' : "Bearer "+localStorage.getItem('token')
+    };
+
+ this.componentDidMount = () => {
+  this.setState({ loading: true }, () => {
+
+     axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct`, { headers: headers})
+
+              .then(response => {
+                  if(response.data.success == true){
+                    this.setState({product:response.data.data.data,
+                      itemsCountPerPage : response.data.data.per_page,
+                      totalItemsCount: response.data.data.total,
+                      activePage:response.data.data.current_page});
+                     this.setState({loading: false});
+                 }else{
+                   toastr.error(response.data.message);
+                   this.setState({loading: false});
+
+                 }
+             })
+   })
   }
 
+this.deleteProduct = async(product_id) =>{
+            this.setState({ loading: true }, () => {
+               axios.post(`${process.env.REACT_APP_BASE_APIURL}deleteProduct/`+product_id,null, { headers: del_headers})
+              .then(response => {
+                      if(response.data.success == true){
+                        //need to refresh page after delete
+                        props.history.push('/all-products');
+                        props.history.push('/products');
+                        toastr.success(response.data.message);
+                        this.setState({loading: false});
+                    }else{
+                      props.history.push('/products');
+                      toastr.error(response.data.message);
+                      this.setState({loading: false});
+                    }
+              })
+            })
+ }
+ this.printProduct = () =>{
+   window.print();
+}
+this.ExportToExcel = () => {
+  this.setState({ loading1: true }, () => {
+  axios.get(`${process.env.REACT_APP_BASE_APIURL}exportlist`, { headers: headers})
+
+  .then(response => {
+      if(response.data.success == true){
+        const sheet = XLSX.utils.json_to_sheet(response.data.data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet 1');
+        XLSX.writeFile(workbook, `ProductData.csv`);
+        this.setState({loading1: false});
+     }else{
+       toastr.error(response.data.message);
+       this.setState({loading1: false});
+     }
+
+  })
+  .catch(error => {
+      toastr.error(error.response.data.message);
+      this.setState({ loading1: false });
+    })
+})
+}
+ this.handlePageChange = (pageNumber) =>{
+   this.setState({ loading: true }, () => {
+    this.handlePageChange.bind(this)
+    //this.setState({activePage: pageNumber});
+    axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?page=`+pageNumber, { headers: headers})
+
+          .then(response => {
+              if(response.data.success == true){
+
+                this.setState({product:response.data.data.data,
+                      itemsCountPerPage : response.data.data.per_page,
+                      totalItemsCount: response.data.data.total,
+                      activePage:response.data.data.current_page});
+                     this.setState({loading: false});
+             }else{
+               toastr.error(response.data.message);
+               this.setState({loading: false});
+             }
+         })
+      })
+  }
+}
+  render(){
+    const { data, loading } = this.state;
+    const { data1, loading1 } = this.state;
   return (
     <React.Fragment>
         <HorizontalLayout/>
@@ -98,51 +144,105 @@ const ListProduct = () => {
             </div>
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
-                    <li> 
+                    <li>
                       <Link to="/add-product" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Product</Link>
                     </li>&nbsp;
+                   {loading1 ?  <center><LoadingSpinner /></center> :
                     <li>
                         <div className="btn-group">
-                        <ButtonDropdown
-                        isOpen={drop_align1}
-                        direction="right"
-                        toggle={() => setDrop_align1(!drop_align1)}
-                        >
-                        <DropdownToggle
-                            caret
-                            color="primary"
-                            className="dropdown-toggle"
-                            aria-expanded="false"
-                        >
-                            Action
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu dropdown-menu-right">
-                            <DropdownItem><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
-                            <DropdownItem><i class="fas fa-file-export"></i> &nbsp;Export to Excel</DropdownItem>
+                          <DropdownButton  title="Actions">
+                            <DropdownItem onClick={this.printProduct}><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
+                            <DropdownItem onClick={this.ExportToExcel}><i class="fas fa-file-export"></i> &nbsp;Export to Excel</DropdownItem>
                             <DropdownItem><i class="fas fa-file-export"></i> &nbsp;Export To PDF</DropdownItem>
                             <DropdownItem><i class="fas fa-file-export"></i> &nbsp;Export As HTML</DropdownItem>
-                        </DropdownMenu>
-                        </ButtonDropdown>
-                        
-                        </div>
-                    </li>
-                </ol>
-            </div>        
-        </div>
+                          </DropdownButton>
 
+                        </div>
+                    </li>}
+                </ol>
+            </div>
+        </div>
           <Row>
             <Col className="col-12">
               <Card>
                 <CardBody>
-                  <MDBDataTable striped bordered data={data} />
+                  <div>
+                  {loading ?  <center><LoadingSpinner /></center> :
+                      <table className="table table-bordered table-striped dataTable">
+                         <thead>
+                           <tr>
+                             <th scope="col">SR No</th>
+                             <th scope="col">Pharmacopeia</th>
+                             <th scope="col">Product Name</th>
+                             <th scope="col">FP/RM/G</th>
+                             <th scope="col">Marker Specifiction</th>
+                             <th scope="col">Generic Name</th>
+                             <th scope="col">Is Generic</th>
+                             <th scope="col">Actions</th>
+                           </tr>
+                         </thead>
+                         {this.state.product.length >=1 ?
+                         <tbody>
+                           {
+                                this.state.product.map((post,index)=>{
+                                      const pharma = post.pharmacopeia || []
+                                      const generic = post.generic || []
+                                  return(
+                                    <tr>
+                                      <th scope="row">{index+1}</th>
+
+                               <td>{pharma.pharmacopeia_name}</td>
+                                      <td>{post.product_name}</td>
+                                      <td>{post.product_generic}</td>
+                                      <td>{post.marker_specification}</td>
+                                      <td>{generic.product_name}</td>
+                                      <td>{post.is_generic ? ("Generic") : ("Non Generic")}</td>
+                                      <td><div><Link className="btn btn-primary" to={"/edit-product/"+base64_encode(post.id)}>
+                                        <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
+                                        <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Product Data?')){ this.deleteProduct(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+                                        &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-product/"+base64_encode(post.id)}>
+                                        <i className="fa fa-eye"></i></Link></div></td>
+                                    </tr>
+                                  )
+                               })
+                             }
+                         </tbody>
+                        : <tr><td colspan="8"><p>No matching records found</p></td></tr>}
+                         <tfoot>
+                           <tr>
+                             <th scope="col">SR No</th>
+                             <th scope="col">Pharmacopiea</th>
+                             <th scope="col">Product Name</th>
+                             <th scope="col">FP/RM/G</th>
+                             <th scope="col">Marker Specifiction</th>
+                             <th scope="col">Generic Name</th>
+                             <th scope="col">Is Generic</th>
+                             <th scope="col">Actions</th>
+                           </tr>
+                         </tfoot>
+                      </table>
+                     }
+                    <div>
+                      <Pagination
+                        activePage={this.state.activePage}
+                        itemsCountPerPage={this.state.itemsCountPerPage}
+                        totalItemsCount={this.state.totalItemsCount}
+                        onChange={this.handlePageChange}
+                        itemClass='page-item'
+                        linkClass='page-link'
+                      />
+                    </div>
+                  </div>
                 </CardBody>
               </Card>
             </Col>
           </Row>
+
+
         </div>
       </div>
     </React.Fragment>
   )
 }
-
+}
 export default ListProduct
