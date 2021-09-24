@@ -83,11 +83,24 @@ this.deleteProduct = async(product_id) =>{
 }
 this.ExportToExcel = () => {
   this.setState({ loading1: true }, () => {
-  axios.get(`${process.env.REACT_APP_BASE_APIURL}exportlist`, { headers: headers})
+  axios.get(`${process.env.REACT_APP_BASE_APIURL}exportproductlist`, { headers: headers})
 
   .then(response => {
       if(response.data.success == true){
-        const sheet = XLSX.utils.json_to_sheet(response.data.data);
+         var product_data = response.data.data.map((post,index)=>({
+            "Pharmacopiea" : post.pharmacopeia.pharmacopeia_name || [],
+            "Product Name" : post.product_name || '',
+            "FP/RM/G" : post.product_generic || '',
+            "Generic Name" : post.generic.generic_product_name || '',
+            "Sample Description" : post.sample_description || '',
+            "Packing Detail" : post.packing_detail || '',
+            "Marker/Specification" : post.marker_specification || '',
+            "Enter By" : post.created_by.first_name+" "+ post.created_by.middle_name + " " + post.created_by.last_name || [],
+            "Enter Datetime" : post.created_at || '',
+            "Modified By" : post.updated_by.first_name+" "+ post.updated_by.middle_name + " " + post.updated_by.last_name || [],
+            "Modified Datetime" : post.updated_at || ''
+           }))
+        const sheet = XLSX.utils.json_to_sheet(product_data);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet 1');
         XLSX.writeFile(workbook, `ProductData.csv`);

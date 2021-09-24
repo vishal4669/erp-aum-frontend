@@ -152,14 +152,18 @@ const fetchparamsList = () => {
 const copyFormGeneric = () => {
 
   var final_generic_product_id = genericProduct;
-  if(typeof genericProduct == "number"){
-    final_generic_product_id = genericProduct
-  } else if(typeof genericProduct == "object"){
-    final_generic_product_id = genericProduct.generic_product_id.value;
-  } else {
-    final_generic_product_id = 0;
-  }
+         if(typeof genericProduct == "number"){
+           final_generic_product_id = genericProduct
+         } else if(typeof genericProduct == "object"){
+           if(genericProduct.generic_product_id !== null){
+             final_generic_product_id = genericProduct.generic_product_id.value;
+           } else{
+             final_generic_product_id = '';
+           }
 
+         } else {
+           final_generic_product_id = '';
+         }
 
      {setLoading2(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/`+final_generic_product_id,{headers})

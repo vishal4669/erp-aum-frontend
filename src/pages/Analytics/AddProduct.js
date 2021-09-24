@@ -114,10 +114,22 @@ const fetchparamsList = () => {
 
 const copyFormGeneric = () => {
 
-    const generic_product_id = genericProduct.generic_name.value;
+          var final_generic_product_id = genericProduct;
+          console.log(genericProduct)
+         if(typeof genericProduct == "number"){
+           final_generic_product_id = genericProduct.generic_name
+         } else if(typeof genericProduct == "object"){
+           if(genericProduct.generic_name !== null){
+             final_generic_product_id = genericProduct.generic_name.value;
+           } else{
+             final_generic_product_id = '';
+           }
 
+         } else {
+           final_generic_product_id = '';
+         }
      {setLoading2(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/`+generic_product_id,{headers})
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/`+final_generic_product_id,{headers})
             .then(response => {
 
                 const samples_data = response.data.data.samples.map(d => ({
@@ -198,14 +210,27 @@ const InsertProduct = (e)=>{
 
         {setLoading(true)};
 
-        const generic_product_id = genericProduct.generic_name.value;
+          var final_generic_product_id = genericProduct;
+          console.log(genericProduct)
+         if(typeof genericProduct == "number"){
+           final_generic_product_id = genericProduct.generic_name
+         } else if(typeof genericProduct == "object"){
+           if(genericProduct.generic_name !== null){
+             final_generic_product_id = genericProduct.generic_name.value;
+           } else{
+             final_generic_product_id = '';
+           }
+
+         } else {
+           final_generic_product_id = '';
+         }
         const sample_details = inputList;
         const data = {
             product_name:product.product_name,
             product_generic:product.product_generic,
             marker_specification:product.marker_specification,
             pharmacopeia_id:product.pharmocopiea,
-            generic_product_id:generic_product_id,
+            generic_product_id:final_generic_product_id,
             packing_detail:product.packing_detail,
             sample_description:product.sample_description,
             hsn_code:product.hsn_code,
