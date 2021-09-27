@@ -146,7 +146,7 @@ const AddBooking = () => {
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Customer</label>
-                                                 <div className="input-group mb-3"><div className="input-group-prepend"><span className="input-group-text" id="basic-addon1"><Link to="/add-customer" target="_blank"><i className="fa fa-plus-circle"></i></Link></span> </div>  <input className="form-control" list="customer_list" id="exampleDataList" placeholder="Type to search..."/>
+                                                 <div className="input-group mb-3">{/*<div className="input-group-prepend"><span className="input-group-text" id="basic-addon1"><Link to="/add-customer" target="_blank"><i className="fa fa-plus-circle"></i></Link></span> </div>*/}  <input className="form-control" list="customer_list" id="exampleDataList" placeholder="Type to search..."/>
                                                     <datalist id="customer_list">
                                                         <option value="Ader Pharmachem"/>
                                                         <option value="Qualimed Pharma"/>
@@ -412,7 +412,7 @@ const AddBooking = () => {
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Product</label>
-                                                 <div className="input-group mb-3"><div className="input-group-prepend"><span className="input-group-text" id="basic-addon1"><a href="add_products.php" target="_blank"><i className="fa fa-plus-circle"></i></a></span> </div><div className="input-group-prepend"><span className="input-group-text" id="basic-addon1"><a href="#" target="_blank">Edit</a></span> </div>  <input className="form-control" list="product_list" id="exampleDataList" placeholder="Type to search..."/>
+                                                 <div className="input-group mb-3">{/*<div className="input-group-prepend"><span className="input-group-text" id="basic-addon1"><a href="add_products.php" target="_blank"><i className="fa fa-plus-circle"></i></a></span> </div><div className="input-group-prepend"><span className="input-group-text" id="basic-addon1"><a href="#" target="_blank">Edit</a></span> </div> */} <input className="form-control" list="product_list" id="exampleDataList" placeholder="Type to search..."/>
                                                     <datalist id="product_list">
                                                         <option value="ORS"/>
                                                         <option value="OLM"/>
@@ -609,8 +609,8 @@ const AddBooking = () => {
                                                             <Table className="table mb-0 border">
                                                               <thead className="table-light">
                                                                 <tr>
-                                                                    <th></th>
-                                                                    <th><input type="checkbox"/></th>
+                                                                    {/*<th></th>
+                                                                    <th><input type="checkbox"/></th>*/}
                                                                     <th>Parent Child</th>
                                                                     <th>P Sr No</th>
                                                                     <th>By Pass</th>
@@ -626,8 +626,8 @@ const AddBooking = () => {
                                                                 </thead>
                                                                 <tbody>
                                                                 <tr>
-                                                                    <td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
-                                                                    <td><input type="checkbox"/></td>
+                                                                    {/*<td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
+                                                                    <td><input type="checkbox"/></td>*/}
                                                                     <td><select style={my_style}  name="parent_child" className="form-select">
                                                                       <option value="Parent">Parent</option>
                                                                       <option value="Child">Child</option>
@@ -716,8 +716,8 @@ const AddBooking = () => {
                                                              
                                                                 <tbody>
                                                                 <tr>
-                                                                    <td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
-                                                                    <td><input type="checkbox"/></td>
+                                                                    {/*<td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
+                                                                    <td><input type="checkbox"/></td>*/}
                                                                     <td><select name="parent_child" style={my_style} className="form-select">
                                                                       <option value="Parent">Parent</option>
                                                                       <option value="Child">Child</option>
@@ -815,75 +815,6 @@ const AddBooking = () => {
                                         </div>   
 
 {/*Test Section End*/}
-{/*Graph Section Start*/}
-
-                                        <h5> <Alert color="danger" role="alert">
-                                      <i className="fa fa-comment">&nbsp;Graph</i>
-                                </Alert></h5>
-
-                                     <div data-repeater-list="group-a" id="form-first-repeater1">
-                                       <div data-repeater-item className="mb-3 row">    
-                                            <div className="form-group">
-                                                <div className="row">
-                                                  <div className="table-responsive">
-                                                    <Table className="table mb-0 border">
-                                                        <thead className="table-light">
-                                                            <tr>
-                                                                <th>Name</th>
-                                                                <th>Graph</th>
-                                                                <th><i className="fa fa-trash"></i></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr>
-                                                               
-                                                                <td><input type="text" name="graph_name" className="form-control"/></td>
-                                                                 <td><input type="file" name="graph"  className="form-control"/></td>
-                                                                <td><input data-repeater-delete type="button" className="btn btn-primary" onClick={e => {
-                                                        handleRemoveRow3(e, id)
-                                                        }} value="Delete" /></td>
-                                                            </tr>
-                                                        </tbody>    
-                                                           
-                                                      </Table>
-                                                    </div>
-                                                 </div>    
-                                              </div>  
-                                          </div>
-                                      </div>    
-
-                                      {rows3.map((item3, idx1) => (
-                <React.Fragment key={idx1}>
-                    <div data-repeater-list="group-a" id={"emp" + idx1}>
-                        <div data-repeater-item className="mb-3">
-                                            <div className="form-group">
-                                                <div className="row">
-                                                <div className="table-responsive">
-                                                    <Table className="table mb-0 border">
-                                                      
-                                                        <tbody>
-                                                            <tr>
-                                                               
-                                                                <td><input type="text" name="graph_name" className="form-control"/></td>
-                                                                 <td><input type="file" name="graph"  className="form-control"/></td>
-                                                                <td><input data-repeater-delete type="button" className="btn btn-primary" onClick={e => {
-                                                                  handleRemoveRow4(e, idx1)
-                                                                }} value="Delete" /></td>
-                                                            </tr>
-
-                                                        </tbody>    
-                                                           
-                                                      </Table>
-                                                    </div>
-                                                 </div>   
-
-                                                    
-                        </div>
-                    </div>
-
-                </div>
-    </React.Fragment>
-                    ))} 
 
                    
                 </CardBody>

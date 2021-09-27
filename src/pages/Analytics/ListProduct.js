@@ -28,6 +28,7 @@ class ListProduct extends Component{
       activePage: 1,
       itemsCountPerPage: 10,
       totalItemsCount: 1,
+      ExportPDFData:[],
     }
     //this.handlePageChange = this.handlePageChange.bind(this);
      const headers = {
@@ -88,6 +89,7 @@ this.ExportToExcel = () => {
   .then(response => {
       if(response.data.success == true){
          var product_data = response.data.data.map((post,index)=>({
+            "SR No" : index+1,
             "Pharmacopiea" : post.pharmacopeia.pharmacopeia_name || [],
             "Product Name" : post.product_name || '',
             "FP/RM/G" : post.product_generic || '',
@@ -117,6 +119,7 @@ this.ExportToExcel = () => {
     })
 })
 }
+
  this.handlePageChange = (pageNumber) =>{
    this.setState({ loading: true }, () => {
     this.handlePageChange.bind(this)
@@ -166,8 +169,8 @@ this.ExportToExcel = () => {
                           <DropdownButton  title="Actions">
                             <DropdownItem onClick={this.printProduct}><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
                             <DropdownItem onClick={this.ExportToExcel}><i class="fas fa-file-export"></i> &nbsp;Export to Excel</DropdownItem>
-                            <DropdownItem><i class="fas fa-file-export"></i> &nbsp;Export To PDF</DropdownItem>
-                            <DropdownItem><i class="fas fa-file-export"></i> &nbsp;Export As HTML</DropdownItem>
+                            <DropdownItem><Link to="/export-product-data" style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export To PDF</Link></DropdownItem>
+                            <DropdownItem><Link to="/export-product-data-as-html" style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export As HTML</Link></DropdownItem>
                           </DropdownButton>
 
                         </div>
@@ -175,7 +178,7 @@ this.ExportToExcel = () => {
                 </ol>
             </div>
         </div>
-          <Row>
+          <Row id="pdfdiv">
             <Col className="col-12">
               <Card>
                 <CardBody>

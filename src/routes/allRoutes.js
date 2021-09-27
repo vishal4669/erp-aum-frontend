@@ -90,6 +90,8 @@ import ListProduct from "../pages/Analytics/ListProduct"
 import AddProduct from "../pages/Analytics/AddProduct"
 import EditProduct from "../pages/Analytics/EditProduct"
 import ViewProduct from "../pages/Analytics/ViewProduct"
+import ExportProductListPDF from "../pages/Analytics/ExportProductListPDF"
+import ExportProductAsHTML from "../pages/Analytics/ExportProductAsHTML"
 //Booking
 import ListBooking from "../pages/Analytics/ListBooking"
 import AddBooking from "../pages/Analytics/AddBooking"
@@ -131,6 +133,8 @@ const authRoutes = [
     { path: "/all-products", component: ListProduct},
     { path: "/view-product", component: ViewProduct},
     { path: "/edit-product", component: EditProduct},
+    { path: "/export-product-data", component: ExportProductListPDF},
+    { path: "/export-product-data-as-html", component: ExportProductAsHTML},
 
     { path: "/company", component: ListCompany},
     { path: "/add-company", component: AddCompany},
