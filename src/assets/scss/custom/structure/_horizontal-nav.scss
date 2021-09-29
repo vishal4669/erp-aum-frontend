@@ -4,7 +4,8 @@
 
 // custom scss
 .topnav .navbar-nav .nav-link {
-    padding: 1rem .7rem !important;
+    //padding: 1rem .7rem !important;
+   padding:  1rem 1.2rem !important;
 
 }
 
@@ -108,7 +109,7 @@ body[data-layout="horizontal"] {
     body[data-layout="horizontal"] {
         .container-fluid,
         .navbar-header {
-            max-width: 85%;
+            max-width: 100%;
         }
     }
 }

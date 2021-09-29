@@ -202,7 +202,7 @@ const { data2, loading1 } = this.state;
                     </li>&nbsp;
                    {loading1 ?  <center><LoadingSpinner /></center> :   <li>
                         <div className="btn-group">
-                          <DropdownButton  title="Actions">
+                          <DropdownButton  title="Actions" drop="left">
                             <DropdownItem onClick={this.printPharmacopiea}><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
                             <DropdownItem onClick={this.ExportToExcel}><i class="fas fa-file-export"></i> &nbsp;Export To Excel </DropdownItem>
                             <DropdownItem><Link to="/export-pdf-pharmacopiea" style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export To PDF</Link></DropdownItem>

@@ -257,6 +257,7 @@ const UpdateProduct = (e)=>{
             is_generic:product.is_generic,
             "sample_details": sample_details,
           }
+          console.log(data)
                   {setLoading(true)};
             axios.post(`${process.env.REACT_APP_BASE_APIURL}editProduct/`+product_id,data,{headers})
                 .then(response => {
@@ -414,7 +415,6 @@ const UpdateProduct = (e)=>{
                             <Table className="table mb-0 border">
                                 <thead className="table-light">
                                     <tr>
-                                        <th></th>
                                         <th>By Pass</th>
                                         <th>Parent</th>
                                         <th>Parameter Name</th>
@@ -433,7 +433,7 @@ const UpdateProduct = (e)=>{
                                 <tbody>
 {loading2 ? <LoadingSpinner /> :
                                     <tr>
-                                        <td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
+                                
                                                     <td class="col-1"><select value={x.by_pass} onChange={e => handleInputChange(e, i)} className="form-select" name="by_pass" style={{width:'70px !important'}}><option value="2">No</option><option value="1">Yes</option></select></td>
                                                     <td class="col-2">
                                                        <select value={x.parent} onChange={e => handleInputChange(e, i)} name="parent" className="form-select" style={{width:'100px !important'}}>
@@ -458,9 +458,9 @@ const UpdateProduct = (e)=>{
                                                         <td class="col-1"><Input value={x.nabl} onChange={e => handleInputChange(e, i)} type="text" name="nabl" className="form-control"/></td>
                                                     <td class="col-1"><Input value={x.formula} onChange={e => handleInputChange(e, i)} type="text" name="formula" className="form-control"/></td>
 
-                                        <td>{inputList.length !== 1 && <button
+                                        <td>{inputList.length >= 1 && <button
                                                           className="mr10"
-                                                          onClick={() => handleRemoveClick(i)} className="btn btn-primary">Delete</button>}</td>
+                                                          onClick={() => handleRemoveClick(i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}</td>
                                     </tr>
                                   }
 

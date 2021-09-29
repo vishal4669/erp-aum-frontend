@@ -166,7 +166,7 @@ this.ExportToExcel = () => {
                    {loading1 ?  <center><LoadingSpinner /></center> :
                     <li>
                         <div className="btn-group">
-                          <DropdownButton  title="Actions">
+                          <DropdownButton  title="Actions" drop="left">
                             <DropdownItem onClick={this.printProduct}><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
                             <DropdownItem onClick={this.ExportToExcel}><i class="fas fa-file-export"></i> &nbsp;Export to Excel</DropdownItem>
                             <DropdownItem><Link to="/export-product-data" style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export To PDF</Link></DropdownItem>

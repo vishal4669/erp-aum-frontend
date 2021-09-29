@@ -756,10 +756,10 @@ return(
                                                         </div>   
 
                                                         <div className="col-md-1">  
-                                                            <label style={{ visibility:'hidden' }}>Delete</label>
-                                                            {inputList.length !== 1 && <button
+                                                            <label style={{ visibility:'hidden' }}>Delete</label><br/>
+                                                            {inputList.length >= 1 && <button
                                                           className="mr10"
-                                                          onClick={() => handleRemoveClick(i)} className="btn btn-primary">Delete</button>}
+                                                          onClick={() => handleRemoveClick(i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}
                                                         </div>             
                                                     </div>  
                                                 </div>

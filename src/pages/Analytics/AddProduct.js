@@ -395,7 +395,6 @@ const InsertProduct = (e)=>{
                             <Table className="table mb-0 border">
                                 <thead className="table-light">
                                     <tr>
-                                        <th></th>
                                         <th>By Pass</th>
                                         <th>Parent</th>
                                         <th>Parameter Name</th>
@@ -408,13 +407,12 @@ const InsertProduct = (e)=>{
                                         <th>Division</th>
                                         <th>NABL</th>
                                         <th>Formula</th>
-                                        <th>Delete</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
 {loading2 ? <LoadingSpinner /> :
                                     <tr>
-                                        <td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
                                                     <td class="col-1"><select value={x.by_pass} onChange={e => handleInputChange(e, i)} className="form-select" name="by_pass" style={{width:'70px !important'}}><option value="2">No</option><option value="1">Yes</option></select></td>
                                                     <td class="col-2">
                                                        <select value={x.parent} onChange={e => handleInputChange(e, i)} name="parent" className="form-select" style={{width:'100px !important'}}>
@@ -441,7 +439,7 @@ const InsertProduct = (e)=>{
 
                                         <td>{inputList.length !== 1 && <button
                                                           className="mr10"
-                                                          onClick={() => handleRemoveClick(i)} className="btn btn-primary">Delete</button>}</td>
+                                                          onClick={() => handleRemoveClick(i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}</td>
                                     </tr>
                                                        }
                                 </tbody>

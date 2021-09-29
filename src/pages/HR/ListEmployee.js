@@ -109,7 +109,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
               mobile: post.mobile,
               email: post.email,
               action : <div className="btn-group">
-                          <DropdownButton variant="dark" title="Actions">
+                          <DropdownButton variant="dark" title="Actions" drop="left">
                             <DropdownItem><i class="fa fa-print"></i> &nbsp;Print Offer Letter</DropdownItem>
                             <DropdownItem><i class="fa fa-print"></i> &nbsp;Print Appointment Letter</DropdownItem>
                             <DropdownItem><i class="fa fa-print"></i> &nbsp;Print Experience Letter</DropdownItem>
