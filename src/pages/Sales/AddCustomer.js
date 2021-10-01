@@ -725,7 +725,7 @@ return(
 
                                                         <div className="col-md-1">  
                                                             <label style={{ visibility:'hidden' }}>Delete</label><br/>
-                                                            {inputList.length !== 1 && <button
+                                                            {inputList.length >= 1 && <button
                                                           className="mr10"
                                                           onClick={() => handleRemoveClick(i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}
                                                         </div>             
@@ -749,6 +749,19 @@ return(
                                         
                                         </React.Fragment>
                                         ))}
+                                        <div className="mb-3 row">
+                                            <div className="form-group">
+                                                <div className="row">
+                                                   <center> 
+                                                        <div className="col-md-2">
+
+                                                        {inputList.length === 0 && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
+                                                        
+                                                        </div>
+                                                    </center>
+                                                 </div>
+                                            </div>
+                                        </div>   
                                     </div>
                                 </div>
                             </div> 
