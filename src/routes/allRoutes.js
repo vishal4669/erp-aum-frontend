@@ -69,7 +69,7 @@ import EditUnit from "../pages/Masters/EditUnit"
 //Masters End
 
 //Sales Module
-//Customer 
+//Customer
 import AddCustomer from "../pages/Sales/AddCustomer"
 import ListCustomer from "../pages/Sales/ListCustomer"
 import EditCustomer from "../pages/Sales/EditCustomer"
@@ -141,6 +141,7 @@ const authRoutes = [
     { path: "/all-company", component: ListCompany},
     { path: "/edit-company", component: EditCompany},
     { path: "/booking", component: ListBooking},
+    { path: "/all-booking", component: ListBooking},
     { path: "/add-booking", component: AddBooking},
     { path: "/branch", component:ListBranch},
     { path: "/all-branch", component:ListBranch},

@@ -1,73 +1,480 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from 'react';
 
 import {
   Card,
   CardBody,
   Col,
   Row,
-  Container,Table,Input,Alert
-} from "reactstrap"
-import { withRouter, Link } from "react-router-dom"
+  CardTitle,
+  Form,
+  Container,
+  Label,
+  Input,
+  FormGroup,
+  Button,
+  Alert,
+  Table,
+} from 'reactstrap';
+
 //Import Breadcrumb
-import Breadcrumbs from "../../components/Common/Breadcrumb"
-import HorizontalLayout from "../../components/HorizontalLayout"
+import Breadcrumbs from '../../components/Common/Breadcrumb';
+import HorizontalLayout from '../../components/HorizontalLayout';
+import { Link } from "react-router-dom"
+import axios from 'axios';
+import PropTypes from 'prop-types';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import { ToastContainer} from "react-toastr";
+import toastr from 'toastr'
+import 'toastr/build/toastr.min.css'
+import Select from 'react-select';
 
+function AddBooking(props)  {
+        const headers = {
+              'Authorization' : "Bearer "+localStorage.getItem('token')
+            }
 
-const AddBooking = () => {
-  const [customchk, setcustomchk] = useState(true)
-  const [toggleSwitch, settoggleSwitch] = useState(true)
-  const [toggleSwitchSize, settoggleSwitchSize] = useState(true)
+  const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
 
-    const [rows2, setrows2] = useState([])
-    const [rows3, setrows3] = useState([])
-  
-    const id = 1;
-    const id1 = 1;
+  const[customer,setCustomer] = useState({customer_id:''})
+  const[manufacturer,setManufacturer] = useState({manufacturer_id:''})
+  const[supplier,setSupplier] = useState({supplier_id:''})
+  const[product,setProduct] = useState({product_id:''})
+
+  const [data, setData] = useState([]);
+  const [data1, setData1] = useState([]);
+  const [data2, setData2] = useState([]);
+  const [data3, setData3] = useState([]);
+  const [data4, setData4] = useState([]);
+  const [data5, setData5] = useState([]);
+
+  const [booking, setBooking] = useState({booking_no: ''});
+  const [reporttype, setreportType] = useState({report_type:''});
+  const [aumserialno, setaumserialno] = useState({aum_serial_no:''});
+
+    const [booking1, setBooking1] = useState({booking_type:'Received',report_type:'',receipte_date:'',
+      booking_no: '',reference_no:'',remarks:'',mfg_date:'',mfg_options:'N/S',exp_date:'',exp_options:'N/S',
+      analysis_date:'',aum_serial_no:'',d_format:'',d_format_options:'N/S',grade: '',grade_options:'N/S',project_name:'',
+      project_options:'N/S',mfg_lic_no:'',is_report_dispacthed:'0',signature:'0',verified_by:'None',nabl_scope: '0',
+      cancel:'None',cancel_remarks:'',priority:'High',discipline:'Chemical',booking_group:'Drugs and Pharmaceuticals',
+      statement_ofconformity:'PASS'});
+
+    const [bookingSamples, setBookingSamples] = useState({batch_no:'',
+    packsize:'',request_quantity:'',sample_code:'',sample_description:'',sample_quantity:'',sample_location:'',
+    sample_packaging:'',sample_type:'',sampling_date_from:'',sampling_date_from_options:'N/S',
+    sampling_date_to:'',sampling_date_to_options:'N/S',sample_received_through:'',chemist:'1',sample_condition:'',
+    is_sample_condition:'0',batch_size_qty_rec:'',notes:'',sample_drawn_by:''});
+
+    const [bookingSamples1, setBookingSamples1] = useState({generic_name:'',product_type:'',pharmacopeia_id:''});
+
+      const[testData,setTestData] = useState([{parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
+      test_name:'',label_claim:'',min_limit:'',max_limit:'',amount:''}])
+
+        useEffect(() => {
+                 fetchCustomerData();
+                 fetchManufacturerData();
+                 fetchSupplierData();
+                 fetchAumSrNo();
+                 fetchProduct();
+                 fetchPharamcopiea();
+                 fetchparentList();
+                }, []);
 
     const my_style = {
     width: '120px !important',
 
     }
-  
-    // Educational Details
-    function handleRemoveRow1(e, id) {
-      if (typeof id != "undefined")
-        document.getElementById("addre" + id).style.display = "none"
-        
-    }
-  
-    function handleRemoveRow2(e, id) {
-      document.getElementById("form-first-repeater").style.display = "none"
-    }
-  
-    function handleAddRowNested1() {
-      const item2 = { name1: "" }
-      setrows2([...rows2, item2])
-    }
 
-    // Employement Details
-
-    function handleRemoveRow4(e, id1) {
-        if (typeof id != "undefined")
-          document.getElementById("emp" + id1).style.display = "none"
-          
-      }
-    
-      function handleRemoveRow3(e, id1) {
-        document.getElementById("form-first-repeater1").style.display = "none"
-      }
-    
-      function handleAddRowNested2() {
-        const item3 = { name2: "" }
-        setrows3([...rows3, item3])
+      const ResetBooking = () => {
+        document.getElementById("AddBooking").reset();
       }
 
+      const handleAddClick = () => {
+        setTestData([...testData, { parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
+        test_name:'',label_claim:'',min_limit:'',max_limit:'',amount:''}]);
+      };
+
+        // handle input change for Degree Details
+      const handleInputChange = (e, index) => {
+        const { name, value } = e.target;
+        const list = [...testData];
+        list[index][name] = value;
+        setTestData(list);
+      };
+
+      // handle click event of the Remove button
+      const handleRemoveClick = index => {
+        const list = [...testData];
+        list.splice(index, 1);
+        setTestData(list);
+      };
+
+      const onChange = (e) => {
+        setBooking1({...booking1, [e.target.name]: e.target.value});
+      }
+
+      const reporttypeonChange = (e) =>{
+        setBooking({...booking, [e.target.name]: e.target.value});
+        setreportType({...reporttype, [e.target.name]: e.target.value});
+          //if(booking.report_type !== null){
+              getBookingNo(e.target.value);
+            //}
+      }
+
+      const AumSerialNoonChange = (e) =>{
+        setaumserialno({...aumserialno, [e.target.name]: e.target.value});
+      }
+
+      const getBookingNo = (e) => {
+
+        var final_report_type = e;
+
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no/`+final_report_type,{headers})
+            .then(response => {
+                      setBooking({booking_no:response.data.data.booking_no});
+                      console.log(response.data.data)
+                     {setLoading1(false)}
+               })
+              .catch((error) => {
+                  toastr.error(error.response.data.message);
+                   {setLoading1(false)}
+              })
+
+      }
+
+      const onChangeProductSamples = (e) => {
+        setBookingSamples({...bookingSamples, [e.target.name]: e.target.value});
+      }
+
+      const onChangeProductSamplesFromDB = (e) => {
+        setBookingSamples1({...bookingSamples1, [e.target.name]: e.target.value});
+      }
+
+      const changeCustomer = (e) =>{
+          setCustomer({customer_id: e });
+        }
+
+      const changeManufacturer = (e) =>{
+          setManufacturer({manufacturer_id: e });
+      }
+
+      const changeSupplier = (e) =>{
+          setSupplier({supplier_id: e });
+      }
+
+      const changeProductID = (e) =>{
+          setProduct({product_id: e });
+
+          getProductData(e);
+      }
+
+      const getProductData = (e) => {
+                      var final_product_id = e.value
+                      axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/`+final_product_id,{headers})
+                          .then(response => {
+                            const tests_data = response.data.data.samples.map(d => ({
+                                    "by_pass" : d.by_pass,
+                                    "parent" : d.parent.id,
+                                    "product_details" : d.description,
+                                    "test_name" : d.parameter.parameter_name,
+                                    "label_claim" :d.label_claim,
+                                    "min_limit" : d.min_limit,
+                                    "max_limit" : d.max_limit,
+                                    "amount": d.amount,
+
+                                  }))
+                             setTestData(tests_data)
+                             setBookingSamples1({product_type:response.data.data.product_generic,
+                               generic_name:response.data.data.generic.generic_product_name,
+                               pharmacopeia_id: response.data.data.pharmacopeia_id
+                             })
+
+                          })
+                          .catch((error) => {
+                              toastr.error(error.response.data.message);
+                          })
+      }
+
+      const fetchCustomerData = () => {
+                   {setLoading1(true)};
+                axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Customer`,{headers})
+                  .then(response => {
+                           const options = response.data.data.map(d => ({
+                              "value" : d.id,
+                              "label" : d.company_name
+                           }))
+                           setData1(options);
+                           {setLoading1(false)}
+                     })
+                    .catch((error) => {
+                        toastr.error(error.response.data.message);
+                         {setLoading1(false)}
+                    })
+      }
+
+      const fetchManufacturerData = () => {
+                   {setLoading1(true)};
+                axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Manufacturer`,{headers})
+                  .then(response => {
+                           const options1 = response.data.data.map(d => ({
+                              "value" : d.id,
+                              "label" : d.company_name
+                           }))
+
+                           setData2(options1);
+                           {setLoading1(false)}
+                     })
+                    .catch((error) => {
+                        toastr.error(error.response.data.message);
+                         {setLoading1(false)}
+                    })
+      }
+
+      const fetchSupplierData = () => {
+                   {setLoading1(true)};
+                axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Supplier`,{headers})
+                  .then(response => {
+                           const options2 = response.data.data.map(d => ({
+                              "value" : d.id,
+                              "label" : d.company_name
+                           }))
+                           setData3(options2);
+                           {setLoading1(false)}
+                     })
+                    .catch((error) => {
+                        toastr.error(error.response.data.message);
+                         {setLoading1(false)}
+                    })
+      }
+
+
+      const fetchAumSrNo = () => {
+        {setLoading1(true)};
+                  axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no/`+null,{headers})
+                    .then(response => {
+                             setaumserialno({aum_serial_no:response.data.data.aum_serial_no});
+                             {setLoading1(false)}
+                       })
+                      .catch((error) => {
+                          toastr.error(error.response.data.message);
+                           {setLoading1(false)}
+                      })
+        }
+
+        const fetchProduct = () => {
+                     {setLoading1(true)};
+                  axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_dropdown=1`,{headers})
+                    .then(response => {
+                             const product_option = response.data.data.map(d => ({
+                                "value" : d.id,
+                                "label" : d.product_name
+                             }))
+                             setData4(product_option);
+                             {setLoading1(false)}
+                       })
+                      .catch((error) => {
+                          toastr.error(error.response.data.message);
+                           {setLoading1(false)}
+                      })
+                }
+
+                const fetchPharamcopiea = () => {
+                            {setLoading1(true)};
+                         axios.get(`${process.env.REACT_APP_BASE_APIURL}listPharmacopeia?is_dropdown=1`,{headers})
+                           .then(response => {
+                                    setData(response.data.data);
+                                    {setLoading1(false)}
+                              })
+                             .catch((error) => {
+                                 toastr.error(error.response.data.message);
+
+                                  {setLoading1(false)}
+                             })
+                }
+
+                const fetchparentList = () => {
+                             {setLoading1(true)};
+                          axios.get(`${process.env.REACT_APP_BASE_APIURL}parentList`,{headers})
+                            .then(response => {
+                                     setData5(response.data.data);
+                                     {setLoading1(false)}
+                               })
+                              .catch((error) => {
+                                  toastr.error(error.response.data.message);
+                                   {setLoading1(false)}
+                              })
+                        }
+
+      const InsertBooking = (e)=>{
+               e.preventDefault();
+               {setLoading(true)};
+
+               var final_customer_id = customer;
+               var final_supplier_id = supplier;
+               var final_manufacturer_id = manufacturer;
+               var final_product_id = product;
+               // Customer ID
+
+                 if(typeof customer == "number"){
+                   final_customer_id = customer.customer_id
+                 } else if(typeof customer == "object"){
+                   if(customer.customer_id !== null){
+                       final_customer_id = customer.customer_id.value;
+                   }else{
+                     final_customer_id = '';
+                   }
+
+                 } else {
+                   final_customer_id = '';
+                 }
+
+
+              //Supplier ID
+              if(typeof supplier == "number"){
+                final_supplier_id = supplier.supplier_id
+              } else if(typeof supplier == "object"){
+                if(supplier.customer_id !== null){
+                    final_supplier_id = supplier.supplier_id.value;
+                } else{
+                  final_supplier_id = '';
+                }
+
+              } else {
+                final_supplier_id = '';
+              }
+
+              // Manufacturer ID
+
+              if(typeof manufacturer == "number"){
+                final_manufacturer_id = manufacturer.manufacturer_id
+              } else if(typeof manufacturer == "object"){
+                if(manufacturer.customer_id !== null){
+                    final_manufacturer_id = manufacturer.manufacturer_id.value;
+                } else{
+                  final_manufacturer_id = '';
+                }
+
+              } else {
+                final_manufacturer_id = '';
+              }
+
+
+              // Product ID
+
+              if(typeof product == "number"){
+                final_product_id = product.product_id
+              } else if(typeof product == "object"){
+                if(product.customer_id !== null){
+                    final_product_id = product.product_id.value;
+                } else{
+                  final_product_id = '';
+                }
+
+              } else {
+                final_product_id = '';
+              }
+
+              var final_booking_no = ''
+              if(booking.booking_no == undefined){
+                final_booking_no = ''
+              } else if(booking.booking_no == null){
+                  final_booking_no = ''
+              } else {
+                final_booking_no = booking.booking_no
+              }
+
+              const test_details = testData;
+
+
+               const data = {
+                   booking_type:booking1.booking_type,
+                   report_type:reporttype.report_type,
+                   receipte_date:booking1.receipte_date,
+                   booking_no:final_booking_no,
+                   customer_id:final_customer_id,
+                   reference_no:booking1.reference_no,
+                   remarks:booking1.remarks,
+                   manufacturer_id:final_manufacturer_id,
+                   supplier_id:final_supplier_id,
+                   mfg_date:booking1.mfg_date,
+                   mfg_options:booking1.mfg_options,
+                   exp_date:booking1.exp_date,
+                   exp_options:booking1.exp_options,
+                   analysis_date:booking1.analysis_date,
+                   aum_serial_no:aumserialno.aum_serial_no,
+                   d_format:booking1.d_format,
+                   d_format_options:booking1.d_format_options,
+                   grade:booking1.grade,
+                   grade_options:booking1.grade_options,
+                   project_name:booking1.project_name,
+                   project_options:booking1.project_options,
+                   mfg_lic_no:booking1.mfg_lic_no,
+                   is_report_dispacthed:booking1.is_report_dispacthed,
+                   signature:booking1.signature,
+                   verified_by:booking1.verified_by,
+                   nabl_scope:booking1.nabl_scope,
+                   cancel:booking1.cancel,
+                   cancel_remarks:booking1.cancel_remarks,
+                   priority:booking1.priority,
+                   discipline:booking1.discipline,
+                   booking_group:booking1.booking_group,
+                   statement_ofconformity:booking1.statement_ofconformity,
+                   "booking_sample_details":[{
+                     product_id: final_product_id,
+                     product_type: bookingSamples1.product_type,
+                     pharmacopiea_id:bookingSamples1.pharmacopeia_id,
+                     batch_no:bookingSamples.batch_no,
+                     packsize:bookingSamples.packsize,
+                     request_quantity:bookingSamples.request_quantity,
+                     sample_code:bookingSamples.sample_code,
+                     sample_description:bookingSamples.sample_description,
+                     sample_quantity:bookingSamples.sample_quantity,
+                     sample_location:bookingSamples.sample_location,
+                     sample_packaging:bookingSamples.sample_packaging,
+                     sample_type:bookingSamples.sample_type,
+                     sampling_date_from:bookingSamples.sampling_date_from,
+                     sampling_date_from_options:bookingSamples.sampling_date_from_options,
+                     sampling_date_to:bookingSamples.sampling_date_to,
+                     sampling_date_to_options:bookingSamples.sampling_date_to_options,
+                     sample_received_through:bookingSamples.sample_received_through,
+                     chemist:bookingSamples.chemist,
+                     sample_condition:bookingSamples.sample_condition,
+                     is_sample_condition:bookingSamples.is_sample_condition,
+                     batch_size_qty_rec:bookingSamples.batch_size_qty_rec,
+                     notes:bookingSamples.notes,
+                     sample_drawn_by:bookingSamples.sample_drawn_by,
+                   }],
+                   "booking_tests": test_details,
+               }
+
+               console.log(data);
+
+              axios.post( `${process.env.REACT_APP_BASE_APIURL}addBooking`, data, {headers} )
+
+                       .then(response => {
+                           if(response.data && response.data.success == true){
+                               props.history.push('/booking');
+                               toastr.success(response.data.message);
+                               {setLoading(false)};
+                           }else{
+                               props.history.push('/add-booking');
+                               toastr.error(response.data.message);
+                               {setLoading(false)};
+                           }
+                       })
+                       .catch((error) => {
+                        {setLoading(false)};
+                        toastr.error(error.response.data.message);
+                      })
+     }
 
   return (
     <React.Fragment>
-      <HorizontalLayout/>  
+      <HorizontalLayout/>
       <div className="page-content">
         <Container fluid={true}>
+        <Form onSubmit={InsertBooking} method="POST" id="AddBooking">
         <div className="page-title-box d-flex align-items-center justify-content-between">
 
             <div className="page-title">
@@ -82,10 +489,13 @@ const AddBooking = () => {
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                     <li><Link to="/booking" className="btn btn-primary btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></Link></li>&nbsp;
-                    <li><button type="reset" className="btn btn-primary btn-sm"><i className="fa fa-reply">&nbsp;Reset</i></button></li>
+                    <li><button type="reset" onClick = {ResetBooking} className="btn btn-primary btn-sm"><i className="fa fa-reply">&nbsp;Reset</i></button></li>
                     &nbsp;
-                    <li><a href="#" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Save</i></a></li>
-                    
+                    { loading ? <center><LoadingSpinner /></center> :
+                    <li>
+                       <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Submit</i></button>
+                    </li>
+                    }
                 </ol>
             </div>
 
@@ -104,7 +514,7 @@ const AddBooking = () => {
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Booking Type</label>
-                                                <select className="form-select" name="booking_type">
+                                                <select className="form-select" name="booking_type" onChange={ onChange }>
                                                         <option value="Received">Received</option>
                                                       <option value="Entry">Entry</option>
                                                       <option value="Temp">Temp</option>
@@ -116,10 +526,10 @@ const AddBooking = () => {
                                                       <option value="Invoice">Invoice</option>
                                                       <option value="Cancel">Cancel</option>
                                                       </select>
-                                              </div>  
-                                              <div className="col-md-3">  
+                                              </div>
+                                              <div className="col-md-3">
                                                 <label>Report Type</label>
-                                                <select className="form-select" name="report_type">
+                                                <select className="form-select" name="report_type" onChange={ reporttypeonChange }>
                                                         <option value="">None</option>
                                                       <option value="FP">FP</option>
                                                       <option value="RM">RM</option>
@@ -128,17 +538,17 @@ const AddBooking = () => {
                                                       <option value="ADL">ADL</option>
                                                       </select>
                                               </div>
-                                              <div className="col-md-3">  
+                                              <div className="col-md-3">
                                                 <label>Receipt Date</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="receipt_date"/>
-                                              </div>  
+                                                <input className="form-control" type="date" id="example-date-input" name="receipte_date" onChange={ onChange }/>
+                                              </div>
                                               <div className="col-md-3">
                                                 <label>Booking No</label>
-                                                <input className="form-control" type="text" value="ARL/COA//210420/001" name="booking_no" readOnly/>
-                                              </div>    
-                                            </div>  
-                                          </div>  
-                                      </div>  
+                                                <input className="form-control" type="text" value={booking.booking_no} onChange={ onChange } name="booking_no" readOnly/>
+                                              </div>
+                                            </div>
+                                          </div>
+                                      </div>
 
 
                                       <div className="mb-3 row">
@@ -146,87 +556,66 @@ const AddBooking = () => {
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Customer</label>
-                                                 <div className="input-group mb-3">{/*<div className="input-group-prepend"><span className="input-group-text" id="basic-addon1"><Link to="/add-customer" target="_blank"><i className="fa fa-plus-circle"></i></Link></span> </div>*/}  <input className="form-control" list="customer_list" id="exampleDataList" placeholder="Type to search..."/>
-                                                    <datalist id="customer_list">
-                                                        <option value="Ader Pharmachem"/>
-                                                        <option value="Qualimed Pharma"/>
-                                                        <option value="Jain Shop"/>
-                                                        <option value="jaylian Pharma"/>
-                                                        <option value="Olive Health Care"/>
-                                                    </datalist></div>
-                                              </div>  
-                                              <div className="col-md-1">
-                                                <label style={{visibility: 'hidden'}}>ID</label>
-                                                <input className="form-control" type="text" name="customer_id" readOnly/>
-                                              </div>  
-                                              <div className="col-md-4">  
+                                                  {loading1 ? <LoadingSpinner /> :<Select onChange={ changeCustomer } options={data1} name="customer_id"
+                                                 placeholder="Select Customer" isClearable/>}
+                                               </div>
+
+                                              <div className="col-md-4">
                                                 <label>Reference No</label>
-                                                <input className="form-control" type="text" name="ref_no" placeholder="Enter Reference No"/>
+                                                <input className="form-control" type="text" name="reference_no" placeholder="Enter Reference No" onChange={ onChange }/>
                                               </div>
 
-                                              <div className="col-md-4">  
+                                              <div className="col-md-5">
                                                 <label>Remarks</label>
-                                                <textarea name="remarks" className="form-control" placeholder="Enter Remarks"></textarea>
-                                              </div>    
+                                                <textarea name="remarks" className="form-control" placeholder="Enter Remarks" onChange={ onChange }></textarea>
+                                              </div>
 
-                                            </div>  
+                                            </div>
                                           </div>
                                       </div>
-  
+
 
                                       <div className="mb-3 row">
                                           <div className="form-group">
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Manufacturer</label>
-                                                 <input className="form-control" list="manufacturer_list" id="exampleDataList" placeholder="Type to search..."/>
-                                                    <datalist id="manufacturer_list">
-                                                        <option value="Ader Pharmachem"/>
-                                                        <option value="Qualimed Pharma"/>
-                                                        <option value="Jain Shop"/>
-                                                        <option value="jaylian Pharma"/>
-                                                        <option value="Olive Health Care"/>
-                                                    </datalist>
-                                              </div>  
-                                              <div className="col-md-3">  
+                                                  {loading1 ? <LoadingSpinner /> :<Select onChange={ changeManufacturer } options={data2} name="manufacturer_id"
+                                                 placeholder="Select Manufacturer" isClearable/>}
+                                              </div>
+                                              <div className="col-md-3">
                                                 <label>Supplier</label>
-                                                 <input className="form-control" list="supplier_list" id="exampleDataList" placeholder="Type to search..."/>
-                                                    <datalist id="supplier_list">
-                                                        <option value="Ader Pharmachem"/>
-                                                        <option value="Qualimed Pharma"/>
-                                                        <option value="Jain Shop"/>
-                                                        <option value="jaylian Pharma"/>
-                                                        <option value="Olive Health Care"/>
-                                                    </datalist>
-                                              </div>  
-                                              
-                                              <div className="col-md-2">  
+                                                  {loading1 ? <LoadingSpinner /> :<Select onChange={ changeSupplier } options={data3} name="supplier_id"
+                                                 placeholder="Select Supplier" isClearable/>}
+                                              </div>
+
+                                              <div className="col-md-2">
                                                 <label>Mfg Date</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="mfg_date"/>
-                                              </div>  
+                                                <input className="form-control" type="date" id="example-date-input" name="mfg_date" onChange={ onChange }/>
+                                              </div>
 
-                                              <div className="col-md-1">  
+                                              <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Mfg</label>
-                                                <select name="mfg_options" className="form-select">
+                                                <select name="mfg_options" className="form-select" onChange={ onChange }>
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
                                                 </select>
-                                              </div>  
+                                              </div>
 
-                                              <div className="col-md-2">  
+                                              <div className="col-md-2">
                                                 <label>Exp Date</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="exp_date"/>
-                                              </div>  
-                                              <div className="col-md-1">  
+                                                <input className="form-control" type="date" id="example-date-input" name="exp_date" onChange={ onChange }/>
+                                              </div>
+                                              <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Exp</label>
-                                                <select name="exp_options" className="form-select">
+                                                <select name="exp_options" className="form-select" onChange={ onChange }>
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
                                                 </select>
-                                              </div>    
-                                            </div>  
+                                              </div>
+                                            </div>
                                           </div>
                                       </div>
 
@@ -235,41 +624,41 @@ const AddBooking = () => {
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Date of Analysis</label>
-                                                 <input className="form-control" type="date" id="example-date-input" name="analysis_date"/>
-                                              </div>  
-                                              <div className="col-md-3">  
+                                                 <input onChange={ onChange } className="form-control" type="date" id="example-date-input" name="analysis_date"/>
+                                              </div>
+                                              <div className="col-md-3">
                                                 <label>Aum Sr. No</label>
-                                                 <input type="text" className="form-control" name="aum_sr_no" value="3145" readOnly/>
-                                                    
-                                              </div>  
-                                              
-                                              <div className="col-md-2">  
+                                                   {loading1 ? <LoadingSpinner /> :<input value={aumserialno.aum_serial_no} type="text" className="form-control" name="aum_serial_no" readOnly/>
+                                                   }
+                                              </div>
+
+                                              <div className="col-md-2">
                                                 <label>D Formate</label>
-                                                <input className="form-control" type="text" name="d_formate" placeholder="Enter D Formate"/>
-                                              </div>  
+                                                <input onChange={ onChange } className="form-control" type="text" name="d_format" placeholder="Enter D Formate"/>
+                                              </div>
 
-                                              <div className="col-md-1">  
+                                              <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Formate</label>
-                                                <select name="formate_options" className="form-select">
+                                                <select name="d_format_options" className="form-select" onChange={ onChange }>
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
                                                 </select>
-                                              </div>  
+                                              </div>
 
-                                              <div className="col-md-2">  
+                                              <div className="col-md-2">
                                                 <label>Grade</label>
-                                                <input className="form-control" type="text" name="grade" placeholder="Enter Grade"/>
-                                              </div>  
-                                              <div className="col-md-1">  
+                                                <input onChange={ onChange } className="form-control" type="text" name="grade" placeholder="Enter Grade"/>
+                                              </div>
+                                              <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Grade</label>
-                                                <select name="grade_options" className="form-select">
+                                                <select onChange={ onChange } name="grade_options" className="form-select">
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
                                                 </select>
-                                              </div>    
-                                            </div>  
+                                              </div>
+                                            </div>
                                           </div>
                                       </div>
 
@@ -277,14 +666,14 @@ const AddBooking = () => {
                                           <div className="form-group">
                                             <div className="row">
 
-                                              <div className="col-md-2">  
+                                              <div className="col-md-2">
                                                 <label>Project Name</label>
-                                                <input className="form-control" type="text" name="project_name" placeholder="Enter Project Name"/>
-                                              </div>  
+                                                <input onChange={ onChange } className="form-control" type="text" name="project_name" placeholder="Enter Project Name"/>
+                                              </div>
 
-                                              <div className="col-md-1">  
+                                              <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>ProName</label>
-                                                <select name="project_name_options" className="form-select">
+                                                <select onChange={ onChange } name="project_options" className="form-select">
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
@@ -293,27 +682,27 @@ const AddBooking = () => {
 
                                               <div className="col-md-3">
                                                 <label> Mfg. Lic. No</label>
-                                                 <input className="form-control" type="text" placeholder="Enter Mfg Lic No" name="mfg_lic_no"/>
+                                                 <input onChange={ onChange } className="form-control" type="text" placeholder="Enter Mfg Lic No" name="mfg_lic_no"/>
                                               </div>
 
-                                              <div className="col-md-3">  
+                                              <div className="col-md-3">
                                                 <label>Is Report Dispacthed?</label>
-                                                <select name="report_dispachted" className="form-select">
-                                                  <option value="No">No</option>
-                                                  <option value="Yes">Yes</option>
+                                                <select onChange={ onChange } name="is_report_dispacthed" className="form-select">
+                                                  <option value="0">No</option>
+                                                  <option value="1">Yes</option>
                                                 </select>
-                                                    
-                                              </div>  
-                                              
-                                              <div className="col-md-3">  
+
+                                              </div>
+
+                                              <div className="col-md-3">
                                                 <label>Signature?</label>
-                                                <select name="signature" className="form-select">
-                                                  <option value="No">No</option>
-                                                  <option value="Yes">Yes</option>
+                                                <select onChange={ onChange } name="signature" className="form-select">
+                                                  <option value="0">No</option>
+                                                  <option value="1">Yes</option>
                                                 </select>
-                                              </div>  
-                                                
-                                            </div>  
+                                              </div>
+
+                                            </div>
                                           </div>
                                       </div>
 
@@ -321,27 +710,27 @@ const AddBooking = () => {
                                           <div className="form-group">
                                             <div className="row">
 
-                                              <div className="col-md-2">  
+                                              <div className="col-md-2">
                                                 <label>Verified By</label>
-                                                <select name="verified_By" className="form-select">
+                                                <select onChange={ onChange } name="verified_by" className="form-select">
                                                   <option value="None">None</option>
                                                   <option value="QA">QA</option>
                                                 </select>
-                                                    
-                                              </div>  
-                                              
-                                              <div className="col-md-2">  
+
+                                              </div>
+
+                                              <div className="col-md-2">
                                                 <label>NABL Scope?</label>
-                                                <select name="nabl_scope" className="form-select">
-                                                  <option value="No">No</option>
-                                                  <option value="Yes">Yes</option>
+                                                <select onChange={ onChange } name="nabl_scope" className="form-select">
+                                                  <option value="0">No</option>
+                                                  <option value="1">Yes</option>
                                                 </select>
-                                                    
-                                              </div>  
-                                              
-                                              <div className="col-md-2">  
+
+                                              </div>
+
+                                              <div className="col-md-2">
                                                 <label>Cancel</label>
-                                                <select name="cancel" className="form-select">
+                                                <select onChange={ onChange } name="cancel" className="form-select">
                                                   <option value="None">None</option>
                                                   <option value="No">No</option>
                                                   <option value="Yes">Yes</option>
@@ -350,10 +739,10 @@ const AddBooking = () => {
 
                                               <div className="col-md-6">
                                                 <label>Cancel Remarks</label>
-                                                <textarea name="cancel_remarks" className="form-control" placeholder="Enter Cancel Remarks"></textarea>
-                                              </div>    
-                                                
-                                            </div>  
+                                                <textarea onChange={ onChange } name="cancel_remarks" className="form-control" placeholder="Enter Cancel Remarks"></textarea>
+                                              </div>
+
+                                            </div>
                                           </div>
                                       </div>
 
@@ -361,46 +750,46 @@ const AddBooking = () => {
                                           <div className="form-group">
                                             <div className="row">
 
-                                              <div className="col-md-3">  
+                                              <div className="col-md-3">
                                                 <label>Priority</label>
-                                                <select name="priority" className="form-select">
+                                                <select onChange={ onChange } name="priority" className="form-select">
                                                   <option value="High">High</option>
                                                   <option value="Medium">Medium</option>
                                                   <option value="Low">Low</option>
                                                 </select>
-                                                    
-                                              </div>  
-                                              
-                                              <div className="col-md-3">  
+
+                                              </div>
+
+                                              <div className="col-md-3">
                                                 <label>Discipline</label>
-                                                <select name="discipline" className="form-select">
+                                                <select onChange={ onChange } name="discipline" className="form-select">
                                                   <option value="Chemical">Chemical</option>
                                                   <option value="Biological">Biological</option>
                                                 </select>
-                                                    
-                                              </div>  
-                                              
-                                              <div className="col-md-3">  
+
+                                              </div>
+
+                                              <div className="col-md-3">
                                                 <label>Group</label>
-                                                <select name="group" className="form-select">
+                                                <select onChange={ onChange } name="booking_group" className="form-select">
                                                   <option value="Drugs and Pharmaceuticals">Drugs and Pharmaceuticals</option>
                                                   <option value="Food of Agriculture Product">Food of Agriculture Product</option>
                                                 </select>
                                               </div>
 
-                                              <div className="col-md-3">  
+                                              <div className="col-md-3">
                                                 <label>Statement Of Conformity</label>
-                                                <select name="priority" className="form-select">
+                                                <select onChange={ onChange } name="statement_ofconformity" className="form-select">
                                                   <option value="PASS">PASS</option>
                                                   <option value="INDETERMINATE">INDETERMINATE</option>
                                                   <option value="FAIL">FAIL</option>
                                                 </select>
-                                                    
-                                              </div>      
-                                                
-                                            </div>  
+
+                                              </div>
+
+                                            </div>
                                           </div>
-                                      </div>  
+                                      </div>
 
                                         <h5> <Alert color="danger" role="alert">
                                             <i className="fa fa-comment">&nbsp;Sample Details</i>
@@ -410,418 +799,290 @@ const AddBooking = () => {
                                         <div className="mb-3 row">
                                           <div className="form-group">
                                             <div className="row">
-                                              <div className="col-md-3">
+                                              <div className="col-md-4">
                                                 <label>Product</label>
-                                                 <div className="input-group mb-3">{/*<div className="input-group-prepend"><span className="input-group-text" id="basic-addon1"><a href="add_products.php" target="_blank"><i className="fa fa-plus-circle"></i></a></span> </div><div className="input-group-prepend"><span className="input-group-text" id="basic-addon1"><a href="#" target="_blank">Edit</a></span> </div> */} <input className="form-control" list="product_list" id="exampleDataList" placeholder="Type to search..."/>
-                                                    <datalist id="product_list">
-                                                        <option value="ORS"/>
-                                                        <option value="OLM"/>
-                                                        <option value="MOX"/>
-                                                        <option value="M & E"/>
-                                                        <option value="Joylex Plus"/>
-                                                    </datalist></div>
-                                              </div>  
-                                              <div className="col-md-1">
-                                                <label style={{visibility: 'hidden'}}>ID</label>
-                                                <input className="form-control" type="text" name="customer_id" readOnly/>
-                                              </div>  
-                                              <div className="col-md-4">  
+                                                {loading1 ? <LoadingSpinner /> :<Select options={data4} name="product_id"
+                                               placeholder="Select Product" onChange={ changeProductID } isClearable/>}
+                                              </div>
+                                              <div className="col-md-4">
                                                 <label>Generic Name</label>
-                                                <input className="form-control" type="text" name="generic_name" readOnly/>
+                                                  {loading1 ? <LoadingSpinner /> :<input className="form-control" value={bookingSamples1.generic_name} type="text" name="generic_name" readOnly/>}
                                               </div>
 
-                                              <div className="col-md-4">  
+                                              <div className="col-md-4">
                                                 <label>Product Type</label>
-                                                <select name="product_type" className="form-select">
+                                                  {loading1 ? <LoadingSpinner /> :<select name="product_type" className="form-select" onChange={ onChangeProductSamplesFromDB } value={bookingSamples1.product_type}>
                                                   <option value="Finished Product">Finished Product</option>
                                                   <option value="Raw Material">Raw Material</option>
                                                   <option value="Other">Other</option>
-                                                </select>
-                                              </div>    
+                                                </select>}
+                                              </div>
 
-                                            </div>  
+                                            </div>
                                           </div>
                                       </div>
 
                                       <div className="mb-3 row">
                                           <div className="form-group">
                                             <div className="row">
-                                              
-                                              <div className="col-md-2">  
+
+                                              <div className="col-md-2">
                                                 <label>Pharmacopiea</label>
-                                                <input className="form-control" type="text" name="pharmacopiea"/>
+                                                {loading1 ? <LoadingSpinner /> :
+                                                    <select className="form-select" value={bookingSamples1.pharmacopeia_id} id="pharmocopiea" name="pharmacopeia_id" onChange={ onChangeProductSamplesFromDB }>
+                                                        <option value="">Select Pharmocopiea</option>
+                                                            { data.map((option, key) => <option value={option.id} key={key} >
+                                                            {option.pharmacopeia_name}</option>) }
+                                                    </select>
+                                                }
                                               </div>
 
-                                              <div className="col-md-2">  
+                                              <div className="col-md-2">
                                                 <label>Batch No</label>
-                                                <input className="form-control" type="text" name="batch_no"/>
+                                                <input className="form-control" type="text" name="batch_no" onChange={ onChangeProductSamples }/>
                                               </div>
 
-                                              <div className="col-md-1">  
+                                              <div className="col-md-1">
                                                 <label>Pack Size</label>
-                                                <input className="form-control" type="text" name="pack_size"/>
+                                                <input className="form-control" type="text" name="packsize" onChange={ onChangeProductSamples }/>
                                               </div>
 
-                                              <div className="col-md-1">  
+                                              <div className="col-md-1">
                                                 <label>Req Qty</label>
-                                                <input className="form-control" type="text" name="req_qty"/>
+                                                <input className="form-control" type="text" name="request_quantity" onChange={ onChangeProductSamples }/>
                                               </div>
 
-                                              <div className="col-md-2">  
+                                              <div className="col-md-2">
                                                 <label>Sample Code</label>
-                                                <input className="form-control" type="text" name="sample_code"/>
+                                                <input className="form-control" type="text" name="sample_code" onChange={ onChangeProductSamples }/>
                                               </div>
 
-                                              <div className="col-md-4">  
+                                              <div className="col-md-4">
                                                 <label>Sample Desc</label>
-                                                <input className="form-control" type="text" name="sample_desc"/>
+                                                <input className="form-control" type="text" name="sample_description" onChange={ onChangeProductSamples }/>
                                               </div>
 
-                                            </div>  
+                                            </div>
                                           </div>
                                       </div>
 
                                       <div className="mb-3 row">
                                           <div className="form-group">
                                             <div className="row">
-                                              
-                                              <div className="col-md-3">  
+
+                                              <div className="col-md-3">
                                                 <label>Sample Qty</label>
-                                                <input className="form-control" type="text" name="sample_qty"/>
+                                                <input className="form-control" type="text" name="sample_quantity" onChange={ onChangeProductSamples }/>
                                               </div>
 
-                                              <div className="col-md-3">  
+                                              <div className="col-md-3">
                                                 <label>Sample Location</label>
-                                                <input className="form-control" type="text" name="sample_location"/>
+                                                <input className="form-control" type="text" name="sample_location"  onChange={ onChangeProductSamples }/>
                                               </div>
 
-                                              <div className="col-md-3">  
+                                              <div className="col-md-3">
                                                 <label>Sample Packaging</label>
-                                                <input className="form-control" type="text" name="sample_packaging"/>
+                                                <input className="form-control" type="text" name="sample_packaging" onChange={ onChangeProductSamples }/>
                                               </div>
 
-                                              <div className="col-md-3">  
+                                              <div className="col-md-3">
                                                 <label>Sample Type</label>
-                                                <input className="form-control" type="text" name="sample_type"/>
+                                                <input className="form-control" type="text" name="sample_type" onChange={ onChangeProductSamples }/>
                                               </div>
 
-                                              
-                                            </div>  
+
+                                            </div>
                                           </div>
                                       </div>
 
                                       <div className="mb-3 row">
                                           <div className="form-group">
                                             <div className="row">
-                                              
-                                              <div className="col-md-2">  
+
+                                              <div className="col-md-2">
                                                 <label>Sampling Date From</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="sampling_date_from"/>
-                                              </div>  
+                                                <input className="form-control" type="date" id="example-date-input" name="sampling_date_from" onChange={ onChangeProductSamples }/>
+                                              </div>
 
-                                              <div className="col-md-1">  
+                                              <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>SamplingFrom</label>
-                                                <select name="sampling_date_from_options" className="form-select">
+                                                <select name="sampling_date_from_options" className="form-select" onChange={ onChangeProductSamples }>
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
                                                 </select>
-                                              </div>  
+                                              </div>
 
-                                              <div className="col-md-2">  
+                                              <div className="col-md-2">
                                                 <label>Sampling Date To</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="sampling_date_to"/>
-                                              </div>  
-                                              <div className="col-md-1">  
+                                                <input className="form-control" type="date" id="example-date-input" name="sampling_date_to" onChange={ onChangeProductSamples }/>
+                                              </div>
+                                              <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Sampling To</label>
-                                                <select name="sampling_date_to_options" className="form-select">
+                                                <select name="sampling_date_to_options" className="form-select" onChange={ onChangeProductSamples }>
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
                                                 </select>
-                                              </div>    
+                                              </div>
 
-                                              <div className="col-md-2">  
+                                              <div className="col-md-2">
                                                 <label>Sample Received Through</label>
-                                                <select name="sample_received_through" className="form-select">
+                                                <select name="sample_received_through" className="form-select" onChange={ onChangeProductSamples }>
                                                   <option value="By Courier">By Courier</option>
                                                   <option value="By Hand">By Hand</option>
                                                   <option value="By Collection">By Collection</option>
                                                 </select>
-                                              </div>  
+                                              </div>
 
-                                              <div className="col-md-1">  
+                                              <div className="col-md-1">
                                                 <label>Chemist</label>
-                                                <select name="chemist" className="form-select">
-                                                  <option value="Yes">Yes</option>
+                                                <select name="chemist" className="form-select" onChange={ onChangeProductSamples }>
+                                                  <option value="1">Yes</option>
                                                 </select>
-                                              </div>  
+                                              </div>
 
-                                              <div className="col-md-2">  
+                                              <div className="col-md-2">
                                                 <label>Sample Condition</label>
-                                                <input className="form-control" type="text" name="sample_condition" value="Secured seal with label"/>
-                                              </div>  
+                                                <input className="form-control" type="text" name="sample_condition" placeholder="Enter Sample Condition" onChange={ onChangeProductSamples }/>
+                                              </div>
 
-                                              <div className="col-md-1">  
+                                              <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>sampleconoption</label>
-                                                <select name="sample_condition_options" className="form-select">
-                                                  <option value="No">No</option>
-                                                  <option value="Yes">Yes</option>
+                                                <select name="is_sample_condition" className="form-select" onChange={ onChangeProductSamples }>
+                                                  <option value="0">No</option>
+                                                  <option value="1">Yes</option>
                                                 </select>
-                                              </div>  
+                                              </div>
 
-                                            </div>  
+                                            </div>
                                           </div>
                                       </div>
 
                                       <div className="mb-3 row">
                                           <div className="form-group">
                                             <div className="row">
-                                              
-                                              <div className="col-md-2">  
+
+                                              <div className="col-md-2">
                                                 <label>Batch Size/ Qty Received</label>
-                                                <input className="form-control" type="text" name="batch_size"/>
+                                                <input className="form-control" type="text" name="batch_size_qty_rec" onChange={ onChangeProductSamples }/>
                                               </div>
 
-                                              <div className="col-md-7">  
+                                              <div className="col-md-7">
                                                 <label>Notes</label>
-                                                <input className="form-control" type="text" name="notes" value="* Marking test analysis are  not under  NABL scope"/>
+                                                <input className="form-control" type="text" name="notes" placeholder="Enter Note" onChange={ onChangeProductSamples }/>
                                               </div>
 
-                                              <div className="col-md-3">  
+                                              <div className="col-md-3">
                                                 <label>Sample Drawn By</label>
-                                                <input className="form-control" type="text" name="sample_drawn_by"/>
+                                                <input className="form-control" type="text" name="sample_drawn_by" onChange={ onChangeProductSamples }/>
                                               </div>
-                                              
-                                            </div>  
+
+                                            </div>
                                           </div>
-                                      </div> 
+                                      </div>
 
 {/*Test Section Start*/}
                                       <h5> <Alert color="success" role="alert">
                                         <i className="fa fa-comment">&nbsp;Tests</i>
                                       </Alert></h5>
-                                      <div data-repeater-list="group-a" id="form-first-repeater">
-                                        <div data-repeater-item className="mb-3 row">
+
+              {testData.map((x, i) => (
+                <React.Fragment key={x}>
+                        <div className="mb-3 row">
                                                 <div className="form-group">
                                                     <div className="row">
                                                          <div className="table-responsive">
                                                             <Table className="table mb-0 border">
-                                                              <thead className="table-light">
+                                                            <thead className="table-light">
                                                                 <tr>
-                                                                    {/*<th></th>
-                                                                    <th><input type="checkbox"/></th>*/}
-                                                                    <th>Parent Child</th>
-                                                                    <th>P Sr No</th>
-                                                                    <th>By Pass</th>
-                                                                    <th>Parent</th>
-                                                                    <th>Product Details</th>
-                                                                    <th>Test Name</th>
-                                                                    <th>Label Claim</th>
-                                                                    <th>Min.Limit</th>
-                                                                    <th>Max.Limit</th>
-                                                                    <th>Amount</th>
-                                                                    <th style={{textAlign:'center'}}><i className="fa fa-trash"></i></th>
+                                                                <th>Parent Child</th>
+                                                                <th>P Sr No</th>
+                                                                <th>By Pass</th>
+                                                                <th>Parent</th>
+                                                                <th>Product Details</th>
+                                                                <th>Test Name</th>
+                                                                <th>Label Claim</th>
+                                                                <th>Min.Limit</th>
+                                                                <th>Max.Limit</th>
+                                                                <th>Amount</th>
+                                                                <th style={{textAlign:'center'}}><i className="fa fa-trash"></i></th>
                                                                 </tr>
-                                                                </thead>
+                                                            </thead>
                                                                 <tbody>
                                                                 <tr>
                                                                     {/*<td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
                                                                     <td><input type="checkbox"/></td>*/}
-                                                                    <td><select style={my_style}  name="parent_child" className="form-select">
+                                                                    <td><select name="parent_child" onChange={e => handleInputChange(e, i)} style={my_style} className="form-select">
                                                                       <option value="Parent">Parent</option>
                                                                       <option value="Child">Child</option>
                                                                     </select></td>
-                                                                    <td><input type="text" name="p_sr_no" className="form-control"/></td>
-                                                                    <td><select style={my_style} className="form-select" name="by_pass"><option value="No">No</option><option value="Yes">Yes</option></select></td>
-                                                                    <td><select style={my_style} name="parent" className="form-select">
-                                                                    <option value="None" selected="selected">None</option>
-                                                                <option value="Related">Related</option>
-                                                                <option value="Assay">Assay</option>
-                                                                <option value="*" style={{fontSize : "20px !important"}}>*</option>
-                                                                
-                                                                  <option value="By KFR">By KFR</option>
-                                                                  
-                                                                  <option value="By  IC">By  IC</option>
-                                                                  
-                                                                  <option value="By ELSD DETECTOR">By ELSD DETECTOR</option>
-                                                                  
-                                                                  <option value="By FLD DETECTOR">By FLD DETECTOR</option>
-                                                                  
-                                                                  <option value="By GCMS">By GCMS</option>
-                                                                  
-                                                                  <option value="By RID DETECTOR">By RID DETECTOR</option>
-                                                                  
-                                                                  <option value="By ICPMS">By ICPMS</option>
-                                                                  
-                                                                  <option value="By GC">By GC</option>
-                                                                  
-                                                                  <option value="By MPAES">By MPAES</option>
-                                                                  
-                                                                  <option value="By UV">By UV</option>
-                                                                  
-                                                                  <option value="By HPLC">By HPLC</option>
-                                                                  
-                                                                  <option value="By I.R.">By I.R.</option>
-                                                                  
-                                                                  <option value="BY CHEMICAL">BY CHEMICAL</option>
-                                                                  
-                                                                  <option value="By Microbiological Assay">By Microbiological Assay</option>
-                                                                  
-                                                                  <option value="By Potentiometric Titration">By Potentiometric Titration</option>
-                                                                  
-                                                                  <option value="By RT">By RT</option>
-                                                                  
-                                                                  <option value="BY TLC">BY TLC</option>
-                                                                  
-                                                                  <option value="By Titration">By Titration</option>
-                                                                  
-                                                                  <option value="By microbiology">By microbiology</option>
-                                                                  
-                                                                  <option value="By AES">By AES</option></select></td>
-
-                                                                  <td><textarea name="product_detail" className="form-control" style={{width:'120px !important'}}></textarea></td>
-
-                                                                    <td><input className="form-control" name="test_name" style={{width:'150px !important'}}/>
-                                                                    </td>
-                                                                    <td><input type="text" name="label_claim" className="form-control"/></td>
-                                                                     <td><input type="text" name="min_limit"  className="form-control"/></td>
-                                                                    <td><input type="text" name="max_limit" className="form-control"/></td>
-                                                                     <td><input type="text" name="amount"  className="form-control"/></td>
-                                                                   
-                                                                    <td>
-                                                                      <input data-repeater-delete type="button" className="btn btn-primary" onClick={e => {
-                                                                      handleRemoveRow2(e, id)
-                                                                      }} value="Delete" />
-                                                                    </td>
-                                                                </tr>
-
-                                                              </tbody>    
-                                                            </Table> 
-                                                        
-                                                    </div>  
-                                                </div>
-                                            </div>
-                                          </div>
-                                        </div> 
-
-              {rows2.map((item2, idx) => (
-                <React.Fragment key={idx}>
-                    <div data-repeater-list="group-a" id={"addre" + idx}>
-                        <div data-repeater-item className="mb-3 row">
-                                                <div className="form-group">
-                                                    <div className="row">
-                                                         <div className="table-responsive">
-                                                            <Table className="table mb-0 border">
-                                                             
-                                                                <tbody>
-                                                                <tr>
-                                                                    {/*<td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
-                                                                    <td><input type="checkbox"/></td>*/}
-                                                                    <td><select name="parent_child" style={my_style} className="form-select">
-                                                                      <option value="Parent">Parent</option>
-                                                                      <option value="Child">Child</option>
+                                                                    <td><input type="text" onChange={e => handleInputChange(e, i)} name="p_sr_no" className="form-control"/></td>
+                                                                    <td><select value={x.by_pass} onChange={e => handleInputChange(e, i)} style={my_style} className="form-select" name="by_pass"><option value="2">No</option><option value="1">Yes</option></select></td>
+                                                                    <td><select value={x.parent} onChange={e => handleInputChange(e, i)} name="parent" className="form-select" style={{width:'100px !important'}}>
+                                                                        <option value="">Select Parent</option>
+                                                                         { data5.map((option, key) => <option value={option.id} key={key} >
+                                                                         {option.parent_name}</option>) }
                                                                     </select></td>
-                                                                    <td><input type="text" name="p_sr_no" className="form-control"/></td>
-                                                                    <td><select style={my_style} className="form-select" name="by_pass"><option value="No">No</option><option value="Yes">Yes</option></select></td>
-                                                                    <td><select name="parent"  style={my_style} className="form-select">
-                                                                    <option value="None" selected="selected">None</option>
-                                                                <option value="Related">Related</option>
-                                                                <option value="Assay">Assay</option>
-                                                                <option value="*" style={{fontSize : "20px !important"}}>*</option>
-                                                                
-                                                                  <option value="By KFR">By KFR</option>
-                                                                  
-                                                                  <option value="By  IC">By  IC</option>
-                                                                  
-                                                                  <option value="By ELSD DETECTOR">By ELSD DETECTOR</option>
-                                                                  
-                                                                  <option value="By FLD DETECTOR">By FLD DETECTOR</option>
-                                                                  
-                                                                  <option value="By GCMS">By GCMS</option>
-                                                                  
-                                                                  <option value="By RID DETECTOR">By RID DETECTOR</option>
-                                                                  
-                                                                  <option value="By ICPMS">By ICPMS</option>
-                                                                  
-                                                                  <option value="By GC">By GC</option>
-                                                                  
-                                                                  <option value="By MPAES">By MPAES</option>
-                                                                  
-                                                                  <option value="By UV">By UV</option>
-                                                                  
-                                                                  <option value="By HPLC">By HPLC</option>
-                                                                  
-                                                                  <option value="By I.R.">By I.R.</option>
-                                                                  
-                                                                  <option value="BY CHEMICAL">BY CHEMICAL</option>
-                                                                  
-                                                                  <option value="By Microbiological Assay">By Microbiological Assay</option>
-                                                                  
-                                                                  <option value="By Potentiometric Titration">By Potentiometric Titration</option>
-                                                                  
-                                                                  <option value="By RT">By RT</option>
-                                                                  
-                                                                  <option value="BY TLC">BY TLC</option>
-                                                                  
-                                                                  <option value="By Titration">By Titration</option>
-                                                                  
-                                                                  <option value="By microbiology">By microbiology</option>
-                                                                  
-                                                                  <option value="By AES">By AES</option></select></td>
 
-                                                                  <td><textarea name="product_detail" className="form-control" style={{width:'120px !important'}}></textarea></td>
+                                                                  <td><textarea name="product_details" onChange={e => handleInputChange(e, i)} className="form-control" style={{width:'120px !important'}} value={x.product_details}></textarea></td>
 
-                                                                    <td><input className="form-control" name="test_name" style={{width:'150px !important'}}/>
+                                                                    <td><input value={x.test_name} className="form-control" onChange={e => handleInputChange(e, i)} name="test_name" style={{width:'150px !important'}}/>
                                                                     </td>
-                                                                    <td><input type="text" name="label_claim" className="form-control"/></td>
-                                                                     <td><input type="text" name="min_limit"  className="form-control"/></td>
-                                                                    <td><input type="text" name="max_limit" className="form-control"/></td>
-                                                                     <td><input type="text" name="amount"  className="form-control"/></td>
-                                                                   
-                                                                    <td>
-                                                                      <input data-repeater-delete type="button" className="btn btn-primary" onClick={e => {
-                                                                        handleRemoveRow1(e, idx)
-                                                                      }} value="Delete" />
-                                                                    </td>
+                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     <td><input value={x.min_limit} type="text" name="min_limit"  onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.max_limit} type="text" name="max_limit" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     <td><input value={x.amount} type="text" name="amount"  onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+
+                                                                     <td>{testData.length >= 1 && <button
+                                                                                       className="mr10"
+                                                                                       onClick={() => handleRemoveClick(i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}</td>
                                                                 </tr>
 
-                                                              </tbody>    
+                                                              </tbody>
                                                             </Table>
-                                                        
-                                                    </div>  
+
+                                                    </div>
                                                 </div>
                                             </div>
-                        
-            </div>
-        </div>
-    </React.Fragment>
-                    ))}    
 
-                    <div className="mb-3 row">
-                                            <div className="form-group">
-                                                <div className="row">
-                                                   <center> 
-                                                        <div className="col-md-2">
-                                                        
-                                                            <input data-repeater-create type="button" onClick={() => {
-                                                            handleAddRowNested1()
-                                                            }} className="btn btn-success mt-3 mt-lg-0" value="Add More" />
-                                                            {/*<button name="add_more" type="button" className="btn btn-primary form-control">Add More</button>*/}
-                                                        </div>
-                                                    </center>
-                                                 </div>
-                                            </div>
-                                        </div>   
+        </div>
+        <div className="mb-3 row">
+                               <div className="form-group">
+                                   <div className="row">
+                                      <center>
+                                           <div className="col-md-2">
+
+                                              {testData.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
+                                           </div>
+                                       </center>
+                                    </div>
+                               </div>
+                           </div>
+    </React.Fragment>
+       ))}
+       <div className="mb-3 row">
+           <div className="form-group">
+               <div className="row">
+                  <center>
+                       <div className="col-md-2">
+
+                       {testData.length === 0 && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
+
+                       </div>
+                   </center>
+                </div>
+           </div>
+       </div>
 
 {/*Test Section End*/}
 
-                   
+
                 </CardBody>
               </Card>
             </Col>
           </Row>
-
+        </Form>
         </Container>
       </div>
     </React.Fragment>

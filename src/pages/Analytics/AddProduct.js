@@ -211,7 +211,6 @@ const InsertProduct = (e)=>{
         {setLoading(true)};
 
           var final_generic_product_id = genericProduct;
-          console.log(genericProduct)
          if(typeof genericProduct == "number"){
            final_generic_product_id = genericProduct.generic_name
          } else if(typeof genericProduct == "object"){
@@ -238,7 +237,7 @@ const InsertProduct = (e)=>{
             "sample_details": sample_details,
 
         }
-        console.log(data)
+
         axios.post( `${process.env.REACT_APP_BASE_APIURL}addProduct`, data, {headers} )
 
                 .then(response => {
@@ -437,7 +436,7 @@ const InsertProduct = (e)=>{
                                                         <td class="col-1"><Input value={x.nabl} onChange={e => handleInputChange(e, i)} type="text" name="nabl" className="form-control"/></td>
                                                     <td class="col-1"><Input value={x.formula} onChange={e => handleInputChange(e, i)} type="text" name="formula" className="form-control"/></td>
 
-                                        <td>{inputList.length !== 1 && <button
+                                        <td>{inputList.length >= 1 && <button
                                                           className="mr10"
                                                           onClick={() => handleRemoveClick(i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}</td>
                                     </tr>
@@ -464,7 +463,19 @@ const InsertProduct = (e)=>{
                                         </div>
     </React.Fragment>
                     ))}
+                    <div className="mb-3 row">
+                        <div className="form-group">
+                            <div className="row">
+                               <center>
+                                    <div className="col-md-2">
 
+                                    {inputList.length === 0 && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
+
+                                    </div>
+                                </center>
+                             </div>
+                        </div>
+                    </div>
 
                 </CardBody>
               </Card>

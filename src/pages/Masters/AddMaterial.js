@@ -27,26 +27,26 @@ import PropTypes from 'prop-types';
 import LoadingSpinner from '../../components/LoadingSpinner';
 
 
-function AddMaterial(props) { 
+function AddMaterial(props) {
  const headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
-  const [data, setData] = useState([]); 
-  const [data1, setData1] = useState([]); 
-  const [data2, setData2] = useState([]); 
-  const [unit, setUnitData] = useState([]); 
+  const [data, setData] = useState([]);
+  const [data1, setData1] = useState([]);
+  const [data2, setData2] = useState([]);
+  const [unit, setUnitData] = useState([]);
   const [material, setmaterial] = useState({ material_type: 'Solid', material_name: '',material_purchase_rate:'',material_code:'',
   category_id : '',sub_category_id:'',sub_sub_category_id:'',material_rate:'',material_amount:'',material_qty:'',mst_units_id:'',
-  material_use_before_date:'',material_case_number:''});  
-useEffect(() => {  
+  material_use_before_date:'',material_case_number:''});
+useEffect(() => {
 
     ParentCategoryList();
-    UnitList();     
-        }, []); 
+    UnitList();
+        }, []);
 
 const ParentCategoryList = ()=>{
 
@@ -54,11 +54,11 @@ const ParentCategoryList = ()=>{
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listParentCategory`,{headers})
             .then(response => {
                      setData(response.data.data);
-                     {setLoading1(false)} 
+                     {setLoading1(false)}
                })
               .catch((error) => {
                   //toastr.error(error.response.data.message);
-                   {setLoading1(false)}   
+                   {setLoading1(false)}
               })
 }
 
@@ -68,11 +68,11 @@ const UnitList = ()=>{
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listUnit?is_dropdown=1`,{headers})
             .then(response => {
                      setUnitData(response.data.data);
-                     {setLoading1(false)} 
+                     {setLoading1(false)}
                })
               .catch((error) => {
                   toastr.error(error.response.data.message);
-                  {setLoading1(false)}    
+                  {setLoading1(false)}
               })
 }
 
@@ -90,7 +90,7 @@ const getSubCategory = ()=>{
                    })
                   .catch((error) => {
                     console.log(error);
-                      toastr.error(error.response.data.message);   
+                      toastr.error(error.response.data.message);
                   })
                 }
     }
@@ -105,7 +105,7 @@ const getSubCategory = ()=>{
                })
               .catch((error) => {
                   //console.log(error);
-                  toastr.error(error.response.data.message);   
+                  toastr.error(error.response.data.message);
               })
           }
 
@@ -123,34 +123,34 @@ const InsertMaterial = (e)=>{
         material_amount: material.material_amount,material_qty: material.material_qty,
         mst_units_id: material.mst_units_id,material_use_before_date: material.material_use_before_date,
         material_case_number: material.material_case_number
-        }; 
+        };
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addMaterial`, data, {headers} )
 
                 .then(response => {
                     if(response.data.success == true){
                         props.history.push('/material');
                         toastr.success(response.data.message);
-                        {setLoading(false)}; 
+                        {setLoading(false)};
                     }else{
                         props.history.push('/add-material');
                         toastr.error(response.data.message);
-                        {setLoading(false)};   
+                        {setLoading(false)};
                     }
                 })
                 .catch((error) => {
                  {setLoading(false)};
                  toastr.error(error.response.data.message);
                 })
-     
+
       }
 
-const ResetMaterial = () => { 
+const ResetMaterial = () => {
   document.getElementById("AddMaterial").reset();
 }
 
-const onChange = (e) => {  
-        e.persist();  
-        setmaterial({...material, [e.target.name]: e.target.value});  
+const onChange = (e) => {
+        e.persist();
+        setmaterial({...material, [e.target.name]: e.target.value});
 
         var category_id = document.getElementById("category_id").value;
 
@@ -161,7 +161,7 @@ const onChange = (e) => {
                          setData1(response.data.data);
                    })
                   .catch((error) => {
-                      toastr.error(error.response.data.message);   
+                      toastr.error(error.response.data.message);
                   })
 
         }
@@ -175,12 +175,12 @@ const onChange = (e) => {
                      setData2(response.data.data);
                })
               .catch((error) => {
-                  toastr.error(error.response.data.message);   
+                  toastr.error(error.response.data.message);
               })
           }
 
-  } 
-  
+  }
+
 
 return(
     <React.Fragment>
@@ -230,19 +230,19 @@ return(
                                                             <option value="Liquid">Liquid</option>
                                                             <option value="Other">Other</option>
                                                         </select>
-                                                    </div>  
-                                                    <div className="col-md-4">  
+                                                    </div>
+                                                    <div className="col-md-4">
                                                         <label>Material Name</label>
                                                         <input className="form-control" type="text" name="material_name" placeholder="Enter Material Name" onChange={ onChange }/>
-                                                    </div>  
+                                                    </div>
 
-                                                    <div className="col-md-4">  
+                                                    <div className="col-md-4">
                                                         <label>Purchase Rate</label>
                                                         <input className="form-control" type="text" name="material_purchase_rate" placeholder="Enter Purchase Rate" onChange={ onChange }/>
-                                                    </div>  
-                                                </div>  
-                                            </div>  
-                                        </div>    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <div className="mb-3 row">
                                             <div className="form-group">
@@ -250,34 +250,34 @@ return(
                                                     <div className="col-md-3">
                                                         <label>Code</label>
                                                         <input className="form-control" type="text" name="material_code" placeholder="Enter Material Code" onChange={ onChange }/>
-                                                    </div>  
-                                                    <div className="col-md-3">  
+                                                    </div>
+                                                    <div className="col-md-3">
                                                         <label>Category</label> {/*Need to fetch dynamically According to category selection sub category will displayed*/}
                                                        <select className="form-select" id="category_id"  name="category_id" onChange={onChange} onChange={getSubCategory}>
                                                              <option value="">Select Category</option>
                                                             { data.map((option, key) => <option value={option.id} key={key} >{option.category_name}</option>) }
-                                                            
+
                                                          </select>
-                                                    </div>  
+                                                    </div>
                                                     <div className="col-md-3">
                                                         <label>Sub Category</label>{/*Need to fetch dynamically According to sub category selection sub sub category will displayed*/}
-                                                      
-                                                         <select className="form-select" id="sub_category_id" name="sub_category_id" onChange={ onChange } onChange={getSubSubCategory}> 
+
+                                                         <select className="form-select" id="sub_category_id" name="sub_category_id" onChange={ onChange } onChange={getSubSubCategory}>
                                                              <option value="">Select Sub Category</option>
                                                             { data1.map((option, key) => <option value={option.id} key={key} >{option.category_name}</option>) }
-                                                            
-                                                         </select> 
 
-                                                    </div>  
-                                                    <div className="col-md-3">  
+                                                         </select>
+
+                                                    </div>
+                                                    <div className="col-md-3">
                                                         <label>Sub Sub Category</label>{/*Need to fetch dynamically*/}
                                                         <select className="form-select" id="sub_sub_category_id" name="sub_sub_category_id" onChange={ onChange }>
                                                              <option value="">Select Sub Sub Category</option>
                                                             { data2.map((option, key) => <option value={option.id} key={key} >{option.category_name}</option>) }
-                                                            
+
                                                          </select>
-                                                    </div>      
-                                                </div>  
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -287,50 +287,50 @@ return(
                                                     <div className="col-md-4">
                                                         <label>Rate</label>
                                                         <input className="form-control" type="text" name="material_rate" placeholder="Enter Rate" onChange={ onChange }/>
-                                                    </div>  
-                                                    <div className="col-md-4">  
+                                                    </div>
+                                                    <div className="col-md-4">
                                                         <label>Amount</label>
                                                         <input className="form-control" type="text" name="material_amount" placeholder="Enter Amount" onChange={ onChange }/>
-                                                    </div>      
+                                                    </div>
 
-                                                    <div className="col-md-4">  
+                                                    <div className="col-md-4">
                                                         <label>Qty</label>
                                                         <input className="form-control" type="text" name="material_qty" placeholder="Enter Qty" onChange={ onChange }/>
-                                                    </div>  
-                                                </div>  
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
-                                      
+
                                         <div className="mb-3 row">
                                             <div className="form-group">
-                                                <div className="row">   
+                                                <div className="row">
 
-                                                    <div className="col-md-4">  
+                                                    <div className="col-md-4">
                                                         <label>Unit</label>
                                                        {loading1 ? <LoadingSpinner /> : <select className="form-select" name="mst_units_id" onChange={ onChange }>
                                                              <option value="">Select Unit</option>
                                                             { unit.map((option, key) => <option value={option.id} key={key} >{option.unit_name}</option>) }
-                                                            
+
                                                          </select>}
                                                     </div>
 
-                                                    <div className="col-md-4">  
+                                                    <div className="col-md-4">
                                                         <label>Use Before Date</label>
                                                         <input className="form-control" type="date" name="material_use_before_date" onChange={ onChange }/>
                                                     </div>
 
-                                                    <div className="col-md-4">  
+                                                    <div className="col-md-4">
                                                         <label>Case Number</label>
                                                         <input className="form-control" type="text" name="material_case_number" placeholder="Enter Case Number" onChange={ onChange }/>
                                                     </div>
 
 
 
-                                                </div>  
+                                                </div>
                                             </div>
                                         </div>
-                                      
+
                 </CardBody>
               </Card>
             </Col>
