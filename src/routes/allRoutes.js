@@ -95,6 +95,8 @@ import ExportProductAsHTML from "../pages/Analytics/ExportProductAsHTML"
 //Booking
 import ListBooking from "../pages/Analytics/ListBooking"
 import AddBooking from "../pages/Analytics/AddBooking"
+import EditBooking from "../pages/Analytics/EditBooking"
+import ViewBooking from "../pages/Analytics/ViewBooking"
 
 
 const userRoutes = [
@@ -143,6 +145,9 @@ const authRoutes = [
     { path: "/booking", component: ListBooking},
     { path: "/all-booking", component: ListBooking},
     { path: "/add-booking", component: AddBooking},
+    { path: "/edit-booking", component: EditBooking},
+    { path: "/view-booking", component: ViewBooking},
+
     { path: "/branch", component:ListBranch},
     { path: "/all-branch", component:ListBranch},
     { path: "/add-branch", component:AddBranch},

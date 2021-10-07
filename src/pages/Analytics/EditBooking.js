@@ -27,11 +27,16 @@ import { ToastContainer} from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import Select from 'react-select';
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
-function AddBooking(props)  {
+function EditBooking(props)  {
         const headers = {
               'Authorization' : "Bearer "+localStorage.getItem('token')
             }
+
+const url = window.location.href
+const booking_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
+const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
@@ -1122,4 +1127,4 @@ function AddBooking(props)  {
   )
 }
 
-export default AddBooking
+export default EditBooking
