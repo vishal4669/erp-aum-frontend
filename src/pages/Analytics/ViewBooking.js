@@ -42,22 +42,24 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
 
-  const[product,setProduct] = useState({product_id:''})
+  const [customer,setCustomer] = useState({company_name:''})
+  const [manufacturer,setManufacturer] = useState({company_name:''})
+  const [supplier,setSupplier] = useState({company_name:''})
+  const [product,setProduct] = useState({product_name:''})
+  const [pharmacopeia,setPharmacopeia] = useState({pharmacopeia_name:''})
 
     const [booking, setBooking] = useState({booking_type:'',report_type:'',receipte_date:'',booking_no:'',
       booking_no: '',reference_no:'',remarks:'',mfg_date:'',mfg_options:'',exp_date:'',exp_options:'',
       analysis_date:'',aum_serial_no:'',d_format:'',d_format_options:'',grade: '',grade_options:'',project_name:'',
       project_options:'',mfg_lic_no:'',is_report_dispacthed:'',signature:'',verified_by:'',nabl_scope: '',
-      cancel:'',cancel_remarks:'',priority:'',discipline:'',booking_group:'',statement_ofconformity:'',company_name:'',
+      cancel:'',cancel_remarks:'',priority:'',discipline:'',booking_group:'',statement_ofconformity:'',
       manufacturer_name:'',supplier_name:''});
 
-    const [bookingSamples, setBookingSamples] = useState({batch_no:'',
+    const [bookingSamples, setBookingSamples] = useState({product_type:'',batch_no:'',
     packsize:'',request_quantity:'',sample_code:'',sample_description:'',sample_quantity:'',sample_location:'',
-    sample_packaging:'',sample_type:'',sampling_date_from:'',sampling_date_from_options:'N/S',
-    sampling_date_to:'',sampling_date_to_options:'N/S',sample_received_through:'By Courier',chemist:'1',sample_condition:'',
-    is_sample_condition:'0',batch_size_qty_rec:'',notes:'',sample_drawn_by:''});
-
-    const [bookingSamples1, setBookingSamples1] = useState({generic_name:'',product_type:'',pharmacopeia_id:''});
+    sample_packaging:'',sample_type:'',sampling_date_from:'',sampling_date_from_options:'',
+    sampling_date_to:'',sampling_date_to_options:'',sample_received_through:'',chemist:'',sample_condition:'',
+    is_sample_condition:'',batch_size_qty_rec:'',notes:'',sample_drawn_by:''});
 
       const[testData,setTestData] = useState([{parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
       test_name:'',label_claim:'',min_limit:'',max_limit:'',amount:''}])
@@ -71,20 +73,26 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
 
     }
 
-                        const GetBookingData=()=>{
-                                {setLoading1(true)}
-                                  axios.get(`${process.env.REACT_APP_BASE_APIURL}getBooking/`+booking_id,{headers})
-                                      .then(response => {
-                                          setBooking(response.data.data);
-                                          {setLoading1(false)};
+const GetBookingData=()=>{
+      {setLoading1(true)}
+        axios.get(`${process.env.REACT_APP_BASE_APIURL}getBooking/`+booking_id,{headers})
+            .then(response => {
+                setBooking(response.data.data);
+                setCustomer(response.data.data.customer_id)
+                setManufacturer(response.data.data.manufacturer_id)
+                setSupplier(response.data.data.supplier_id)
+                setProduct(response.data.data.samples[0].product_id)
+                setPharmacopeia(response.data.data.samples[0].pharmacopiea_id)
+                setBookingSamples(response.data.data.samples[0])
+                {setLoading1(false)};
 
-                                      })
-                                      .catch((error) => {
-                                          {setLoading1(false)}
-                                          toastr.error(error.response.data.message);
-                                          this.setState({loading: false});
-                                      })
-                                }
+            })
+            .catch((error) => {
+                {setLoading1(false)}
+                toastr.error(error.response.data.message);
+                this.setState({loading: false});
+            })
+      }
   return (
     <React.Fragment>
       <HorizontalLayout/>
@@ -147,7 +155,7 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Customer</label>
-                                                  <input className="form-control" type="text"  readOnly/>
+                                                  <input className="form-control" value={customer.company_name} type="text"  readOnly/>
                                                </div>
 
                                               <div className="col-md-4">
@@ -157,7 +165,7 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
 
                                               <div className="col-md-5">
                                                 <label>Remarks</label>
-                                                <textarea name="remarks" className="form-control" placeholder="Enter Remarks" ></textarea>
+                                                <textarea name="remarks" className="form-control" value={booking.remarks} readOnly></textarea>
                                               </div>
 
                                             </div>
@@ -170,40 +178,30 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Manufacturer</label>
-                                                  {loading1 ? <LoadingSpinner /> :<Select name="manufacturer_id"
-                                                 placeholder="Select Manufacturer" isClearable/>}
+                                                  <input className="form-control" value={manufacturer.company_name} type="text"  readOnly/>
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Supplier</label>
-                                                  {loading1 ? <LoadingSpinner /> :<Select name="supplier_id"
-                                                 placeholder="Select Supplier" isClearable/>}
+                                                  <input className="form-control" value={supplier.company_name} type="text"  readOnly/>
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>Mfg Date</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="mfg_date" />
+                                                <input className="form-control" type="text" value={booking.mfg_date} readOnly/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Mfg</label>
-                                                <select name="mfg_options" className="form-select" >
-                                                  <option value="N/S">N/S</option>
-                                                  <option value="None">None</option>
-                                                  <option value="N/A">N/A</option>
-                                                </select>
+                                                <input className="form-control" type="text" value={booking.mfg_options} readOnly/>
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>Exp Date</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="exp_date" />
+                                                <input className="form-control" type="text" value={booking.exp_date} readOnly/>
                                               </div>
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Exp</label>
-                                                <select name="exp_options" className="form-select" >
-                                                  <option value="N/S">N/S</option>
-                                                  <option value="None">None</option>
-                                                  <option value="N/A">N/A</option>
-                                                </select>
+                                                <input className="form-control" type="text" value={booking.exp_options} readOnly/>
                                               </div>
                                             </div>
                                           </div>
@@ -214,39 +212,30 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Date of Analysis</label>
-                                                 <input  className="form-control" type="date" id="example-date-input" name="analysis_date"/>
+                                                 <input className="form-control" type="text" value={booking.analysis_date} readOnly/>
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Aum Sr. No</label>
-                                                   {loading1 ? <LoadingSpinner /> :<input type="text" className="form-control" name="aum_serial_no" readOnly/>
-                                                   }
+                                                <input className="form-control" type="text" value={booking.aum_serial_no} readOnly/>
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>D Formate</label>
-                                                <input  className="form-control" type="text" name="d_format" placeholder="Enter D Formate"/>
+                                                  <input className="form-control" type="text" value={booking.d_format} readOnly/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Formate</label>
-                                                <select name="d_format_options" className="form-select" >
-                                                  <option value="N/S">N/S</option>
-                                                  <option value="None">None</option>
-                                                  <option value="N/A">N/A</option>
-                                                </select>
+                                                  <input className="form-control" type="text" value={booking.d_format_options} readOnly/>
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>Grade</label>
-                                                <input  className="form-control" type="text" name="grade" placeholder="Enter Grade"/>
+                                                <input className="form-control" type="text" value={booking.grade} readOnly/>
                                               </div>
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Grade</label>
-                                                <select  name="grade_options" className="form-select">
-                                                  <option value="N/S">N/S</option>
-                                                  <option value="None">None</option>
-                                                  <option value="N/A">N/A</option>
-                                                </select>
+                                                <input className="form-control" type="text" value={booking.grade_options} readOnly/>
                                               </div>
                                             </div>
                                           </div>
@@ -258,38 +247,37 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
 
                                               <div className="col-md-2">
                                                 <label>Project Name</label>
-                                                <input  className="form-control" type="text" name="project_name" placeholder="Enter Project Name"/>
+                                                <input className="form-control" type="text" value={booking.project_name} readOnly/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>ProName</label>
-                                                <select  name="project_options" className="form-select">
-                                                  <option value="N/S">N/S</option>
-                                                  <option value="None">None</option>
-                                                  <option value="N/A">N/A</option>
-                                                </select>
+                                                <input className="form-control" type="text" value={booking.project_options} readOnly/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label> Mfg. Lic. No</label>
-                                                 <input  className="form-control" type="text" placeholder="Enter Mfg Lic No" name="mfg_lic_no"/>
+                                                 <input className="form-control" type="text" value={booking.mfg_lic_no} readOnly/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Is Report Dispacthed?</label>
-                                                <select  name="is_report_dispacthed" className="form-select">
-                                                  <option value="0">No</option>
-                                                  <option value="1">Yes</option>
-                                                </select>
+                                                {booking.is_report_dispacthed == 0 ?
+                                                    <input className="form-control" type="text" value="No" readOnly/>
+                                                  :
+                                                  <input className="form-control" type="text" value="Yes" readOnly/>
+                                                }
+
 
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Signature?</label>
-                                                <select  name="signature" className="form-select">
-                                                  <option value="0">No</option>
-                                                  <option value="1">Yes</option>
-                                                </select>
+                                                {booking.signature == 0 ?
+                                                    <input className="form-control" type="text" value="No" readOnly/>
+                                                  :
+                                                  <input className="form-control" type="text" value="Yes" readOnly/>
+                                                }
                                               </div>
 
                                             </div>
@@ -302,34 +290,27 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
 
                                               <div className="col-md-2">
                                                 <label>Verified By</label>
-                                                <select  name="verified_by" className="form-select">
-                                                  <option value="None">None</option>
-                                                  <option value="QA">QA</option>
-                                                </select>
-
+                                                  <input className="form-control" type="text" value={booking.verified_by} readOnly/>
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>NABL Scope?</label>
-                                                <select  name="nabl_scope" className="form-select">
-                                                  <option value="0">No</option>
-                                                  <option value="1">Yes</option>
-                                                </select>
+                                                  {booking.nabl_scope == 0 ?
+                                                      <input className="form-control" type="text" value="No" readOnly/>
+                                                    :
+                                                    <input className="form-control" type="text" value="Yes" readOnly/>
+                                                  }
 
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>Cancel</label>
-                                                <select  name="cancel" className="form-select">
-                                                  <option value="None">None</option>
-                                                  <option value="No">No</option>
-                                                  <option value="Yes">Yes</option>
-                                                </select>
+                                                <input className="form-control" type="text" value={booking.cancel} readOnly/>
                                               </div>
 
                                               <div className="col-md-6">
                                                 <label>Cancel Remarks</label>
-                                                <textarea  name="cancel_remarks" className="form-control" placeholder="Enter Cancel Remarks"></textarea>
+                                                <textarea className="form-control" value={booking.cancel_remarks} readOnly></textarea>
                                               </div>
 
                                             </div>
@@ -342,39 +323,22 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
 
                                               <div className="col-md-3">
                                                 <label>Priority</label>
-                                                <select  name="priority" className="form-select">
-                                                  <option value="High">High</option>
-                                                  <option value="Medium">Medium</option>
-                                                  <option value="Low">Low</option>
-                                                </select>
-
+                                                <input className="form-control" type="text" value={booking.priority} readOnly/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Discipline</label>
-                                                <select  name="discipline" className="form-select">
-                                                  <option value="Chemical">Chemical</option>
-                                                  <option value="Biological">Biological</option>
-                                                </select>
-
+                                                <input className="form-control" type="text" value={booking.discipline} readOnly/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Group</label>
-                                                <select  name="booking_group" className="form-select">
-                                                  <option value="Drugs and Pharmaceuticals">Drugs and Pharmaceuticals</option>
-                                                  <option value="Food of Agriculture Product">Food of Agriculture Product</option>
-                                                </select>
+                                                <input className="form-control" type="text" value={booking.booking_group} readOnly/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Statement Of Conformity</label>
-                                                <select  name="statement_ofconformity" className="form-select">
-                                                  <option value="PASS">PASS</option>
-                                                  <option value="INDETERMINATE">INDETERMINATE</option>
-                                                  <option value="FAIL">FAIL</option>
-                                                </select>
-
+                                                <input className="form-control" type="text" value={booking.statement_ofconformity} readOnly/>
                                               </div>
 
                                             </div>
@@ -391,8 +355,7 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
                                             <div className="row">
                                               <div className="col-md-4">
                                                 <label>Product</label>
-                                                {loading1 ? <LoadingSpinner /> :<Select name="product_id"
-                                               placeholder="Select Product" isClearable/>}
+                                                <input className="form-control" type="text"  value={product.product_name} readOnly/>
                                               </div>
                                               <div className="col-md-4">
                                                 <label>Generic Name</label>
@@ -401,11 +364,7 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
 
                                               <div className="col-md-4">
                                                 <label>Product Type</label>
-                                                  {loading1 ? <LoadingSpinner /> :<select name="product_type" className="form-select">
-                                                  <option value="Finished Product">Finished Product</option>
-                                                  <option value="Raw Material">Raw Material</option>
-                                                  <option value="Other">Other</option>
-                                                </select>}
+                                                <input className="form-control" type="text"  value={bookingSamples.product_type} readOnly/>
                                               </div>
 
                                             </div>
@@ -418,36 +377,32 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
 
                                               <div className="col-md-2">
                                                 <label>Pharmacopiea</label>
-                                                {loading1 ? <LoadingSpinner /> :
-                                                    <select className="form-select" id="pharmocopiea" name="pharmacopeia_id" >
-
-                                                    </select>
-                                                }
+                                                <input className="form-control" type="text"  value={pharmacopeia.pharmacopeia_name} readOnly/>
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>Batch No</label>
-                                                <input className="form-control" type="text" name="batch_no" />
+                                                <input className="form-control" type="text"  value={bookingSamples.batch_no} readOnly/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label>Pack Size</label>
-                                                <input className="form-control" type="text" name="packsize" />
+                                                <input className="form-control" type="text"  value={bookingSamples.packsize} readOnly/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label>Req Qty</label>
-                                                <input className="form-control" type="text" name="request_quantity" />
+                                                <input className="form-control" type="text"  value={bookingSamples.request_quantity} readOnly/>
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>Sample Code</label>
-                                                <input className="form-control" type="text" name="sample_code" />
+                                                <input className="form-control" type="text"  value={bookingSamples.sample_code} readOnly/>
                                               </div>
 
                                               <div className="col-md-4">
                                                 <label>Sample Desc</label>
-                                                <input className="form-control" type="text" name="sample_description" />
+                                                <input className="form-control" type="text"  value={bookingSamples.sample_description} readOnly/>
                                               </div>
 
                                             </div>
@@ -460,22 +415,22 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
 
                                               <div className="col-md-3">
                                                 <label>Sample Qty</label>
-                                                <input className="form-control" type="text" name="sample_quantity" />
+                                                <input className="form-control" type="text"  value={bookingSamples.sample_quantity} readOnly/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Sample Location</label>
-                                                <input className="form-control" type="text" name="sample_location"  />
+                                                <input className="form-control" type="text"  value={bookingSamples.sample_location} readOnly/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Sample Packaging</label>
-                                                <input className="form-control" type="text" name="sample_packaging" />
+                                                <input className="form-control" type="text"  value={bookingSamples.sample_packaging} readOnly/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Sample Type</label>
-                                                <input className="form-control" type="text" name="sample_type" />
+                                                <input className="form-control" type="text"  value={bookingSamples.sample_type} readOnly/>
                                               </div>
 
 
@@ -489,58 +444,49 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
 
                                               <div className="col-md-2">
                                                 <label>Sampling Date From</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="sampling_date_from" />
+                                                <input className="form-control" type="text"  value={bookingSamples.sampling_date_from} readOnly/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>SamplingFrom</label>
-                                                <select name="sampling_date_from_options" className="form-select" >
-                                                  <option value="N/S">N/S</option>
-                                                  <option value="None">None</option>
-                                                  <option value="N/A">N/A</option>
-                                                </select>
+                                                <input className="form-control" type="text"  value={bookingSamples.sampling_date_from_options} readOnly/>
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>Sampling Date To</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="sampling_date_to" />
+                                                <input className="form-control" type="text"  value={bookingSamples.sampling_date_to} readOnly/>
                                               </div>
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Sampling To</label>
-                                                <select name="sampling_date_to_options" className="form-select" >
-                                                  <option value="N/S">N/S</option>
-                                                  <option value="None">None</option>
-                                                  <option value="N/A">N/A</option>
-                                                </select>
+                                                <input className="form-control" type="text"  value={bookingSamples.sampling_date_to_options} readOnly/>
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>Sample Received Through</label>
-                                                <select name="sample_received_through" className="form-select" >
-                                                  <option value="By Courier">By Courier</option>
-                                                  <option value="By Hand">By Hand</option>
-                                                  <option value="By Collection">By Collection</option>
-                                                </select>
+                                                <input className="form-control" type="text"  value={bookingSamples.sample_received_through} readOnly/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label>Chemist</label>
-                                                <select name="chemist" className="form-select" >
-                                                  <option value="1">Yes</option>
-                                                </select>
+                                                {bookingSamples.chemist == 1 ?
+                                                    <input className="form-control" type="text" value="Yes" readOnly/>
+                                                  : <input className="form-control" type="text" value="No" readOnly/>
+
+                                                }
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>Sample Condition</label>
-                                                <input className="form-control" type="text" name="sample_condition" placeholder="Enter Sample Condition" />
+                                                <input className="form-control" type="text"  value={bookingSamples.sample_condition} readOnly/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>sampleconoption</label>
-                                                <select name="is_sample_condition" className="form-select" >
-                                                  <option value="0">No</option>
-                                                  <option value="1">Yes</option>
-                                                </select>
+                                                {bookingSamples.is_sample_condition == 0 ?
+                                                    <input className="form-control" type="text" value="No" readOnly/>
+                                                  : <input className="form-control" type="text" value="Yes" readOnly/>
+
+                                                }
                                               </div>
 
                                             </div>
@@ -553,17 +499,17 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
 
                                               <div className="col-md-2">
                                                 <label>Batch Size/ Qty Received</label>
-                                                <input className="form-control" type="text" name="batch_size_qty_rec" />
+                                                <input className="form-control" type="text"  value={bookingSamples.batch_size_qty_rec} readOnly/>
                                               </div>
 
                                               <div className="col-md-7">
                                                 <label>Notes</label>
-                                                <input className="form-control" type="text" name="notes" placeholder="Enter Note" />
+                                                <input className="form-control" type="text"  value={bookingSamples.notes} readOnly/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Sample Drawn By</label>
-                                                <input className="form-control" type="text" name="sample_drawn_by" />
+                                                <input className="form-control" type="text"  value={bookingSamples.sample_drawn_by} readOnly/>
                                               </div>
 
                                             </div>
