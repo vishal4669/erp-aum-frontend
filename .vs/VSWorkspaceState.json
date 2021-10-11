@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\components",
+    "\\src\\components\\HorizontalLayout",
+    "\\src\\helpers",
+    "\\src\\helpers\\AuthType",
+    "\\src\\pages",
+    "\\src\\pages\\employee",
+    "\\src\\store"
+  ],
+  "SelectedNode": "\\src\\pages\\employee\\index.js",
+  "PreviewInSolutionExplorer": false
+}

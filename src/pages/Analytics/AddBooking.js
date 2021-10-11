@@ -27,6 +27,7 @@ import { ToastContainer} from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import Select from 'react-select';
+import $ from 'jquery'
 
 function AddBooking(props)  {
         const headers = {
@@ -58,7 +59,7 @@ function AddBooking(props)  {
       analysis_date:'',d_format:'',d_format_options:'N/S',grade: '',grade_options:'N/S',project_name:'',
       project_options:'N/S',mfg_lic_no:'',is_report_dispacthed:'0',signature:'0',verified_by:'None',nabl_scope: '0',
       cancel:'None',cancel_remarks:'',priority:'High',discipline:'Chemical',booking_group:'Drugs and Pharmaceuticals',
-      statement_ofconformity:'PASS'});
+      statement_ofconformity:'PASS',dispatch_mode:'',dispatch_date_time:'',dispatch_details:''});
 
     const [bookingSamples, setBookingSamples] = useState({batch_no:'',
     packsize:'',request_quantity:'',sample_code:'',sample_description:'',sample_quantity:'',sample_location:'',
@@ -143,6 +144,27 @@ function AddBooking(props)  {
 
       const onChange = (e) => {
         setBooking1({...booking1, [e.target.name]: e.target.value});
+
+        booking1.is_report_dispacthed = document.BookingData.is_report_dispacthed.value;
+        var report_dispatch_count = booking1.is_report_dispacthed
+        if(report_dispatch_count !== null){
+          {
+             if(report_dispatch_count == 1){
+               $(".report_dispatch_yes").css("display", "block");
+             } else {
+               $("#dispatch_date_time").val("");
+               $("#dispatch_mode").val("");
+               $("#dispatch_details").val("");
+               $(".report_dispatch_yes").css("display", "none");
+             }
+          }
+          //document.getElementsByClassName("report_dispatch_yes").style.display = "block";
+        //  $(".report_dispatch_yes").css("display", "block");
+      }/* if(report_dispatch_count === 0){
+          console.log(booking1.is_report_dispacthed)
+          console.log("in 0")
+          $(".report_dispatch_yes").css("display", "none");
+        }*/
       }
 
       const reporttypeonChange = (e) =>{
@@ -733,6 +755,35 @@ function AddBooking(props)  {
                                                   <option value="0">No</option>
                                                   <option value="1">Yes</option>
                                                 </select>
+                                              </div>
+
+                                            </div>
+                                          </div>
+                                      </div>
+
+                                      <div className="mb-3 row report_dispatch_yes" style={{display:'none'}}>
+                                          <div className="form-group">
+                                            <div className="row">
+
+                                              <div className="col-md-4">
+                                                <label>Dispatch Date Time</label>
+                                                <input id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>
+                                              </div>
+
+                                              <div className="col-md-4">
+                                                <label>Dispatch Mode</label>
+                                                <select onChange={ onChange } name="dispatch_mode" className="form-select" id="dispatch_mode">
+                                                  <option value="">Select Dispatch Mode</option>
+                                                  <option value="By Courier">By Courier</option>
+                                                  <option value="By Hand Delivery">By Hand Delivery</option>
+                                                  <option value="Collect by Party">Collect by Party</option>
+                                                </select>
+
+                                              </div>
+
+                                              <div className="col-md-4">
+                                                <label>Dispatch Details</label>
+                                                <input id="dispatch_details" onChange={ onChange } className="form-control" type="text" name="dispatch_details" placeholder="Enter Dispatch Details"/>
                                               </div>
 
                                             </div>

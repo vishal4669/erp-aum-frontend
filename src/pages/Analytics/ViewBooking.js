@@ -61,7 +61,7 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
     sampling_date_to:'',sampling_date_to_options:'',sample_received_through:'',chemist:'',sample_condition:'',
     is_sample_condition:'',batch_size_qty_rec:'',notes:'',sample_drawn_by:''});
 
-      const[testData,setTestData] = useState([{parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
+      const[testData,setTestData] = useState([{parent_child:'',p_sr_no:'',by_pass:'',parent:'',product_details:'',
       test_name:'',label_claim:'',min_limit:'',max_limit:'',amount:''}])
 
         useEffect(() => {
