@@ -36,8 +36,8 @@ class ListCustomer extends Component{
     const del_headers = {
       'Authorization' : "Bearer "+localStorage.getItem('token')
     };
- 
- this.componentDidMount = () => { 
+
+ this.componentDidMount = () => {
   this.setState({ loading: true }, () => {
 
      axios.get(`${process.env.REACT_APP_BASE_APIURL}listCustomer`, { headers: headers})
@@ -54,9 +54,9 @@ class ListCustomer extends Component{
                    this.setState({loading: false});
 
                  }
-             }) 
+             })
    })
-  }  
+  }
 
 this.deleteCustomer = async(customer_id) =>{
             this.setState({ loading: true }, () => {
@@ -94,7 +94,7 @@ this.deleteCustomer = async(customer_id) =>{
                this.setState({loading: false});
              }
          })
-      }) 
+      })
   }
 }
   render(){
@@ -114,11 +114,11 @@ this.deleteCustomer = async(customer_id) =>{
             </div>
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
-                    <li> 
+                    <li>
                       <Link to="/add-customer" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Customer</Link>
                     </li>&nbsp;
                 </ol>
-            </div>        
+            </div>
         </div>
           <Row>
             <Col className="col-12">
@@ -142,7 +142,7 @@ this.deleteCustomer = async(customer_id) =>{
                          {this.state.customer.length >=1 ?
                          <tbody>
                            {
-                                this.state.customer.map((post,index)=>{ 
+                                this.state.customer.map((post,index)=>{
 
                                   return(
                                     <tr>
@@ -194,7 +194,7 @@ this.deleteCustomer = async(customer_id) =>{
             </Col>
           </Row>
 
-          
+
         </div>
       </div>
     </React.Fragment>

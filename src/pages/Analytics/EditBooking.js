@@ -27,16 +27,16 @@ import { ToastContainer} from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import Select from 'react-select';
+import $ from 'jquery'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
 function EditBooking(props)  {
-        const headers = {
-              'Authorization' : "Bearer "+localStorage.getItem('token')
-            }
-
-const url = window.location.href
-const booking_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
-const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
+  const headers = {
+        'Authorization' : "Bearer "+localStorage.getItem('token')
+      }
+  const url = window.location.href
+  const booking_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
+  const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
@@ -63,7 +63,8 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
       analysis_date:'',d_format:'',d_format_options:'N/S',grade: '',grade_options:'N/S',project_name:'',
       project_options:'N/S',mfg_lic_no:'',is_report_dispacthed:'0',signature:'0',verified_by:'None',nabl_scope: '0',
       cancel:'None',cancel_remarks:'',priority:'High',discipline:'Chemical',booking_group:'Drugs and Pharmaceuticals',
-      statement_ofconformity:'PASS'});
+      statement_ofconformity:'PASS',dispatch_mode:'',dispatch_date_time:'',dispatch_details:'',invoice_date:'',invoice_number:'',
+      audit_reamrks:'',remark:'',comments:''});
 
     const [bookingSamples, setBookingSamples] = useState({batch_no:'',
     packsize:'',request_quantity:'',sample_code:'',sample_description:'',sample_quantity:'',sample_location:'',
@@ -84,16 +85,13 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
                  fetchProduct();
                  fetchPharamcopiea();
                  fetchparentList();
+                 GetBookingData();
                 }, []);
 
     const my_style = {
     width: '120px !important',
 
     }
-
-      const ResetBooking = () => {
-        document.getElementById("AddBooking").reset();
-      }
 
       const handleAddClick = () => {
         setTestData([...testData, { parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
@@ -146,8 +144,70 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
         setTestData(list);
       };
 
+      const GetBookingData=()=>{
+            {setLoading1(true)}
+              axios.get(`${process.env.REACT_APP_BASE_APIURL}getBooking/`+booking_id,{headers})
+                  .then(response => {
+                      setBooking(response.data.data);
+                      setCustomer(response.data.data.customer_id)
+                      setManufacturer(response.data.data.manufacturer_id)
+                      setSupplier(response.data.data.supplier_id)
+                      setProduct(response.data.data.samples[0].product_id)
+                      //setPharmacopeia(response.data.data.samples[0].pharmacopiea_id)
+                      setBookingSamples(response.data.data.samples[0])
+                      {setLoading1(false)};
+
+                  })
+                  .catch((error) => {
+                      {setLoading1(false)}
+                      toastr.error(error.response.data.message);
+                      this.setState({loading: false});
+                  })
+            }
+
       const onChange = (e) => {
         setBooking1({...booking1, [e.target.name]: e.target.value});
+
+        booking1.is_report_dispacthed = document.BookingData.is_report_dispacthed.value;
+        var report_dispatch_count = booking1.is_report_dispacthed
+
+        booking1.booking_type = document.BookingData.booking_type.value;
+        var chnage_booking_type = booking1.booking_type
+
+        if(report_dispatch_count !== null){
+          {
+             if(report_dispatch_count == 1){
+               $(".report_dispatch_yes").css("display", "block");
+             } else {
+               $("#dispatch_date_time").val("");
+               $("#dispatch_mode").val("");
+               $("#dispatch_details").val("");
+               setBooking1(prevState => ({...prevState,dispatch_date_time: "",dispatch_mode: "",dispatch_details:""}))
+               $(".report_dispatch_yes").css("display", "none");
+             }
+          }
+        }
+
+        if(chnage_booking_type !== null){
+          if(chnage_booking_type == 'Invoice'){
+            $(".invoice_data").css("display", "block");
+          } else {
+            $("#invoice_date").val("");
+            $("#invoice_number").val("");
+            setBooking1(prevState => ({...prevState,invoice_date: "",invoice_number: ""}))
+            $(".invoice_data").css("display", "none");
+          }
+
+          if(chnage_booking_type == 'Report'){
+            $(".audit_details").css("display", "block");
+          } else {
+            $("#audit_reamrks").val("");
+            $("#reason").val("");
+            $("#comments").val("");
+            setBooking1(prevState => ({...prevState,audit_reamrks: "",reason: "",comments:""}))
+            $(".audit_details").css("display", "none");
+          }
+        }
       }
 
       const reporttypeonChange = (e) =>{
@@ -428,6 +488,8 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
                const data = {
                    booking_type:booking1.booking_type,
                    report_type:reporttype.report_type,
+                   invoice_date:booking1.invoice_date,
+                   invoice_no:booking1.invoice_number,
                    receipte_date:booking1.receipte_date,
                    booking_no:final_booking_no,
                    customer_id:final_customer_id,
@@ -449,6 +511,9 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
                    project_options:booking1.project_options,
                    mfg_lic_no:booking1.mfg_lic_no,
                    is_report_dispacthed:booking1.is_report_dispacthed,
+                   dispatch_date_time:booking1.dispatch_date_time,
+                   dispatch_mode : booking1.dispatch_mode,
+                   dispatch_details : booking1.dispatch_details,
                    signature:booking1.signature,
                    verified_by:booking1.verified_by,
                    nabl_scope:booking1.nabl_scope,
@@ -484,6 +549,11 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
                      sample_drawn_by:bookingSamples.sample_drawn_by,
                    }],
                    "booking_tests": test_details,
+                    "booking_audit_details": {
+                        audit_remarks:booking1.audit_reamrks,
+                        reason:booking1.reason,
+                        comments:booking1.comments
+                    }
                }
 
                console.log(data);
@@ -520,18 +590,16 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
                     <li className="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
                     <li className="breadcrumb-item">Analytics</li>
                     <li className="breadcrumb-item"><a href="/booking">Booking</a></li>
-                    <li className="breadcrumb-item active">Add Booking</li>
+                    <li className="breadcrumb-item active">Edit Booking</li>
                 </ol>
             </div>
 
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                     <li><Link to="/booking" className="btn btn-primary btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></Link></li>&nbsp;
-                    <li><button type="reset" onClick = {ResetBooking} className="btn btn-primary btn-sm"><i className="fa fa-reply">&nbsp;Reset</i></button></li>
-                    &nbsp;
                     { loading ? <center><LoadingSpinner /></center> :
                     <li>
-                       <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Submit</i></button>
+                       <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
                     </li>
                     }
                 </ol>
@@ -574,6 +642,7 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
                                                       <option value="OT">OT</option>
                                                       <option value="TP">TP</option>
                                                       <option value="ADL">ADL</option>
+                                                      <option value="AYUSH">AYUSH</option>
                                                       </select>
                                               </div>
                                               <div className="col-md-3">
@@ -584,6 +653,24 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
                                                 <label>Booking No</label>
                                                 <input className="form-control" type="text" value={booking.booking_no} onChange={ onChange } name="booking_no" readOnly/>
                                               </div>
+                                            </div>
+                                          </div>
+                                      </div>
+
+                                      <div className="mb-3 row invoice_data" style={{display:'none'}}>
+                                          <div className="form-group">
+                                            <div className="row">
+
+                                              <div className="col-md-6">
+                                                <label>Invoice Date</label>
+                                                <input id="invoice_date" onChange={ onChange } className="form-control" type="date" name="invoice_date" placeholder="Enter Invoice Date"/>
+                                              </div>
+
+                                              <div className="col-md-6">
+                                                <label>Invoice Number</label>
+                                                <input id="invoice_number" onChange={ onChange } className="form-control" type="text" name="invoice_number" placeholder="Enter Invoice Number"/>
+                                              </div>
+
                                             </div>
                                           </div>
                                       </div>
@@ -738,6 +825,35 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
                                                   <option value="0">No</option>
                                                   <option value="1">Yes</option>
                                                 </select>
+                                              </div>
+
+                                            </div>
+                                          </div>
+                                      </div>
+
+                                      <div className="mb-3 row report_dispatch_yes" style={{display:'none'}}>
+                                          <div className="form-group">
+                                            <div className="row">
+
+                                              <div className="col-md-4">
+                                                <label>Dispatch Date Time</label>
+                                                <input id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>
+                                              </div>
+
+                                              <div className="col-md-4">
+                                                <label>Dispatch Mode</label>
+                                                <select onChange={ onChange } name="dispatch_mode" className="form-select" id="dispatch_mode">
+                                                  <option value="">Select Dispatch Mode</option>
+                                                  <option value="By Courier">By Courier</option>
+                                                  <option value="By Hand Delivery">By Hand Delivery</option>
+                                                  <option value="Collect by Party">Collect by Party</option>
+                                                </select>
+
+                                              </div>
+
+                                              <div className="col-md-4">
+                                                <label>Dispatch Details</label>
+                                                <input id="dispatch_details" onChange={ onChange } className="form-control" type="text" name="dispatch_details" placeholder="Enter Dispatch Details"/>
                                               </div>
 
                                             </div>
@@ -1114,7 +1230,31 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
        </div>
 
 {/*Test Section End*/}
+      <h5 className="audit_details" style={{display:'none'}}> <Alert color="danger" role="alert">
+          <i className="fa fa-comment">&nbsp;Audit Details</i>
+      </Alert></h5>
+      <div className="mb-3 row audit_details" style={{display:'none'}}>
+          <div className="form-group">
+            <div className="row">
 
+              <div className="col-md-4">
+                <label>Audit Remarks</label>
+                <textarea name="audit_reamrks" id="audit_reamrks" className="form-control" placeholder="Enter Remarks" onChange={ onChange }></textarea>
+              </div>
+
+              <div className="col-md-4">
+                <label>Reason</label>
+                <textarea name="reason" id="reason" className="form-control" placeholder="Enter Reason" onChange={ onChange }></textarea>
+              </div>
+
+              <div className="col-md-4">
+                <label>Comments</label>
+                <textarea name="comments" id="comments" className="form-control" placeholder="Enter Comments" onChange={ onChange }></textarea>
+              </div>
+
+            </div>
+          </div>
+      </div>
 
                 </CardBody>
               </Card>

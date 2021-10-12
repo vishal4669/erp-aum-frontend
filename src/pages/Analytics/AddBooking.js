@@ -59,7 +59,8 @@ function AddBooking(props)  {
       analysis_date:'',d_format:'',d_format_options:'N/S',grade: '',grade_options:'N/S',project_name:'',
       project_options:'N/S',mfg_lic_no:'',is_report_dispacthed:'0',signature:'0',verified_by:'None',nabl_scope: '0',
       cancel:'None',cancel_remarks:'',priority:'High',discipline:'Chemical',booking_group:'Drugs and Pharmaceuticals',
-      statement_ofconformity:'PASS',dispatch_mode:'',dispatch_date_time:'',dispatch_details:''});
+      statement_ofconformity:'PASS',dispatch_mode:'',dispatch_date_time:'',dispatch_details:'',invoice_date:'',invoice_number:'',
+      audit_reamrks:'',remark:'',comments:''});
 
     const [bookingSamples, setBookingSamples] = useState({batch_no:'',
     packsize:'',request_quantity:'',sample_code:'',sample_description:'',sample_quantity:'',sample_location:'',
@@ -147,6 +148,10 @@ function AddBooking(props)  {
 
         booking1.is_report_dispacthed = document.BookingData.is_report_dispacthed.value;
         var report_dispatch_count = booking1.is_report_dispacthed
+
+        booking1.booking_type = document.BookingData.booking_type.value;
+        var chnage_booking_type = booking1.booking_type
+
         if(report_dispatch_count !== null){
           {
              if(report_dispatch_count == 1){
@@ -155,16 +160,32 @@ function AddBooking(props)  {
                $("#dispatch_date_time").val("");
                $("#dispatch_mode").val("");
                $("#dispatch_details").val("");
+               setBooking1(prevState => ({...prevState,dispatch_date_time: "",dispatch_mode: "",dispatch_details:""}))
                $(".report_dispatch_yes").css("display", "none");
              }
           }
-          //document.getElementsByClassName("report_dispatch_yes").style.display = "block";
-        //  $(".report_dispatch_yes").css("display", "block");
-      }/* if(report_dispatch_count === 0){
-          console.log(booking1.is_report_dispacthed)
-          console.log("in 0")
-          $(".report_dispatch_yes").css("display", "none");
-        }*/
+        }
+
+        if(chnage_booking_type !== null){
+          if(chnage_booking_type == 'Invoice'){
+            $(".invoice_data").css("display", "block");
+          } else {
+            $("#invoice_date").val("");
+            $("#invoice_number").val("");
+            setBooking1(prevState => ({...prevState,invoice_date: "",invoice_number: ""}))
+            $(".invoice_data").css("display", "none");
+          }
+
+          if(chnage_booking_type == 'Report'){
+            $(".audit_details").css("display", "block");
+          } else {
+            $("#audit_reamrks").val("");
+            $("#reason").val("");
+            $("#comments").val("");
+            setBooking1(prevState => ({...prevState,audit_reamrks: "",reason: "",comments:""}))
+            $(".audit_details").css("display", "none");
+          }
+        }
       }
 
       const reporttypeonChange = (e) =>{
@@ -445,6 +466,8 @@ function AddBooking(props)  {
                const data = {
                    booking_type:booking1.booking_type,
                    report_type:reporttype.report_type,
+                   invoice_date:booking1.invoice_date,
+                   invoice_no:booking1.invoice_number,
                    receipte_date:booking1.receipte_date,
                    booking_no:final_booking_no,
                    customer_id:final_customer_id,
@@ -466,6 +489,9 @@ function AddBooking(props)  {
                    project_options:booking1.project_options,
                    mfg_lic_no:booking1.mfg_lic_no,
                    is_report_dispacthed:booking1.is_report_dispacthed,
+                   dispatch_date_time:booking1.dispatch_date_time,
+                   dispatch_mode : booking1.dispatch_mode,
+                   dispatch_details : booking1.dispatch_details,
                    signature:booking1.signature,
                    verified_by:booking1.verified_by,
                    nabl_scope:booking1.nabl_scope,
@@ -501,6 +527,11 @@ function AddBooking(props)  {
                      sample_drawn_by:bookingSamples.sample_drawn_by,
                    }],
                    "booking_tests": test_details,
+                    "booking_audit_details": {
+                        audit_remarks:booking1.audit_reamrks,
+                        reason:booking1.reason,
+                        comments:booking1.comments
+                    }
                }
 
                console.log(data);
@@ -591,6 +622,7 @@ function AddBooking(props)  {
                                                       <option value="OT">OT</option>
                                                       <option value="TP">TP</option>
                                                       <option value="ADL">ADL</option>
+                                                      <option value="AYUSH">AYUSH</option>
                                                       </select>
                                               </div>
                                               <div className="col-md-3">
@@ -601,6 +633,24 @@ function AddBooking(props)  {
                                                 <label>Booking No</label>
                                                 <input className="form-control" type="text" value={booking.booking_no} onChange={ onChange } name="booking_no" readOnly/>
                                               </div>
+                                            </div>
+                                          </div>
+                                      </div>
+
+                                      <div className="mb-3 row invoice_data" style={{display:'none'}}>
+                                          <div className="form-group">
+                                            <div className="row">
+
+                                              <div className="col-md-6">
+                                                <label>Invoice Date</label>
+                                                <input id="invoice_date" onChange={ onChange } className="form-control" type="date" name="invoice_date" placeholder="Enter Invoice Date"/>
+                                              </div>
+
+                                              <div className="col-md-6">
+                                                <label>Invoice Number</label>
+                                                <input id="invoice_number" onChange={ onChange } className="form-control" type="text" name="invoice_number" placeholder="Enter Invoice Number"/>
+                                              </div>
+
                                             </div>
                                           </div>
                                       </div>
@@ -1160,7 +1210,31 @@ function AddBooking(props)  {
        </div>
 
 {/*Test Section End*/}
+      <h5 className="audit_details" style={{display:'none'}}> <Alert color="danger" role="alert">
+          <i className="fa fa-comment">&nbsp;Audit Details</i>
+      </Alert></h5>
+      <div className="mb-3 row audit_details" style={{display:'none'}}>
+          <div className="form-group">
+            <div className="row">
 
+              <div className="col-md-4">
+                <label>Audit Remarks</label>
+                <textarea name="audit_reamrks" id="audit_reamrks" className="form-control" placeholder="Enter Remarks" onChange={ onChange }></textarea>
+              </div>
+
+              <div className="col-md-4">
+                <label>Reason</label>
+                <textarea name="reason" id="reason" className="form-control" placeholder="Enter Reason" onChange={ onChange }></textarea>
+              </div>
+
+              <div className="col-md-4">
+                <label>Comments</label>
+                <textarea name="comments" id="comments" className="form-control" placeholder="Enter Comments" onChange={ onChange }></textarea>
+              </div>
+
+            </div>
+          </div>
+      </div>
 
                 </CardBody>
               </Card>
