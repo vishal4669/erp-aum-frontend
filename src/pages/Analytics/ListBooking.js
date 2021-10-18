@@ -143,8 +143,9 @@ this.deleteBooking = async(booking_id) =>{
                 srno: this.state.count,
                 coa_print: post.coa_print,
                 aum_serial_no: post.aum_serial_no,
+                booking_type: post.booking_type,
                 booking_no: post.booking_no,
-                product_type: post.product_type,
+                product_type: post.product_generic,
                 receipte_date: post.receipte_date,
                 product_name : post.product_name,
                 action : <div><Link className="btn btn-primary" to={"/edit-booking/"+base64_encode(post.id)}>
@@ -184,6 +185,10 @@ this.deleteBooking = async(booking_id) =>{
                   {
                     label:'Aum SR No',
                     field:'aum_serial_no',
+                  },
+                  {
+                    label:'Booking Type',
+                    field:'booking_type',
                   },
                   {
                     label:'Booking No',

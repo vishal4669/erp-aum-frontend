@@ -54,17 +54,13 @@ function EditBooking(props)  {
   const [data4, setData4] = useState([]);
   const [data5, setData5] = useState([]);
 
-  const [booking, setBooking] = useState({booking_no: ''});
-  const [reporttype, setreportType] = useState({report_type:''});
-  const [aumserialno, setaumserialno] = useState({aum_serial_no:''});
-
-    const [booking1, setBooking1] = useState({booking_type:'Received',receipte_date:'',
-      booking_no: '',reference_no:'',remarks:'',mfg_date:'',mfg_options:'N/S',exp_date:'',exp_options:'N/S',
+    const [booking1, setBooking1] = useState({booking_type:'Received',report_type:'',receipte_date:'',
+      booking_no: '',aum_serial_no:'',reference_no:'',remarks:'',mfg_date:'',mfg_options:'N/S',exp_date:'',exp_options:'N/S',
       analysis_date:'',d_format:'',d_format_options:'N/S',grade: '',grade_options:'N/S',project_name:'',
       project_options:'N/S',mfg_lic_no:'',is_report_dispacthed:'0',signature:'0',verified_by:'None',nabl_scope: '0',
       cancel:'None',cancel_remarks:'',priority:'High',discipline:'Chemical',booking_group:'Drugs and Pharmaceuticals',
       statement_ofconformity:'PASS',dispatch_mode:'',dispatch_date_time:'',dispatch_details:'',invoice_date:'',invoice_number:'',
-      audit_reamrks:'',remark:'',comments:''});
+      audit_reamrks:'',remark:'',comments:'',coa_release_date:'',block:''});
 
     const [bookingSamples, setBookingSamples] = useState({batch_no:'',
     packsize:'',request_quantity:'',sample_code:'',sample_description:'',sample_quantity:'',sample_location:'',
@@ -72,7 +68,7 @@ function EditBooking(props)  {
     sampling_date_to:'',sampling_date_to_options:'N/S',sample_received_through:'By Courier',chemist:'1',sample_condition:'',
     is_sample_condition:'0',batch_size_qty_rec:'',notes:'',sample_drawn_by:''});
 
-    const [bookingSamples1, setBookingSamples1] = useState({generic_name:'',product_type:'',pharmacopeia_id:''});
+    const [bookingSamples1, setBookingSamples1] = useState({generic_name:'',product_type:'',pharmacopeia_name:''});
 
       const[testData,setTestData] = useState([{parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
       test_name:'',label_claim:'',min_limit:'',max_limit:'',amount:''}])
@@ -81,7 +77,6 @@ function EditBooking(props)  {
                  fetchCustomerData();
                  fetchManufacturerData();
                  fetchSupplierData();
-                 fetchAumSrNo();
                  fetchProduct();
                  fetchPharamcopiea();
                  fetchparentList();
@@ -148,18 +143,23 @@ function EditBooking(props)  {
             {setLoading1(true)}
               axios.get(`${process.env.REACT_APP_BASE_APIURL}getBooking/`+booking_id,{headers})
                   .then(response => {
-                      setBooking(response.data.data);
+                      setBooking1(response.data.data);
                       setCustomer(response.data.data.customer_id)
                       setManufacturer(response.data.data.manufacturer_id)
                       setSupplier(response.data.data.supplier_id)
                       setProduct(response.data.data.samples[0].product_id)
-                      //setPharmacopeia(response.data.data.samples[0].pharmacopiea_id)
                       setBookingSamples(response.data.data.samples[0])
+                      setBookingSamples1({
+                        product_type:response.data.data.samples[0].product_id.product_generic,
+                        pharmacopeia_name: response.data.data.samples[0].product_id.pharmacopeia_id.pharmacopeia_name,
+                        generic_name : response.data.data.samples[0].product_id.generic_product_name
+                      })
                       {setLoading1(false)};
 
                   })
                   .catch((error) => {
                       {setLoading1(false)}
+                      //console.log(error)
                       toastr.error(error.response.data.message);
                       this.setState({loading: false});
                   })
@@ -190,11 +190,20 @@ function EditBooking(props)  {
 
         if(chnage_booking_type !== null){
           if(chnage_booking_type == 'Invoice'){
+            console.log("here")
+            $("#invoice_date").val("");
+            $("#invoice_number").val("");
+            $(".invoice_data").remove();
             $(".invoice_data").css("display", "block");
+            //$("#invoice_date").val("");
+            //$("#invoice_number").val("");
+            setBooking1(prevState => ({...prevState,invoice_date: "",invoice_number: ""}))
           } else {
+            console.log("here1")
             $("#invoice_date").val("");
             $("#invoice_number").val("");
             setBooking1(prevState => ({...prevState,invoice_date: "",invoice_number: ""}))
+            console.log(booking1)
             $(".invoice_data").css("display", "none");
           }
 
@@ -208,35 +217,6 @@ function EditBooking(props)  {
             $(".audit_details").css("display", "none");
           }
         }
-      }
-
-      const reporttypeonChange = (e) =>{
-        setBooking({...booking, [e.target.name]: e.target.value});
-        setreportType({...reporttype, [e.target.name]: e.target.value});
-          //if(booking.report_type !== null){
-              getBookingNo(e.target.value);
-            //}
-      }
-
-      const AumSerialNoonChange = (e) =>{
-        setaumserialno({...aumserialno, [e.target.name]: e.target.value});
-      }
-
-      const getBookingNo = (e) => {
-
-        var final_report_type = e;
-
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no/`+final_report_type,{headers})
-            .then(response => {
-                      setBooking({booking_no:response.data.data.booking_no});
-                      console.log(response.data.data)
-                     {setLoading1(false)}
-               })
-              .catch((error) => {
-                  toastr.error(error.response.data.message);
-                   {setLoading1(false)}
-              })
-
       }
 
       const onChangeProductSamples = (e) => {
@@ -285,11 +265,12 @@ function EditBooking(props)  {
                              setTestData(tests_data)
                              setBookingSamples1({product_type:response.data.data.product_generic,
                                generic_name:response.data.data.generic.generic_product_name,
-                               pharmacopeia_id: response.data.data.pharmacopeia_id
+                               pharmacopeia_name: response.data.data.pharmacopeia.pharmacopeia_name
                              })
 
                           })
                           .catch((error) => {
+                            console.log(error)
                               toastr.error(error.response.data.message);
                           })
       }
@@ -345,20 +326,6 @@ function EditBooking(props)  {
                          {setLoading1(false)}
                     })
       }
-
-
-      const fetchAumSrNo = () => {
-        {setLoading1(true)};
-                  axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no/`+null,{headers})
-                    .then(response => {
-                             setaumserialno({aum_serial_no:response.data.data.aum_serial_no});
-                             {setLoading1(false)}
-                       })
-                      .catch((error) => {
-                          toastr.error(error.response.data.message);
-                           {setLoading1(false)}
-                      })
-        }
 
         const fetchProduct = () => {
                      {setLoading1(true)};
@@ -473,25 +440,16 @@ function EditBooking(props)  {
                 final_product_id = '';
               }
 
-              var final_booking_no = ''
-              if(booking.booking_no == undefined){
-                final_booking_no = ''
-              } else if(booking.booking_no == null){
-                  final_booking_no = ''
-              } else {
-                final_booking_no = booking.booking_no
-              }
-
               const test_details = testData;
 
 
                const data = {
                    booking_type:booking1.booking_type,
-                   report_type:reporttype.report_type,
+                   report_type:booking1.report_type,
                    invoice_date:booking1.invoice_date,
                    invoice_no:booking1.invoice_number,
                    receipte_date:booking1.receipte_date,
-                   booking_no:final_booking_no,
+                   booking_no:booking1.booking_no,
                    customer_id:final_customer_id,
                    reference_no:booking1.reference_no,
                    remarks:booking1.remarks,
@@ -502,7 +460,7 @@ function EditBooking(props)  {
                    exp_date:booking1.exp_date,
                    exp_options:booking1.exp_options,
                    analysis_date:booking1.analysis_date,
-                   aum_serial_no:aumserialno.aum_serial_no,
+                   aum_serial_no:booking1.aum_serial_no,
                    d_format:booking1.d_format,
                    d_format_options:booking1.d_format_options,
                    grade:booking1.grade,
@@ -523,6 +481,8 @@ function EditBooking(props)  {
                    discipline:booking1.discipline,
                    booking_group:booking1.booking_group,
                    statement_ofconformity:booking1.statement_ofconformity,
+                   coa_release_date:booking1.coa_release_date,
+                   block:booking1.block,
                    "booking_sample_details":[{
                      product_id: final_product_id,
                      product_type: bookingSamples1.product_type,
@@ -620,7 +580,7 @@ function EditBooking(props)  {
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Booking Type</label>
-                                                <select className="form-select" name="booking_type" onChange={ onChange }>
+                                                <select className="form-select" value={booking1.booking_type} name="booking_type" onChange={ onChange }>
                                                         <option value="Received">Received</option>
                                                       <option value="Entry">Entry</option>
                                                       <option value="Temp">Temp</option>
@@ -635,7 +595,7 @@ function EditBooking(props)  {
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Report Type</label>
-                                                <select className="form-select" name="report_type" onChange={ reporttypeonChange }>
+                                                <select className="form-select" value={booking1.report_type} name="report_type" isOptionDisabled={(option) => option.disabled}>
                                                         <option value="">None</option>
                                                       <option value="FP">FP</option>
                                                       <option value="RM">RM</option>
@@ -647,11 +607,11 @@ function EditBooking(props)  {
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Receipt Date</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="receipte_date" onChange={ onChange }/>
+                                                <input className="form-control" value={booking1.receipte_date} type="date" id="example-date-input" name="receipte_date" onChange={ onChange }/>
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Booking No</label>
-                                                <input className="form-control" type="text" value={booking.booking_no} onChange={ onChange } name="booking_no" readOnly/>
+                                                <input className="form-control" type="text" value={booking1.booking_no} onChange={ onChange } name="booking_no" readOnly/>
                                               </div>
                                             </div>
                                           </div>
@@ -675,24 +635,45 @@ function EditBooking(props)  {
                                           </div>
                                       </div>
 
+                                      {booking1.booking_type == "Invoice" ?
+                                        <div className="mb-3 row invoice_data">
+                                            <div className="form-group">
+                                              <div className="row">
+
+                                                <div className="col-md-6">
+                                                  <label>Invoice Date</label>
+                                                  <input id="invoice_date" value={booking1.invoice_date} onChange={ onChange } className="form-control" type="date" name="invoice_date" placeholder="Enter Invoice Date"/>
+                                                </div>
+
+                                                <div className="col-md-6">
+                                                  <label>Invoice Number</label>
+                                                  <input id="invoice_number"  value={booking1.invoice_no} onChange={ onChange } className="form-control" type="text" name="invoice_number" placeholder="Enter Invoice Number"/>
+                                                </div>
+
+                                              </div>
+                                            </div>
+                                        </div>
+                                      : ''
+                                      }
+
 
                                       <div className="mb-3 row">
                                           <div className="form-group">
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Customer</label>
-                                                  {loading1 ? <LoadingSpinner /> :<Select onChange={ changeCustomer } options={data1} name="customer_id"
+                                                  {loading1 ? <LoadingSpinner /> :<Select value={data1.find(obj => obj.value === customer.id)} onChange={ changeCustomer } options={data1} name="customer_id"
                                                  placeholder="Select Customer" isClearable/>}
                                                </div>
 
                                               <div className="col-md-4">
                                                 <label>Reference No</label>
-                                                <input className="form-control" type="text" name="reference_no" placeholder="Enter Reference No" onChange={ onChange }/>
+                                                <input className="form-control" type="text" name="reference_no" value={booking1.reference_no} placeholder="Enter Reference No" onChange={ onChange }/>
                                               </div>
 
                                               <div className="col-md-5">
                                                 <label>Remarks</label>
-                                                <textarea name="remarks" className="form-control" placeholder="Enter Remarks" onChange={ onChange }></textarea>
+                                                <textarea name="remarks" className="form-control" value={booking1.remarks} placeholder="Enter Remarks" onChange={ onChange }></textarea>
                                               </div>
 
                                             </div>
@@ -705,23 +686,23 @@ function EditBooking(props)  {
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Manufacturer</label>
-                                                  {loading1 ? <LoadingSpinner /> :<Select onChange={ changeManufacturer } options={data2} name="manufacturer_id"
+                                                  {loading1 ? <LoadingSpinner /> :<Select value={data2.find(obj => obj.value === manufacturer.id)} onChange={ changeManufacturer } options={data2} name="manufacturer_id"
                                                  placeholder="Select Manufacturer" isClearable/>}
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Supplier</label>
-                                                  {loading1 ? <LoadingSpinner /> :<Select onChange={ changeSupplier } options={data3} name="supplier_id"
+                                                  {loading1 ? <LoadingSpinner /> :<Select value={data3.find(obj => obj.value === supplier.id)} onChange={ changeSupplier } options={data3} name="supplier_id"
                                                  placeholder="Select Supplier" isClearable/>}
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>Mfg Date</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="mfg_date" onChange={ onChange }/>
+                                                <input className="form-control" value={booking1.mfg_date} type="date" id="example-date-input" name="mfg_date" onChange={ onChange }/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Mfg</label>
-                                                <select name="mfg_options" className="form-select" onChange={ onChange }>
+                                                <select name="mfg_options" value={booking1.mfg_options} className="form-select" onChange={ onChange }>
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
@@ -730,11 +711,11 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Exp Date</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="exp_date" onChange={ onChange }/>
+                                                <input className="form-control" value={booking1.exp_date} type="date" id="example-date-input" name="exp_date" onChange={ onChange }/>
                                               </div>
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Exp</label>
-                                                <select name="exp_options" className="form-select" onChange={ onChange }>
+                                                <select name="exp_options" value={booking1.exp_options} className="form-select" onChange={ onChange }>
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
@@ -749,22 +730,22 @@ function EditBooking(props)  {
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Date of Analysis</label>
-                                                 <input onChange={ onChange } className="form-control" type="date" id="example-date-input" name="analysis_date"/>
+                                                 <input onChange={ onChange } value={booking1.analysis_date} className="form-control" type="date" id="example-date-input" name="analysis_date"/>
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Aum Sr. No</label>
-                                                   {loading1 ? <LoadingSpinner /> :<input value={aumserialno.aum_serial_no} type="text" className="form-control" name="aum_serial_no" readOnly/>
-                                                   }
+                                                   <input value={booking1.aum_serial_no} type="text" className="form-control" name="aum_serial_no" readOnly/>
+
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>D Formate</label>
-                                                <input onChange={ onChange } className="form-control" type="text" name="d_format" placeholder="Enter D Formate"/>
+                                                <input value={booking1.d_format} onChange={ onChange } className="form-control" type="text" name="d_format" placeholder="Enter D Formate"/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Formate</label>
-                                                <select name="d_format_options" className="form-select" onChange={ onChange }>
+                                                <select value={booking1.d_format_options} name="d_format_options" className="form-select" onChange={ onChange }>
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
@@ -773,11 +754,11 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Grade</label>
-                                                <input onChange={ onChange } className="form-control" type="text" name="grade" placeholder="Enter Grade"/>
+                                                <input value={booking1.grade} onChange={ onChange } className="form-control" type="text" name="grade" placeholder="Enter Grade"/>
                                               </div>
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Grade</label>
-                                                <select onChange={ onChange } name="grade_options" className="form-select">
+                                                <select value={booking1.grade_options} onChange={ onChange } name="grade_options" className="form-select">
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
@@ -793,12 +774,12 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Project Name</label>
-                                                <input onChange={ onChange } className="form-control" type="text" name="project_name" placeholder="Enter Project Name"/>
+                                                <input value={booking1.project_name} onChange={ onChange } className="form-control" type="text" name="project_name" placeholder="Enter Project Name"/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>ProName</label>
-                                                <select onChange={ onChange } name="project_options" className="form-select">
+                                                <select value={booking1.project_options} onChange={ onChange } name="project_options" className="form-select">
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
@@ -807,12 +788,12 @@ function EditBooking(props)  {
 
                                               <div className="col-md-3">
                                                 <label> Mfg. Lic. No</label>
-                                                 <input onChange={ onChange } className="form-control" type="text" placeholder="Enter Mfg Lic No" name="mfg_lic_no"/>
+                                                 <input value={booking1.mfg_lic_no} onChange={ onChange } className="form-control" type="text" placeholder="Enter Mfg Lic No" name="mfg_lic_no"/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Is Report Dispacthed?</label>
-                                                <select onChange={ onChange } name="is_report_dispacthed" className="form-select">
+                                                <select value={booking1.is_report_dispacthed} onChange={ onChange } name="is_report_dispacthed" className="form-select">
                                                   <option value="0">No</option>
                                                   <option value="1">Yes</option>
                                                 </select>
@@ -821,7 +802,7 @@ function EditBooking(props)  {
 
                                               <div className="col-md-3">
                                                 <label>Signature?</label>
-                                                <select onChange={ onChange } name="signature" className="form-select">
+                                                <select value={booking1.signature} onChange={ onChange } name="signature" className="form-select">
                                                   <option value="0">No</option>
                                                   <option value="1">Yes</option>
                                                 </select>
@@ -837,12 +818,12 @@ function EditBooking(props)  {
 
                                               <div className="col-md-4">
                                                 <label>Dispatch Date Time</label>
-                                                <input id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>
+                                                <input value={booking1.dispatch_date_time} id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>
                                               </div>
 
                                               <div className="col-md-4">
                                                 <label>Dispatch Mode</label>
-                                                <select onChange={ onChange } name="dispatch_mode" className="form-select" id="dispatch_mode">
+                                                <select value={booking1.dispatch_mode} onChange={ onChange } name="dispatch_mode" className="form-select" id="dispatch_mode">
                                                   <option value="">Select Dispatch Mode</option>
                                                   <option value="By Courier">By Courier</option>
                                                   <option value="By Hand Delivery">By Hand Delivery</option>
@@ -853,7 +834,7 @@ function EditBooking(props)  {
 
                                               <div className="col-md-4">
                                                 <label>Dispatch Details</label>
-                                                <input id="dispatch_details" onChange={ onChange } className="form-control" type="text" name="dispatch_details" placeholder="Enter Dispatch Details"/>
+                                                <input value={booking1.dispatch_details} id="dispatch_details" onChange={ onChange } className="form-control" type="text" name="dispatch_details" placeholder="Enter Dispatch Details"/>
                                               </div>
 
                                             </div>
@@ -866,7 +847,7 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Verified By</label>
-                                                <select onChange={ onChange } name="verified_by" className="form-select">
+                                                <select value={booking1.verified_by} onChange={ onChange } name="verified_by" className="form-select">
                                                   <option value="None">None</option>
                                                   <option value="QA">QA</option>
                                                 </select>
@@ -875,7 +856,7 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>NABL Scope?</label>
-                                                <select onChange={ onChange } name="nabl_scope" className="form-select">
+                                                <select value={booking1.nabl_scope} onChange={ onChange } name="nabl_scope" className="form-select">
                                                   <option value="0">No</option>
                                                   <option value="1">Yes</option>
                                                 </select>
@@ -884,7 +865,7 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Cancel</label>
-                                                <select onChange={ onChange } name="cancel" className="form-select">
+                                                <select value={booking1.cancel} onChange={ onChange } name="cancel" className="form-select">
                                                   <option value="None">None</option>
                                                   <option value="No">No</option>
                                                   <option value="Yes">Yes</option>
@@ -893,7 +874,7 @@ function EditBooking(props)  {
 
                                               <div className="col-md-6">
                                                 <label>Cancel Remarks</label>
-                                                <textarea onChange={ onChange } name="cancel_remarks" className="form-control" placeholder="Enter Cancel Remarks"></textarea>
+                                                <textarea value={booking1.cancel_remarks} onChange={ onChange } name="cancel_remarks" className="form-control" placeholder="Enter Cancel Remarks"></textarea>
                                               </div>
 
                                             </div>
@@ -906,7 +887,7 @@ function EditBooking(props)  {
 
                                               <div className="col-md-3">
                                                 <label>Priority</label>
-                                                <select onChange={ onChange } name="priority" className="form-select">
+                                                <select value={booking1.priority} onChange={ onChange } name="priority" className="form-select">
                                                   <option value="High">High</option>
                                                   <option value="Medium">Medium</option>
                                                   <option value="Low">Low</option>
@@ -916,7 +897,7 @@ function EditBooking(props)  {
 
                                               <div className="col-md-3">
                                                 <label>Discipline</label>
-                                                <select onChange={ onChange } name="discipline" className="form-select">
+                                                <select value={booking1.discipline} onChange={ onChange } name="discipline" className="form-select">
                                                   <option value="Chemical">Chemical</option>
                                                   <option value="Biological">Biological</option>
                                                 </select>
@@ -925,7 +906,7 @@ function EditBooking(props)  {
 
                                               <div className="col-md-3">
                                                 <label>Group</label>
-                                                <select onChange={ onChange } name="booking_group" className="form-select">
+                                                <select value={booking1.booking_group} onChange={ onChange } name="booking_group" className="form-select">
                                                   <option value="Drugs and Pharmaceuticals">Drugs and Pharmaceuticals</option>
                                                   <option value="Food of Agriculture Product">Food of Agriculture Product</option>
                                                 </select>
@@ -933,10 +914,32 @@ function EditBooking(props)  {
 
                                               <div className="col-md-3">
                                                 <label>Statement Of Conformity</label>
-                                                <select onChange={ onChange } name="statement_ofconformity" className="form-select">
+                                                <select value={booking1.statement_ofconformity} onChange={ onChange } name="statement_ofconformity" className="form-select">
                                                   <option value="PASS">PASS</option>
                                                   <option value="INDETERMINATE">INDETERMINATE</option>
                                                   <option value="FAIL">FAIL</option>
+                                                </select>
+
+                                              </div>
+
+                                            </div>
+                                          </div>
+                                      </div>
+
+                                      <div className="mb-3 row">
+                                          <div className="form-group">
+                                            <div className="row">
+
+                                              <div className="col-md-6">
+                                                <label>COA Release Date</label>
+                                                <input value={booking1.coa_release_date} id="coa_release_date" onChange={ onChange } className="form-control" type="date" name="coa_release_date" placeholder="Enter COA Release Date"/>
+                                              </div>
+
+                                              <div className="col-md-6">
+                                                <label>Block</label>
+                                                <select value={booking1.block} onChange={ onChange } name="block" className="form-select">
+                                                <option value="0">No</option>
+                                                <option value="1">Yes</option>
                                                 </select>
 
                                               </div>
@@ -955,7 +958,7 @@ function EditBooking(props)  {
                                             <div className="row">
                                               <div className="col-md-4">
                                                 <label>Product</label>
-                                                {loading1 ? <LoadingSpinner /> :<Select options={data4} name="product_id"
+                                                {loading1 ? <LoadingSpinner /> :<Select value={data4.find(obj => obj.value === product.id)} options={data4} name="product_id"
                                                placeholder="Select Product" onChange={ changeProductID } isClearable/>}
                                               </div>
                                               <div className="col-md-4">
@@ -965,11 +968,8 @@ function EditBooking(props)  {
 
                                               <div className="col-md-4">
                                                 <label>Product Type</label>
-                                                  {loading1 ? <LoadingSpinner /> :<select name="product_type" className="form-select" onChange={ onChangeProductSamplesFromDB } value={bookingSamples1.product_type}>
-                                                  <option value="Finished Product">Finished Product</option>
-                                                  <option value="Raw Material">Raw Material</option>
-                                                  <option value="Other">Other</option>
-                                                </select>}
+                                                  <input type="text" name="product_type" className="form-control" value={bookingSamples1.product_type}/>
+
                                               </div>
 
                                             </div>
@@ -982,13 +982,7 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Pharmacopiea</label>
-                                                {loading1 ? <LoadingSpinner /> :
-                                                    <select className="form-select" value={bookingSamples1.pharmacopeia_id} id="pharmocopiea" name="pharmacopeia_id" onChange={ onChangeProductSamplesFromDB }>
-                                                        <option value="">Select Pharmocopiea</option>
-                                                            { data.map((option, key) => <option value={option.id} key={key} >
-                                                            {option.pharmacopeia_name}</option>) }
-                                                    </select>
-                                                }
+                                                <input type="text" name="product_type" className="form-control" value={bookingSamples1.pharmacopeia_name}/>
                                               </div>
 
                                               <div className="col-md-2">

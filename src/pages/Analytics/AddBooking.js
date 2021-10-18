@@ -68,7 +68,7 @@ function AddBooking(props)  {
     sampling_date_to:'',sampling_date_to_options:'N/S',sample_received_through:'By Courier',chemist:'1',sample_condition:'',
     is_sample_condition:'0',batch_size_qty_rec:'',notes:'',sample_drawn_by:''});
 
-    const [bookingSamples1, setBookingSamples1] = useState({generic_name:'',product_type:'',pharmacopeia_id:''});
+    const [bookingSamples1, setBookingSamples1] = useState({generic_name:'',product_generic:'',pharmacopeia_name:''});
 
       const[testData,setTestData] = useState([{parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
       test_name:'',label_claim:'',min_limit:'',max_limit:'',amount:''}])
@@ -261,9 +261,10 @@ function AddBooking(props)  {
 
                                   }))
                              setTestData(tests_data)
-                             setBookingSamples1({product_type:response.data.data.product_generic,
-                               generic_name:response.data.data.generic.generic_product_name,
-                               pharmacopeia_id: response.data.data.pharmacopeia_id
+                             setBookingSamples1({
+                               product_generic:response.data.data.product_generic,
+                               pharmacopeia_name: response.data.data.pharmacopeia.pharmacopeia_name,
+                               generic_name : response.data.data.generic.generic_product_name
                              })
 
                           })
@@ -503,8 +504,8 @@ function AddBooking(props)  {
                    statement_ofconformity:booking1.statement_ofconformity,
                    "booking_sample_details":[{
                      product_id: final_product_id,
-                     product_type: bookingSamples1.product_type,
-                     pharmacopiea_id:bookingSamples1.pharmacopeia_id,
+                    // product_type: bookingSamples1.product_type,
+                  //   pharmacopiea_id:bookingSamples1.pharmacopeia_id,
                      batch_no:bookingSamples.batch_no,
                      packsize:bookingSamples.packsize,
                      request_quantity:bookingSamples.request_quantity,
@@ -533,9 +534,6 @@ function AddBooking(props)  {
                         comments:booking1.comments
                     }
                }
-
-               console.log(data);
-
               axios.post( `${process.env.REACT_APP_BASE_APIURL}addBooking`, data, {headers} )
 
                        .then(response => {
@@ -945,11 +943,7 @@ function AddBooking(props)  {
 
                                               <div className="col-md-4">
                                                 <label>Product Type</label>
-                                                  {loading1 ? <LoadingSpinner /> :<select name="product_type" className="form-select" onChange={ onChangeProductSamplesFromDB } value={bookingSamples1.product_type}>
-                                                  <option value="Finished Product">Finished Product</option>
-                                                  <option value="Raw Material">Raw Material</option>
-                                                  <option value="Other">Other</option>
-                                                </select>}
+                                                  <input type="text" name="product_type" className="form-control" value={bookingSamples1.product_generic} readOnly/>
                                               </div>
 
                                             </div>
@@ -962,13 +956,7 @@ function AddBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Pharmacopiea</label>
-                                                {loading1 ? <LoadingSpinner /> :
-                                                    <select className="form-select" value={bookingSamples1.pharmacopeia_id} id="pharmocopiea" name="pharmacopeia_id" onChange={ onChangeProductSamplesFromDB }>
-                                                        <option value="">Select Pharmocopiea</option>
-                                                            { data.map((option, key) => <option value={option.id} key={key} >
-                                                            {option.pharmacopeia_name}</option>) }
-                                                    </select>
-                                                }
+                                                    <input type="text" className="form-control" value={bookingSamples1.pharmacopeia_name} id="pharmocopiea" name="pharmacopeia_name" readOnly/>
                                               </div>
 
                                               <div className="col-md-2">
