@@ -36,8 +36,8 @@ class ListMaterial extends Component{
     const del_headers = {
       'Authorization' : "Bearer "+localStorage.getItem('token')
     };
- 
- this.componentDidMount = () => { 
+
+ this.componentDidMount = () => {
   this.setState({ loading: true }, () => {
 
      axios.get(`${process.env.REACT_APP_BASE_APIURL}listMaterial`, { headers: headers})
@@ -54,9 +54,9 @@ class ListMaterial extends Component{
                    this.setState({loading: false});
 
                  }
-             }) 
+             })
    })
-  }  
+  }
 
 this.deleteMaterial = (material_id) =>{
             this.setState({ loading: true }, () => {
@@ -94,7 +94,7 @@ this.deleteMaterial = (material_id) =>{
                this.setState({loading: false});
              }
          })
-      }) 
+      })
   }
 }
   render(){
@@ -114,11 +114,11 @@ this.deleteMaterial = (material_id) =>{
             </div>
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
-                    <li> 
+                    <li>
                       <Link to="/add-material" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Material</Link>
                     </li>&nbsp;
                 </ol>
-            </div>        
+            </div>
         </div>
           <Row>
             <Col className="col-12">
@@ -142,7 +142,7 @@ this.deleteMaterial = (material_id) =>{
                       {this.state.material.length >=1 ?
                        <tbody>
                        {
-                         this.state.material.map((post,index)=>{ 
+                         this.state.material.map((post,index)=>{
 
                             return(
                               <tr>
@@ -155,14 +155,14 @@ this.deleteMaterial = (material_id) =>{
                                 <td>{post.material_amount}</td>
                                 <td><div><Link className="btn btn-primary" to={"/edit-material/"+base64_encode(post.id+"/"+post.category_id+"/"+post.sub_category_id)}>
                                   <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-                                  <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Material Data?')){ this.deleteMaterial(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-                                  &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-material/"+base64_encode(post.id)}>
+                                  {/*<button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Material Data?')){ this.deleteMaterial(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+                                  &nbsp;&nbsp;*/}<Link className="btn btn-info" to={"/view-material/"+base64_encode(post.id)}>
                                   <i className="fa fa-eye"></i></Link></div></td>
                               </tr>
                             )
                          })
                        }
-                     
+
                        </tbody>
                         : <tr><td colspan="8"><p>No matching records found</p></td></tr>}
                        <tfoot>
@@ -195,7 +195,7 @@ this.deleteMaterial = (material_id) =>{
             </Col>
           </Row>
 
-          
+
         </div>
       </div>
     </React.Fragment>

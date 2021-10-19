@@ -18,7 +18,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import axios from 'axios'
 import * as XLSX from 'xlsx';
 import jsPDF from "jspdf";
-import html2canvas from 'html2canvas'; 
+import html2canvas from 'html2canvas';
 import $ from "jquery";
 
 class ListPharmacopiea extends Component {
@@ -40,7 +40,7 @@ class ListPharmacopiea extends Component {
 
         const del_headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-        };      
+        };
 
       {/*Delete Pharmocopiea data from list*/}
         this.deletePharmacopiea = async(pharmacopiea_id) =>{
@@ -132,8 +132,9 @@ class ListPharmacopiea extends Component {
               year : post.pharmacopeia_year,
               edition : post.pharmacopeia_edition,
               action : <div><Link className="btn btn-primary" to={"/edit-pharmacopiea/"+base64_encode(post.id)}>
-              <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Pharmacopiea?')){ this.deletePharmacopiea(post.id)}}}><i class="fas fa-trash-alt"></i></button></div>
+              <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;
+              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Pharmacopiea?')){ this.deletePharmacopiea(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+              */}</div>
               ,
 
             }
@@ -197,7 +198,7 @@ const { data2, loading1 } = this.state;
             </div>
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
-                    <li> 
+                    <li>
                       <Link to="/add-pharmacopiea" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;Add Pharmacopiea</Link>
                     </li>&nbsp;
                    {loading1 ?  <center><LoadingSpinner /></center> :   <li>
@@ -207,20 +208,20 @@ const { data2, loading1 } = this.state;
                             <DropdownItem onClick={this.ExportToExcel}><i class="fas fa-file-export"></i> &nbsp;Export To Excel </DropdownItem>
                             <DropdownItem><Link to="/export-pdf-pharmacopiea" style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export To PDF</Link></DropdownItem>
                           </DropdownButton>
-                        
+
                         </div>
                     </li>}
                 </ol>
-            </div>        
+            </div>
         </div>
 
           <Row>
             <Col className="col-12">
               <Card>
                 <CardBody>
-                
+
                   {loading ?  <center><LoadingSpinner /></center> :  <MDBDataTable striped bordered data={data1} id="pharmacopiea"/>}
- 
+
                 </CardBody>
               </Card>
             </Col>

@@ -97,8 +97,9 @@ class ListDepartment extends Component {
               branchname: post.branch_name,
               departmentname: post.department_name,
               action : <div><Link className="btn btn-primary" to={"/edit-department/"+base64_encode(post.id)}>
-              <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Department?')){ this.deleteDepartment(post.id)}}}><i class="fas fa-trash-alt"></i></button></div>
+              <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;
+              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Department?')){ this.deleteDepartment(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+              */}</div>
             }
           )
         });

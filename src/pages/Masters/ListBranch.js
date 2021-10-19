@@ -18,7 +18,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import axios from 'axios'
 import * as XLSX from 'xlsx';
 import jsPDF from "jspdf";
-import html2canvas from 'html2canvas'; 
+import html2canvas from 'html2canvas';
 import $ from "jquery";
 
 class ListBranch extends Component {
@@ -39,7 +39,7 @@ class ListBranch extends Component {
 
         const del_headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-        }; 
+        };
 
       {/*Delete Branch data from list*/}
         this.deleteBranch = (branch_id) =>{
@@ -101,8 +101,8 @@ class ListBranch extends Component {
               companyname: post.company_name,
               branchtype : post.branch_type,
               action : <div><Link className="btn btn-primary" to={"/edit-branch/"+base64_encode(post.id)}>
-              <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Branch?')){ this.deleteBranch(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+              <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;
+              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Branch?')){ this.deleteBranch(post.id)}}}><i class="fas fa-trash-alt"></i></button>*/}
               &nbsp;&nbsp;
               <Link className="btn btn-info" to={"/view-branch/"+base64_encode(post.id)}> <i className="fa fa-eye"></i></Link>
               </div>
@@ -164,26 +164,26 @@ const { data, loading } = this.state;
             </div>
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
-                    <li> 
+                    <li>
                       <Link to="/add-branch" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Branch</Link>
                     </li>&nbsp;
                 </ol>
-            </div>        
+            </div>
         </div>
 
           <Row>
             <Col className="col-12">
               <Card>
                 <CardBody>
-                
+
                   {loading ?  <center><LoadingSpinner /></center> :  <MDBDataTable striped bordered data={data1}/>}
- 
+
                 </CardBody>
               </Card>
             </Col>
           </Row>
 
-          
+
         </div>
       </div>
     </React.Fragment>

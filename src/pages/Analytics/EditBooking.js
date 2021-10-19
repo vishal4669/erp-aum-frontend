@@ -154,6 +154,7 @@ function EditBooking(props)  {
                         pharmacopeia_name: response.data.data.samples[0].product_id.pharmacopeia_id.pharmacopeia_name,
                         generic_name : response.data.data.samples[0].product_id.generic_product_name
                       })
+                      setTestData(response.data.data.tests)
                       {setLoading1(false)};
 
                   })
@@ -987,27 +988,27 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Batch No</label>
-                                                <input className="form-control" type="text" name="batch_no" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="batch_no" onChange={ onChangeProductSamples } value={bookingSamples.batch_no}/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label>Pack Size</label>
-                                                <input className="form-control" type="text" name="packsize" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="packsize" onChange={ onChangeProductSamples } value={bookingSamples.packsize}/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label>Req Qty</label>
-                                                <input className="form-control" type="text" name="request_quantity" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="request_quantity" onChange={ onChangeProductSamples } value={bookingSamples.request_quantity}/>
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>Sample Code</label>
-                                                <input className="form-control" type="text" name="sample_code" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="sample_code" onChange={ onChangeProductSamples } value={bookingSamples.sample_code}/>
                                               </div>
 
                                               <div className="col-md-4">
                                                 <label>Sample Desc</label>
-                                                <input className="form-control" type="text" name="sample_description" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="sample_description" onChange={ onChangeProductSamples } value={bookingSamples.sample_description}/>
                                               </div>
 
                                             </div>
@@ -1020,22 +1021,22 @@ function EditBooking(props)  {
 
                                               <div className="col-md-3">
                                                 <label>Sample Qty</label>
-                                                <input className="form-control" type="text" name="sample_quantity" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="sample_quantity" onChange={ onChangeProductSamples } value={bookingSamples.sample_quantity}/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Sample Location</label>
-                                                <input className="form-control" type="text" name="sample_location"  onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="sample_location"  onChange={ onChangeProductSamples } value={bookingSamples.sample_location}/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Sample Packaging</label>
-                                                <input className="form-control" type="text" name="sample_packaging" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="sample_packaging" onChange={ onChangeProductSamples } value={bookingSamples.sample_packaging}/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Sample Type</label>
-                                                <input className="form-control" type="text" name="sample_type" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="sample_type" onChange={ onChangeProductSamples } value={bookingSamples.sample_type}/>
                                               </div>
 
 
@@ -1049,12 +1050,12 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Sampling Date From</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="sampling_date_from" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="date" id="example-date-input" name="sampling_date_from" onChange={ onChangeProductSamples } value={bookingSamples.sampling_date_from}/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>SamplingFrom</label>
-                                                <select name="sampling_date_from_options" className="form-select" onChange={ onChangeProductSamples }>
+                                                <select name="sampling_date_from_options" className="form-select" onChange={ onChangeProductSamples} value={bookingSamples.sampling_date_from_options}>
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
@@ -1063,11 +1064,11 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Sampling Date To</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="sampling_date_to" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="date" id="example-date-input" name="sampling_date_to" onChange={ onChangeProductSamples } value={bookingSamples.sampling_date_to}/>
                                               </div>
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Sampling To</label>
-                                                <select name="sampling_date_to_options" className="form-select" onChange={ onChangeProductSamples }>
+                                                <select name="sampling_date_to_options" className="form-select" onChange={ onChangeProductSamples } value={bookingSamples.sampling_date_to_options}>
                                                   <option value="N/S">N/S</option>
                                                   <option value="None">None</option>
                                                   <option value="N/A">N/A</option>
@@ -1076,7 +1077,7 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Sample Received Through</label>
-                                                <select name="sample_received_through" className="form-select" onChange={ onChangeProductSamples }>
+                                                <select name="sample_received_through" className="form-select" onChange={ onChangeProductSamples } value={bookingSamples.sample_received_through}>
                                                   <option value="By Courier">By Courier</option>
                                                   <option value="By Hand">By Hand</option>
                                                   <option value="By Collection">By Collection</option>
@@ -1085,19 +1086,19 @@ function EditBooking(props)  {
 
                                               <div className="col-md-1">
                                                 <label>Chemist</label>
-                                                <select name="chemist" className="form-select" onChange={ onChangeProductSamples }>
+                                                <select name="chemist" className="form-select" onChange={ onChangeProductSamples } value={bookingSamples.chemist}>
                                                   <option value="1">Yes</option>
                                                 </select>
                                               </div>
 
                                               <div className="col-md-2">
                                                 <label>Sample Condition</label>
-                                                <input className="form-control" type="text" name="sample_condition" placeholder="Enter Sample Condition" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="sample_condition" value={bookingSamples.sample_condition} placeholder="Enter Sample Condition" onChange={ onChangeProductSamples }/>
                                               </div>
 
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>sampleconoption</label>
-                                                <select name="is_sample_condition" className="form-select" onChange={ onChangeProductSamples }>
+                                                <select name="is_sample_condition" className="form-select" onChange={ onChangeProductSamples } value={bookingSamples.is_sample_condition}>
                                                   <option value="0">No</option>
                                                   <option value="1">Yes</option>
                                                 </select>
@@ -1113,17 +1114,17 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Batch Size/ Qty Received</label>
-                                                <input className="form-control" type="text" name="batch_size_qty_rec" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="batch_size_qty_rec" onChange={ onChangeProductSamples } value={bookingSamples.batch_size_qty_rec}/>
                                               </div>
 
                                               <div className="col-md-7">
                                                 <label>Notes</label>
-                                                <input className="form-control" type="text" name="notes" placeholder="Enter Note" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="notes" placeholder="Enter Note" onChange={ onChangeProductSamples } value={bookingSamples.notes}/>
                                               </div>
 
                                               <div className="col-md-3">
                                                 <label>Sample Drawn By</label>
-                                                <input className="form-control" type="text" name="sample_drawn_by" onChange={ onChangeProductSamples }/>
+                                                <input className="form-control" type="text" name="sample_drawn_by" onChange={ onChangeProductSamples } value={bookingSamples.sample_drawn_by}/>
                                               </div>
 
                                             </div>
@@ -1161,13 +1162,13 @@ function EditBooking(props)  {
                                                                 <tr>
                                                                     {/*<td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
                                                                     <td><input type="checkbox"/></td>*/}
-                                                                    <td><select name="parent_child" onChange={e => handleInputChange(e, i)} style={my_style} className="form-select">
+                                                                    <td><select name="parent_child" value={x.parent_child} onChange={e => handleInputChange(e, i)} style={my_style} className="form-select">
                                                                       <option value="Parent">Parent</option>
                                                                       <option value="Child">Child</option>
                                                                     </select></td>
-                                                                    <td><input type="text" onChange={e => handleInputChange(e, i)} name="p_sr_no" className="form-control"/></td>
+                                                                    <td><input value={x.p_sr_no} type="text" onChange={e => handleInputChange(e, i)} name="p_sr_no" className="form-control"/></td>
                                                                     <td><select value={x.by_pass} onChange={e => handleInputChange(e, i)} style={my_style} className="form-select" name="by_pass"><option value="2">No</option><option value="1">Yes</option></select></td>
-                                                                    <td><select value={x.parent} onChange={e => handleInputChange(e, i)} name="parent" className="form-select" style={{width:'100px !important'}}>
+                                                                    <td><select value={x.parent.id} onChange={e => handleInputChange(e, i)} name="parent" className="form-select" style={{width:'100px !important'}}>
                                                                         <option value="">Select Parent</option>
                                                                          { data5.map((option, key) => <option value={option.id} key={key} >
                                                                          {option.parent_name}</option>) }

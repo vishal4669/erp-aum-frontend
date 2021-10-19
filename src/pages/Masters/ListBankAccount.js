@@ -18,7 +18,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import axios from 'axios'
 import * as XLSX from 'xlsx';
 import jsPDF from "jspdf";
-import html2canvas from 'html2canvas'; 
+import html2canvas from 'html2canvas';
 import $ from "jquery";
 
 class ListBankAccount extends Component {
@@ -38,7 +38,7 @@ class ListBankAccount extends Component {
 
         const del_headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-        }; 
+        };
 
       {/*Delete Branch data from list*/}
         this.deleteBankAccount = (bank_id) =>{
@@ -81,6 +81,8 @@ class ListBankAccount extends Component {
              this.setState({ tableRows:this.assemblePosts(), isLoading:false });
              this.setState({ loading: false });
           }).catch(error => {
+            console.log(error)
+            console.log(error)
               toastr.error(error.response.data.message);
               this.setState({ loading: false });
             })
@@ -103,9 +105,9 @@ class ListBankAccount extends Component {
               micrcode : post.micr_code,
               ifsc_code : post.ifsc_code,
               action : <div><Link className="btn btn-primary" to={"/edit-bank-account/"+base64_encode(post.id)}>
-              <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
+              <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;
               <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Bank Account?')){ this.deleteBankAccount(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-              </div>
+              */}</div>
               ,
 
             }
@@ -176,26 +178,26 @@ const { data, loading } = this.state;
             </div>
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
-                    <li> 
+                    <li>
                       <Link to="/add-bank-account" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Bank Account Master</Link>
                     </li>&nbsp;
                 </ol>
-            </div>        
+            </div>
         </div>
 
           <Row>
             <Col className="col-12">
               <Card>
                 <CardBody>
-                
+
                   {loading ?  <center><LoadingSpinner /></center> :  <MDBDataTable striped bordered data={data1}/>}
- 
+
                 </CardBody>
               </Card>
             </Col>
           </Row>
 
-          
+
         </div>
       </div>
     </React.Fragment>

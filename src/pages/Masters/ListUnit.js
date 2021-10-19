@@ -22,37 +22,37 @@ class ListUnit extends React.Component {
     constructor(props) {
 
         super(props);
-    
+
         this.state= {
-    
+
           posts: [],
-    
+
           //isLoading:false,
 
           loading : false,
 
           data1 : [],
-    
+
           tableRows: [],
           count :0
-          
+
         };
         const headers = {
           'Content-Type': "application/json",
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
         const del_headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
-    this.deleteUnit= (unit_id) =>{ 
+    this.deleteUnit= (unit_id) =>{
       this.setState({ loading: true }, () => {
-     axios.post(`${process.env.REACT_APP_BASE_APIURL}deleteUnit/`+unit_id,null, { headers: del_headers})  
-    .then(response => {  
-      if(response.data.success == true){  
+     axios.post(`${process.env.REACT_APP_BASE_APIURL}deleteUnit/`+unit_id,null, { headers: del_headers})
+    .then(response => {
+      if(response.data.success == true){
         props.history.push('/all-unit');
         props.history.push('/unit');
         toastr.success(response.data.message);
@@ -62,41 +62,41 @@ class ListUnit extends React.Component {
                 props.history.push('/unit');
                 toastr.error(response.data.message);
                 this.setState({loading: false});
-            }  
-    }) 
-      .catch((error) => {  
+            }
+    })
+      .catch((error) => {
                 this.setState({loading: false});
                 toastr.error(error.response.data.message);
-      }) 
-    })  
-    } 
+      })
+    })
+    }
 
       this.componentWillMount=async() => {
                     this.setState({ loading: true }, () => {
         axios.get(`${process.env.REACT_APP_BASE_APIURL}listUnit`, { headers: headers})
-    
+
           .then(response => response.data.data)
           .then(data => {
-    
+
              // if (err) throw err;
-    
+
              this.setState({ posts: data })
              this.setState({loading: false});
-    
+
           })
-    
+
           .then(async() => {
-              
+
              this.setState({ tableRows:this.assemblePosts()})
              this.setState({loading: false});
-    
+
           }).catch(error => {
               toastr.error(error.response.data.message);
               this.setState({ loading: false });
             })
 
         })
-      }      
+      }
 
       this.assemblePosts= () => {
         let posts =this.state.posts.map((post) => {
@@ -105,68 +105,69 @@ class ListUnit extends React.Component {
       count: this.state.count + 1
     });
           return (
-    
+
             {
-    
+
               srno: this.state.count,
-    
+
               unit_name: post.unit_name,
 
               action : <div><Link className="btn btn-primary" to={"/edit-unit/"+base64_encode(post.id)}>
-              <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;{loading ? <a className="btn btn-primary w-100 waves-effect waves-light"
-                           > <LoadingSpinner /> </a>  : 
-              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Unit?')){ this.deleteUnit(post.id)}}}><i class="fas fa-trash-alt"></i></button>}</div>
+              <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;{loading ? <a className="btn btn-primary w-100 waves-effect waves-light"
+                           > <LoadingSpinner /> </a>  :
+              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Unit?')){ this.deleteUnit(post.id)}}}><i class="fas fa-trash-alt"></i></button>}
+              */}</div>
               ,
-    
+
             }
-    
-          ) 
-    
+
+          )
+
         });
-    
+
         return posts;
-    
-      } 
-    }  
+
+      }
+    }
 
 
     render() {
         const { data, loading } = this.state;
 
         const data1 = {
-    
+
           columns: [
-    
+
             {
-    
+
               label:'SR No',
-    
+
               field:'srno',
-    
-            },
-    
-            {
-    
-              label:'Unit Name',
-    
-              field:'unit_name',
-    
+
             },
 
             {
-    
-              label:'Action',
-    
-              field: 'action',
-    
+
+              label:'Unit Name',
+
+              field:'unit_name',
+
             },
-      
+
+            {
+
+              label:'Action',
+
+              field: 'action',
+
+            },
+
           ],
 
 
 
           rows:this.state.tableRows,
-        } 
+        }
         return (
           <React.Fragment>
               <HorizontalLayout/>
@@ -182,13 +183,13 @@ class ListUnit extends React.Component {
                   </div>
                   <div className="page-title-right">
                       <ol className="breadcrumb m-0">
-                          <li> 
+                          <li>
                             <Link to="/add-unit" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Unit</Link>
                           </li>
                       </ol>
-                  </div>        
+                  </div>
               </div>
-      
+
                 <Row>
                   <Col className="col-12">
                     <Card>
@@ -204,10 +205,10 @@ class ListUnit extends React.Component {
             </div>
           </React.Fragment>
         )
-      } 
-     
-}        
-  
+      }
+
+}
+
 
 
 export default ListUnit

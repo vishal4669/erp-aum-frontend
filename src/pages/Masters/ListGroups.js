@@ -97,8 +97,9 @@ class ListGroups extends Component {
               parentgroup: post.parent_name,
               code : post.	group_code,
               action : <div><Link className="btn btn-primary" to={"/edit-group/"+base64_encode(post.id)}>
-              <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Group?')){ this.deleteGroup(post.id)}}}><i class="fas fa-trash-alt"></i></button></div>
+              <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;
+              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Group?')){ this.deleteGroup(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+              */}</div>
             }
           )
         });
@@ -142,7 +143,7 @@ class ListGroups extends Component {
 
           <React.Fragment>
               <HorizontalLayout/>
-             
+
             <div className="page-content">
               <div className="container-fluid">
                   <div class="page-title-box d-flex align-items-center justify-content-between">
