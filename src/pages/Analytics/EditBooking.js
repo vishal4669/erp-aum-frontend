@@ -59,8 +59,8 @@ function EditBooking(props)  {
       analysis_date:'',d_format:'',d_format_options:'N/S',grade: '',grade_options:'N/S',project_name:'',
       project_options:'N/S',mfg_lic_no:'',is_report_dispacthed:'0',signature:'0',verified_by:'None',nabl_scope: '0',
       cancel:'None',cancel_remarks:'',priority:'High',discipline:'Chemical',booking_group:'Drugs and Pharmaceuticals',
-      statement_ofconformity:'PASS',dispatch_mode:'',dispatch_date_time:'',dispatch_details:'',invoice_date:'',invoice_number:'',
-      audit_reamrks:'',remark:'',comments:'',coa_release_date:'',block:''});
+      statement_ofconformity:'PASS',dispatch_mode:'',dispatch_date_time:'',dispatch_details:'',invoice_date:'',invoice_no:'',
+      audit_reamrks:'',remark:'',comments:'',coa_release_date:'',block:'0'});
 
     const [bookingSamples, setBookingSamples] = useState({batch_no:'',
     packsize:'',request_quantity:'',sample_code:'',sample_description:'',sample_quantity:'',sample_location:'',
@@ -191,21 +191,16 @@ function EditBooking(props)  {
 
         if(chnage_booking_type !== null){
           if(chnage_booking_type == 'Invoice'){
-            console.log("here")
-            $("#invoice_date").val("");
-            $("#invoice_number").val("");
-            $(".invoice_data").remove();
+          //  $("#invoice_date").val("");
+            //$("#invoice_no").val("");
+            //$(".invoice_data").remove();
             $(".invoice_data").css("display", "block");
-            //$("#invoice_date").val("");
-            //$("#invoice_number").val("");
-            setBooking1(prevState => ({...prevState,invoice_date: "",invoice_number: ""}))
+          //  setBooking1(prevState => ({...prevState,invoice_date: "",invoice_no: ""}))
           } else {
-            console.log("here1")
             $("#invoice_date").val("");
-            $("#invoice_number").val("");
-            setBooking1(prevState => ({...prevState,invoice_date: "",invoice_number: ""}))
-            console.log(booking1)
+            $("#invoice_no").val("");
             $(".invoice_data").css("display", "none");
+            setBooking1(prevState => ({...prevState,invoice_date: "",invoice_no: ""}))
           }
 
           if(chnage_booking_type == 'Report'){
@@ -229,21 +224,61 @@ function EditBooking(props)  {
       }
 
       const changeCustomer = (e) =>{
-          setCustomer({customer_id: e });
-        }
+
+        if(e !== null){
+            if(e.value){
+              setCustomer({id:e.value,company_name:e.label});
+            } else {
+              setCustomer({customer_id:e});
+            }
+          } else {
+            setCustomer({customer_id:e});
+          }
+
+      }
 
       const changeManufacturer = (e) =>{
-          setManufacturer({manufacturer_id: e });
+        //  setManufacturer({manufacturer_id: e });
+
+        if(e !== null){
+            if(e.value){
+              setManufacturer({id:e.value,company_name:e.label});
+            } else {
+              setManufacturer({customer_id:e});
+            }
+          } else {
+            setManufacturer({customer_id:e});
+          }
+
       }
 
       const changeSupplier = (e) =>{
-          setSupplier({supplier_id: e });
+          //setSupplier({supplier_id: e });
+
+          if(e !== null){
+              if(e.value){
+                setSupplier({id:e.value,company_name:e.label});
+              } else {
+                setSupplier({customer_id:e});
+              }
+            } else {
+              setSupplier({customer_id:e});
+            }
       }
 
       const changeProductID = (e) =>{
-          setProduct({product_id: e });
+          //setProduct({product_id: e });
 
-          getProductData(e);
+          if(e !== null){
+              if(e.value){
+                setProduct({id:e.value});
+              } else {
+                setProduct({product_id:e});
+              }
+            getProductData(e);
+            } else {
+              setProduct({product_id:e});
+            }
       }
 
       const getProductData = (e) => {
@@ -372,10 +407,11 @@ function EditBooking(props)  {
                               })
                         }
 
-      const InsertBooking = (e)=>{
+      const UpdateBooking = (e)=>{
                e.preventDefault();
-               {setLoading(true)};
 
+               console.log(booking1)
+          //     {setLoading(true)};
                var final_customer_id = customer;
                var final_supplier_id = supplier;
                var final_manufacturer_id = manufacturer;
@@ -383,14 +419,14 @@ function EditBooking(props)  {
                // Customer ID
 
                  if(typeof customer == "number"){
-                   final_customer_id = customer.customer_id
+                   final_customer_id = customer.id
                  } else if(typeof customer == "object"){
                    if(customer.customer_id !== null){
-                       final_customer_id = customer.customer_id.value;
-                   }else{
+                       final_customer_id = customer.id;
+                   }
+                  else{
                      final_customer_id = '';
                    }
-
                  } else {
                    final_customer_id = '';
                  }
@@ -398,10 +434,10 @@ function EditBooking(props)  {
 
               //Supplier ID
               if(typeof supplier == "number"){
-                final_supplier_id = supplier.supplier_id
+                final_supplier_id = supplier.id
               } else if(typeof supplier == "object"){
-                if(supplier.customer_id !== null){
-                    final_supplier_id = supplier.supplier_id.value;
+                if(supplier.id !== null){
+                    final_supplier_id = supplier.id;
                 } else{
                   final_supplier_id = '';
                 }
@@ -413,10 +449,10 @@ function EditBooking(props)  {
               // Manufacturer ID
 
               if(typeof manufacturer == "number"){
-                final_manufacturer_id = manufacturer.manufacturer_id
+                final_manufacturer_id = manufacturer.id
               } else if(typeof manufacturer == "object"){
-                if(manufacturer.customer_id !== null){
-                    final_manufacturer_id = manufacturer.manufacturer_id.value;
+                if(manufacturer.id !== null){
+                    final_manufacturer_id = manufacturer.id;
                 } else{
                   final_manufacturer_id = '';
                 }
@@ -427,12 +463,11 @@ function EditBooking(props)  {
 
 
               // Product ID
-
               if(typeof product == "number"){
                 final_product_id = product.product_id
               } else if(typeof product == "object"){
-                if(product.customer_id !== null){
-                    final_product_id = product.product_id.value;
+                if(product.product_id !== null){
+                    final_product_id = product.id;
                 } else{
                   final_product_id = '';
                 }
@@ -441,6 +476,7 @@ function EditBooking(props)  {
                 final_product_id = '';
               }
 
+
               const test_details = testData;
 
 
@@ -448,7 +484,7 @@ function EditBooking(props)  {
                    booking_type:booking1.booking_type,
                    report_type:booking1.report_type,
                    invoice_date:booking1.invoice_date,
-                   invoice_no:booking1.invoice_number,
+                   invoice_no:booking1.invoice_no,
                    receipte_date:booking1.receipte_date,
                    booking_no:booking1.booking_no,
                    customer_id:final_customer_id,
@@ -519,7 +555,7 @@ function EditBooking(props)  {
 
                console.log(data);
 
-              axios.post( `${process.env.REACT_APP_BASE_APIURL}addBooking`, data, {headers} )
+              /*axios.post( `${process.env.REACT_APP_BASE_APIURL}addBooking`, data, {headers} )
 
                        .then(response => {
                            if(response.data && response.data.success == true){
@@ -535,7 +571,7 @@ function EditBooking(props)  {
                        .catch((error) => {
                         {setLoading(false)};
                         toastr.error(error.response.data.message);
-                      })
+                      })*/
      }
 
   return (
@@ -543,7 +579,8 @@ function EditBooking(props)  {
       <HorizontalLayout/>
       <div className="page-content">
         <Container fluid={true}>
-        <Form onSubmit={InsertBooking} method="POST" id="AddBooking" name="BookingData">
+        <Form onSubmit={ (e) => {
+           UpdateBooking(e) }} method="POST" id="AddBooking" name="BookingData">
         <div className="page-title-box d-flex align-items-center justify-content-between">
 
             <div className="page-title">
@@ -608,7 +645,7 @@ function EditBooking(props)  {
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Receipt Date</label>
-                                                <input className="form-control" value={booking1.receipte_date} type="date" id="example-date-input" name="receipte_date" onChange={ onChange }/>
+                                                <input className="form-control" value={booking1.receipte_date} type="date" id="example-date-input" name="receipte_date" onChange={ onChange } readOnly/>
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Booking No</label>
@@ -618,7 +655,7 @@ function EditBooking(props)  {
                                           </div>
                                       </div>
 
-                                      <div className="mb-3 row invoice_data" style={{display:'none'}}>
+                                      {/*<div className="mb-3 row invoice_data" style={{display:'none'}}>
                                           <div className="form-group">
                                             <div className="row">
 
@@ -629,12 +666,12 @@ function EditBooking(props)  {
 
                                               <div className="col-md-6">
                                                 <label>Invoice Number</label>
-                                                <input id="invoice_number" onChange={ onChange } className="form-control" type="text" name="invoice_number" placeholder="Enter Invoice Number"/>
+                                                <input id="invoice_no" onChange={ onChange } className="form-control" type="text" name="invoice_no" placeholder="Enter Invoice Number"/>
                                               </div>
 
                                             </div>
                                           </div>
-                                      </div>
+                                      </div>*/}
 
                                       {booking1.booking_type == "Invoice" ?
                                         <div className="mb-3 row invoice_data">
@@ -648,7 +685,7 @@ function EditBooking(props)  {
 
                                                 <div className="col-md-6">
                                                   <label>Invoice Number</label>
-                                                  <input id="invoice_number"  value={booking1.invoice_no} onChange={ onChange } className="form-control" type="text" name="invoice_number" placeholder="Enter Invoice Number"/>
+                                                  <input id="invoice_no"  value={booking1.invoice_no} onChange={ onChange } className="form-control" type="text" name="invoice_no" placeholder="Enter Invoice Number"/>
                                                 </div>
 
                                               </div>
@@ -813,7 +850,37 @@ function EditBooking(props)  {
                                           </div>
                                       </div>
 
-                                      <div className="mb-3 row report_dispatch_yes" style={{display:'none'}}>
+                                      {/*<div className="mb-3 row report_dispatch_yes" style={{display:'none'}}>
+                                          <div className="form-group">
+                                            <div className="row">
+
+                                              <div className="col-md-4">
+                                                <label>Dispatch Date Time</label>
+                                                <input value={booking1.dispatch_date_time} id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>
+                                              </div>
+
+                                              <div className="col-md-4">
+                                                <label>Dispatch Mode</label>
+                                                <select value={booking1.dispatch_mode} onChange={ onChange } name="dispatch_mode" className="form-select" id="dispatch_mode">
+                                                  <option value="">Select Dispatch Mode</option>
+                                                  <option value="By Courier">By Courier</option>
+                                                  <option value="By Hand Delivery">By Hand Delivery</option>
+                                                  <option value="Collect by Party">Collect by Party</option>
+                                                </select>
+
+                                              </div>
+
+                                              <div className="col-md-4">
+                                                <label>Dispatch Details</label>
+                                                <input value={booking1.dispatch_details} id="dispatch_details" onChange={ onChange } className="form-control" type="text" name="dispatch_details" placeholder="Enter Dispatch Details"/>
+                                              </div>
+
+                                            </div>
+                                          </div>
+                                      </div>*/}
+
+                                      {booking1.is_report_dispacthed == "1" ?
+                                      <div className="mb-3 row report_dispatch_yes">
                                           <div className="form-group">
                                             <div className="row">
 
@@ -841,6 +908,8 @@ function EditBooking(props)  {
                                             </div>
                                           </div>
                                       </div>
+                                      : ''
+                                      }
 
                                       <div className="mb-3 row">
                                           <div className="form-group">
@@ -1225,7 +1294,7 @@ function EditBooking(props)  {
        </div>
 
 {/*Test Section End*/}
-      <h5 className="audit_details" style={{display:'none'}}> <Alert color="danger" role="alert">
+      {/*<h5 className="audit_details" style={{display:'none'}}> <Alert color="danger" role="alert">
           <i className="fa fa-comment">&nbsp;Audit Details</i>
       </Alert></h5>
       <div className="mb-3 row audit_details" style={{display:'none'}}>
@@ -1249,7 +1318,38 @@ function EditBooking(props)  {
 
             </div>
           </div>
+      </div>*/}
+
+      {booking1.booking_type == "Report" ?
+      <div className="audit_details">
+        <h5> <Alert color="danger" role="alert">
+            <i className="fa fa-comment">&nbsp;Audit Details</i>
+        </Alert></h5>
+        <div className="mb-3 row audit_details">
+            <div className="form-group">
+              <div className="row">
+
+                <div className="col-md-4">
+                  <label>Audit Remarks</label>
+                  <textarea name="audit_reamrks" Value={booking1.audit[0].audit_remarks} id="audit_reamrks" className="form-control" placeholder="Enter Remarks" onChange={ onChange }></textarea>
+                </div>
+
+                <div className="col-md-4">
+                  <label>Reason</label>
+                  <textarea name="reason" id="reason" Value={booking1.audit[0].reason} className="form-control" placeholder="Enter Reason" onChange={ onChange }></textarea>
+                </div>
+
+                <div className="col-md-4">
+                  <label>Comments</label>
+                  <textarea name="comments" id="comments" Value={booking1.audit[0].comments} className="form-control" placeholder="Enter Comments" onChange={ onChange }></textarea>
+                </div>
+
+              </div>
+            </div>
+        </div>
       </div>
+      : ''
+      }
 
                 </CardBody>
               </Card>

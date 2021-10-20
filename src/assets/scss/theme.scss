@@ -64,3 +64,11 @@
 /*  .dataTables_length.bs-select {
     visibility: hidden;
 */
+
+/*For Menu alignmnet media query*/
+
+@media screen and (max-width: 1400px){
+	.topnav .navbar-nav .nav-link{
+		padding: 1rem 0.5rem !important;
+	}
+}

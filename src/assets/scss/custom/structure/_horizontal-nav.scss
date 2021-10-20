@@ -1,6 +1,6 @@
-// 
+//
 // _horizontal.scss
-// 
+//
 
 // custom scss
 .topnav .navbar-nav .nav-link {
@@ -22,14 +22,14 @@
     left: 0;
     right: 0;
     z-index: 100;
-    
+
     .topnav-menu {
         margin: 0;
         padding: 0;
     }
 
     .navbar-nav {
-        
+
         .nav-link {
             font-size: 14.5px;
             position: relative;
@@ -43,7 +43,7 @@
                 background-color: transparent;
             }
         }
-        
+
         .dropdown-item{
             color: $menu-item-color;
             &.active, &:hover{
@@ -51,7 +51,7 @@
                 background-color: transparent;
             }
         }
-        
+
         .nav-item{
             .nav-link.active{
                 color: $menu-item-active-color;
@@ -88,7 +88,7 @@ body[data-layout="horizontal"] {
         }
     }
 
-    
+
     @media (min-width: 992px) {
         .topnav{
             margin-top: 24px;
@@ -217,14 +217,14 @@ body[data-layout="horizontal"] {
                     display: $display-block;
                 }
             }
-        
+
             .logo-light {
                 display: $display-none;
-                
+
             }
         }
     }
-    
+
     .topnav {
         position: fixed;
         max-height: 360px;
@@ -244,7 +244,7 @@ body[data-layout="horizontal"] {
                 padding-left: 15px;
                 &.dropdown-mega-menu-xl{
                     width: auto;
-    
+
                     .row{
                         margin: 0px;
                     }
@@ -279,7 +279,7 @@ body[data-layout="horizontal"] {
             .logo-dark {
                 display: $display-block;
             }
-        
+
             .logo-light {
                 display: $display-none;
             }
@@ -287,16 +287,19 @@ body[data-layout="horizontal"] {
 
         .topnav{
             background-color: $header-bg;
+            //newly Added
+
+            padding: 0rem 0.5rem !important;
             .navbar-nav {
-        
+
                 .nav-link {
                     color: $menu-item-color;
-                    
+
                     &:focus, &:hover{
                         color: $primary;
                     }
                 }
-        
+
                 > .dropdown{
                     &.active{
                     >a {
@@ -309,7 +312,7 @@ body[data-layout="horizontal"] {
     }
 }
 
-// Colored Topbar 
+// Colored Topbar
 
 body[data-layout="horizontal"][data-topbar="colored"] {
     #page-topbar{
@@ -326,7 +329,7 @@ body[data-layout="horizontal"][data-topbar="colored"] {
     }
 
     .app-search {
-    
+
         .form-control {
             background-color: rgba($topbar-search-bg,0.07);
             color: $white;
@@ -338,7 +341,7 @@ body[data-layout="horizontal"][data-topbar="colored"] {
     }
     .header-item {
         color: $header-dark-item-color;
-    
+
         &:hover {
             color: $header-dark-item-color;
         }
@@ -363,4 +366,3 @@ body[data-layout="horizontal"][data-topbar="colored"] {
     }
 
 }
-

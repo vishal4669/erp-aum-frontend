@@ -51,10 +51,10 @@ function AddBooking(props)  {
   const [data5, setData5] = useState([]);
 
   const [booking, setBooking] = useState({booking_no: ''});
-  const [reporttype, setreportType] = useState({report_type:''});
+  const [reporttype, setreportType] = useState({report_type:'',receipte_date:''});
   const [aumserialno, setaumserialno] = useState({aum_serial_no:''});
 
-    const [booking1, setBooking1] = useState({booking_type:'Received',receipte_date:'',
+    const [booking1, setBooking1] = useState({booking_type:'Received',
       booking_no: '',reference_no:'',remarks:'',mfg_date:'',mfg_options:'N/S',exp_date:'',exp_options:'N/S',
       analysis_date:'',d_format:'',d_format_options:'N/S',grade: '',grade_options:'N/S',project_name:'',
       project_options:'N/S',mfg_lic_no:'',is_report_dispacthed:'0',signature:'0',verified_by:'None',nabl_scope: '0',
@@ -191,20 +191,26 @@ function AddBooking(props)  {
       const reporttypeonChange = (e) =>{
         setBooking({...booking, [e.target.name]: e.target.value});
         setreportType({...reporttype, [e.target.name]: e.target.value});
-          //if(booking.report_type !== null){
-              getBookingNo(e.target.value);
-            //}
+
+            booking1.report_type = document.BookingData.report_type.value;
+            var report_type_value = booking1.report_type
+
+            booking1.receipte_date = document.BookingData.receipte_date.value;
+            var receipte_date_value = booking1.receipte_date
+
+            if(report_type_value !== '' && receipte_date_value !== ''){
+               getBookingNo(report_type_value,receipte_date_value);
+            }
+
       }
 
       const AumSerialNoonChange = (e) =>{
         setaumserialno({...aumserialno, [e.target.name]: e.target.value});
       }
 
-      const getBookingNo = (e) => {
+      const getBookingNo = (report_type_value,receipte_date_value) => {
 
-        var final_report_type = e;
-
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no/`+final_report_type,{headers})
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no/`+report_type_value+"/"+receipte_date_value,{headers})
             .then(response => {
                       setBooking({booking_no:response.data.data.booking_no});
                       console.log(response.data.data)
@@ -411,7 +417,7 @@ function AddBooking(props)  {
               if(typeof supplier == "number"){
                 final_supplier_id = supplier.supplier_id
               } else if(typeof supplier == "object"){
-                if(supplier.customer_id !== null){
+                if(supplier.supplier_id !== null){
                     final_supplier_id = supplier.supplier_id.value;
                 } else{
                   final_supplier_id = '';
@@ -426,7 +432,7 @@ function AddBooking(props)  {
               if(typeof manufacturer == "number"){
                 final_manufacturer_id = manufacturer.manufacturer_id
               } else if(typeof manufacturer == "object"){
-                if(manufacturer.customer_id !== null){
+                if(manufacturer.manufacturer_id !== null){
                     final_manufacturer_id = manufacturer.manufacturer_id.value;
                 } else{
                   final_manufacturer_id = '';
@@ -442,7 +448,7 @@ function AddBooking(props)  {
               if(typeof product == "number"){
                 final_product_id = product.product_id
               } else if(typeof product == "object"){
-                if(product.customer_id !== null){
+                if(product.product_id !== null){
                     final_product_id = product.product_id.value;
                 } else{
                   final_product_id = '';
@@ -469,7 +475,7 @@ function AddBooking(props)  {
                    report_type:reporttype.report_type,
                    invoice_date:booking1.invoice_date,
                    invoice_no:booking1.invoice_number,
-                   receipte_date:booking1.receipte_date,
+                   receipte_date:reporttype.receipte_date,
                    booking_no:final_booking_no,
                    customer_id:final_customer_id,
                    reference_no:booking1.reference_no,
@@ -534,6 +540,7 @@ function AddBooking(props)  {
                         comments:booking1.comments
                     }
                }
+               console.log(data)
               axios.post( `${process.env.REACT_APP_BASE_APIURL}addBooking`, data, {headers} )
 
                        .then(response => {
@@ -625,7 +632,7 @@ function AddBooking(props)  {
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Receipt Date</label>
-                                                <input className="form-control" type="date" id="example-date-input" name="receipte_date" onChange={ onChange }/>
+                                                <input className="form-control" type="date" id="example-date-input" name="receipte_date" onChange={ reporttypeonChange }/>
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Booking No</label>
