@@ -29,6 +29,7 @@ import 'toastr/build/toastr.min.css'
 import Select from 'react-select';
 import $ from 'jquery'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
+import moment from 'moment'
 
 function EditBooking(props)  {
   const headers = {
@@ -71,7 +72,9 @@ function EditBooking(props)  {
     const [bookingSamples1, setBookingSamples1] = useState({generic_name:'',product_type:'',pharmacopeia_name:''});
 
       const[testData,setTestData] = useState([{parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
-      test_name:'',label_claim:'',min_limit:'',max_limit:'',amount:''}])
+      test_name:'',label_claim:'',percentage_of_label_claim:'',min_limit:'',max_limit:'',result:'',label_claim_result:'',
+      label_claim_unit:'',result2:'',mean:'',na_content:'',final_na_content:'',unit:'',expanded_uncertanity:'',amount:'',
+      division:'',method:'',test_time:'',test_date_time:'',approval_date_time:'',approved:'',chemist_name:''}])
 
         useEffect(() => {
                  fetchCustomerData();
@@ -81,12 +84,38 @@ function EditBooking(props)  {
                  fetchPharamcopiea();
                  fetchparentList();
                  GetBookingData();
+                 check_timing();
                 }, []);
+
+                const check_timing = () => {
+                  var date = new Date(Date.UTC(2012, 11, 12, 3, 0, 0));
+    var dateString = date.toLocaleTimeString();
+
+    //apparently toLocaleTimeString() has a bug in Chrome. toString() however returns 12/24 hour formats. If one of two contains AM/PM execute 12 hour coding.
+    if (dateString.match(/am|pm/i) || date.toString().match(/am|pm/i) )
+    {
+        //12 hour clock
+        console.log("12 hour");
+    }
+    else
+    {
+        //24 hour clock
+        console.log("24 hour");
+    }
+                }
 
     const my_style = {
     width: '120px !important',
 
     }
+
+    const table_th_style = {
+    minWidth: '120px',
+  }
+
+  const table_textarea_th_style = {
+  minWidth: '140px',
+}
 
       const handleAddClick = () => {
         setTestData([...testData, { parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
@@ -154,13 +183,23 @@ function EditBooking(props)  {
                         pharmacopeia_name: response.data.data.samples[0].product_id.pharmacopeia_id.pharmacopeia_name,
                         generic_name : response.data.data.samples[0].product_id.generic_product_name
                       })
+
+                    //  console.log(response.data.data.dispatch_date_time)
+                    //  let dateNow = moment(response.data.data.dispatch_date_time).format('YYYY-MM-DDTHH:MM:SS')
+                    //  console.log(dateNow)
+                      if(response.data.data.booking_type == "Report"){
+                        setBooking1(prevState => ({...prevState,
+                          audit_reamrks: response.data.data.audit[0].audit_remarks,
+                          reason: response.data.data.audit[0].reason,
+                          comments:response.data.data.audit[0].comments}))
+                      }
                       setTestData(response.data.data.tests)
                       {setLoading1(false)};
 
                   })
                   .catch((error) => {
                       {setLoading1(false)}
-                      //console.log(error)
+                      console.log(error)
                       toastr.error(error.response.data.message);
                       this.setState({loading: false});
                   })
@@ -410,7 +449,7 @@ function EditBooking(props)  {
       const UpdateBooking = (e)=>{
                e.preventDefault();
 
-               console.log(booking1)
+               console.log(moment(booking1.dispatch_date_time).format('YYYY-MM-DD hh:mm:ss A'))
           //     {setLoading(true)};
                var final_customer_id = customer;
                var final_supplier_id = supplier;
@@ -886,7 +925,9 @@ function EditBooking(props)  {
 
                                               <div className="col-md-4">
                                                 <label>Dispatch Date Time</label>
-                                                <input value={booking1.dispatch_date_time} id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>
+                                                {booking1.dispatch_date_time?
+                                                <input value={moment(booking1.dispatch_date_time).format('YYYY-MM-DDTHH:MM:SS')} id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>
+                                                : <input value={booking1.dispatch_date_time} id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>}
                                               </div>
 
                                               <div className="col-md-4">
@@ -1211,19 +1252,36 @@ function EditBooking(props)  {
                                                 <div className="form-group">
                                                     <div className="row">
                                                          <div className="table-responsive">
-                                                            <Table className="table mb-0 border">
+                                                            <Table className="table mb-0 border" style={{width:'100%'}}>
                                                             <thead className="table-light">
                                                                 <tr>
-                                                                <th>Parent Child</th>
-                                                                <th>P Sr No</th>
-                                                                <th>By Pass</th>
-                                                                <th>Parent</th>
-                                                                <th>Product Details</th>
-                                                                <th>Test Name</th>
-                                                                <th>Label Claim</th>
-                                                                <th>Min.Limit</th>
-                                                                <th>Max.Limit</th>
-                                                                <th>Amount</th>
+                                                                <th style={table_th_style}>Parent Child</th>
+                                                                <th style={table_th_style}>P Sr No</th>
+                                                                <th style={table_th_style}>By Pass</th>
+                                                                <th style={table_th_style}>Parent</th>
+                                                                <th style={table_textarea_th_style}>Product Details</th>
+                                                                <th style={table_textarea_th_style}>Test Name</th>
+                                                                <th style={table_th_style}>Label Claim</th>
+                                                                <th style={table_th_style}>% of Label Claim</th>
+                                                                <th style={table_th_style}>Min. Limit</th>
+                                                                <th style={table_th_style}>Max. Limit</th>
+                                                                <th style={table_th_style}>Result</th>
+                                                                <th style={table_th_style}>Label Claim Result</th>
+                                                                <th style={table_th_style}>Label Claim Unit</th>
+                                                                <th style={table_th_style}>Result2</th>
+                                                                <th style={table_th_style}>Mean</th>
+                                                                <th style={table_th_style}>Na Content</th>
+                                                                <th style={table_th_style}>Final Na Content</th>
+                                                                <th style={table_th_style}>Unit</th>
+                                                                <th style={table_th_style}>Expanded Uncertainty</th>
+                                                                <th style={table_th_style}>Amount</th>
+                                                                <th style={table_th_style}>Division</th>
+                                                                <th style={table_th_style}>Method</th>
+                                                                <th style={table_th_style}>Test Time</th>
+                                                                <th style={table_th_style}>Test Date Time</th>
+                                                                <th style={table_th_style}>Approval Date Time</th>
+                                                                <th style={table_th_style}>Approved</th>
+                                                                <th style={table_th_style}>Chemist Name</th>
                                                                 <th style={{textAlign:'center'}}><i className="fa fa-trash"></i></th>
                                                                 </tr>
                                                             </thead>
@@ -1248,9 +1306,42 @@ function EditBooking(props)  {
                                                                     <td><input value={x.test_name} className="form-control" onChange={e => handleInputChange(e, i)} name="test_name" style={{width:'150px !important'}}/>
                                                                     </td>
                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    {//
+                                                                    }
+                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    {//end
+                                                                    }
+
                                                                      <td><input value={x.min_limit} type="text" name="min_limit"  onChange={e => handleInputChange(e, i)} className="form-control"/></td>
                                                                     <td><input value={x.max_limit} type="text" name="max_limit" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+
+                                                                    {//
+                                                                    }
+                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    {//end
+                                                                    }
+
                                                                      <td><input value={x.amount} type="text" name="amount"  onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+
+                                                                     {//
+                                                                     }
+                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                      <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     {//end
+                                                                     }
 
                                                                      <td>{testData.length >= 1 && <button
                                                                                        className="mr10"
@@ -1331,17 +1422,17 @@ function EditBooking(props)  {
 
                 <div className="col-md-4">
                   <label>Audit Remarks</label>
-                  <textarea name="audit_reamrks" Value={booking1.audit[0].audit_remarks} id="audit_reamrks" className="form-control" placeholder="Enter Remarks" onChange={ onChange }></textarea>
+                  <textarea name="audit_reamrks" value={booking1.audit_reamrks} id="audit_reamrks" className="form-control" placeholder="Enter Remarks" onChange={ onChange }></textarea>
                 </div>
 
                 <div className="col-md-4">
                   <label>Reason</label>
-                  <textarea name="reason" id="reason" Value={booking1.audit[0].reason} className="form-control" placeholder="Enter Reason" onChange={ onChange }></textarea>
+                  <textarea name="reason" id="reason" value={booking1.reason} className="form-control" placeholder="Enter Reason" onChange={ onChange }></textarea>
                 </div>
 
                 <div className="col-md-4">
                   <label>Comments</label>
-                  <textarea name="comments" id="comments" Value={booking1.audit[0].comments} className="form-control" placeholder="Enter Comments" onChange={ onChange }></textarea>
+                  <textarea name="comments" id="comments" value={booking1.comments} className="form-control" placeholder="Enter Comments" onChange={ onChange }></textarea>
                 </div>
 
               </div>

@@ -397,7 +397,20 @@ function AddBooking(props)  {
                var final_supplier_id = supplier;
                var final_manufacturer_id = manufacturer;
                var final_product_id = product;
+
                // Customer ID
+
+               /*var dispatch_date_time_final = '';
+
+               if(booking1.dispatch_date_time !== null || booking1.dispatch_date_time !== ''){
+
+                 dispatch_date_time_final = moment(booking1.dispatch_date_time).format("YYYY-MM-DDTHH:mm");
+
+               } else {
+                 dispatch_date_time_final = '';
+               }*/
+
+               //console.log(moment(booking1.dispatch_date_time).format("YYYY-MM-DDTHH:mm:ss"))
 
                  if(typeof customer == "number"){
                    final_customer_id = customer.customer_id
@@ -823,6 +836,7 @@ function AddBooking(props)  {
                                               <div className="col-md-4">
                                                 <label>Dispatch Date Time</label>
                                                 <input id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>
+
                                               </div>
 
                                               <div className="col-md-4">
