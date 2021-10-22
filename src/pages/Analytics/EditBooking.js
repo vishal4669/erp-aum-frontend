@@ -54,6 +54,10 @@ function EditBooking(props)  {
   const [data3, setData3] = useState([]);
   const [data4, setData4] = useState([]);
   const [data5, setData5] = useState([]);
+  const [chemist, setChemist] = useState([]);
+
+  var date1 = new Date(Date.UTC(2012, 11, 12, 3, 0, 0));
+  var dateString1 = date1.toLocaleTimeString();
 
     const [booking1, setBooking1] = useState({booking_type:'Received',report_type:'',receipte_date:'',
       booking_no: '',aum_serial_no:'',reference_no:'',remarks:'',mfg_date:'',mfg_options:'N/S',exp_date:'',exp_options:'N/S',
@@ -74,7 +78,7 @@ function EditBooking(props)  {
       const[testData,setTestData] = useState([{parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
       test_name:'',label_claim:'',percentage_of_label_claim:'',min_limit:'',max_limit:'',result:'',label_claim_result:'',
       label_claim_unit:'',result2:'',mean:'',na_content:'',final_na_content:'',unit:'',expanded_uncertanity:'',amount:'',
-      division:'',method:'',test_time:'',test_date_time:'',approval_date_time:'',approved:'',chemist_name:''}])
+      division:'',method:'',test_time:'',test_date_time:'',approval_date_time:'',approved:'Pending',chemist_name:''}])
 
         useEffect(() => {
                  fetchCustomerData();
@@ -84,25 +88,9 @@ function EditBooking(props)  {
                  fetchPharamcopiea();
                  fetchparentList();
                  GetBookingData();
-                 check_timing();
+                 chemist_data();
                 }, []);
 
-                const check_timing = () => {
-                  var date = new Date(Date.UTC(2012, 11, 12, 3, 0, 0));
-    var dateString = date.toLocaleTimeString();
-
-    //apparently toLocaleTimeString() has a bug in Chrome. toString() however returns 12/24 hour formats. If one of two contains AM/PM execute 12 hour coding.
-    if (dateString.match(/am|pm/i) || date.toString().match(/am|pm/i) )
-    {
-        //12 hour clock
-        console.log("12 hour");
-    }
-    else
-    {
-        //24 hour clock
-        console.log("24 hour");
-    }
-                }
 
     const my_style = {
     width: '120px !important',
@@ -119,7 +107,9 @@ function EditBooking(props)  {
 
       const handleAddClick = () => {
         setTestData([...testData, { parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
-        test_name:'',label_claim:'',min_limit:'',max_limit:'',amount:''}]);
+        test_name:'',label_claim:'',percentage_of_label_claim:'',min_limit:'',max_limit:'',result:'',label_claim_result:'',
+        label_claim_unit:'',result2:'',mean:'',na_content:'',final_na_content:'',unit:'',expanded_uncertanity:'',amount:'',
+        division:'',method:'',test_time:'',test_date_time:'',approval_date_time:'',approved:'Pending',chemist_name:''}]);
       };
 
         // handle input change for Degree Details
@@ -184,9 +174,33 @@ function EditBooking(props)  {
                         generic_name : response.data.data.samples[0].product_id.generic_product_name
                       })
 
-                    //  console.log(response.data.data.dispatch_date_time)
-                    //  let dateNow = moment(response.data.data.dispatch_date_time).format('YYYY-MM-DDTHH:MM:SS')
-                    //  console.log(dateNow)
+                      if(response.data.data.dispatch_date_time !== null || response.data.data.dispatch_date_time !== ''){
+
+                          var date = new Date(Date.UTC(2012, 11, 12, 3, 0, 0));
+                          var dateString = date.toLocaleTimeString();
+
+                          //apparently toLocaleTimeString() has a bug in Chrome. toString() however returns 12/24 hour formats. If one of two contains AM/PM execute 12 hour coding.
+                          if (dateString.match(/am|pm/i) || date.toString().match(/am|pm/i) )
+                          {
+                            setBooking1(prevState => ({...prevState,
+                              dispatch_date_time: moment(response.data.data.dispatch_date_time).format('YYYY-MM-DDTHH:mm')}))
+                              //12 hour clock
+                              //console.log("12 hour");
+                            //  console.log(moment(response.data.data.dispatch_date_time).format('YYYY-MM-DDTHH:mm:SS'))
+                          }
+                          else
+                          {
+                              //24 hour clock
+                              //console.log(moment(booking1.dispatch_date_time).format('YYYY-MM-DDTHH:MM:SS'))
+                              setBooking1(prevState => ({...prevState,
+                                dispatch_date_time: moment(response.data.data.dispatch_date_time).format('YYYY-MM-DDTHH:MM')}))
+                            //  console.log("24 hour");
+                          }
+                        } else {
+                          setBooking1(prevState => ({...prevState,
+                            dispatch_date_time: ''}))
+                        }
+
                       if(response.data.data.booking_type == "Report"){
                         setBooking1(prevState => ({...prevState,
                           audit_reamrks: response.data.data.audit[0].audit_remarks,
@@ -446,11 +460,24 @@ function EditBooking(props)  {
                               })
                         }
 
+
+                        const chemist_data = () => {
+                                     {setLoading1(true)};
+                                  axios.get(`${process.env.REACT_APP_BASE_APIURL}listEmployee?is_chemist=1`,{headers})
+                                    .then(response => {
+                                             setChemist(response.data.data);
+                                             {setLoading1(false)}
+                                       })
+                                      .catch((error) => {
+                                          toastr.error(error.response.data.message);
+                                           {setLoading1(false)}
+                                      })
+                        }
+
+
       const UpdateBooking = (e)=>{
                e.preventDefault();
-
-               console.log(moment(booking1.dispatch_date_time).format('YYYY-MM-DD hh:mm:ss A'))
-          //     {setLoading(true)};
+           {setLoading(true)};
                var final_customer_id = customer;
                var final_supplier_id = supplier;
                var final_manufacturer_id = manufacturer;
@@ -561,8 +588,8 @@ function EditBooking(props)  {
                    block:booking1.block,
                    "booking_sample_details":[{
                      product_id: final_product_id,
-                     product_type: bookingSamples1.product_type,
-                     pharmacopiea_id:bookingSamples1.pharmacopeia_id,
+                    // product_type: bookingSamples1.product_type,
+                    // pharmacopiea_id:bookingSamples1.pharmacopeia_id,
                      batch_no:bookingSamples.batch_no,
                      packsize:bookingSamples.packsize,
                      request_quantity:bookingSamples.request_quantity,
@@ -594,7 +621,7 @@ function EditBooking(props)  {
 
                console.log(data);
 
-              /*axios.post( `${process.env.REACT_APP_BASE_APIURL}addBooking`, data, {headers} )
+              axios.post( `${process.env.REACT_APP_BASE_APIURL}editBooking/`+booking_id, data, {headers} )
 
                        .then(response => {
                            if(response.data && response.data.success == true){
@@ -602,7 +629,7 @@ function EditBooking(props)  {
                                toastr.success(response.data.message);
                                {setLoading(false)};
                            }else{
-                               props.history.push('/add-booking');
+                               props.history.push('/edit-booking/'+edit_booking_id);
                                toastr.error(response.data.message);
                                {setLoading(false)};
                            }
@@ -610,7 +637,7 @@ function EditBooking(props)  {
                        .catch((error) => {
                         {setLoading(false)};
                         toastr.error(error.response.data.message);
-                      })*/
+                      })
      }
 
   return (
@@ -926,7 +953,7 @@ function EditBooking(props)  {
                                               <div className="col-md-4">
                                                 <label>Dispatch Date Time</label>
                                                 {booking1.dispatch_date_time?
-                                                <input value={moment(booking1.dispatch_date_time).format('YYYY-MM-DDTHH:MM:SS')} id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>
+                                                <input value={booking1.dispatch_date_time} id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>
                                                 : <input value={booking1.dispatch_date_time} id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>}
                                               </div>
 
@@ -1281,7 +1308,7 @@ function EditBooking(props)  {
                                                                 <th style={table_th_style}>Test Date Time</th>
                                                                 <th style={table_th_style}>Approval Date Time</th>
                                                                 <th style={table_th_style}>Approved</th>
-                                                                <th style={table_th_style}>Chemist Name</th>
+                                                                <th style={table_textarea_th_style}>Chemist Name</th>
                                                                 <th style={{textAlign:'center'}}><i className="fa fa-trash"></i></th>
                                                                 </tr>
                                                             </thead>
@@ -1308,7 +1335,7 @@ function EditBooking(props)  {
                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
                                                                     {//
                                                                     }
-                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.percentage_of_label_claim} type="text" name="percentage_of_label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
                                                                     {//end
                                                                     }
 
@@ -1317,15 +1344,15 @@ function EditBooking(props)  {
 
                                                                     {//
                                                                     }
-                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                    <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.result} type="text" name="result" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.label_claim_result} type="text" name="label_claim_result" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.label_claim_unit} type="text" name="label_claim_unit" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.result2} type="text" name="result2" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.mean} type="text" name="mean" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.na_content} type="text" name="na_content" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.final_na_content} type="text" name="final_na_content" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.unit} type="text" name="unit" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                    <td><input value={x.expanded_uncertanity} type="text" name="expanded_uncertanity" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
                                                                     {//end
                                                                     }
 
@@ -1333,13 +1360,42 @@ function EditBooking(props)  {
 
                                                                      {//
                                                                      }
-                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                     <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                      <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     <td><input value={x.division} type="text" name="division" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     <td><input value={x.method} type="text" name="method" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     <td><input value={x.test_time} type="text" name="test_time" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     <td> {x.test_date_time !== null || x.test_date_time !== '' ?
+                                                                     (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
+                                                                      <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>
+                                                                     :<input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>)
+                                                                     :
+                                                                     <input value={x.test_date_time} type="time" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>
+                                                                     }
+                                                                     </td>
+                                                                     <td> {x.approval_date_time !== null || x.approval_date_time !== '' ?
+                                                                     (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
+                                                                      <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>
+                                                                     :<input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>)
+                                                                     :
+                                                                     <input value={x.approval_date_time} type="time" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>
+                                                                     }
+                                                                     </td>
+                                                                     <td>
+                                                                       <select name="approved" className="form-select" onChange={e => handleInputChange(e, i)} value={x.approved}>
+                                                                         <option value="Pending">Pending</option>
+                                                                         <option value="Approved">Approved</option>
+                                                                         <option value="Reject">Reject</option>
+                                                                       </select>
+                                                                     </td>
+
+                                                                      <td>
+                                                                        {loading1 ? <LoadingSpinner /> :
+                                                                             <select className="form-select" value={x.chemist_name} name="chemist_name" onChange={e => handleInputChange(e, i)}>
+                                                                                 <option value="">Select Chemist</option>
+                                                                                     { chemist.map((option, key) => <option value={option.id} key={key} >
+                                                                                     {option.first_name+" "+option.middle_name+" "+option.last_name}</option>) }
+                                                                             </select>
+                                                                         }
+                                                                       </td>
                                                                      {//end
                                                                      }
 

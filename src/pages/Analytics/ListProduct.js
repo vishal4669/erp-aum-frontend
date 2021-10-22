@@ -4,6 +4,7 @@ import { Row, Col, Card, CardBody, CardTitle, CardSubtitle,Dropdown,
     Dropdownpost,
     DropdownToggle,
     ButtonDropdown,Button } from "reactstrap"
+import { MDBDataTable } from "mdbreact"
 import { withRouter, Link } from "react-router-dom"
 import { DropdownButton } from 'react-bootstrap';
 import Breadcrumbs from "../../components/Common/Breadcrumb"
@@ -24,11 +25,16 @@ class ListProduct extends Component{
   constructor(props){
     super(props);
     this.state= {
-      product: [],
-      activePage: 1,
-      itemsCountPerPage: 10,
-      totalItemsCount: 1,
+      //product: [],
+    //  activePage: 1,
+      //itemsCountPerPage: 10,
+      //totalItemsCount: 1,
       ExportPDFData:[],
+      posts: [],
+      tableRows: [],
+      loading: false,
+      loading1: false,
+      count :0
     }
     //this.handlePageChange = this.handlePageChange.bind(this);
      const headers = {
@@ -40,7 +46,7 @@ class ListProduct extends Component{
       'Authorization' : "Bearer "+localStorage.getItem('token')
     };
 
- this.componentDidMount = () => {
+ /*this.componentDidMount = () => {
   this.setState({ loading: true }, () => {
 
      axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct`, { headers: headers})
@@ -59,7 +65,35 @@ class ListProduct extends Component{
                  }
              })
    })
-  }
+ }*/
+
+ this.componentWillMount=async() => {
+    this.setState({ loading: true }, () => {
+     axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct`, { headers: headers})
+
+       .then(response => response.data.data)
+       .then(data => {
+
+          // if (err) throw err;
+
+          this.setState({ posts: data })
+          this.setState({loading: false});
+
+       })
+
+       .then(async() => {
+
+          this.setState({ tableRows:this.assemblePosts()})
+          this.setState({loading: false});
+
+       }).catch(error => {
+         console.log(error)
+           toastr.error(error.response.data.message);
+           this.setState({ loading: false });
+         })
+
+     })
+ }
 
 this.deleteProduct = async(product_id) =>{
             this.setState({ loading: true }, () => {
@@ -120,7 +154,7 @@ this.ExportToExcel = () => {
 })
 }
 
- this.handlePageChange = (pageNumber) =>{
+ /*this.handlePageChange = (pageNumber) =>{
    this.setState({ loading: true }, () => {
     this.handlePageChange.bind(this)
     //this.setState({activePage: pageNumber});
@@ -140,11 +174,94 @@ this.ExportToExcel = () => {
              }
          })
       })
-  }
+  }*/
+
+  this.assemblePosts= () => {
+          let posts =this.state.posts.map((post) => {
+              const { data1, loading } = this.state;
+              this.setState({
+        count: this.state.count + 1
+      });
+
+      let generic_product = post.generic ? post.generic.product_name : '';
+      let is_generic_data = post.is_generic ? ("Generic") : ("Non Generic");
+            return (
+
+              {
+
+                srno: this.state.count,
+                pharmacopeia_name: post.pharmacopeia.pharmacopeia_name,
+                product_name: post.product_name,
+                product_generic: post.product_generic,
+                marker_specification: post.marker_specification,
+                generic_product_name: generic_product,
+                is_generic: is_generic_data,
+                action : <div><Link className="btn btn-primary" to={"/edit-product/"+base64_encode(post.id)}>
+                  <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
+                  <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Product Data?')){ this.deleteProduct(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+                  &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-product/"+base64_encode(post.id)}>
+                  <i className="fa fa-eye"></i></Link></div>
+
+                ,
+
+              }
+
+            )
+
+          });
+
+          return posts;
+
+        }
+      }
+          render() {
+              const { data, loading } = this.state;
+              const { data2, loading1 } = this.state;
+
+              const data1 = {
+
+                columns: [
+
+                  {
+                    label:'SR No',
+                    field:'srno',
+                  },
+                  {
+                    label:'Pharmacopiea',
+                    field:'pharmacopeia_name',
+                  },
+                  {
+                    label:'Product Name',
+                    field:'product_name',
+                  },
+                  {
+                    label:'FP/RM/G',
+                    field:'product_generic',
+                  },
+                  {
+                    label:'Marker Specifiction',
+                    field:'marker_specification',
+                  },
+                  {
+                    label:'Generic Name',
+                    field:'generic_product_name',
+                  },
+                  {
+                    label:'Is Generic',
+                    field:'is_generic',
+                  },
+                  {
+                    label:'Action',
+                    field: 'action',
+                  },
+
+                ],
+                rows:this.state.tableRows,
+
 }
-  render(){
-    const { data, loading } = this.state;
-    const { data1, loading1 } = this.state;
+  //render(){
+  //  const { data, loading } = this.state;
+  //  const { data1, loading1 } = this.state;
   return (
     <React.Fragment>
         <HorizontalLayout/>
@@ -183,62 +300,63 @@ this.ExportToExcel = () => {
               <Card>
                 <CardBody>
                   <div>
-                  {loading ?  <center><LoadingSpinner /></center> :
-                      <table className="table table-bordered table-striped dataTable">
-                         <thead>
-                           <tr>
-                             <th scope="col">SR No</th>
-                             <th scope="col">Pharmacopeia</th>
-                             <th scope="col">Product Name</th>
-                             <th scope="col">FP/RM/G</th>
-                             <th scope="col">Marker Specifiction</th>
-                             <th scope="col">Generic Name</th>
-                             <th scope="col">Is Generic</th>
-                             <th scope="col">Actions</th>
-                           </tr>
-                         </thead>
-                         {this.state.product.length >=1 ?
-                         <tbody>
-                           {
-                                this.state.product.map((post,index)=>{
-                                      const pharma = post.pharmacopeia || []
-                                      const generic = post.generic || []
-                                  return(
-                                    <tr>
-                                      <th scope="row">{index+1}</th>
+                  {/*<table className="table table-bordered table-striped dataTable">
+                     <thead>
+                       <tr>
+                         <th scope="col">SR No</th>
+                         <th scope="col">Pharmacopeia</th>
+                         <th scope="col">Product Name</th>
+                         <th scope="col">FP/RM/G</th>
+                         <th scope="col">Marker Specifiction</th>
+                         <th scope="col">Generic Name</th>
+                         <th scope="col">Is Generic</th>
+                         <th scope="col">Actions</th>
+                       </tr>
+                     </thead>
+                     {this.state.product.length >=1 ?
+                     <tbody>
+                       {
+                            this.state.product.map((post,index)=>{
+                                  const pharma = post.pharmacopeia || []
+                                  const generic = post.generic || []
+                              return(
+                                <tr>
+                                  <th scope="row">{index+1}</th>
 
-                               <td>{pharma.pharmacopeia_name}</td>
-                                      <td>{post.product_name}</td>
-                                      <td>{post.product_generic}</td>
-                                      <td>{post.marker_specification}</td>
-                                      <td>{generic.product_name}</td>
-                                      <td>{post.is_generic ? ("Generic") : ("Non Generic")}</td>
-                                      <td><div><Link className="btn btn-primary" to={"/edit-product/"+base64_encode(post.id)}>
-                                        <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-                                        <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Product Data?')){ this.deleteProduct(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-                                        &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-product/"+base64_encode(post.id)}>
-                                        <i className="fa fa-eye"></i></Link></div></td>
-                                    </tr>
-                                  )
-                               })
-                             }
-                         </tbody>
-                        : <tr><td colspan="8"><p>No matching records found</p></td></tr>}
-                         <tfoot>
-                           <tr>
-                             <th scope="col">SR No</th>
-                             <th scope="col">Pharmacopiea</th>
-                             <th scope="col">Product Name</th>
-                             <th scope="col">FP/RM/G</th>
-                             <th scope="col">Marker Specifiction</th>
-                             <th scope="col">Generic Name</th>
-                             <th scope="col">Is Generic</th>
-                             <th scope="col">Actions</th>
-                           </tr>
-                         </tfoot>
-                      </table>
+                           <td>{pharma.pharmacopeia_name}</td>
+                                  <td>{post.product_name}</td>
+                                  <td>{post.product_generic}</td>
+                                  <td>{post.marker_specification}</td>
+                                  <td>{generic.product_name}</td>
+                                  <td>{post.is_generic ? ("Generic") : ("Non Generic")}</td>
+                                  <td><div><Link className="btn btn-primary" to={"/edit-product/"+base64_encode(post.id)}>
+                                    <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
+                                    <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Product Data?')){ this.deleteProduct(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+                                    &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-product/"+base64_encode(post.id)}>
+                                    <i className="fa fa-eye"></i></Link></div></td>
+                                </tr>
+                              )
+                           })
+                         }
+                     </tbody>
+                    : <tr><td colspan="8"><p>No matching records found</p></td></tr>}
+                     <tfoot>
+                       <tr>
+                         <th scope="col">SR No</th>
+                         <th scope="col">Pharmacopiea</th>
+                         <th scope="col">Product Name</th>
+                         <th scope="col">FP/RM/G</th>
+                         <th scope="col">Marker Specifiction</th>
+                         <th scope="col">Generic Name</th>
+                         <th scope="col">Is Generic</th>
+                         <th scope="col">Actions</th>
+                       </tr>
+                     </tfoot>
+                  </table>*/}
+                  {loading ?  <center><LoadingSpinner /></center> :
+                    <MDBDataTable striped bordered data={data1} />
                      }
-                    <div>
+                    {/*<div>
                       <Pagination
                         activePage={this.state.activePage}
                         itemsCountPerPage={this.state.itemsCountPerPage}
@@ -247,7 +365,7 @@ this.ExportToExcel = () => {
                         itemClass='page-item'
                         linkClass='page-link'
                       />
-                    </div>
+                    </div>*/}
                   </div>
                 </CardBody>
               </Card>
