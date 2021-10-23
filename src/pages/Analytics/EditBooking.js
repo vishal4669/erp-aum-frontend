@@ -75,7 +75,7 @@ function EditBooking(props)  {
 
     const [bookingSamples1, setBookingSamples1] = useState({generic_name:'',product_type:'',pharmacopeia_name:''});
 
-      const[testData,setTestData] = useState([{parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
+      const[testData,setTestData] = useState([{parent_child:'Parent',p_sr_no:'',by_pass:'2',parent_id:'',product_details:'',
       test_name:'',label_claim:'',percentage_of_label_claim:'',min_limit:'',max_limit:'',result:'',label_claim_result:'',
       label_claim_unit:'',result2:'',mean:'',na_content:'',final_na_content:'',unit:'',expanded_uncertanity:'',amount:'',
       division:'',method:'',test_time:'',test_date_time:'',approval_date_time:'',approved:'Pending',chemist_name:''}])
@@ -106,7 +106,7 @@ function EditBooking(props)  {
 }
 
       const handleAddClick = () => {
-        setTestData([...testData, { parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
+        setTestData([...testData, { parent_child:'Parent',p_sr_no:'',by_pass:'2',parent_id:'',product_details:'',
         test_name:'',label_claim:'',percentage_of_label_claim:'',min_limit:'',max_limit:'',result:'',label_claim_result:'',
         label_claim_unit:'',result2:'',mean:'',na_content:'',final_na_content:'',unit:'',expanded_uncertanity:'',amount:'',
         division:'',method:'',test_time:'',test_date_time:'',approval_date_time:'',approved:'Pending',chemist_name:''}]);
@@ -213,7 +213,6 @@ function EditBooking(props)  {
                   })
                   .catch((error) => {
                       {setLoading1(false)}
-                      console.log(error)
                       toastr.error(error.response.data.message);
                       this.setState({loading: false});
                   })
@@ -342,7 +341,7 @@ function EditBooking(props)  {
                                     "parent_child" : "Parent",
                                     "p_sr_no" : '',
                                     "by_pass" : d.by_pass,
-                                    "parent" : d.parent.id,
+                                    "parent_id" : d.parent.id,
                                     "product_details" : d.description,
                                     "test_name" : d.parameter.parameter_name,
                                     "label_claim" :d.label_claim,
@@ -359,7 +358,6 @@ function EditBooking(props)  {
 
                           })
                           .catch((error) => {
-                            console.log(error)
                               toastr.error(error.response.data.message);
                           })
       }
@@ -477,7 +475,7 @@ function EditBooking(props)  {
 
       const UpdateBooking = (e)=>{
                e.preventDefault();
-           {setLoading(true)};
+          {setLoading(true)};
                var final_customer_id = customer;
                var final_supplier_id = supplier;
                var final_manufacturer_id = manufacturer;
@@ -619,9 +617,7 @@ function EditBooking(props)  {
                     }
                }
 
-               console.log(data);
-
-              axios.post( `${process.env.REACT_APP_BASE_APIURL}editBooking/`+booking_id, data, {headers} )
+        axios.post( `${process.env.REACT_APP_BASE_APIURL}editBooking/`+booking_id, data, {headers} )
 
                        .then(response => {
                            if(response.data && response.data.success == true){
@@ -1322,7 +1318,7 @@ function EditBooking(props)  {
                                                                     </select></td>
                                                                     <td><input value={x.p_sr_no} type="text" onChange={e => handleInputChange(e, i)} name="p_sr_no" className="form-control"/></td>
                                                                     <td><select value={x.by_pass} onChange={e => handleInputChange(e, i)} style={my_style} className="form-select" name="by_pass"><option value="2">No</option><option value="1">Yes</option></select></td>
-                                                                    <td><select value={x.parent.id} onChange={e => handleInputChange(e, i)} name="parent" className="form-select" style={{width:'100px !important'}}>
+                                                                    <td><select value={x.parent_id} onChange={e => handleInputChange(e, i)} name="parent_id" className="form-select" style={{width:'100px !important'}}>
                                                                         <option value="">Select Parent</option>
                                                                          { data5.map((option, key) => <option value={option.id} key={key} >
                                                                          {option.parent_name}</option>) }
@@ -1368,7 +1364,7 @@ function EditBooking(props)  {
                                                                       <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>
                                                                      :<input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>)
                                                                      :
-                                                                     <input value={x.test_date_time} type="time" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>
+                                                                     <input value={x.test_date_time} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>
                                                                      }
                                                                      </td>
                                                                      <td> {x.approval_date_time !== null || x.approval_date_time !== '' ?
@@ -1376,10 +1372,12 @@ function EditBooking(props)  {
                                                                       <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>
                                                                      :<input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>)
                                                                      :
-                                                                     <input value={x.approval_date_time} type="time" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>
+                                                                     <input value={x.approval_date_time} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>
                                                                      }
                                                                      </td>
-                                                                     <td>
+                                                                     {/*<td><input value={x.test_date_time} type="text" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     <td><input value={x.approval_date_time} type="text" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
+                                                                     */}<td>
                                                                        <select name="approved" className="form-select" onChange={e => handleInputChange(e, i)} value={x.approved}>
                                                                          <option value="Pending">Pending</option>
                                                                          <option value="Approved">Approved</option>
@@ -1424,7 +1422,7 @@ function EditBooking(props)  {
                                     </div>
                                </div>
                            </div>
-    </React.Fragment>
+                </React.Fragment>
        ))}
        <div className="mb-3 row">
            <div className="form-group">

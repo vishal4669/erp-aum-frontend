@@ -433,7 +433,7 @@ const UpdateProduct = (e)=>{
                                 <tbody>
 {loading2 ? <LoadingSpinner /> :
                                     <tr>
-                                
+
                                                     <td class="col-1"><select value={x.by_pass} onChange={e => handleInputChange(e, i)} className="form-select" name="by_pass" style={{width:'70px !important'}}><option value="2">No</option><option value="1">Yes</option></select></td>
                                                     <td class="col-2">
                                                        <select value={x.parent} onChange={e => handleInputChange(e, i)} name="parent" className="form-select" style={{width:'100px !important'}}>

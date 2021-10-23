@@ -28,6 +28,7 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import Select from 'react-select';
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
+import moment from 'moment'
 
 function ViewBooking(props)  {
         const headers = {
@@ -53,7 +54,7 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
       analysis_date:'',aum_serial_no:'',d_format:'',d_format_options:'',grade: '',grade_options:'',project_name:'',
       project_options:'',mfg_lic_no:'',is_report_dispacthed:'',signature:'',verified_by:'',nabl_scope: '',
       cancel:'',cancel_remarks:'',priority:'',discipline:'',booking_group:'',statement_ofconformity:'',
-      manufacturer_name:'',supplier_name:''});
+      manufacturer_name:'',supplier_name:'',audit_reamrks:'',reason:'',comments:''});
 
     const [bookingSamples, setBookingSamples] = useState({product_type:'',batch_no:'',
     packsize:'',request_quantity:'',sample_code:'',sample_description:'',sample_quantity:'',sample_location:'',
@@ -61,17 +62,30 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
     sampling_date_to:'',sampling_date_to_options:'',sample_received_through:'',chemist:'',sample_condition:'',
     is_sample_condition:'',batch_size_qty_rec:'',notes:'',sample_drawn_by:''});
 
-      const[testData,setTestData] = useState([{parent_child:'',p_sr_no:'',by_pass:'',parent:'',product_details:'',
-      test_name:'',label_claim:'',min_limit:'',max_limit:'',amount:''}])
+      const[testData,setTestData] = useState([{parent_child:'Parent',p_sr_no:'',by_pass:'2',parent_id:'',product_details:'',
+      test_name:'',label_claim:'',percentage_of_label_claim:'',min_limit:'',max_limit:'',result:'',label_claim_result:'',
+      label_claim_unit:'',result2:'',mean:'',na_content:'',final_na_content:'',unit:'',expanded_uncertanity:'',amount:'',
+      division:'',method:'',test_time:'',test_date_time:'',approval_date_time:'',approved:'Pending',chemist_name:''}])
 
         useEffect(() => {
                  GetBookingData();
                 }, []);
 
+    var date1 = new Date(Date.UTC(2012, 11, 12, 3, 0, 0));
+    var dateString1 = date1.toLocaleTimeString();
+
     const my_style = {
     width: '120px !important',
 
     }
+
+    const table_th_style = {
+    minWidth: '150px',
+  }
+
+  const table_textarea_th_style = {
+  minWidth: '140px',
+}
 
 const GetBookingData=()=>{
       {setLoading1(true)}
@@ -82,12 +96,21 @@ const GetBookingData=()=>{
                 setManufacturer(response.data.data.manufacturer_id)
                 setSupplier(response.data.data.supplier_id)
                 setProduct(response.data.data.samples[0].product_id)
-                setPharmacopeia(response.data.data.samples[0].pharmacopiea_id)
+                setPharmacopeia(response.data.data.samples[0].product_id.pharmacopeia_id.pharmacopeia_name)
                 setBookingSamples(response.data.data.samples[0])
+                if(response.data.data.booking_type == "Report"){
+                  setBooking(prevState => ({...prevState,
+                    audit_reamrks: response.data.data.audit[0].audit_remarks,
+                    reason: response.data.data.audit[0].reason,
+                    comments:response.data.data.audit[0].comments}))
+                }
+                setTestData(response.data.data.tests)
+
                 {setLoading1(false)};
 
             })
             .catch((error) => {
+              console.log(error)
                 {setLoading1(false)}
                 toastr.error(error.response.data.message);
                 this.setState({loading: false});
@@ -139,7 +162,7 @@ const GetBookingData=()=>{
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Receipt Date</label>
-                                                <input className="form-control" type="text" value={booking.receipte_date} readOnly/>
+                                                <input className="form-control" type="text" value={moment(booking.receipte_date).format('DD-MM-YYYY')} readOnly/>
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Booking No</label>
@@ -148,6 +171,23 @@ const GetBookingData=()=>{
                                             </div>
                                           </div>
                                       </div>
+
+                                      {booking.booking_type == 'Invoice' ?
+                                          <div className="mb-3 row">
+                                            <div className="form-group">
+                                              <div className="row">
+                                                <div className="col-md-6">
+                                                  <label>Invoice Date</label>
+                                                  <input type="text" value={moment(booking.invoice_date).format('DD-MM-YYYY')} className="form-control" readOnly/>
+                                                 </div>
+                                                <div className="col-md-6">
+                                                  <label>Invoice No</label>
+                                                  <input type="text" value={booking.invoice_no} className="form-control" readOnly/>
+                                                </div>
+                                              </div>
+                                            </div>
+                                        </div>
+                                      : ''}
 
 
                                       <div className="mb-3 row">
@@ -187,7 +227,9 @@ const GetBookingData=()=>{
 
                                               <div className="col-md-2">
                                                 <label>Mfg Date</label>
-                                                <input className="form-control" type="text" value={booking.mfg_date} readOnly/>
+                                                {booking.mfg_date? <input className="form-control" type="text" value={moment(booking.mfg_date).format('DD-MM-YYYY')} readOnly/>
+                                                : <input className="form-control" type="text" value={booking.mfg_date} readOnly/>}
+
                                               </div>
 
                                               <div className="col-md-1">
@@ -197,7 +239,8 @@ const GetBookingData=()=>{
 
                                               <div className="col-md-2">
                                                 <label>Exp Date</label>
-                                                <input className="form-control" type="text" value={booking.exp_date} readOnly/>
+                                                {booking.exp_date? <input className="form-control" type="text" value={moment(booking.exp_date).format('DD-MM-YYYY')} readOnly/>
+                                                : <input className="form-control" type="text" value={booking.exp_date} readOnly/>}
                                               </div>
                                               <div className="col-md-1">
                                                 <label style={{visibility: 'hidden'}}>Exp</label>
@@ -212,7 +255,8 @@ const GetBookingData=()=>{
                                             <div className="row">
                                               <div className="col-md-3">
                                                 <label>Date of Analysis</label>
-                                                 <input className="form-control" type="text" value={booking.analysis_date} readOnly/>
+                                                {booking.analysis_date? <input className="form-control" type="text" value={moment(booking.analysis_date).format('DD-MM-YYYY')} readOnly/>
+                                                : <input className="form-control" type="text" value={booking.analysis_date} readOnly/>}
                                               </div>
                                               <div className="col-md-3">
                                                 <label>Aum Sr. No</label>
@@ -284,6 +328,39 @@ const GetBookingData=()=>{
                                           </div>
                                       </div>
 
+                                      {booking.is_report_dispacthed == "1" ?
+                                      <div className="mb-3 row report_dispatch_yes">
+                                          <div className="form-group">
+                                            <div className="row">
+
+                                              <div className="col-md-4">
+                                                <label>Dispatch Date Time</label>
+                                                {booking.dispatch_date_time !== null || booking.dispatch_date_time !== '' ?
+                                                (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
+                                                 <input value={moment(booking.dispatch_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" className="form-control" readOnly/>
+                                                :<input value={moment(booking.dispatch_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" className="form-control" readOnly/>)
+                                                :
+                                                <input value={booking.dispatch_date_time} type="text" className="form-control" readOnly/>
+                                                }
+
+                                              </div>
+
+                                              <div className="col-md-4">
+                                                <label>Dispatch Mode</label>
+                                                <input className="form-control" type="text" value={booking.dispatch_mode} readOnly/>
+                                              </div>
+
+                                              <div className="col-md-4">
+                                                <label>Dispatch Details</label>
+                                                <input className="form-control" type="text" value={booking.dispatch_details} readOnly/>
+                                              </div>
+
+                                            </div>
+                                          </div>
+                                      </div>
+                                      : ''
+                                      }
+
                                       <div className="mb-3 row">
                                           <div className="form-group">
                                             <div className="row">
@@ -345,6 +422,31 @@ const GetBookingData=()=>{
                                           </div>
                                       </div>
 
+                                      <div className="mb-3 row">
+                                          <div className="form-group">
+                                            <div className="row">
+
+                                              <div className="col-md-6">
+                                                <label>COA Release Date</label>
+                                                {booking.coa_release_date? <input className="form-control" type="text" value={moment(booking.coa_release_date).format('DD-MM-YYYY')} readOnly/>
+                                                : <input className="form-control" type="text" value={booking.coa_release_date} readOnly/>}
+                                              </div>
+
+                                              <div className="col-md-6">
+                                                <label>Block</label>
+                                                {booking.block == 0 ?
+                                                    <input className="form-control" type="text" value="No" readOnly/>
+                                                  :
+                                                  <input className="form-control" type="text" value="Yes" readOnly/>
+                                                }
+
+                                              </div>
+
+                                            </div>
+                                          </div>
+                                      </div>
+
+
                                         <h5> <Alert color="danger" role="alert">
                                             <i className="fa fa-comment">&nbsp;Sample Details</i>
                                         </Alert></h5>
@@ -359,12 +461,12 @@ const GetBookingData=()=>{
                                               </div>
                                               <div className="col-md-4">
                                                 <label>Generic Name</label>
-                                                  {loading1 ? <LoadingSpinner /> :<input className="form-control" type="text" name="generic_name" readOnly/>}
+                                                  <input className="form-control" value={product.generic_product_name} type="text" name="generic_name" readOnly/>
                                               </div>
 
                                               <div className="col-md-4">
                                                 <label>Product Type</label>
-                                                <input className="form-control" type="text"  value={bookingSamples.product_type} readOnly/>
+                                                <input className="form-control" type="text"  value={product.product_generic} readOnly/>
                                               </div>
 
                                             </div>
@@ -377,7 +479,7 @@ const GetBookingData=()=>{
 
                                               <div className="col-md-2">
                                                 <label>Pharmacopiea</label>
-                                                <input className="form-control" type="text"  value={pharmacopeia.pharmacopeia_name} readOnly/>
+                                                <input className="form-control" type="text" value={pharmacopeia} readOnly/>
                                               </div>
 
                                               <div className="col-md-2">
@@ -516,73 +618,158 @@ const GetBookingData=()=>{
                                           </div>
                                       </div>
 
-{/*Test Section Start*/}
-                                      <h5> <Alert color="success" role="alert">
-                                        <i className="fa fa-comment">&nbsp;Tests</i>
-                                      </Alert></h5>
+                                      {/*Test Section Start*/}
+                                                                            <h5> <Alert color="success" role="alert">
+                                                                              <i className="fa fa-comment">&nbsp;Tests</i>
+                                                                            </Alert></h5>
 
-              {testData.map((x, i) => (
-                <React.Fragment key={x}>
-                        <div className="mb-3 row">
-                                                <div className="form-group">
-                                                    <div className="row">
-                                                         <div className="table-responsive">
-                                                            <Table className="table mb-0 border">
-                                                            <thead className="table-light">
-                                                                <tr>
-                                                                <th>Parent Child</th>
-                                                                <th>P Sr No</th>
-                                                                <th>By Pass</th>
-                                                                <th>Parent</th>
-                                                                <th>Product Details</th>
-                                                                <th>Test Name</th>
-                                                                <th>Label Claim</th>
-                                                                <th>Min.Limit</th>
-                                                                <th>Max.Limit</th>
-                                                                <th>Amount</th>
-                                                                <th style={{textAlign:'center'}}><i className="fa fa-trash"></i></th>
-                                                                </tr>
-                                                            </thead>
-                                                                <tbody>
-                                                                <tr>
-                                                                    {/*<td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
-                                                                    <td><input type="checkbox"/></td>*/}
-                                                                    <td><select name="parent_child"  style={my_style} className="form-select">
-                                                                      <option value="Parent">Parent</option>
-                                                                      <option value="Child">Child</option>
-                                                                    </select></td>
-                                                                    <td><input type="text"  name="p_sr_no" className="form-control"/></td>
-                                                                    <td><select value={x.by_pass}  style={my_style} className="form-select" name="by_pass"><option value="2">No</option><option value="1">Yes</option></select></td>
-                                                                    <td><select value={x.parent}  name="parent" className="form-select" style={{width:'100px !important'}}>
+                                                    {testData.map((x, i) => (
+                                                      <React.Fragment key={x}>
+                                                              <div className="mb-3 row">
+                                                                                      <div className="form-group">
+                                                                                          <div className="row">
+                                                                                               <div className="table-responsive">
+                                                                                                  <Table className="table mb-0 border" style={{width:'100%'}}>
+                                                                                                  <thead className="table-light">
+                                                                                                      <tr>
+                                                                                                      <th style={table_th_style}>Parent Child</th>
+                                                                                                      <th style={table_th_style}>P Sr No</th>
+                                                                                                      <th style={table_th_style}>By Pass</th>
+                                                                                                      <th style={table_th_style}>Parent</th>
+                                                                                                      <th style={table_textarea_th_style}>Product Details</th>
+                                                                                                      <th style={table_textarea_th_style}>Test Name</th>
+                                                                                                      <th style={table_th_style}>Label Claim</th>
+                                                                                                      <th style={table_th_style}>% of Label Claim</th>
+                                                                                                      <th style={table_th_style}>Min. Limit</th>
+                                                                                                      <th style={table_th_style}>Max. Limit</th>
+                                                                                                      <th style={table_th_style}>Result</th>
+                                                                                                      <th style={table_th_style}>Label Claim Result</th>
+                                                                                                      <th style={table_th_style}>Label Claim Unit</th>
+                                                                                                      <th style={table_th_style}>Result2</th>
+                                                                                                      <th style={table_th_style}>Mean</th>
+                                                                                                      <th style={table_th_style}>Na Content</th>
+                                                                                                      <th style={table_th_style}>Final Na Content</th>
+                                                                                                      <th style={table_th_style}>Unit</th>
+                                                                                                      <th style={table_th_style}>Expanded Uncertainty</th>
+                                                                                                      <th style={table_th_style}>Amount</th>
+                                                                                                      <th style={table_th_style}>Division</th>
+                                                                                                      <th style={table_th_style}>Method</th>
+                                                                                                      <th style={table_th_style}>Test Time</th>
+                                                                                                      <th style={table_th_style}>Test Date Time</th>
+                                                                                                      <th style={table_th_style}>Approval Date Time</th>
+                                                                                                      <th style={table_th_style}>Approved</th>
+                                                                                                      <th style={table_textarea_th_style}>Chemist Name</th>
+                                                                                                      <th style={{textAlign:'center'}}><i className="fa fa-trash"></i></th>
+                                                                                                      </tr>
+                                                                                                  </thead>
+                                                                                                      <tbody>
+                                                                                                      <tr>
+                                                                                                          {/*<td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
+                                                                                                          <td><input type="checkbox"/></td>*/}
+                                                                                                          <td><input value={x.parent_child} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.p_sr_no} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td>{x.by_pass == 1 ?
+                                                                                                            <input value="Yes" type="text" className="form-control" readOnly/>
+                                                                                                             : <input value="No" type="text" className="form-control" readOnly/>
+                                                                                                           }
+                                                                                                          </td>
+                                                                                                          <td>{
+                                                                                                            x.parent_id !== '' ?
+                                                                                                              <input value={x.parent.parent_name} type="text" className="form-control" readOnly/>
+                                                                                                            :
+                                                                                                            <input value='' type="text" className="form-control" readOnly/>
+                                                                                                          }
 
-                                                                    </select></td>
+                                                                                                          </td>
+                                                                                                          <td><textarea className="form-control" style={{width:'120px !important'}} value={x.product_details} readOnly></textarea></td>
+                                                                                                          <td><input value={x.test_name} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.label_claim} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.percentage_of_label_claim} type="text" className="form-control" readOnly/></td>
+                                                                                                           <td><input value={x.min_limit} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.max_limit} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.result} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.label_claim_result} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.label_claim_unit} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.result2} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.mean} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.na_content} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.final_na_content} type="text"  className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.unit} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.expanded_uncertanity} type="text"  className="form-control" readOnly/></td>
+                                                                                                           <td><input value={x.amount} type="text"  className="form-control" readOnly/></td>
+                                                                                                           <td><input value={x.division} type="text" className="form-control" readOnly/></td>
+                                                                                                           <td><input value={x.method} type="text"  className="form-control" readOnly/></td>
+                                                                                                           <td><input value={x.test_time} type="text" className="form-control" readOnly/></td>
+                                                                                                           <td> {x.test_date_time !== null || x.test_date_time !== '' ?
+                                                                                                           (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
+                                                                                                            <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local"  className="form-control" readOnly/>
+                                                                                                           :<input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local"  className="form-control" readOnly/>)
+                                                                                                           :
+                                                                                                           <input value={x.test_date_time} type="text" className="form-control" readOnly/>
+                                                                                                           }
+                                                                                                           </td>
+                                                                                                           <td> {x.approval_date_time !== null || x.approval_date_time !== '' ?
+                                                                                                           (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
+                                                                                                            <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" className="form-control" readOnly/>
+                                                                                                           :<input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local"  className="form-control" readOnly/>)
+                                                                                                           :
+                                                                                                           <input value={x.approval_date_time} type="text" className="form-control" readOnly/>
+                                                                                                           }
+                                                                                                           </td>
+                                                                                                           {/*<td><input value={x.test_date_time} type="text" name="test_date_time"  className="form-control"/></td>
+                                                                                                           <td><input value={x.approval_date_time} type="text" name="approval_date_time"  className="form-control"/></td>
+                                                                                                           */}<td><input value={x.approved} type="text" className="form-control" readOnly/></td>
 
-                                                                  <td><textarea name="product_details"  className="form-control" style={{width:'120px !important'}} value={x.product_details}></textarea></td>
+                                                                                                            <td>{
+                                                                                                              x.chemist_name !== ''?
+                                                                                                                <input value={x.chemist.first_name+" "+x.chemist.middle_name+" "+x.chemist.last_name} type="text" className="form-control" readOnly/>
+                                                                                                              :
+                                                                                                              <input value='' type="text" className="form-control" readOnly/>
+                                                                                                            }
+                                                                                                             </td>
+                                                                                                      </tr>
 
-                                                                    <td><input value={x.test_name} className="form-control"  name="test_name" style={{width:'150px !important'}}/>
-                                                                    </td>
-                                                                    <td><input value={x.label_claim} type="text" name="label_claim"  className="form-control"/></td>
-                                                                     <td><input value={x.min_limit} type="text" name="min_limit"   className="form-control"/></td>
-                                                                    <td><input value={x.max_limit} type="text" name="max_limit"  className="form-control"/></td>
-                                                                     <td><input value={x.amount} type="text" name="amount"   className="form-control"/></td>
+                                                                                                    </tbody>
+                                                                                                  </Table>
 
-                                                                </tr>
+                                                                                          </div>
+                                                                                      </div>
+                                                                                  </div>
 
-                                                              </tbody>
-                                                            </Table>
+                                              </div>
+                                                      </React.Fragment>
+                                             ))}
+                                             {/*Test Section End*/}
+{booking.booking_type == "Report" ?
+<div className="audit_details">
+  <h5> <Alert color="danger" role="alert">
+      <i className="fa fa-comment">&nbsp;Audit Details</i>
+  </Alert></h5>
+  <div className="mb-3 row audit_details">
+      <div className="form-group">
+        <div className="row">
 
-                                                    </div>
-                                                </div>
-                                            </div>
+          <div className="col-md-4">
+            <label>Audit Remarks</label>
+            <textarea name="audit_reamrks" value={booking.audit_reamrks} className="form-control" readOnly></textarea>
+          </div>
+
+          <div className="col-md-4">
+            <label>Reason</label>
+            <textarea name="reason" value={booking.reason} className="form-control" readOnly></textarea>
+          </div>
+
+          <div className="col-md-4">
+            <label>Comments</label>
+            <textarea name="comments" value={booking.comments} className="form-control" readOnly></textarea>
+          </div>
 
         </div>
-
-    </React.Fragment>
-       ))}
-
-
-{/*Test Section End*/}
-
+      </div>
+  </div>
+</div>
+: ''
+}
 
                 </CardBody>
               </Card>

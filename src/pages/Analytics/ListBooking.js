@@ -29,6 +29,7 @@ class ListBooking extends Component{
       tableRows: [],
       loading: false,
       loading1: false,
+      ExportPDFData:[],
       count :0
     }
     //this.handlePageChange = this.handlePageChange.bind(this);
@@ -87,6 +88,56 @@ class ListBooking extends Component{
        })
 
    })
+ }
+
+ this.ExportToExcel = () => {
+   this.setState({ loading1: true }, () => {
+   axios.get(`${process.env.REACT_APP_BASE_APIURL}exportlist`, { headers: headers})
+
+   .then(response => {
+       if(response.data.success == true){
+          var booking_data = response.data.data.map((post,index)=>({
+            /* "SR No" : index+1,
+             "COA Print" : post.pharmacopeia.pharmacopeia_name || [],
+             "Aum Sr. No." : post.product_name || '',
+             "Booking No" : post.product_generic || '',
+             "Type" : post.generic.generic_product_name || '',
+             "Receipt Date" : post.sample_description || '',
+             "Product Name" : post.packing_detail || '',
+             "Company" : post.marker_specification || '',
+             "Generic Name" :,
+             "Batch No" :,
+             "Report No.":,
+             "Status":,
+             "Release Date" :,
+             "Billing Date" :,
+             "Bill No":,
+             "Amount":,
+             "NABL Scope":,
+             "Enter By" : post.created_by.first_name+" "+ post.created_by.middle_name + " " + post.created_by.last_name || [],
+             "Enter Datetime" : post.created_at || '',
+             "Modified By" : post.updated_by.first_name+" "+ post.updated_by.middle_name + " " + post.updated_by.last_name || [],
+             "Modified Datetime" : post.updated_at || '',
+             "List of Test":,
+             "List Of Chemist":,
+             "Block":,*/
+            }))
+         const sheet = XLSX.utils.json_to_sheet(booking_data);
+         const workbook = XLSX.utils.book_new();
+         XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet 1');
+         XLSX.writeFile(workbook, `ProductData.csv`);
+         this.setState({loading1: false});
+      }else{
+        toastr.error(response.data.message);
+        this.setState({loading1: false});
+      }
+
+   })
+   .catch(error => {
+       toastr.error(error.response.data.message);
+       this.setState({ loading1: false });
+     })
+ })
  }
 
 
@@ -242,7 +293,7 @@ this.deleteBooking = async(booking_id) =>{
                             <DropdownItem><i class="fa fa-barcode"></i> &nbsp;Generate Barcode</DropdownItem>
                             <DropdownItem><i class="fa fa-file"></i> &nbsp;Generate ROA</DropdownItem>
                             <DropdownItem><i class="fas fa-file"></i> &nbsp;Generate COA</DropdownItem>
-                            <DropdownItem><i class="fas fa-file-export"></i> &nbsp;Export To Excel</DropdownItem>
+                            <DropdownItem onClick={this.ExportToExcel}><i class="fas fa-file-export"></i> &nbsp;Export To Excel</DropdownItem>
                           </DropdownButton>
 
                         </div>

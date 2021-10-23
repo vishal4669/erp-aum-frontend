@@ -70,7 +70,7 @@ function AddBooking(props)  {
 
     const [bookingSamples1, setBookingSamples1] = useState({generic_name:'',product_generic:'',pharmacopeia_name:''});
 
-      const[testData,setTestData] = useState([{parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
+      const[testData,setTestData] = useState([{parent_child:'Parent',p_sr_no:'',by_pass:'2',parent_id:'',product_details:'',
       test_name:'',label_claim:'',min_limit:'',max_limit:'',amount:''}])
 
         useEffect(() => {
@@ -93,7 +93,7 @@ function AddBooking(props)  {
       }
 
       const handleAddClick = () => {
-        setTestData([...testData, { parent_child:'Parent',p_sr_no:'',by_pass:'2',parent:'',product_details:'',
+        setTestData([...testData, { parent_child:'Parent',p_sr_no:'',by_pass:'2',parent_id:'',product_details:'',
         test_name:'',label_claim:'',min_limit:'',max_limit:'',amount:''}]);
       };
 
@@ -213,7 +213,6 @@ function AddBooking(props)  {
           axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no/`+report_type_value+"/"+receipte_date_value,{headers})
             .then(response => {
                       setBooking({booking_no:response.data.data.booking_no});
-                      console.log(response.data.data)
                      {setLoading1(false)}
                })
               .catch((error) => {
@@ -257,7 +256,7 @@ function AddBooking(props)  {
                                     "parent_child" : "Parent",
                                     "p_sr_no" : '',
                                     "by_pass" : d.by_pass,
-                                    "parent" : d.parent.id,
+                                    "parent_id" : d.parent.id,
                                     "product_details" : d.description,
                                     "test_name" : d.parameter.parameter_name,
                                     "label_claim" :d.label_claim,
@@ -553,7 +552,6 @@ function AddBooking(props)  {
                         comments:booking1.comments
                     }
                }
-               console.log(data)
               axios.post( `${process.env.REACT_APP_BASE_APIURL}addBooking`, data, {headers} )
 
                        .then(response => {
@@ -1162,7 +1160,7 @@ function AddBooking(props)  {
                                                                     </select></td>
                                                                     <td><input type="text" onChange={e => handleInputChange(e, i)} name="p_sr_no" className="form-control"/></td>
                                                                     <td><select value={x.by_pass} onChange={e => handleInputChange(e, i)} style={my_style} className="form-select" name="by_pass"><option value="2">No</option><option value="1">Yes</option></select></td>
-                                                                    <td><select value={x.parent} onChange={e => handleInputChange(e, i)} name="parent" className="form-select" style={{width:'100px !important'}}>
+                                                                    <td><select value={x.parent_id} onChange={e => handleInputChange(e, i)} name="parent_id" className="form-select" style={{width:'100px !important'}}>
                                                                         <option value="">Select Parent</option>
                                                                          { data5.map((option, key) => <option value={option.id} key={key} >
                                                                          {option.parent_name}</option>) }
