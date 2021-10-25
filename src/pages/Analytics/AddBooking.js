@@ -81,6 +81,7 @@ function AddBooking(props)  {
                  fetchProduct();
                  fetchPharamcopiea();
                  fetchparentList();
+                 set_p_sr_no();
                 }, []);
 
     const my_style = {
@@ -95,6 +96,7 @@ function AddBooking(props)  {
       const handleAddClick = () => {
         setTestData([...testData, { parent_child:'Parent',p_sr_no:'',by_pass:'2',parent_id:'',product_details:'',
         test_name:'',label_claim:'',min_limit:'',max_limit:'',amount:''}]);
+        set_p_sr_no(testData);
       };
 
         // handle input change for Degree Details
@@ -103,6 +105,8 @@ function AddBooking(props)  {
         const list = [...testData];
         list[index][name] = value;
         setTestData(list);
+
+        set_p_sr_no(testData);
 
       /*  var getSecondLastData = testData.slice(-2,-1).pop();
         var getLastData = testData.slice(-1).pop();
@@ -135,6 +139,10 @@ function AddBooking(props)  {
           //console.log(get_p_sr_no)
         }*/
       };
+
+      const set_p_sr_no = (testData) => {
+        console.log(testData);
+      }
 
       // handle click event of the Remove button
       const handleRemoveClick = index => {

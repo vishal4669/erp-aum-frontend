@@ -81,10 +81,10 @@ function EditBooking(props)  {
       division:'',method:'',test_time:'',test_date_time:'',approval_date_time:'',approved:'Pending',chemist_name:''}])
 
         useEffect(() => {
-                 fetchCustomerData();
-                 fetchManufacturerData();
-                 fetchSupplierData();
-                 fetchProduct();
+                // fetchCustomerData();
+              //   fetchManufacturerData();
+                // fetchSupplierData();
+              //fetchProduct();
                  fetchPharamcopiea();
                  fetchparentList();
                  GetBookingData();
@@ -167,11 +167,12 @@ function EditBooking(props)  {
                       setManufacturer(response.data.data.manufacturer_id)
                       setSupplier(response.data.data.supplier_id)
                       setProduct(response.data.data.samples[0].product_id)
+                      console.log(product)
                       setBookingSamples(response.data.data.samples[0])
                       setBookingSamples1({
-                        product_type:response.data.data.samples[0].product_id.product_generic,
-                        pharmacopeia_name: response.data.data.samples[0].product_id.pharmacopeia_id.pharmacopeia_name,
-                        generic_name : response.data.data.samples[0].product_id.generic_product_name
+                        product_type:response.data.data.samples[0].get_product.product_generic,
+                        pharmacopeia_name: response.data.data.samples[0].get_product.pharmacopeia_id.pharmacopeia_name,
+                        generic_name : response.data.data.samples[0].get_product.generic_product_name
                       })
 
                       if(response.data.data.dispatch_date_time !== null || response.data.data.dispatch_date_time !== ''){
@@ -208,11 +209,41 @@ function EditBooking(props)  {
                           comments:response.data.data.audit[0].comments}))
                       }
                       setTestData(response.data.data.tests)
+
+                      //set customer dropdown data
+                      const options = response.data.data.contact_type_Customer.map(d => ({
+                         "value" : d.id,
+                         "label" : d.company_name
+                      }))
+                      setData1(options);
+                      //set manufacturer dropdown data
+                      const options1 = response.data.data.contact_type_Manufacturer.map(d => ({
+                         "value" : d.id,
+                         "label" : d.company_name
+                      }))
+
+                      setData2(options1);
+                      //set supplier dropdown data
+                      const options2 = response.data.data.contact_type_Supplier.map(d => ({
+                         "value" : d.id,
+                         "label" : d.company_name
+                      }))
+                      setData3(options2);
+
+                      //set product dropdown data
+
+                      const product_option = response.data.data.products.map(d => ({
+                         "value" : d.id,
+                         "label" : d.product_name
+                      }))
+                      setData4(product_option);
+
                       {setLoading1(false)};
 
                   })
                   .catch((error) => {
                       {setLoading1(false)}
+                      console.log(error)
                       toastr.error(error.response.data.message);
                       this.setState({loading: false});
                   })
@@ -362,7 +393,7 @@ function EditBooking(props)  {
                           })
       }
 
-      const fetchCustomerData = () => {
+    /*  const fetchCustomerData = () => {
                    {setLoading1(true)};
                 axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Customer`,{headers})
                   .then(response => {
@@ -377,9 +408,9 @@ function EditBooking(props)  {
                         toastr.error(error.response.data.message);
                          {setLoading1(false)}
                     })
-      }
+      }*/
 
-      const fetchManufacturerData = () => {
+      /*const fetchManufacturerData = () => {
                    {setLoading1(true)};
                 axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Manufacturer`,{headers})
                   .then(response => {
@@ -412,9 +443,9 @@ function EditBooking(props)  {
                         toastr.error(error.response.data.message);
                          {setLoading1(false)}
                     })
-      }
+      }*/
 
-        const fetchProduct = () => {
+      /*const fetchProduct = () => {
                      {setLoading1(true)};
                   axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_dropdown=1`,{headers})
                     .then(response => {
@@ -424,12 +455,13 @@ function EditBooking(props)  {
                              }))
                              setData4(product_option);
                              {setLoading1(false)}
+                             console.log(response.data.data)
                        })
                       .catch((error) => {
                           toastr.error(error.response.data.message);
                            {setLoading1(false)}
                       })
-                }
+                }*/
 
                 const fetchPharamcopiea = () => {
                             {setLoading1(true)};
@@ -1092,7 +1124,7 @@ function EditBooking(props)  {
                                             <div className="row">
                                               <div className="col-md-4">
                                                 <label>Product</label>
-                                                {loading1 ? <LoadingSpinner /> :<Select value={data4.find(obj => obj.value === product.id)} options={data4} name="product_id"
+                                                {loading1 ? <LoadingSpinner /> :<Select value={data4.find(obj => obj.value === product)} options={data4} name="product_id"
                                                placeholder="Select Product" onChange={ changeProductID } isClearable/>}
                                               </div>
                                               <div className="col-md-4">

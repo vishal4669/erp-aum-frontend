@@ -1,18 +1,18 @@
-import React, { useState, useEffect,Component } from 'react';
+import React, { useState, useEffect, Component } from 'react';
 
 import {
-  Card,
-  CardBody,
-  Col,
-  Row,
-  CardTitle,
-  Form,
-  Container,
-  Label,
-  Input,
-  FormGroup,
-  Button,
-  Alert,
+    Card,
+    CardBody,
+    Col,
+    Row,
+    CardTitle,
+    Form,
+    Container,
+    Label,
+    Input,
+    FormGroup,
+    Button,
+    Alert,
 } from 'reactstrap';
 
 //Import Breadcrumb
@@ -22,47 +22,82 @@ import { Link } from "react-router-dom"
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { ToastContainer} from "react-toastr";
+import { ToastContainer } from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import Dropzone from "react-dropzone"
 
 class AddCustomer extends Component {
 
-    constructor(props){
+    constructor(props) {
 
-         super(props);
-          this.state ={
+        super(props);
+        this.state = {
             image: '',
-            loading:'',
-            loading1:'',
-            data:'',
-            data1:'',
-            data3:'',
-            data4:'',
-            company_name: '', gst_no: '',contact_person_name:'',tally_alias_name:'',
-       username:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',active_inactive:'1',logo:'',
-       homestreet:'',homestreet2:'',area:'',city:'',pincode:'',state_id:'',country_id:'',landline:'',admin_contact:'',
-       qc_contact:'',admin_email:'',pancard_no:'',street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
-       corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:'',education_details:'',prev_details:'',
-       tin_no:'',service_tax_no:'',customer_discount:''  
+            loading: '',
+            loading1: '',
+            data: '',
+            data1: '',
+            data3: '',
+            data4: '',
+            company_name: '',
+            gst_no: '',
+            contact_person_name: '',
+            tally_alias_name: '',
+            username: '',
+            password: '',
+            birth_date: '',
+            contact_type: 'Customer',
+            priority: 'High',
+            notes: '',
+            active_inactive: '1',
+            logo: '',
+            homestreet: '',
+            homestreet2: '',
+            area: '',
+            city: '',
+            pincode: '',
+            state_id: '',
+            country_id: '',
+            landline: '',
+            admin_contact: '',
+            qc_contact: '',
+            admin_email: '',
+            pancard_no: '',
+            street: '',
+            street2: '',
+            area1: '',
+            city1: '',
+            pincode1: '',
+            corr_state_id: '',
+            corr_country_id: '',
+            website: '',
+            qa_contact: '',
+            qc_email: '',
+            qa_email: '',
+            pancard_copy: '',
+            education_details: '',
+            prev_details: '',
+            tin_no: '',
+            service_tax_no: '',
+            customer_discount: ''
 
-          } 
-
-        const headers = {
-          'content-type': "multipart/form-data",
-          'Authorization' : "Bearer "+localStorage.getItem('token')
         }
 
-          //const [loading, setLoading] = useState(false);
-          //const [loading1, setLoading1] = useState(false);
-         // const [data, setData] = useState([]);
-          //const [data1, setData1] = useState([]); 
-          //const [data3, setData3] = useState([]);
-          //const [data4, setData4] = useState([]); 
-       
-       /*const [inputList, setInputList]  = this.state[{ contact_person_name: "", contact_person_mobile: "", 
-       contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}];*/
+        const headers = {
+            'content-type': "multipart/form-data",
+            'Authorization': "Bearer " + localStorage.getItem('token')
+        }
+
+        //const [loading, setLoading] = useState(false);
+        //const [loading1, setLoading1] = useState(false);
+        // const [data, setData] = useState([]);
+        //const [data1, setData1] = useState([]); 
+        //const [data3, setData3] = useState([]);
+        //const [data4, setData4] = useState([]); 
+
+        /*const [inputList, setInputList]  = this.state[{ contact_person_name: "", contact_person_mobile: "", 
+        contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}];*/
 
 
 
@@ -71,212 +106,216 @@ class AddCustomer extends Component {
             this.fetchStates();
             this.fetchPosition();
             this.fetchDepartment();
-          }
+        }
 
-           this.fetchCountry = () => {
+        this.fetchCountry = () => {
             this.setState({ loading1: true }, () => {
-              axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
-                .then(response => {
-                         this.setState({data:response.data.data});
-                         //setData(response.data.data);
-                         this.setState({loading1: false});  
-                   })
-                  .catch((error) => {
-                      toastr.error(error.response.data.message);
-                       this.setState({loading1: false});   
-                  })
+                axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`, { headers })
+                    .then(response => {
+                        this.setState({ data: response.data.data });
+                        //setData(response.data.data);
+                        this.setState({ loading1: false });
+                    })
+                    .catch((error) => {
+                        toastr.error(error.response.data.message);
+                        this.setState({ loading1: false });
+                    })
             })
-        } 
+        }
 
         this.fetchStates = () => {
-         this.setState({ loading1: true }, () => {
-              axios.get(`${process.env.REACT_APP_BASE_APIURL}listStates`,{headers})
-                .then(response => {
-                         //setData1(response.data.data);
-                         this.setState({data1:response.data.data});
-                         this.setState({loading1: false});
-                   })
-                  .catch((error) => {
-                      toastr.error(error.response.data.message);
-                       this.setState({loading1: false});   
-                  })
+            this.setState({ loading1: true }, () => {
+                axios.get(`${process.env.REACT_APP_BASE_APIURL}listStates`, { headers })
+                    .then(response => {
+                        //setData1(response.data.data);
+                        this.setState({ data1: response.data.data });
+                        this.setState({ loading1: false });
+                    })
+                    .catch((error) => {
+                        toastr.error(error.response.data.message);
+                        this.setState({ loading1: false });
+                    })
             })
         }
 
         this.fetchPosition = () => {
-         this.setState({ loading1: true }, () => {
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}listPosition?is_dropdown=1`,{headers})
-            .then(response => {
-                     //setData3(response.data.data);
-                     this.setState({data3:response.data.data});
-                     this.setState({loading1: false});
-               })
-              .catch((error) => {
-                  toastr.error(error.response.data.message);
+            this.setState({ loading1: true }, () => {
+                axios.get(`${process.env.REACT_APP_BASE_APIURL}listPosition?is_dropdown=1`, { headers })
+                    .then(response => {
+                        //setData3(response.data.data);
+                        this.setState({ data3: response.data.data });
+                        this.setState({ loading1: false });
+                    })
+                    .catch((error) => {
+                        toastr.error(error.response.data.message);
 
-                   this.setState({loading1: false});   
-              })
-         })
-        } 
+                        this.setState({ loading1: false });
+                    })
+            })
+        }
 
         this.fetchDepartment = () => {
             this.setState({ loading1: true }, () => {
-              axios.get(`${process.env.REACT_APP_BASE_APIURL}listDepartment?is_dropdown=1`,{headers})
-                .then(response => {
-                         //setData4(response.data.data);
-                         this.setState({data4:response.data.data});
-                         this.setState({loading1: false});
-                   })
-                  .catch((error) => {
-                      toastr.error(error.response.data.message);
+                axios.get(`${process.env.REACT_APP_BASE_APIURL}listDepartment?is_dropdown=1`, { headers })
+                    .then(response => {
+                        //setData4(response.data.data);
+                        this.setState({ data4: response.data.data });
+                        this.setState({ loading1: false });
+                    })
+                    .catch((error) => {
+                        toastr.error(error.response.data.message);
 
-                       this.setState({loading1: false});   
-                  })
+                        this.setState({ loading1: false });
+                    })
             })
-        } 
-
-        this.InsertCustomer = (e)=>{
-         e.preventDefault();
-
-         const contact_person_data = inputList;
-
-        this.setState({ loading: true }, () => {
-        const data = 
-        { 
-            company_name:this.refs.company_name, 
-            gst_number: this.refs.gst_no,
-            contact_person_name: this.refs.contact_person_name,
-            tally_alias_name: this.refs.tally_alias_name,
-            user_name: this.refs.username,
-            password: this.refs..password,
-            birth_date: this.refs.birth_date,
-            contact_type: this.refs.contact_type,
-            priority: this.refs.priority,
-            notes: this.refs.notes,
-            is_active: this.refs.active_inactive,
-            //logo:setselectedFiles,
-            education_details:this.refs.education_details,
-            prev_details:this.refs.prev_details,
-            company_tin_no: this.refs.tin_no,
-            company_service_tax_no :this.refs.service_tax_no,
-            company_cust_discount:this.refs.customer_discount,
-            "customer_contact_info" : {
-                "home_contact_info":[
-                   {
-                        street_1:customer.homestreet,
-                        street_2:customer.homestreet2,
-                        area:customer.area,
-                        city:customer.city,
-                        pin:customer.pincode,
-                        state:customer.state_id,
-                        country:customer.country_id,
-                        home_landline:customer.landline,
-                        contact_no:customer.admin_contact,   //Admin OR Account Contact No
-                        home_qc_contact_no:customer.qc_contact,
-                        email:customer.admin_email, // Account OR Admin Email
-                        home_pan_card:customer.pancard_no,
-                        "contact_info_type" : 1,
-                    }
-                ],
-                "other_contact_info":[
-                     /*Correspondence Address - Address Type 2*/
-                       {
-                        street_1:customer.street,
-                        street_2:customer.street2,
-                        area:customer.area1,
-                        city:customer.city1,
-                        pin:customer.pincode1,
-                        state:customer.corr_state_id,
-                        country:customer.corr_country_id,
-                        other_website:customer.website,
-                        contact_no:customer.qa_contact, //QA Contact No
-                        other_qc_email:customer.qc_email,
-                        email: customer.qa_email,//QA Email
-                        other_pan_card_copy:"",
-                        "contact_info_type" : 2,
-                       }
-                ]
-            }, "customer_contact_person": contact_person_data,
-        }; 
-        //console.log(setselectedFiles)
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}addCustomer`, data, {headers} )
-                .then(response => {
-                    if(response.data.success == true){
-                        props.history.push('/customer');
-                        toastr.success(response.data.message);
-                        this.setState({loading: false});
-                    }else{
-                        props.history.push('/add-customer');
-                        toastr.error(response.data.message);
-                        this.setState({loading: false});  
-                    }
-                })
-                .catch((error) => {
-                 this.setState({loading: false});
-                 toastr.error(error.response.data.message);
-                })
-        })
-      }
-
-      this.ResetCustomer = () => { 
-        document.getElementById("AddCustomer").reset();
-      }
-
-    this.onChange = (e) => {  
-       // e.persist();  
-        //customer({...customer, [e.target.name]: e.target.value});
-
-        this.setState({[e.target.name]: e.target.value});  
-      } 
-
-    this.onImageChange = (e) => {
-          let files = e.target.files || e.dataTransfer.files;
-          if (!files.length)
-                return;
-          this.createImage(files[0]);
         }
 
-    this.createImage = (file) => {
-          let reader = new FileReader();
-          reader.onload = (e) => {
+        this.InsertCustomer = (e) => {
+            e.preventDefault();
+
+            const contact_person_data = inputList;
+
+            this.setState({ loading: true }, () => {
+                const data = {
+                    company_name: this.refs.company_name,
+                    gst_number: this.refs.gst_no,
+                    contact_person_name: this.refs.contact_person_name,
+                    tally_alias_name: this.refs.tally_alias_name,
+                    user_name: this.refs.username,
+                    password: this.refs..password,
+                    birth_date: this.refs.birth_date,
+                    contact_type: this.refs.contact_type,
+                    priority: this.refs.priority,
+                    notes: this.refs.notes,
+                    is_active: this.refs.active_inactive,
+                    //logo:setselectedFiles,
+                    education_details: this.refs.education_details,
+                    prev_details: this.refs.prev_details,
+                    company_tin_no: this.refs.tin_no,
+                    company_service_tax_no: this.refs.service_tax_no,
+                    company_cust_discount: this.refs.customer_discount,
+                    "customer_contact_info": {
+                        "home_contact_info": [{
+                            street_1: customer.homestreet,
+                            street_2: customer.homestreet2,
+                            area: customer.area,
+                            city: customer.city,
+                            pin: customer.pincode,
+                            state: customer.state_id,
+                            country: customer.country_id,
+                            home_landline: customer.landline,
+                            contact_no: customer.admin_contact, //Admin OR Account Contact No
+                            home_qc_contact_no: customer.qc_contact,
+                            email: customer.admin_email, // Account OR Admin Email
+                            home_pan_card: customer.pancard_no,
+                            "contact_info_type": 1,
+                        }],
+                        "other_contact_info": [
+                            /*Correspondence Address - Address Type 2*/
+                            {
+                                street_1: customer.street,
+                                street_2: customer.street2,
+                                area: customer.area1,
+                                city: customer.city1,
+                                pin: customer.pincode1,
+                                state: customer.corr_state_id,
+                                country: customer.corr_country_id,
+                                other_website: customer.website,
+                                contact_no: customer.qa_contact, //QA Contact No
+                                other_qc_email: customer.qc_email,
+                                email: customer.qa_email, //QA Email
+                                other_pan_card_copy: "",
+                                "contact_info_type": 2,
+                            }
+                        ]
+                    },
+                    "customer_contact_person": contact_person_data,
+                };
+                //console.log(setselectedFiles)
+                axios.post(`${process.env.REACT_APP_BASE_APIURL}addCustomer`, data, { headers })
+                    .then(response => {
+                        if (response.data.success == true) {
+                            props.history.push('/customer');
+                            toastr.success(response.data.message);
+                            this.setState({ loading: false });
+                        } else {
+                            props.history.push('/add-customer');
+                            toastr.error(response.data.message);
+                            this.setState({ loading: false });
+                        }
+                    })
+                    .catch((error) => {
+                        this.setState({ loading: false });
+                        toastr.error(error.response.data.message);
+                    })
+            })
+        }
+
+        this.ResetCustomer = () => {
+            document.getElementById("AddCustomer").reset();
+        }
+
+        this.onChange = (e) => {
+            // e.persist();  
+            //customer({...customer, [e.target.name]: e.target.value});
+
             this.setState({
-              image: e.target.result
-            })
-          };
-          reader.readAsDataURL(file);
+                [e.target.name]: e.target.value });
         }
 
-      // handle click event of the Add button
-    this.handleAddClick = () => {
-      setInputList([...inputList, { contact_person_name: "", contact_person_mobile: "", 
-        contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
-    };
+        this.onImageChange = (e) => {
+            let files = e.target.files || e.dataTransfer.files;
+            if (!files.length)
+                return;
+            this.createImage(files[0]);
+        }
 
-      // handle input change for Degree Details
-    this.handleInputChange = (e, index) => {
-      const { name, value } = e.target;
-      const list = [...inputList];
-      list[index][name] = value;
-      setInputList(list);
-    };
-     
-    // handle click event of the Remove button
-    this.handleRemoveClick = index => {
-      const list = [...inputList];
-      list.splice(index, 1);
-      setInputList(list);
-    };
-    }    
+        this.createImage = (file) => {
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.setState({
+                    image: e.target.result
+                })
+            };
+            reader.readAsDataURL(file);
+        }
 
-render() {
-    const { data5, loading } = this.state;
-    const { data6, loading1 } = this.state;
-    const { setData, data } = this.state;
-    const { setData1, data1 } = this.state;
-    const { setData3, data3} = this.state;
-    const { setData4, data4} = this.state;
-return (
- <React.Fragment>
+        // handle click event of the Add button
+        this.handleAddClick = () => {
+            setInputList([...inputList, {
+                contact_person_name: "",
+                contact_person_mobile: "",
+                contact_person_email: "",
+                mst_departments_id: "",
+                mst_positions_id: ""
+            }]);
+        };
+
+        // handle input change for Degree Details
+        this.handleInputChange = (e, index) => {
+            const { name, value } = e.target;
+            const list = [...inputList];
+            list[index][name] = value;
+            setInputList(list);
+        };
+
+        // handle click event of the Remove button
+        this.handleRemoveClick = index => {
+            const list = [...inputList];
+            list.splice(index, 1);
+            setInputList(list);
+        };
+    }
+
+    render() {
+        const { data5, loading } = this.state;
+        const { data6, loading1 } = this.state;
+        const { setData, data } = this.state;
+        const { setData1, data1 } = this.state;
+        const { setData3, data3 } = this.state;
+        const { setData4, data4 } = this.state;
+        return (
+            <React.Fragment>
       <HorizontalLayout/>
 
                 <div className="page-content">
@@ -642,8 +681,8 @@ return (
                     </div>
                 </div>
     </React.Fragment>
-)
-  }
+        )
+    }
 }
 
-export default AddCustomer  
+export default AddCustomer
