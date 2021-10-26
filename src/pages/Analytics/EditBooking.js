@@ -560,7 +560,7 @@ function EditBooking(props)  {
 
               // Product ID
               if(typeof product == "number"){
-                final_product_id = product.product_id
+                final_product_id = product
               } else if(typeof product == "object"){
                 if(product.product_id !== null){
                     final_product_id = product.id;
@@ -648,6 +648,7 @@ function EditBooking(props)  {
                         comments:booking1.comments
                     }
                }
+
 
         axios.post( `${process.env.REACT_APP_BASE_APIURL}editBooking/`+booking_id, data, {headers} )
 
