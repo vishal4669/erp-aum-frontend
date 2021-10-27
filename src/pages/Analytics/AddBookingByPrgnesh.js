@@ -164,12 +164,12 @@ function AddBooking(props) {
           // console.log("lastprent no", typeof(lastparentno));
           // console.log("lastChild no", parseInt(testData[last_index_child]['p_sr_no']));
           // testData[i]['p_sr_no'] = testData[last_index_child]['p_sr_no'];
-     
+
             console.log("================if");
             console.log("*******",testData[last_index_child]['p_sr_no']);
             let lastindex = parseInt(testData[last_index_child]['p_sr_no']) + 0.1;
             testData[i]['p_sr_no'] = lastindex;
-        
+
           console.log("*****==**",2.1+0.1);
           // testData[i]['p_sr_no']  = testData[last_index_parent]['p_sr_no'];
           // console.log("lastChild No", testData[last_index_child]['p_sr_no']);
