@@ -95,8 +95,9 @@ const GetBookingData=()=>{
                 setCustomer(response.data.data.customer_id)
                 setManufacturer(response.data.data.manufacturer_id)
                 setSupplier(response.data.data.supplier_id)
-                setProduct(response.data.data.samples[0].product_id)
-                setPharmacopeia(response.data.data.samples[0].product_id.pharmacopeia_id.pharmacopeia_name)
+                setProduct(response.data.data.samples[0].get_product)
+                console.log(product)
+                setPharmacopeia(response.data.data.samples[0].get_product.pharmacopeia_id.pharmacopeia_name)
                 setBookingSamples(response.data.data.samples[0])
                 if(response.data.data.booking_type == "Report"){
                   setBooking(prevState => ({...prevState,
@@ -619,11 +620,13 @@ const GetBookingData=()=>{
                                       </div>
 
                                       {/*Test Section Start*/}
-                                                                            <h5> <Alert color="success" role="alert">
-                                                                              <i className="fa fa-comment">&nbsp;Tests</i>
-                                                                            </Alert></h5>
 
+                                      <h5> <Alert color="success" role="alert">{testData && testData.length ?
+                                        <i className="fa fa-comment">&nbsp;Tests</i>
+                                        : <center>No Tests Details Found</center>}
+                                      </Alert></h5>
                                                     {testData.map((x, i) => (
+
                                                       <React.Fragment key={x}>
                                                               <div className="mb-3 row">
                                                                                       <div className="form-group">
@@ -659,7 +662,6 @@ const GetBookingData=()=>{
                                                                                                       <th style={table_th_style}>Approval Date Time</th>
                                                                                                       <th style={table_th_style}>Approved</th>
                                                                                                       <th style={table_textarea_th_style}>Chemist Name</th>
-                                                                                                      <th style={{textAlign:'center'}}><i className="fa fa-trash"></i></th>
                                                                                                       </tr>
                                                                                                   </thead>
                                                                                                       <tbody>
@@ -738,7 +740,9 @@ const GetBookingData=()=>{
 
                                               </div>
                                                       </React.Fragment>
+
                                              ))}
+
                                              {/*Test Section End*/}
 {booking.booking_type == "Report" ?
 <div className="audit_details">

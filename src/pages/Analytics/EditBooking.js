@@ -167,7 +167,6 @@ function EditBooking(props)  {
                       setManufacturer(response.data.data.manufacturer_id)
                       setSupplier(response.data.data.supplier_id)
                       setProduct(response.data.data.samples[0].product_id)
-                      console.log(product)
                       setBookingSamples(response.data.data.samples[0])
                       setBookingSamples1({
                         product_type:response.data.data.samples[0].get_product.product_generic,
@@ -1149,7 +1148,7 @@ function EditBooking(props)  {
 
                                               <div className="col-md-2">
                                                 <label>Pharmacopiea</label>
-                                                <input type="text" name="product_type" className="form-control" value={bookingSamples1.pharmacopeia_name}/>
+                                                <input type="text" name="pharmacopeia_name" className="form-control" value={bookingSamples1.pharmacopeia_name}/>
                                               </div>
 
                                               <div className="col-md-2">
