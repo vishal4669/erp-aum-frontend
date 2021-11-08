@@ -56,7 +56,7 @@ function EditProduct(props)  {
 
   useEffect(() => {
          fetchPharamcopiea();
-        //  fetchGenericProduct();
+         fetchGenericProduct();
          fetchparentList();
          fetchparamsList();
          GetProductData();
@@ -82,19 +82,12 @@ function EditProduct(props)  {
 
                       }))
                  setProduct(response.data.data);
-                 const options = response.data.data.generic_dropdown.map(d => ({
-                                               "value" : d.generic.id,
-                                                 "label" : d.generic.product_name
-                  }))
-                  setData1(options);
-                  setGenericProduct(response.data.data.generic_product_id.id);
-                  console.log(response.data.data.generic_dropdown)
+                 setGenericProduct(response.data.data.generic_product_id);
                  setInputList(samples_data);
                   {setLoading1(false)};
 
               })
               .catch((error) => {
-                console.log(error)
                   {setLoading1(false)}
                   toastr.error(error.response.data.message);
               })
@@ -113,22 +106,22 @@ function EditProduct(props)  {
                    {setLoading1(false)}
               })
         }
-// const fetchGenericProduct = () => {
-//              {setLoading1(true)};
-//           axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_generic=1`,{headers})
-//             .then(response => {
-//                      const options = response.data.data.map(d => ({
-//                         "value" : d.id,
-//                         "label" : d.product_name
-//                      }))
-//                      setData1(options);
-//                      {setLoading1(false)}
-//                })
-//               .catch((error) => {
-//                   toastr.error(error.response.data.message);
-//                    {setLoading1(false)}
-//               })
-//         }
+const fetchGenericProduct = () => {
+             {setLoading1(true)};
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_generic=1`,{headers})
+            .then(response => {
+                     const options = response.data.data.map(d => ({
+                        "value" : d.id,
+                        "label" : d.product_name
+                     }))
+                     setData1(options);
+                     {setLoading1(false)}
+               })
+              .catch((error) => {
+                  toastr.error(error.response.data.message);
+                   {setLoading1(false)}
+              })
+        }
 
 const fetchparentList = () => {
              {setLoading1(true)};
@@ -191,7 +184,7 @@ const copyFormGeneric = () => {
                         "formula" : d.formula
 
                       }))
-                      
+
                      setInputList(samples_data);
                      {setLoading2(false)}
                })

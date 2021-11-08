@@ -382,13 +382,11 @@ function AddBooking(props) {
           "amount": d.amount,
 
         }))
-        console.log(response.data.data);
         setTestData(tests_data)
-        // console.log(response.data.data.generic_product_id.generic_product_name);
         setBookingSamples1({
           product_generic: response.data.data.product_generic,
           pharmacopeia_name: response.data.data.pharmacopeia.pharmacopeia_name,
-          generic_name: response.data.data.generic_product_id.generic_product_name
+          generic_name: response.data.data.generic.generic_product_name
         })
 
       })

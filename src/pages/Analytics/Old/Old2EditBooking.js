@@ -527,7 +527,6 @@ function EditBooking(props) {
 
         }))
         setTestData(tests_data)
-        console.log(response.data.data.generic_product_id.generic_product_name);
         setBookingSamples1({
           product_type: response.data.data.product_generic,
           generic_name: response.data.data.generic.generic_product_name,

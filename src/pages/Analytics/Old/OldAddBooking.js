@@ -29,14 +29,12 @@ import 'toastr/build/toastr.min.css'
 import Select from 'react-select';
 import $ from 'jquery'
 import { parse } from '@babel/core';
-import { PassThrough } from 'stream';
 
 function AddBooking(props) {
   const headers = {
     'Authorization': "Bearer " + localStorage.getItem('token')
   }
 
-  const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
@@ -92,7 +90,6 @@ function AddBooking(props) {
     fetchparentList();
   }, []);
 
-
   const my_style = {
     width: '120px !important',
 
@@ -102,83 +99,39 @@ function AddBooking(props) {
     document.getElementById("AddBooking").reset();
   }
 
-  const handleAddClick = (e,index) => {
-
-    let setdata = () => {
-
-      setTestData([...testData, {
-        parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
-        test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
-      }]);
-    }
-    
+  const handleAddClick = () => {
+    setTestData([...testData, {
+      parent_child: 'Parent', p_sr_no: '', by_pass: '2', parent_id: '', product_details: '',
+      test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
+    }]);
+    console.log(testData)
     let arr_len = testData.length;
     for (let i = 0; i < arr_len; i++) {
       var parent;
       if (i == 0) {
         if (testData[i]['parent_child'] == 'Parent') {
-          parent = 2;
-          setdata();
-
+          parent = 1;
+          testData[i]['p_sr_no'] = parent;
         }
         else {
           testData[i]['p_sr_no'] = '';
-          setTestData([...testData, {
-            parent_child: 'Parent', p_sr_no: '', by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
-          }]);
         }
       }
       if (i >= 1) {
         if (testData[i]['parent_child'] == 'Parent') {
           parent = parent + 1;
-          setdata();
+          testData[i]['p_sr_no'] = parent;
         }
       }
-      
-
     }
-
-
   };
 
   // handle input change for Degree Details
   const handleInputChange = (e, index) => {
-
-    console.log(e.target.name+""+index);
-
     const { name, value } = e.target;
     const list = [...testData];
     list[index][name] = value;
     setTestData(list);
-    if ($.isEmptyObject(testData[index + 1])) {
-      console.log("No Child Available");
-    }
-    else {
-      let x = document.getElementById(`parent_child_${index}`);
-      if (x.value == "Parent") {
-        let is_disable = $(`#parent_child_${index}`).is(':disabled');
-        // console.log("target",testData.index.p_sr_no);
-        if(e.target.name == 'parent_child')
-        {
-          toastr.error("Please delete all the Childs before changing the Child");
-          $(`#parent_child_${index}`).val("Child");
-          testData[index]['parent_child'] = "Child";
-          // $(`#parent_child_${index}`).prop("disabled", true);
-        }
-          
-      }
-      else {
-        let is_disable = $(`#parent_child_${index}`).is(':disabled');
-        if(e.target.name == 'parent_child')
-        {
-          toastr.error("Please delete all the Childs before changing the parent");
-          $(`#parent_child_${index}`).val("Parent");
-          testData[index]['parent_child'] = "Parent";
-          // $(`#parent_child_${index}`).prop("disabled", true);
-        }
-      }
-    }
 
     let arr_len = testData.length;
     for (let i = 0; i < arr_len; i++) {
@@ -213,17 +166,21 @@ function AddBooking(props) {
         }
         else {
           if (testData[i]['parent_child'] == 'Child') {
-            if (testData[i - 1]['parent_child'] == 'Parent') {
-              testData[i]['p_sr_no'] = testData[i - 1]['p_sr_no'] + 0.1;
+
+            if(last_index_parent == i - 1)
+            {
+
+              testData[i]['p_sr_no'] = testData[last_index_parent]['p_sr_no'] + 0.1;
             }
-            else {
-              let index = last_index_child - 1;
+            else
+            {
+              let index = last_index_child-1;
               let p_sr_no_child_value = testData[index]['p_sr_no'];
-              let str = p_sr_no_child_value.toString();
-              let numarray = str.split('.');
+              let str=p_sr_no_child_value.toString();
+              let numarray=str.split('.');
               let num_val = parseInt(numarray[1]) + parseInt(1);
-              let last_child_no = numarray[0] + "." + num_val;
-              testData[last_index_child]['p_sr_no'] = last_child_no;
+              let last_child_no = numarray[0]+"."+num_val;
+              testData[last_index_child]['p_sr_no'] =last_child_no;
             }
 
           }
@@ -235,28 +192,10 @@ function AddBooking(props) {
   };
 
   // handle click event of the Remove button
-  const handleRemoveClick = (e, index) => {
-    e.preventDefault()
-    if ($.isEmptyObject(testData[index + 1])) {
-      const list = [...testData];
-      let x = document.getElementById(`parent_child_${index}`);
-      if (x.value == "Parent") {
-        toastr.success("Parent Element Deleted Successfully.");
-        $(`#parent_child_${index}`).val("Child");
-        testData[index]['parent_child'] = "Child";
-        // $(`#parent_child_${testData.length - 2}`).removeAttr('disabled');
-      }
-      else {
-        toastr.success("Child Element Deleted Successfully.");
-        $(`#parent_child_${index}`).val("Parent");
-        testData[index]['parent_child'] = "Parent";
-        // $(`#parent_child_${testData.length - 2}`).removeAttr('disabled');
-      }
-      list.splice(index, 1);
-      setTestData(list);
-    } else {
-      toastr.error("Delete all the Child element before deleting parent elements");
-    }
+  const handleRemoveClick = index => {
+    const list = [...testData];
+    list.splice(index, 1);
+    setTestData(list);
   };
 
   const onChange = (e) => {
@@ -366,12 +305,11 @@ function AddBooking(props) {
 
   const getProductData = (e) => {
     var final_product_id = e.value
-    var index = 0
     axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/` + final_product_id, { headers })
       .then(response => {
-        const tests_data = response.data.data.samples.map((d, index) => ({
+        const tests_data = response.data.data.samples.map(d => ({
           "parent_child": "Parent",
-          "p_sr_no": index + 1,
+          "p_sr_no": '',
           "by_pass": d.by_pass,
           "parent_id": d.parent.id,
           "product_details": d.description,
@@ -382,13 +320,11 @@ function AddBooking(props) {
           "amount": d.amount,
 
         }))
-        console.log(response.data.data);
         setTestData(tests_data)
-        // console.log(response.data.data.generic_product_id.generic_product_name);
         setBookingSamples1({
           product_generic: response.data.data.product_generic,
           pharmacopeia_name: response.data.data.pharmacopeia.pharmacopeia_name,
-          generic_name: response.data.data.generic_product_id.generic_product_name
+          generic_name: response.data.data.generic.generic_product_name
         })
 
       })
@@ -519,11 +455,11 @@ function AddBooking(props) {
     // Customer ID
 
     /*var dispatch_date_time_final = '';
-  
+
     if(booking1.dispatch_date_time !== null || booking1.dispatch_date_time !== ''){
-  
+
       dispatch_date_time_final = moment(booking1.dispatch_date_time).format("YYYY-MM-DDTHH:mm");
-  
+
     } else {
       dispatch_date_time_final = '';
     }*/
@@ -671,7 +607,6 @@ function AddBooking(props) {
         comments: booking1.comments
       }
     }
-    console.log("final test",testData)
     axios.post(`${process.env.REACT_APP_BASE_APIURL}addBooking`, data, { headers })
 
       .then(response => {
@@ -1274,7 +1209,7 @@ function AddBooking(props) {
                                     <tr>
                                       {/*<td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
                                                                     <td><input type="checkbox"/></td>*/}
-                                      <td><select name="parent_child" onChange={e => handleInputChange(e, i)} style={my_style} id={'parent_child_' + i} className="form-select">
+                                      <td><select name="parent_child" onChange={e => handleInputChange(e, i)} style={my_style} className="form-select">
                                         <option value="Parent">Parent</option>
                                         <option value="Child">Child</option>
                                       </select></td>
@@ -1297,7 +1232,7 @@ function AddBooking(props) {
 
                                       <td>{testData.length >= 1 && <button
                                         className="mr10"
-                                        onClick={e => handleRemoveClick(e, i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}</td>
+                                        onClick={() => handleRemoveClick(i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}</td>
                                     </tr>
 
                                   </tbody>
@@ -1314,7 +1249,7 @@ function AddBooking(props) {
                               <center>
                                 <div className="col-md-2">
 
-                                  {testData.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={e => handleAddClick(e,i)}>Add More</button>}
+                                  {testData.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
                                 </div>
                               </center>
                             </div>
