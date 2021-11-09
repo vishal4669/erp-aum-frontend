@@ -144,7 +144,7 @@ function EditBooking(props) {
           setdata();
         }
       }
-      
+
 
     }
   };
@@ -171,7 +171,7 @@ function EditBooking(props) {
           testData[index]['parent_child'] = "Child";
           // $(`#parent_child_${index}`).prop("disabled", true);
         }
-          
+
       }
       else {
         // let is_disable = $(`#parent_child_${index}`).is(':disabled');
@@ -511,11 +511,12 @@ function EditBooking(props) {
 
   const getProductData = (e) => {
     var final_product_id = e.value
+    var index = 0
     axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/` + final_product_id, { headers })
       .then(response => {
         const tests_data = response.data.data.samples.map(d => ({
           "parent_child": "Parent",
-          "p_sr_no": '',
+          "p_sr_no": index + 1,
           "by_pass": d.by_pass,
           "parent_id": d.parent.id,
           "product_details": d.description,
@@ -527,10 +528,9 @@ function EditBooking(props) {
 
         }))
         setTestData(tests_data)
-        console.log(response.data.data.generic_product_id.generic_product_name);
         setBookingSamples1({
           product_type: response.data.data.product_generic,
-          generic_name: response.data.data.generic.generic_product_name,
+          generic_name: response.data.data.generic_product_id.generic_product_name,
           pharmacopeia_name: response.data.data.pharmacopeia.pharmacopeia_name
         })
 

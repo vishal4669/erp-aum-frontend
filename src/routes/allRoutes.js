@@ -97,7 +97,10 @@ import ListBooking from "../pages/Analytics/ListBooking"
 import AddBooking from "../pages/Analytics/AddBooking"
 import EditBooking from "../pages/Analytics/EditBooking"
 import ViewBooking from "../pages/Analytics/ViewBooking"
-
+//Instrument
+import ListInstruments from "../pages/Analytics/ListInstruments"
+import AddInstrument from "../pages/Analytics/AddInstrument"
+import EditInstrument from "../pages/Analytics/EditInstrument"
 
 const userRoutes = [
 
@@ -204,6 +207,10 @@ const authRoutes = [
     { path: "/all-customer" ,component: ListCustomer},
     { path: "/edit-customer" ,component: EditCustomer},
     { path: "/view-customer" ,component: ViewCustomer},
+    //Instrument
+    { path: "/instruments" ,component: ListInstruments},
+    { path: "/add-instrument" ,component: AddInstrument},
+    { path: "/edit-instrument" ,component: EditInstrument},
 ]
 
 export { userRoutes, authRoutes }

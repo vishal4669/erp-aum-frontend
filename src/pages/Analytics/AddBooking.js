@@ -111,7 +111,7 @@ function AddBooking(props) {
         test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
       }]);
     }
-    
+
     let arr_len = testData.length;
     for (let i = 0; i < arr_len; i++) {
       var parent;
@@ -135,7 +135,7 @@ function AddBooking(props) {
           setdata();
         }
       }
-      
+
 
     }
 
@@ -166,7 +166,7 @@ function AddBooking(props) {
           testData[index]['parent_child'] = "Child";
           // $(`#parent_child_${index}`).prop("disabled", true);
         }
-          
+
       }
       else {
         let is_disable = $(`#parent_child_${index}`).is(':disabled');
@@ -519,11 +519,11 @@ function AddBooking(props) {
     // Customer ID
 
     /*var dispatch_date_time_final = '';
-  
+
     if(booking1.dispatch_date_time !== null || booking1.dispatch_date_time !== ''){
-  
+
       dispatch_date_time_final = moment(booking1.dispatch_date_time).format("YYYY-MM-DDTHH:mm");
-  
+
     } else {
       dispatch_date_time_final = '';
     }*/
