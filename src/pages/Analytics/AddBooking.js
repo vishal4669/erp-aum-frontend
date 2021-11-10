@@ -42,8 +42,8 @@ function AddBooking(props) {
   const [loading2, setLoading2] = useState(false);
 
   const [customer, setCustomer] = useState({ customer_id: '' })
-  const [manufacturer, setManufacturer] = useState({ manufacturer_id: '' })
-  const [supplier, setSupplier] = useState({ supplier_id: '' })
+  const [manufacturer, setManufacturer] = useState({ manufacturer_name: '' })
+  const [supplier, setSupplier] = useState({ supplier_name: '' })
   const [product, setProduct] = useState({ product_id: '' })
 
   const [data, setData] = useState([]);
@@ -104,13 +104,18 @@ function AddBooking(props) {
 
   const handleAddClick = (e,index) => {
 
-    let setdata = () => {
+    setTestData([...testData, {
+      parent_child: 'Parent', p_sr_no: '1', by_pass: '2', parent_id: '', product_details: '',
+      test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
+    }]);
+
+  /*  let setdata = () => {
 
       setTestData([...testData, {
-        parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
+        parent_child: 'Parent', p_sr_no: 1, by_pass: '2', parent_id: '', product_details: '',
         test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
       }]);
-    }
+    }*/
 
     let arr_len = testData.length;
     for (let i = 0; i < arr_len; i++) {
@@ -118,7 +123,11 @@ function AddBooking(props) {
       if (i == 0) {
         if (testData[i]['parent_child'] == 'Parent') {
           parent = 2;
-          setdata();
+          //setdata();
+          setTestData([...testData, {
+            parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
+            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
+          }]);
 
         }
         else {
@@ -132,7 +141,11 @@ function AddBooking(props) {
       if (i >= 1) {
         if (testData[i]['parent_child'] == 'Parent') {
           parent = parent + 1;
-          setdata();
+          //setdata();
+          setTestData([...testData, {
+            parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
+            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
+          }]);
         }
       }
 
@@ -351,11 +364,12 @@ function AddBooking(props) {
   }
 
   const changeManufacturer = (e) => {
-    setManufacturer({ manufacturer_id: e });
+    setManufacturer({ ...manufacturer, [e.target.name]: e.target.value });
   }
 
   const changeSupplier = (e) => {
-    setSupplier({ supplier_id: e });
+    //setSupplier({ supplier_id: e });
+    setSupplier({ ...supplier, [e.target.name]: e.target.value });
   }
 
   const changeProductID = (e) => {
@@ -418,12 +432,11 @@ function AddBooking(props) {
     { setLoading1(true) };
     axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Manufacturer`, { headers })
       .then(response => {
-        const options1 = response.data.data.map(d => ({
+      /*  const options1 = response.data.data.map(d => ({
           "value": d.id,
           "label": d.company_name
-        }))
-
-        setData2(options1);
+        }))*/
+        setData2(response.data.data);
         { setLoading1(false) }
       })
       .catch((error) => {
@@ -436,11 +449,11 @@ function AddBooking(props) {
     { setLoading1(true) };
     axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Supplier`, { headers })
       .then(response => {
-        const options2 = response.data.data.map(d => ({
+      /*  const options2 = response.data.data.map(d => ({
           "value": d.id,
           "label": d.company_name
-        }))
-        setData3(options2);
+        }))*/
+        setData3(response.data.data);
         { setLoading1(false) }
       })
       .catch((error) => {
@@ -512,8 +525,8 @@ function AddBooking(props) {
     { setLoading(true) };
 
     var final_customer_id = customer;
-    var final_supplier_id = supplier;
-    var final_manufacturer_id = manufacturer;
+    //var final_supplier_id = supplier;
+    //var final_manufacturer_id = manufacturer;
     var final_product_id = product;
 
     // Customer ID
@@ -544,7 +557,7 @@ function AddBooking(props) {
     }
 
 
-    //Supplier ID
+  /*  //Supplier ID
     if (typeof supplier == "number") {
       final_supplier_id = supplier.supplier_id
     } else if (typeof supplier == "object") {
@@ -556,15 +569,15 @@ function AddBooking(props) {
 
     } else {
       final_supplier_id = '';
-    }
+    }*/
 
-    // Manufacturer ID
+   // Manufacturer ID
 
-    if (typeof manufacturer == "number") {
-      final_manufacturer_id = manufacturer.manufacturer_id
+  /*  if (typeof manufacturer == "number") {
+      final_manufacturer_id = manufacturer.manufacturer_name
     } else if (typeof manufacturer == "object") {
-      if (manufacturer.manufacturer_id !== null) {
-        final_manufacturer_id = manufacturer.manufacturer_id.value;
+      if (manufacturer.manufacturer_name !== null) {
+        final_manufacturer_id = manufacturer.manufacturer_name.value;
       } else {
         final_manufacturer_id = '';
       }
@@ -572,6 +585,8 @@ function AddBooking(props) {
     } else {
       final_manufacturer_id = '';
     }
+
+    console.log(manufacturer)*/
 
 
     // Product ID
@@ -611,8 +626,10 @@ function AddBooking(props) {
       customer_id: final_customer_id,
       reference_no: booking1.reference_no,
       remarks: booking1.remarks,
-      manufacturer_id: final_manufacturer_id,
-      supplier_id: final_supplier_id,
+      //manufacturer_name: final_manufacturer_id,
+      manufacturer_name: manufacturer.manufacturer_name,
+      //supplier_id: final_supplier_id,
+      supplier_name: supplier.supplier_name,
       mfg_date: booking1.mfg_date,
       mfg_options: booking1.mfg_options,
       exp_date: booking1.exp_date,
@@ -671,7 +688,7 @@ function AddBooking(props) {
         comments: booking1.comments
       }
     }
-    console.log("final test",testData)
+    console.log(data)
     axios.post(`${process.env.REACT_APP_BASE_APIURL}addBooking`, data, { headers })
 
       .then(response => {
@@ -821,13 +838,28 @@ function AddBooking(props) {
                         <div className="row">
                           <div className="col-md-3">
                             <label>Manufacturer</label>
-                            {loading1 ? <LoadingSpinner /> : <Select onChange={changeManufacturer} options={data2} name="manufacturer_id"
-                              placeholder="Select Manufacturer" isClearable />}
+
+                          {/*{loading1 ? <LoadingSpinner /> : <Select onChange={changeManufacturer} options={data2} name="manufacturer_id"
+                              placeholder="Select Manufacturer" isClearable />}*/}
+                              <input value={manufacturer.manufacturer_name} onChange={changeManufacturer} name="manufacturer_name" className="form-control"
+                               list="manufacturer_name" id="exampleDataList" placeholder="Type to search For Manufacturer..."/>
+                               <datalist id="manufacturer_name">
+                                   { data2.map((option, key) => <option data-value={option.id} value={option.company_name} key={key} >
+                                     </option>) }
+                                </datalist>
+
                           </div>
                           <div className="col-md-3">
                             <label>Supplier</label>
-                            {loading1 ? <LoadingSpinner /> : <Select onChange={changeSupplier} options={data3} name="supplier_id"
-                              placeholder="Select Supplier" isClearable />}
+                            {/*{loading1 ? <LoadingSpinner /> : <Select onChange={changeSupplier} options={data3} name="supplier_id"
+                              placeholder="Select Supplier" isClearable />}*/}
+
+                              <input value={supplier.supplier_name} onChange={changeSupplier} name="supplier_name" className="form-control"
+                               list="supplier_name" id="exampleDataList" placeholder="Type to search For Supplier..."/>
+                               <datalist id="supplier_name">
+                                   { data3.map((option, key) => <option data-value={option.id} value={option.company_name} key={key} >
+                                     </option>) }
+                                </datalist>
                           </div>
 
                           <div className="col-md-2">

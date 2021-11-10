@@ -44,8 +44,8 @@ function EditBooking(props) {
   const [loading2, setLoading2] = useState(false);
 
   const [customer, setCustomer] = useState({ customer_id: '' })
-  const [manufacturer, setManufacturer] = useState({ manufacturer_id: '' })
-  const [supplier, setSupplier] = useState({ supplier_id: '' })
+  const [manufacturer, setManufacturer] = useState({ manufacturer_name: '' })
+  const [supplier, setSupplier] = useState({ supplier_name: '' })
   const [product, setProduct] = useState({ product_id: '' })
 
   const [data, setData] = useState([]);
@@ -112,7 +112,14 @@ function EditBooking(props) {
   }
 
   const handleAddClick = () => {
-    let setdata = () => {
+
+     setTestData([...testData, {
+      parent_child: 'Parent', p_sr_no: 1, by_pass: '2', parent_id: '', product_details: '',
+      test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
+      label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
+      division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
+    }]);
+    /*let setdata = () => {
       setTestData([...testData, {
         parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
         test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
@@ -120,14 +127,20 @@ function EditBooking(props) {
         division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
       }]);
 
-    }
+    }*/
     let arr_len = testData.length;
     for (let i = 0; i < arr_len; i++) {
       var parent;
       if (i == 0) {
         if (testData[i]['parent_child'] == 'Parent') {
           parent = 2;
-          setdata();
+          //setdata();
+          setTestData([...testData, {
+            parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
+            test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
+            label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
+            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
+          }]);
 
         }
         else {
@@ -141,7 +154,13 @@ function EditBooking(props) {
       if (i >= 1) {
         if (testData[i]['parent_child'] == 'Parent') {
           parent = parent + 1;
-          setdata();
+          setTestData([...testData, {
+            parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
+            test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
+            label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
+            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
+          }]);
+          //setdata();
         }
       }
 
@@ -350,7 +369,9 @@ function EditBooking(props) {
             comments: response.data.data.audit[0].comments
           }))
         }
-        setTestData(response.data.data.tests)
+        if(response.data.data.tests !== null || response.data.data.tests !== ''){
+          setTestData(response.data.data.tests)
+        }
 
         //set customer dropdown data
         const options = response.data.data.contact_type_Customer.map(d => ({
@@ -359,18 +380,18 @@ function EditBooking(props) {
         }))
         setData1(options);
         //set manufacturer dropdown data
-        const options1 = response.data.data.contact_type_Manufacturer.map(d => ({
+        /*const options1 = response.data.data.contact_type_Manufacturer.map(d => ({
           "value": d.id,
           "label": d.company_name
-        }))
+        }))*/
 
-        setData2(options1);
+        setData2(response.data.data.contact_type_Manufacturer);
         //set supplier dropdown data
-        const options2 = response.data.data.contact_type_Supplier.map(d => ({
+        /*const options2 = response.data.data.contact_type_Supplier.map(d => ({
           "value": d.id,
           "label": d.company_name
-        }))
-        setData3(options2);
+        }))*/
+        setData3(response.data.data.contact_type_Supplier);
 
         //set product dropdown data
 
@@ -382,7 +403,6 @@ function EditBooking(props) {
         if(response.data.data.chemist_dropdown.id !== null || response.data.data.chemist_dropdown.id !== ''){
           setChemist(response.data.data.chemist_dropdown);
         }
-        console.log("response",response.data.data);
         { setLoading1(false) };
 
       })
@@ -468,7 +488,7 @@ function EditBooking(props) {
   const changeManufacturer = (e) => {
     //  setManufacturer({manufacturer_id: e });
 
-    if (e !== null) {
+  /*  if (e !== null) {
       if (e.value) {
         setManufacturer({ id: e.value, company_name: e.label });
       } else {
@@ -476,14 +496,16 @@ function EditBooking(props) {
       }
     } else {
       setManufacturer({ customer_id: e });
-    }
+    }*/
+
+    setManufacturer({ ...manufacturer, [e.target.name]: e.target.value });
 
   }
 
   const changeSupplier = (e) => {
     //setSupplier({supplier_id: e });
 
-    if (e !== null) {
+    /*if (e !== null) {
       if (e.value) {
         setSupplier({ id: e.value, company_name: e.label });
       } else {
@@ -491,7 +513,9 @@ function EditBooking(props) {
       }
     } else {
       setSupplier({ customer_id: e });
-    }
+    }*/
+
+    setSupplier({ ...supplier, [e.target.name]: e.target.value });
   }
 
   const changeProductID = (e) => {
@@ -514,7 +538,7 @@ function EditBooking(props) {
     var index = 0
     axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/` + final_product_id, { headers })
       .then(response => {
-        const tests_data = response.data.data.samples.map(d => ({
+        const tests_data = response.data.data.samples.map((d, index) => ({
           "parent_child": "Parent",
           "p_sr_no": index + 1,
           "by_pass": d.by_pass,
@@ -656,8 +680,8 @@ function EditBooking(props) {
     e.preventDefault();
     { setLoading(true) };
     var final_customer_id = customer;
-    var final_supplier_id = supplier;
-    var final_manufacturer_id = manufacturer;
+  //  var final_supplier_id = supplier;
+  //  var final_manufacturer_id = manufacturer;
     var final_product_id = product;
     // Customer ID
 
@@ -675,7 +699,7 @@ function EditBooking(props) {
     }
 
 
-    //Supplier ID
+  /*  //Supplier ID
     if (typeof supplier == "number") {
       final_supplier_id = supplier.id
     } else if (typeof supplier == "object") {
@@ -702,7 +726,7 @@ function EditBooking(props) {
 
     } else {
       final_manufacturer_id = '';
-    }
+    }*/
 
 
     // Product ID
@@ -733,8 +757,10 @@ function EditBooking(props) {
       customer_id: final_customer_id,
       reference_no: booking1.reference_no,
       remarks: booking1.remarks,
-      manufacturer_id: final_manufacturer_id,
-      supplier_id: final_supplier_id,
+    //  manufacturer_id: final_manufacturer_id,
+      //supplier_id: final_supplier_id,
+      manufacturer_name:manufacturer.manufacturer_name,
+      supplier_name:supplier.supplier_name,
       mfg_date: booking1.mfg_date,
       mfg_options: booking1.mfg_options,
       exp_date: booking1.exp_date,
@@ -967,13 +993,27 @@ function EditBooking(props) {
                         <div className="row">
                           <div className="col-md-3">
                             <label>Manufacturer</label>
-                            {loading1 ? <LoadingSpinner /> : <Select value={data2.find(obj => obj.value === manufacturer.id)} onChange={changeManufacturer} options={data2} name="manufacturer_id"
-                              placeholder="Select Manufacturer" isClearable />}
+                            {/*{loading1 ? <LoadingSpinner /> : <Select value={data2.find(obj => obj.value === manufacturer.id)} onChange={changeManufacturer} options={data2} name="manufacturer_id"
+                              placeholder="Select Manufacturer" isClearable />}*/}
+
+                              <input value={manufacturer.manufacturer_name} onChange={changeManufacturer} name="manufacturer_name" className="form-control"
+                               list="manufacturer_name" id="exampleDataList" placeholder="Type to search For Manufacturer..."/>
+                               <datalist id="manufacturer_name">
+                                   { data2.map((option, key) => <option data-value={option.id} value={option.manufacturer_name} key={key} >
+                                     </option>) }
+                                </datalist>
                           </div>
                           <div className="col-md-3">
                             <label>Supplier</label>
-                            {loading1 ? <LoadingSpinner /> : <Select value={data3.find(obj => obj.value === supplier.id)} onChange={changeSupplier} options={data3} name="supplier_id"
-                              placeholder="Select Supplier" isClearable />}
+                            {/*{loading1 ? <LoadingSpinner /> : <Select value={data3.find(obj => obj.value === supplier.id)} onChange={changeSupplier} options={data3} name="supplier_id"
+                              placeholder="Select Supplier" isClearable />}*/}
+
+                              <input value={supplier.supplier_name} onChange={changeSupplier} name="supplier_name" className="form-control"
+                               list="supplier_name" id="exampleDataList" placeholder="Type to search For Supplier..."/>
+                               <datalist id="supplier_name">
+                                   { data3.map((option, key) => <option data-value={option.id} value={option.company_name} key={key} >
+                                     </option>) }
+                                </datalist>
                           </div>
 
                           <div className="col-md-2">
