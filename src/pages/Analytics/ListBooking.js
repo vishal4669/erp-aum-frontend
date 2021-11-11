@@ -192,6 +192,10 @@ this.deleteBooking = async(booking_id) =>{
               {
 
                 srno: this.state.count,
+                generate_data: <div><Link className="btn btn-secondary btn-sm">
+                ROA</Link>&nbsp;&nbsp;<Link className="btn btn-warning btn-sm">
+                COA</Link>&nbsp;&nbsp;<Link className="btn btn-success btn-sm">
+                <i className="fa fa-barcode"></i></Link></div>,
                 coa_print: post.coa_print,
                 aum_serial_no: post.aum_serial_no,
                 booking_type: post.booking_type,
@@ -199,11 +203,11 @@ this.deleteBooking = async(booking_id) =>{
                 product_type: post.product_generic,
                 receipte_date: post.receipte_date,
                 product_name : post.product_name,
-                action : <div><Link className="btn btn-primary" to={"/edit-booking/"+base64_encode(post.id)}>
-                <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;<Link className="btn btn-info" to={"/view-booking/"+base64_encode(post.id)}>
+                action : <div><Link className="btn btn-primary btn-sm" to={"/edit-booking/"+base64_encode(post.id)}>
+                <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-booking/"+base64_encode(post.id)}>
                 <i className="fa fa-eye"></i></Link>&nbsp;&nbsp;{loading ? <a className="btn btn-primary w-100 waves-effect waves-light"
                              > <LoadingSpinner /> </a>  :
-                <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Booking Data?')){ this.deleteBooking(post.id)}}}><i class="fas fa-trash-alt"></i></button>}</div>
+                <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Booking Data?')){ this.deleteBooking(post.id)}}}><i class="fas fa-trash-alt"></i></button>}</div>
 
                 ,
 
@@ -228,6 +232,10 @@ this.deleteBooking = async(booking_id) =>{
                   {
                     label:'SR No',
                     field:'srno',
+                  },
+                  {
+                    label:'Generate',
+                    field:'generate_data',
                   },
                   {
                     label:'COA Print',
@@ -282,12 +290,11 @@ this.deleteBooking = async(booking_id) =>{
                 <ol className="breadcrumb m-0">
                     <li><Link to="#" className="btn btn-primary"><i className="fa fa-envelope">&nbsp;SMS</i></Link></li>&nbsp;
                     <li><Link to="#" className="btn btn-primary"><i className="fa fa-envelope">&nbsp;Email</i></Link></li> &nbsp;
-                    <li><Link to="#" className="btn btn-primary">Booking Rate</Link></li>&nbsp;
+                    {/*<li><Link to="#" className="btn btn-primary">Booking Rate</Link></li>&nbsp;*/}
                     <li>
                       <Link to="/add-booking" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Booking</Link>
                     </li>&nbsp;
-                   {loading1 ?  <center><LoadingSpinner /></center> :
-                    <li>
+                    {/*<li>
                         <div className="btn-group">
                           <DropdownButton  title="Actions" drop="left">
                             <DropdownItem><i class="fa fa-barcode"></i> &nbsp;Generate Barcode</DropdownItem>
@@ -297,7 +304,10 @@ this.deleteBooking = async(booking_id) =>{
                           </DropdownButton>
 
                         </div>
-                    </li>}
+                    </li>*/}
+                   {loading1 ?  <center><LoadingSpinner /></center> :
+                     <li><Link to="#" className="btn btn-primary"><i class="fas fa-file-export"></i> &nbsp;Export To Excel</Link></li>
+                    }
                 </ol>
             </div>
         </div>

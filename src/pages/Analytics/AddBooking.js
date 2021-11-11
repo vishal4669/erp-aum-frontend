@@ -389,7 +389,7 @@ function AddBooking(props) {
           "by_pass": d.by_pass,
           "parent_id": d.parent.id,
           "product_details": d.description,
-          "test_name": d.parameter.parameter_name,
+          "test_name": d.parameter.procedure_name,
           "label_claim": d.label_claim,
           "min_limit": d.min_limit,
           "max_limit": d.max_limit,
@@ -842,7 +842,7 @@ function AddBooking(props) {
                           {/*{loading1 ? <LoadingSpinner /> : <Select onChange={changeManufacturer} options={data2} name="manufacturer_id"
                               placeholder="Select Manufacturer" isClearable />}*/}
                               <input value={manufacturer.manufacturer_name} onChange={changeManufacturer} name="manufacturer_name" className="form-control"
-                               list="manufacturer_name" id="exampleDataList" placeholder="Type to search For Manufacturer..."/>
+                               list="manufacturer_name" id="exampleDataList" placeholder="Type to search For Manufacturer..." autoComplete="off"/>
                                <datalist id="manufacturer_name">
                                    { data2.map((option, key) => <option data-value={option.id} value={option.company_name} key={key} >
                                      </option>) }
@@ -855,7 +855,7 @@ function AddBooking(props) {
                               placeholder="Select Supplier" isClearable />}*/}
 
                               <input value={supplier.supplier_name} onChange={changeSupplier} name="supplier_name" className="form-control"
-                               list="supplier_name" id="exampleDataList" placeholder="Type to search For Supplier..."/>
+                               list="supplier_name" id="exampleDataList" placeholder="Type to search For Supplier..." autoComplete="off"/>
                                <datalist id="supplier_name">
                                    { data3.map((option, key) => <option data-value={option.id} value={option.company_name} key={key} >
                                      </option>) }

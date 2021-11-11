@@ -58,7 +58,7 @@ function EditProduct(props)  {
          fetchPharamcopiea();
         //  fetchGenericProduct();
          fetchparentList();
-         fetchparamsList();
+      //   fetchparamsList();
          GetProductData();
         }, []);
 
@@ -69,7 +69,7 @@ function EditProduct(props)  {
                   const samples_data = response.data.data.samples.map(d => ({
                         "by_pass" : d.by_pass,
                         "parent" : d.parent.id,
-                        "parameter_name" : d.parameter.parameter_name,
+                        "parameter_name" : d.mst_sample_parameter_id,
                         "label_claim" :d.label_claim,
                         "min_limit" : d.min_limit,
                         "max_limit" : d.max_limit,
@@ -88,7 +88,7 @@ function EditProduct(props)  {
                   }))
                   setData1(options);
                   setGenericProduct(response.data.data.generic_product_id.id);
-                  console.log(response.data.data.generic_dropdown)
+                  setData3(response.data.data.parameter_dropdown);
                  setInputList(samples_data);
                   {setLoading1(false)};
 
@@ -143,7 +143,7 @@ const fetchparentList = () => {
               })
         }
 
-const fetchparamsList = () => {
+/*const fetchparamsList = () => {
              {setLoading1(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}paramsList`,{headers})
             .then(response => {
@@ -154,7 +154,7 @@ const fetchparamsList = () => {
                   toastr.error(error.response.data.message);
                    {setLoading1(false)}
               })
-        }
+        }*/
 
 const copyFormGeneric = () => {
 
@@ -191,7 +191,7 @@ const copyFormGeneric = () => {
                         "formula" : d.formula
 
                       }))
-                      
+
                      setInputList(samples_data);
                      {setLoading2(false)}
                })
@@ -367,7 +367,8 @@ const UpdateProduct = (e)=>{
                             <div class="col-md-4">
                                 <label>Generic Name</label>
                                  <Select onChange={ changeGenericName } options={data1} value = {
-       data1.find(obj => obj.value === genericProduct)} name="generic_product_id" placeholder="Select Generic Product" isClearable/>
+                                   data1.find(obj => obj.value === genericProduct)}
+                                   name="generic_product_id" placeholder="Select Generic Product" isClearable/>
                             </div>
                             <div class="col-md-2">
                                 <label style={{visibility: 'hidden'}}>Copy From Generic</label>
@@ -450,11 +451,18 @@ const UpdateProduct = (e)=>{
                                                        </select>
                                                     </td>
 
-                                                    <td class="col-2"><input value={x.parameter_name} onChange={e => handleInputChange(e, i)} name="parameter_name" className="form-control" list="parameter_name" id="exampleDataList" placeholder="Type to search..." style={{width:'120px !important'}}/>
+                                                    <td class="col-2">
+                                                    <select value={x.parameter_name} className="form-select"  name="parameter_name" onChange={ e => handleInputChange(e, i) }>
+                                                         <option value="">Select Parameter Name</option>
+                                                        { data3.map((option, key) => <option value={option.id} key={key} >{option.procedure_name}</option>) }
+                                                    </select>
+
+                                                    {/*<input value={x.parameter_name} onChange={e => handleInputChange(e, i)} name="parameter_name" className="form-control" list="parameter_name" id="exampleDataList" placeholder="Type to search..." style={{width:'120px !important'}}/>
                                                     <datalist id="parameter_name">
                                                          { data3.map((option, key) => <option data-value={option.id} value={option.parameter_name} key={key} >
                                                            </option>) }
-                                                    </datalist></td>
+                                                    </datalist>*/}
+                                                    </td>
                                                     <td class="col-1"><Input value={x.label_claim} onChange={e => handleInputChange(e, i)} type="text" name="label_claim" className="form-control"/></td>
                                                         <td class="col-1"><Input value={x.min_limit} onChange={e => handleInputChange(e, i)} type="text" name="min_limit"  className="form-control"/></td>
                                                     <td class="col-1"><Input value={x.max_limit} onChange={e => handleInputChange(e, i)} type="text" name="max_limit" className="form-control"/></td>

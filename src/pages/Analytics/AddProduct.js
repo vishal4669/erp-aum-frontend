@@ -101,7 +101,7 @@ const fetchparentList = () => {
 
 const fetchparamsList = () => {
              {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}paramsList`,{headers})
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest?is_dropdown=1`,{headers})
             .then(response => {
                      setData3(response.data.data);
                      {setLoading1(false)}
@@ -135,7 +135,7 @@ const copyFormGeneric = () => {
                 const samples_data = response.data.data.samples.map(d => ({
                         "by_pass" : d.by_pass,
                         "parent" : d.parent.id,
-                        "parameter_name" : d.parameter.parameter_name,
+                        "parameter_name" : d.mst_sample_parameter_id,
                         "label_claim" :d.label_claim,
                         "min_limit" : d.min_limit,
                         "max_limit" : d.max_limit,
@@ -147,6 +147,8 @@ const copyFormGeneric = () => {
                         "formula" : d.formula
 
                       }))
+
+                      console.log(samples_data)
 
                      // console.log(response.data.data.samples)
 
@@ -421,11 +423,12 @@ const InsertProduct = (e)=>{
                                                        </select>
                                                     </td>
 
-                                                    <td class="col-2"><input value={x.parameter_name} onChange={e => handleInputChange(e, i)} name="parameter_name" className="form-control" list="parameter_name" id="exampleDataList" placeholder="Type to search..." style={{width:'120px !important'}}/>
-                                                    <datalist id="parameter_name">
-                                                         { data3.map((option, key) => <option data-value={option.id} value={option.parameter_name} key={key} >
-                                                           </option>) }
-                                                    </datalist></td>
+                                                    <td class="col-2">
+                                                    {loading1 ? <LoadingSpinner /> :  <select value={x.parameter_name} className="form-select"  name="parameter_name" onChange={ e => handleInputChange(e, i) } >
+                                                         <option value="">Select Parameter Name</option>
+                                                        { data3.map((option, key) => <option value={option.id} key={key} >{option.procedure_name}</option>) }
+                                                    </select> }
+                                                  </td>
                                                     <td class="col-1"><Input value={x.label_claim} onChange={e => handleInputChange(e, i)} type="text" name="label_claim" className="form-control"/></td>
                                                         <td class="col-1"><Input value={x.min_limit} onChange={e => handleInputChange(e, i)} type="text" name="min_limit"  className="form-control"/></td>
                                                     <td class="col-1"><Input value={x.max_limit} onChange={e => handleInputChange(e, i)} type="text" name="max_limit" className="form-control"/></td>
