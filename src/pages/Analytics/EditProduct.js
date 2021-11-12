@@ -83,8 +83,8 @@ function EditProduct(props)  {
                       }))
                  setProduct(response.data.data);
                  const options = response.data.data.generic_dropdown.map(d => ({
-                                               "value" : d.generic.id,
-                                                 "label" : d.generic.product_name
+                    "value" : d.id,
+                    "label" : d.product_name
                   }))
                   setData1(options);
                   setGenericProduct(response.data.data.generic_product_id.id);

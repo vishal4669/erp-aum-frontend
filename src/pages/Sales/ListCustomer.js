@@ -3,7 +3,7 @@ import { Row, Col, Card, CardBody, CardTitle, CardSubtitle,Dropdown,
     DropdownMenu,
     Dropdownpost,
     DropdownToggle,Table,
-    ButtonDropdown,Button } from "reactstrap"
+    ButtonDropdown,Button,DropdownItem } from "reactstrap"
 import { MDBDataTable } from "mdbreact"
 import { withRouter, Link } from "react-router-dom"
 import { DropdownButton } from 'react-bootstrap';
@@ -232,6 +232,16 @@ this.deleteCustomer = async(customer_id) =>{
                     <li>
                       <Link to="/add-customer" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Customer</Link>
                     </li>&nbsp;
+                    <li>
+                      <div className="btn-group">
+                      <DropdownButton  title="Actions" drop="left">
+                        <DropdownItem><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
+                        <DropdownItem><i class="fas fa-file-export"></i> &nbsp;Export To Excel </DropdownItem>
+                        <DropdownItem><Link style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export To PDF</Link></DropdownItem>
+                        <DropdownItem><i class="fas fa-file-export"></i> &nbsp;Export As HTML </DropdownItem>
+                      </DropdownButton>
+                    </div>
+                  </li>
                 </ol>
             </div>
         </div>

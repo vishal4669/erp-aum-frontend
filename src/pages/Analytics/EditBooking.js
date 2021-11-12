@@ -560,6 +560,7 @@ function EditBooking(props) {
 
       })
       .catch((error) => {
+        console.log(error)
         toastr.error(error.response.data.message);
       })
   }
