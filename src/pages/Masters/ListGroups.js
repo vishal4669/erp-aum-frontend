@@ -96,7 +96,7 @@ class ListGroups extends Component {
               name: post.group_name,
               parentgroup: post.parent_name,
               code : post.	group_code,
-              action : <div><Link className="btn btn-primary" to={"/edit-group/"+base64_encode(post.id)}>
+              action : <div><Link className="btn btn-primary btn-sm" to={"/edit-group/"+base64_encode(post.id)}>
               <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;
               <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Group?')){ this.deleteGroup(post.id)}}}><i class="fas fa-trash-alt"></i></button>
               */}</div>

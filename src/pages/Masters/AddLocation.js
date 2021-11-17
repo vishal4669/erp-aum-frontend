@@ -27,51 +27,51 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 
 
-function AddLocation(props) { 
+function AddLocation(props) {
 
   const headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
-  const [data, setData] = useState([]); 
-  const [location, setlocation] = useState({ location_name: ''});  
+  const [data, setData] = useState([]);
+  const [location, setlocation] = useState({ location_name: ''});
 
 const InsertLocation = (e)=>{
          e.preventDefault();
 
         {setLoading(true)};
-        const data = { location_name:location.location_name}; 
+        const data = { location_name:location.location_name};
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addLocation`, data, {headers} )
                 .then(response => {
                     if(response.data.success == true){
                         props.history.push('/location');
                         toastr.success(response.data.message);
-                        {setLoading(false)}; 
+                        {setLoading(false)};
                     }else{
                         props.history.push('/add-location');
                         toastr.error(response.data.message);
-                        {setLoading(false)};   
+                        {setLoading(false)};
                     }
                 })
                 .catch((error) => {
                  {setLoading(false)};
                  toastr.error(error.response.data.message);
                 })
-     
+
       }
 
 
-const ResetLocation = () => { 
+const ResetLocation = () => {
   document.getElementById("AddLocation").reset();
 }
 
-  const onChange = (e) => {  
-    e.persist();  
-    setlocation({...location, [e.target.name]: e.target.value});  
-  } 
+  const onChange = (e) => {
+    e.persist();
+    setlocation({...location, [e.target.name]: e.target.value});
+  }
 
 return(
  <React.Fragment>
@@ -107,7 +107,7 @@ return(
                             <div className="col-12">
                                 <div className="card">
                                     <div className="card-body">
-        
+
                                         <h5 className="alert alert-success"><i className="fa fa-comment">&nbsp;Basic Info</i></h5>
 
                                          <div className="mb-3 row">
@@ -115,10 +115,10 @@ return(
                                                 <div className="row">
 
                                                      <div className="col-md-12">
-                                                        <label>Location Name</label>
-                                                        <input type="text" id="location_name" name="location_name" className="form-control" placeholder="Enter Location Name" onChange={ onChange }/>
-                                                    </div>  
-                                                </div>  
+                                                        <label className="required-field">Location Name</label>
+                                                        <input type="text" id="location_name" name="location_name" className="form-control" placeholder="Enter Location Name" onChange={ onChange } required/>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -133,4 +133,4 @@ return(
   )
 }
 
-export default AddLocation  
+export default AddLocation

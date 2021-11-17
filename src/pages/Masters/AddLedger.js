@@ -39,7 +39,7 @@ constructor() {
         };
         const headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
         this.InsertLedger = (event)=>{
@@ -50,11 +50,11 @@ constructor() {
          const balance_type = this.refs.balance_type.value
          const ledger_opening_balance = this.refs.ledger_opening_balance.value
          const ledger_contact_type = this.refs.ledger_contact_type.value
-     
-         this.setState({ loading: true }, () => { 
+
+         this.setState({ loading: true }, () => {
          //add Group information
 
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}addLedger`, 
+         axios.post( `${process.env.REACT_APP_BASE_APIURL}addLedger`,
           { ledger_name:ledger_name, mst_groups_id:mst_groups_id,
             balance_type : balance_type,ledger_opening_balance : ledger_opening_balance,ledger_contact_type : ledger_contact_type} , {headers} )
 
@@ -62,32 +62,32 @@ constructor() {
                     if(response.data.success == true){
                         this.props.history.push('/ledger');
                         toastr.success(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }else{
                         this.props.history.push('/add-ledger');
                         toastr.error(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }
                 })
                 .catch((error) => {
                  this.setState({loading: false});
                  toastr.error(error.response.data.message);
                 })
-         }) 
-         return      
+         })
+         return
       }
 
 
         this.componentDidMount = () =>{
-          this.setState({ loading1: true }, () => { 
+          this.setState({ loading1: true }, () => {
       axios.get(`${process.env.REACT_APP_BASE_APIURL}listGroup?is_dropdown=1`,{headers})
         .then(response => {
                 this.setState({options: response.data.data})
-                 this.setState({loading1: false});  
+                 this.setState({loading1: false});
            })
           .catch((error) => {
               toastr.error(error.response.data.message);
-               this.setState({loading1: false});  
+               this.setState({loading1: false});
           })
 
       })
@@ -95,16 +95,16 @@ constructor() {
   }
 
       this.logChange = (e) =>{
-        this.setState({[e.target.name]: e.target.value});  
+        this.setState({[e.target.name]: e.target.value});
     }
 
-    this.ResetLedger = () => { 
+    this.ResetLedger = () => {
   document.getElementById("AddLedger").reset();
 }
 
 
 }
-  
+
 
 render() {
 const { data, loading } = this.state;
@@ -155,36 +155,36 @@ const { data1, loading1 } = this.state;
                                                 <div className="row">
 
                                                      <div className="col-md-3">
-                                                        <label>Name</label>
+                                                        <label className="required-field">Name</label>
                                                         <input type="text" onChange={this.logChange} ref="ledger_name" className="form-control" placeholder="Enter Ledger Name" required/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-3">
                                                         <label>Group</label>
-                                                        
+
                                                         {loading1 ? <LoadingSpinner /> :  <select className="form-select" onChange={this.logChange} ref="mst_groups_id">
 
                                                             { this.state.options.map((option, key) => <option value={option.id} key={key} >{option.group_name}</option>) }
-                                                            
+
                                                          </select> }
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-1">
                                                         <label style={{visibility: 'hidden'}}>Debit/Credit</label>
-                                                        
+
                                                          <select className="form-select" onChange={this.logChange} ref="balance_type">
                                                              <option value="Dr">Dr</option>
                                                              <option value="Cr">Cr</option>
-                                                             
-                                                         </select> 
-                                                    </div> 
+
+                                                         </select>
+                                                    </div>
 
                                                     <div className="col-md-3">
-                                                        <label>Opening Balance</label>
+                                                        <label className="required-field">Opening Balance</label>
                                                         <input type="text" onChange={this.logChange} ref="ledger_opening_balance" className="form-control" placeholder="Enter Opening Balance" required/>
-                                                    </div> 
+                                                    </div>
 
-                                                      <div className="col-md-2">  
+                                                      <div className="col-md-2">
                                                         <label>Contact Type</label>
                                                         <select className="form-select" onChange={this.logChange} ref="ledger_contact_type">
                                                             <option value="Ledger">Ledger</option>
@@ -194,8 +194,8 @@ const { data1, loading1 } = this.state;
                                                             <option value="Service Provider">Service Provider</option>
                                                             <option value="Other">Other</option>
                                                         </select>
-                                                    </div>        
-                                                </div>  
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                 </CardBody>

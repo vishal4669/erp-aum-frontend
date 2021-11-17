@@ -41,7 +41,7 @@ constructor() {
         };
         const headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
         this.InsertGroup = (event)=>{
@@ -50,43 +50,43 @@ constructor() {
          const pgroup = this.refs.parentGroup.value
          const gname = this.refs.groupName.value
          const gcode = this.refs.groupCode.value
-     
-         this.setState({ loading: true }, () => { 
+
+         this.setState({ loading: true }, () => {
          //add Group information
 
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}addGroup`, 
+         axios.post( `${process.env.REACT_APP_BASE_APIURL}addGroup`,
           { group_name:gname, group_code:gcode, parent_group:pgroup} , {headers} )
 
                 .then(response => {
                     if(response.data.success == true){
                         this.props.history.push('/group');
                         toastr.success(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }else{
                         this.props.history.push('/add-group');
                         toastr.error(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }
                 })
                 .catch((error) => {
-                  this.setState({loading: false});  
+                  this.setState({loading: false});
                   toastr.error(error.response.data.message);
                 })
-         }) 
-         return      
+         })
+         return
       }
 
 
         this.componentDidMount = () =>{
-          this.setState({ loading1: true }, () => { 
+          this.setState({ loading1: true }, () => {
       axios.get(`${process.env.REACT_APP_BASE_APIURL}listParentGroup`,{headers})
         .then(response => {
                 this.setState({options: response.data.data})
-                 this.setState({loading1: false});  
+                 this.setState({loading1: false});
            })
           .catch((error) => {
                toastr.error(error.response.data.message);
-               this.setState({loading1: false});  
+               this.setState({loading1: false});
           })
 
       })
@@ -94,16 +94,16 @@ constructor() {
   }
 
       this.logChange = (e) =>{
-        this.setState({[e.target.name]: e.target.value});  
+        this.setState({[e.target.name]: e.target.value});
     }
 
-    this.ResetGroup = () => { 
+    this.ResetGroup = () => {
   document.getElementById("AddGroup").reset();
 }
 
 
 }
-  
+
 
 render() {
 const { data, loading } = this.state;
@@ -152,13 +152,13 @@ const { data1, loading1 } = this.state;
                         <div className="form-group">
                             <div className="row">
                                 <div className="col-md-4">
-                                    <label>Name</label>
+                                    <label className="required-field">Name</label>
                                     <input type="text" onChange={this.logChange} ref="groupName" name="group_name" className="form-control" placeholder="Enter Group Name" required/>
                                 </div>
-                                 
+
                                   <div className="col-md-4">
                                     <label>Parent Group</label>
-                                       
+
                                           {loading1 ? <LoadingSpinner /> : <select onChange={this.logChange} ref="parentGroup" className="form-select" name="parent_group">
                                            <option value="">Select Parent Group</option>
                                            { this.state.options.map((option, key) => <option value={option.id} key={key} >{option.group_name}</option>) }
@@ -166,7 +166,7 @@ const { data1, loading1 } = this.state;
                                 </div>
 
                                 <div className="col-md-4">
-                                    <label>Code</label>
+                                    <label className="required-field">Code</label>
                                     <input onChange={this.logChange} ref="groupCode" type="text" name="group_code" className="form-control" placeholder="Enter Group Code" required/>
 
                                  </div>

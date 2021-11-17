@@ -27,65 +27,65 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
-function EditMachine(props) { 
+function EditMachine(props) {
 
   const headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
-  const [data, setData] = useState([]); 
-  const [machine, setMachine] = useState({ machine_name: ''}); 
+  const [data, setData] = useState([]);
+  const [machine, setMachine] = useState({ machine_name: ''});
 
     const url = window.location.href
 const machine_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
-const edit_machine_id =url.substring(url.lastIndexOf('/') + 1) 
+const edit_machine_id =url.substring(url.lastIndexOf('/') + 1)
 
-useEffect(() => {  
-         {setLoading1(true)} 
-      axios.get(`${process.env.REACT_APP_BASE_APIURL}getMachine/`+machine_id,{headers})  
-          .then(response => {  
-              setMachine(response.data.data); 
-               {setLoading1(false)}   
-  
-          })  
-          .catch((error) => {  
-              {setLoading1(false)} 
+useEffect(() => {
+         {setLoading1(true)}
+      axios.get(`${process.env.REACT_APP_BASE_APIURL}getMachine/`+machine_id,{headers})
+          .then(response => {
+              setMachine(response.data.data);
+               {setLoading1(false)}
+
+          })
+          .catch((error) => {
+              {setLoading1(false)}
               toastr.error(error.response.data.message);
-              this.setState({loading: false}); 
-          })  
-        }, []); 
+              this.setState({loading: false});
+          })
+        }, []);
 
 const EditMachine = (e)=>{
          e.preventDefault();
 
         {setLoading(true)};
-        const data = { machine_name:machine.machine_name}; 
+        const data = { machine_name:machine.machine_name};
          axios.post( `${process.env.REACT_APP_BASE_APIURL}editMachine/`+machine_id, data, {headers} )
                 .then(response => {
                     if(response.data.success == true){
                         props.history.push('/machine');
                         toastr.success(response.data.message);
-                        {setLoading(false)}; 
+                        {setLoading(false)};
                     }else{
                         props.history.push('/edit-machine/'+edit_machine_id);
                         toastr.error(response.data.message);
-                        {setLoading(false)};   
+                        {setLoading(false)};
                     }
                 })
                 .catch((error) => {
                  {setLoading(false)};
                  toastr.error(error.response.data.message);
                 })
-     
+
       }
 
-  const onChange = (e) => {  
-    e.persist();  
-    setMachine({...machine, [e.target.name]: e.target.value});  
-  } 
+  const onChange = (e) => {
+    e.persist();
+    setMachine({...machine, [e.target.name]: e.target.value});
+  }
 
 return(
  <React.Fragment>
@@ -120,7 +120,7 @@ return(
                             <div className="col-12">
                                 <div className="card">
                                     <div className="card-body">
-        
+
                                         <h5 className="alert alert-success"><i className="fa fa-comment">&nbsp;Basic Info</i></h5>
 
                                          <div className="mb-3 row">
@@ -128,10 +128,10 @@ return(
                                                 <div className="row">
 
                                                      <div className="col-md-12">
-                                                        <label>Machine Name</label>
-                                                        <input value={machine.machine_name} type="text" id="machine_name" name="machine_name" className="form-control" placeholder="Enter Machine Name" onChange={ onChange }/>
-                                                    </div>  
-                                                </div>  
+                                                        <label className="required-field">Machine Name</label>
+                                                        <input value={machine.machine_name} type="text" id="machine_name" name="machine_name" className="form-control" placeholder="Enter Machine Name" onChange={ onChange } required/>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -146,4 +146,4 @@ return(
   )
 }
 
-export default EditMachine  
+export default EditMachine

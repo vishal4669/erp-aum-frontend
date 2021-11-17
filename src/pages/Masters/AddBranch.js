@@ -41,7 +41,7 @@ constructor() {
         };
         const headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
         this.InsertBranch = (event)=>{
@@ -64,36 +64,36 @@ constructor() {
          const branch_fax = this.refs.branch_fax.value
          const branch_mobile = this.refs.branch_mobile.value
          const branch_email = this.refs.branch_email.value
-         const branch_establish_year = this.refs.branch_establish_year.value        
+         const branch_establish_year = this.refs.branch_establish_year.value
 
-         this.setState({ loading: true }, () => { 
+         this.setState({ loading: true }, () => {
          //add Group information
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}addBranch`, 
+         axios.post( `${process.env.REACT_APP_BASE_APIURL}addBranch`,
           { branch_name:branch_name, mst_companies_id:mst_companies_id, branch_type:branch_type,
           branch_code : branch_code, branch_office_no:branch_office_no, branch_complex_name: branch_complex_name,
            branch_street_name : branch_street_name,branch_land_mark : branch_land_mark, branch_area: branch_area,
-           branch_city : branch_city,branch_state : branch_state,branch_country : branch_country, 
-           branch_pin: branch_pincode, branch_phone : branch_phone, branch_fax : branch_fax, 
-           branch_mobile : branch_mobile, branch_email: branch_email, branch_establish_year : branch_establish_year} 
+           branch_city : branch_city,branch_state : branch_state,branch_country : branch_country,
+           branch_pin: branch_pincode, branch_phone : branch_phone, branch_fax : branch_fax,
+           branch_mobile : branch_mobile, branch_email: branch_email, branch_establish_year : branch_establish_year}
            , {headers} )
 
                 .then(response => {
                     if(response.data.success == true){
                         this.props.history.push('/branch');
                         toastr.success(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }else{
                         this.props.history.push('/add-branch');
                         toastr.error(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }
                 })
                 .catch((error) => {
-                  this.setState({loading: false});  
+                  this.setState({loading: false});
                   toastr.error(error.response.data.message);
                 })
-         }) 
-         return      
+         })
+         return
       }
 
 
@@ -117,16 +117,16 @@ this.componentDidMount = () => {
   }
 
       this.logChange = (e) =>{
-        this.setState({[e.target.name]: e.target.value});  
+        this.setState({[e.target.name]: e.target.value});
     }
 
-    this.ResetBranch = () => { 
+    this.ResetBranch = () => {
   document.getElementById("AddBranch").reset();
 }
 
 
 }
-  
+
 
 render() {
 const { data, loading } = this.state;
@@ -177,9 +177,9 @@ const { data1, loading1 } = this.state;
                                                 <div className="row">
 
                                                      <div className="col-md-3">
-                                                        <label>Name</label>
+                                                        <label className="required-field">Name</label>
                                                         <input type="text" onChange={this.logChange} ref="branch_name" name="branch_name" className="form-control" placeholder="Enter Branch Name" required/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-3">
                                                         <label>Company Name</label>
@@ -188,18 +188,18 @@ const { data1, loading1 } = this.state;
                                                                   { this.state.options.map((option, key) => <option value={option.id} key={key} >{option.company_name}</option>) }
                                                               </select>
                                                           }
-                                                    </div> 
+                                                    </div>
 
                                                     <div className="col-md-3">
-                                                        <label>Branch Type</label>
+                                                        <label className="required-field">Branch Type</label>
                                                         <input type="text" onChange={this.logChange} ref="branch_type" name="branch_type" className="form-control" placeholder="Enter Branch Type" required/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-3">
-                                                        <label>Code</label>
+                                                        <label className="required-field">Code</label>
                                                         <input type="text" onChange={this.logChange} ref="branch_code" name="branch_code" className="form-control" placeholder="Enter Branch Code" required/>
-                                                    </div>       
-                                                </div>  
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -208,25 +208,25 @@ const { data1, loading1 } = this.state;
                                                 <div className="row">
 
                                                     <div className="col-md-3">
-                                                        <label>Office No</label>
+                                                        <label className="required-field">Office No</label>
                                                         <input type="text" onChange={this.logChange}  ref="branch_office_no" name="office_no" className="form-control" placeholder="Enter Office No" required/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-3">
-                                                        <label>Complex Name</label>
-                                                        <input type="text" onChange={this.logChange} ref="branch_complex_name" name="complex_name" className="form-control" placeholder="Enter Complex Name"/>
+                                                        <label className="required-field">Complex Name</label>
+                                                        <input type="text" onChange={this.logChange} ref="branch_complex_name" name="complex_name" className="form-control" placeholder="Enter Complex Name" required/>
                                                     </div>
 
                                                     <div className="col-md-3">
                                                         <label>Street Name</label>
                                                         <input type="text" onChange={this.logChange}  ref="branch_street_name" name="street_name" className="form-control" placeholder="Enter Street Name"/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-3">
                                                         <label>Land Mark</label>
                                                         <input type="text" onChange={this.logChange} ref="branch_land_mark" name="land_mark" className="form-control" placeholder="Enter Land Mark"/>
-                                                    </div>       
-                                                </div>  
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -237,29 +237,29 @@ const { data1, loading1 } = this.state;
                                                     <div className="col-md-3">
                                                         <label>Area</label>
                                                         <input type="text" onChange={this.logChange} ref="branch_area" name="area" className="form-control" placeholder="Enter Area"/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-3">
-                                                        <label>City</label>
-                                                        <input type="text" onChange={this.logChange} ref="branch_city" name="city" className="form-control" placeholder="Enter City Name"/>
+                                                        <label className="required-field">City</label>
+                                                        <input type="text" onChange={this.logChange} ref="branch_city" name="city" className="form-control" placeholder="Enter City Name" required/>
                                                     </div>
 
                                                     <div className="col-md-2">
-                                                        <label>State</label>
-                                                        <input type="text" onChange={this.logChange} ref="branch_state" name="state" className="form-control" placeholder="Enter State Name"/>
-                                                    </div>  
+                                                        <label className="required-field">State</label>
+                                                        <input type="text" onChange={this.logChange} ref="branch_state" name="state" className="form-control" placeholder="Enter State Name" required/>
+                                                    </div>
 
                                                     <div className="col-md-2">
-                                                        <label>Country</label>
-                                                        <input type="text" onChange={this.logChange} ref="branch_country" name="country" className="form-control" placeholder="Enter Country"/>
-                                                    </div>   
+                                                        <label className="required-field">Country</label>
+                                                        <input type="text" onChange={this.logChange} ref="branch_country" name="country" className="form-control" placeholder="Enter Country" required/>
+                                                    </div>
 
                                                      <div className="col-md-2">
-                                                        <label>Pincode</label>
+                                                        <label className="required-field">Pincode</label>
                                                         <input type="text" onChange={this.logChange} ref="branch_pincode" name="pincode" className="form-control" placeholder="Enter Pincode" required/>
-                                                    </div>  
+                                                    </div>
 
-                                                </div>  
+                                                </div>
                                             </div>
                                         </div>
 
@@ -268,9 +268,9 @@ const { data1, loading1 } = this.state;
                                                 <div className="row">
 
                                                     <div className="col-md-3">
-                                                        <label>Phone</label>
+                                                        <label className="required-field">Phone</label>
                                                         <input type="text" onChange={this.logChange} ref="branch_phone" name="phone" className="form-control" placeholder="Enter Phone No" required/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-3">
                                                         <label>Fax</label>
@@ -278,21 +278,21 @@ const { data1, loading1 } = this.state;
                                                     </div>
 
                                                     <div className="col-md-2">
-                                                        <label>Mobile</label>
+                                                        <label className="required-field">Mobile</label>
                                                         <input type="text" onChange={this.logChange} ref="branch_mobile" name="mobile" className="form-control" placeholder="Enter Mobile No" required/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-2">
-                                                        <label>Email</label>
-                                                        <input type="text" onChange={this.logChange} ref="branch_email" name="email" className="form-control" placeholder="Enter Email" required/>
-                                                    </div>   
+                                                        <label className="required-field">Email</label>
+                                                        <input type="email" onChange={this.logChange} ref="branch_email" name="email" className="form-control" placeholder="Enter Email" required/>
+                                                    </div>
 
                                                      <div className="col-md-2">
-                                                        <label>Establish Year</label>
-                                                        <input type="text" onChange={this.logChange} ref="branch_establish_year" name="establish_year" className="form-control" placeholder="Enter Establish Year"/>
-                                                    </div>  
+                                                        <label className="required-field">Establish Year</label>
+                                                        <input type="text" onChange={this.logChange} ref="branch_establish_year" name="establish_year" className="form-control" placeholder="Enter Establish Year" required/>
+                                                    </div>
 
-                                                </div>  
+                                                </div>
                                             </div>
                                         </div>
                 </CardBody>

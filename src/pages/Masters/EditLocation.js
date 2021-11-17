@@ -28,65 +28,65 @@ import 'toastr/build/toastr.min.css'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
 
-function EditLocation(props) { 
+function EditLocation(props) {
 
 const headers = {
           'Content-Type': "application/json",
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
-  const [data, setData] = useState([]); 
-  const [location, setlocation] = useState({ location_name: ''});  
+  const [data, setData] = useState([]);
+  const [location, setlocation] = useState({ location_name: ''});
   const url = window.location.href
 const location_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
 const edit_location_id =url.substring(url.lastIndexOf('/') + 1)
 
-useEffect(() => {  
-         {setLoading1(true)} 
-      axios.get(`${process.env.REACT_APP_BASE_APIURL}getLocation/`+location_id,{headers})  
-          .then(response => {  
-              setlocation(response.data.data); 
-               {setLoading1(false)}   
-  
-          })  
-          .catch((error) => {  
-              {setLoading1(false)} 
+useEffect(() => {
+         {setLoading1(true)}
+      axios.get(`${process.env.REACT_APP_BASE_APIURL}getLocation/`+location_id,{headers})
+          .then(response => {
+              setlocation(response.data.data);
+               {setLoading1(false)}
+
+          })
+          .catch((error) => {
+              {setLoading1(false)}
               toastr.error(error.response.data.message);
-              this.setState({loading: false}); 
-          })  
-        }, []); 
+              this.setState({loading: false});
+          })
+        }, []);
 
 const EditLocation = (e)=>{
          e.preventDefault();
         {setLoading(true)};
-        const data = { location_name:location.location_name}; 
+        const data = { location_name:location.location_name};
          axios.post( `${process.env.REACT_APP_BASE_APIURL}editLocation/`+location_id, data, {headers} )
                 .then(response => {
                     if(response.data.success == true){
                         props.history.push('/location');
                         toastr.success(response.data.message);
-                        {setLoading(false)}; 
+                        {setLoading(false)};
                     }else{
                         props.history.push('/edit-location/'+edit_location_id);
                         toastr.error(response.data.message);
-                        {setLoading(false)};   
+                        {setLoading(false)};
                     }
                 })
                 .catch((error) => {
                  {setLoading(false)};
                  toastr.error(error.response.data.message);
                 })
-     
+
       }
 
 
-  const onChange = (e) => {  
-    e.persist();  
-    setlocation({...location, [e.target.name]: e.target.value});  
-  } 
+  const onChange = (e) => {
+    e.persist();
+    setlocation({...location, [e.target.name]: e.target.value});
+  }
 
 return(
  <React.Fragment>
@@ -116,12 +116,12 @@ return(
                     </li>}
                 </ol>
             </div>
-        </div>{loading1 ? <center><LoadingSpinner /></center> : 
+        </div>{loading1 ? <center><LoadingSpinner /></center> :
                           <div className="row">
                             <div className="col-12">
                                 <div className="card">
                                     <div className="card-body">
-        
+
                                         <h5 className="alert alert-success"><i className="fa fa-comment">&nbsp;Basic Info</i></h5>
 
                                          <div className="mb-3 row">
@@ -129,10 +129,10 @@ return(
                                                 <div className="row">
 
                                                      <div className="col-md-12">
-                                                        <label>Location Name</label>
-                                                        <input value={location.location_name} type="text" id="location_name" name="location_name" className="form-control" placeholder="Enter Location Name" onChange={ onChange }/>
-                                                    </div>  
-                                                </div>  
+                                                        <label className="required-field">Location Name</label>
+                                                        <input value={location.location_name} type="text" id="location_name" name="location_name" className="form-control" placeholder="Enter Location Name" onChange={ onChange } required/>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -147,4 +147,4 @@ return(
   )
 }
 
-export default EditLocation  
+export default EditLocation

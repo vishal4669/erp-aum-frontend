@@ -1,7 +1,11 @@
-import React from "react"
-import { Container, Row, Col, CardBody, Card } from "reactstrap"
+import React, { useState } from "react"
+import {   TabContent,
+  TabPane,
+  Collapse,
+  NavLink,
+  NavItem,
+  Nav,Container, Row, Col, CardBody, Card,CardTitle,Badge} from "reactstrap"
 import { Link } from "react-router-dom"
-
 
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb"
@@ -11,6 +15,7 @@ import MiniWidget from "./mini-widget"
 import SalesAnalyticsChart from "./salesanalytics-chart"
 import RecentActivity from "./recent-activity"
 
+import classnames from "classnames"
 
 import HorizontalLayout from "../../components/HorizontalLayout/index"
 import { ToastContainer } from 'react-toastify'
@@ -168,6 +173,12 @@ const options4 = {
 };
 
 const Dashboard = () => {
+const [activeTabJustify, setactiveTabJustify] = useState("1")
+function toggleCustomJustified(tab) {
+  if (activeTabJustify !== tab) {
+    setactiveTabJustify(tab)
+  }
+}
 
   const reports = [
 
@@ -277,15 +288,253 @@ const Dashboard = () => {
             <MiniWidget reports={reports} />
           </Row>
 
+
+            <Row>
+              <Col xl={12}>
+              <Card>
+                <CardBody>
+                  <CardTitle className="h4">Quick Access Tabs</CardTitle>
+
+                  <Nav tabs className="nav-tabs-custom nav-justified">
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: activeTabJustify === "1",
+                        })}
+                        onClick={() => {
+                          toggleCustomJustified("1")
+                        }}
+                      >
+                        <i className="fa fa-tasks"></i>
+                        <span className="d-none d-sm-block">Task</span>
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: activeTabJustify === "2",
+                        })}
+                        onClick={() => {
+                          toggleCustomJustified("2")
+                        }}
+                      >
+                        <i className="fas fa-chart-line"></i>
+                        <span className="d-none d-sm-block">Analytics</span>
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: activeTabJustify === "3",
+                        })}
+                        onClick={() => {
+                          toggleCustomJustified("3")
+                        }}
+                      >
+                        <i className="fa fa-thumbs-up"></i>&nbsp;<span className="badge bg-soft-dark">1</span>
+                        <span className="d-none d-sm-block">Assign</span>
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: activeTabJustify === "4",
+                        })}
+                        onClick={() => {
+                          toggleCustomJustified("4")
+                        }}
+                      >
+                        <i className="fa fa-file"></i>
+                        <span className="d-none d-sm-block">Approve</span>
+                      </NavLink>
+                    </NavItem>
+
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: activeTabJustify === "5",
+                        })}
+                        onClick={() => {
+                          toggleCustomJustified("5")
+                        }}
+                      >
+                        <i className="fa fa-check"></i>
+                        <span className="d-none d-sm-block">Approved</span>
+                      </NavLink>
+                    </NavItem>
+
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: activeTabJustify === "6",
+                        })}
+                        onClick={() => {
+                          toggleCustomJustified("6")
+                        }}
+                      >
+                        <i className="fa fa-times"></i>
+                        <span className="d-none d-sm-block">Reject</span>
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: activeTabJustify === "7",
+                        })}
+                        onClick={() => {
+                          toggleCustomJustified("7")
+                        }}
+                      >
+                        <i className="fa fa-print"></i>
+                        <span className="d-none d-sm-block">Print</span>
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: activeTabJustify === "8",
+                        })}
+                        onClick={() => {
+                          toggleCustomJustified("8")
+                        }}
+                      >
+                        <i className="fa fa-users"></i>
+                        <span className="d-none d-sm-block">HR</span>
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: activeTabJustify === "9",
+                        })}
+                        onClick={() => {
+                          toggleCustomJustified("9")
+                        }}
+                      >
+                        <i className="fab fa-houzz"></i>
+                        <span className="d-none d-sm-block">Stock</span>
+                      </NavLink>
+                    </NavItem>
+                  </Nav>
+
+                  <TabContent activeTab={activeTabJustify}>
+                    <TabPane tabId="1" className="p-3">
+                      <p className="mb-0">
+                        Raw denim you probably haven't heard of them jean shorts Austin.
+                        Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache
+                        cliche tempor, williamsburg carles vegan helvetica. Reprehenderit
+                        butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi,
+                        qui irure terry richardson ex squid. Aliquip placeat salvia cillum
+                        iphone. Seitan aliquip quis cardigan american apparel, butcher
+                        voluptate nisi qui.
+                                            </p>
+                    </TabPane>
+                    <TabPane tabId="2" className="p-3">
+                      <p className="mb-0">
+                        Food truck fixie locavore, accusamus mcsweeney's marfa nulla
+                        single-origin coffee squid. Exercitation +1 labore velit, blog
+                        sartorial PBR leggings next level wes anderson artisan four loko
+                        farm-to-table craft beer twee. Qui photo booth letterpress,
+                        commodo enim craft beer mlkshk aliquip jean shorts ullamco ad
+                        vinyl cillum PBR. Homo nostrud organic, assumenda labore
+                        aesthetic magna delectus.
+                                            </p>
+                    </TabPane>
+                    <TabPane tabId="3" className="p-3">
+                       <p className="mb-0">
+                           <i className="fas fa-chart-bar"></i>&nbsp;&nbsp;Total Pending Assign :28 to chemist.
+                           &nbsp;&nbsp;<Link type="button" to="/assign-test" class="btn btn-primary waves-effect waves-light btn-sm">
+                           Assign <i class="fa fa-share"></i></Link>
+                       </p>
+                    </TabPane>
+
+                    <TabPane tabId="4" className="p-3">
+                      <p className="mb-0">
+                        Trust fund seitan letterpress, keytar raw denim keffiyeh etsy
+                        art party before they sold out master cleanse gluten-free squid
+                        scenester freegan cosby sweater. Fanny pack portland seitan DIY,
+                        art party locavore wolf cliche high life echo park Austin. Cred
+                        vinyl keffiyeh DIY salvia PBR, banh mi before they sold out
+                        farm-to-table VHS viral locavore cosby sweater. Lomo wolf viral,
+                        mustache readymade keffiyeh craft.
+                                            </p>
+                    </TabPane>
+                    <TabPane tabId="5" className="p-3">
+                      <p className="mb-0">
+                        Trust fund seitan letterpress, keytar raw denim keffiyeh etsy
+                        art party before they sold out master cleanse gluten-free squid
+                        scenester freegan cosby sweater. Fanny pack portland seitan DIY,
+                        art party locavore wolf cliche high life echo park Austin. Cred
+                        vinyl keffiyeh DIY salvia PBR, banh mi before they sold out
+                        farm-to-table VHS viral locavore cosby sweater. Lomo wolf viral,
+                        mustache readymade keffiyeh craft.
+                                            </p>
+                    </TabPane>
+                    <TabPane tabId="6" className="p-3">
+                      <p className="mb-0">
+                        Trust fund seitan letterpress, keytar raw denim keffiyeh etsy
+                        art party before they sold out master cleanse gluten-free squid
+                        scenester freegan cosby sweater. Fanny pack portland seitan DIY,
+                        art party locavore wolf cliche high life echo park Austin. Cred
+                        vinyl keffiyeh DIY salvia PBR, banh mi before they sold out
+                        farm-to-table VHS viral locavore cosby sweater. Lomo wolf viral,
+                        mustache readymade keffiyeh craft.
+                                            </p>
+                    </TabPane>
+                    <TabPane tabId="7" className="p-3">
+                      <p className="mb-0">
+                        Trust fund seitan letterpress, keytar raw denim keffiyeh etsy
+                        art party before they sold out master cleanse gluten-free squid
+                        scenester freegan cosby sweater. Fanny pack portland seitan DIY,
+                        art party locavore wolf cliche high life echo park Austin. Cred
+                        vinyl keffiyeh DIY salvia PBR, banh mi before they sold out
+                        farm-to-table VHS viral locavore cosby sweater. Lomo wolf viral,
+                        mustache readymade keffiyeh craft.
+                                            </p>
+                    </TabPane>
+                    <TabPane tabId="8" className="p-3">
+                      <p className="mb-0">
+                        Trust fund seitan letterpress, keytar raw denim keffiyeh etsy
+                        art party before they sold out master cleanse gluten-free squid
+                        scenester freegan cosby sweater. Fanny pack portland seitan DIY,
+                        art party locavore wolf cliche high life echo park Austin. Cred
+                        vinyl keffiyeh DIY salvia PBR, banh mi before they sold out
+                        farm-to-table VHS viral locavore cosby sweater. Lomo wolf viral,
+                        mustache readymade keffiyeh craft.
+                                            </p>
+                    </TabPane>
+                    <TabPane tabId="9" className="p-3">
+                      <p className="mb-0">
+                        Trust fund seitan letterpress, keytar raw denim keffiyeh etsy
+                        art party before they sold out master cleanse gluten-free squid
+                        scenester freegan cosby sweater. Fanny pack portland seitan DIY,
+                        art party locavore wolf cliche high life echo park Austin. Cred
+                        vinyl keffiyeh DIY salvia PBR, banh mi before they sold out
+                        farm-to-table VHS viral locavore cosby sweater. Lomo wolf viral,
+                        mustache readymade keffiyeh craft.
+                                            </p>
+                    </TabPane>
+                  </TabContent>
+                </CardBody>
+              </Card>
+              </Col>
+            </Row>
+
           <Row>
-            <Col xl={8}>
+            <Col xl={12}>
               <SalesAnalyticsChart />
             </Col>
-            <Col xl={4}>
-              <RecentActivity />
-            </Col>
-            </Row>
-          
+          </Row>
+
         </Container>
       </div>
     </React.Fragment>

@@ -108,17 +108,22 @@ import LoadingSpinner from '../../components/LoadingSpinner';
               position_title: post.position_title,
               mobile: post.mobile,
               email: post.email,
-              action : <div className="btn-group">
-                          <DropdownButton variant="dark" title="Actions" drop="left">
+              print_action : <div className="btn-group">
+                          <DropdownButton variant="success btn-sm" title="Print Actions" drop="left">
                             <DropdownItem><i class="fa fa-print"></i> &nbsp;Print Offer Letter</DropdownItem>
                             <DropdownItem><i class="fa fa-print"></i> &nbsp;Print Appointment Letter</DropdownItem>
                             <DropdownItem><i class="fa fa-print"></i> &nbsp;Print Experience Letter</DropdownItem>
                             <DropdownItem><i class="fa fa-print"></i> &nbsp;All Rights Print</DropdownItem>
-                            <DropdownItem><i class="fa fa-edit"></i><Link to={"/edit-employee/"+base64_encode(post.id)}> &nbsp;Edit </Link></DropdownItem>
-                            <DropdownItem><i class="fa fa-trash"></i> &nbsp;Delete </DropdownItem>
-                            <DropdownItem><i class="fa fa-eye"></i> <Link to={"/view-employee/"+base64_encode(post.id)}>&nbsp;View </Link></DropdownItem>
                           </DropdownButton>
-                        
+
+                        </div>,
+              action : <div className="btn-group">
+                          <DropdownButton variant="dark btn-sm" title="Actions" drop="left">
+                            <DropdownItem><i class="fa fa-edit"></i><Link to={"/edit-employee/"+base64_encode(post.id)} style={{color:"black"}}> &nbsp;Edit </Link></DropdownItem>
+                            <DropdownItem><i class="fa fa-trash"></i> &nbsp;Delete </DropdownItem>
+                            <DropdownItem><i class="fa fa-eye"></i> <Link to={"/view-employee/"+base64_encode(post.id)} style={{color:"black"}}>&nbsp;View </Link></DropdownItem>
+                          </DropdownButton>
+
                         </div>
            }
           )
@@ -130,7 +135,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 
 
     render() {
-        
+
         const { data, loading } = this.state;
         const data1 = {
           columns: [
@@ -157,6 +162,10 @@ import LoadingSpinner from '../../components/LoadingSpinner';
             {
               label:'email',
               field:'email',
+            },
+            {
+              label:'Print',
+              field: 'print_action',
             },
             {
               label:'Action',

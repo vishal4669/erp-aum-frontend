@@ -27,65 +27,65 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 
 
-function AddCategory(props) { 
+function AddCategory(props) {
 
   const headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
-  const [data, setData] = useState([]); 
-  const [category, setcategory] = useState({ category_name: '', parent_category_id: ''});  
-useEffect(() => {  
+  const [data, setData] = useState([]);
+  const [category, setcategory] = useState({ category_name: '', parent_category_id: ''});
+useEffect(() => {
           {setLoading1(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listCategory?is_dropdown=1`,{headers})
             .then(response => {
                      setData(response.data.data);
-                     {setLoading1(false)} 
+                     {setLoading1(false)}
                })
               .catch((error) => {
                   toastr.error(error.response.data.message);
 
-                   {setLoading1(false)}   
+                   {setLoading1(false)}
               })
-        }, []); 
+        }, []);
 
 const InsertCategory = (e)=>{
          e.preventDefault();
 
         {setLoading(true)};
-        const data = { category_name:category.category_name, parent_category_id: category.parent_category_id}; 
+        const data = { category_name:category.category_name, parent_category_id: category.parent_category_id};
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addCategory`, data, {headers} )
 
                 .then(response => {
                     if(response.data.success == true){
                         props.history.push('/category');
                         toastr.success(response.data.message);
-                        {setLoading(false)}; 
+                        {setLoading(false)};
                     }else{
                         props.history.push('/add-category');
                         toastr.error(response.data.message);
-                        {setLoading(false)};   
+                        {setLoading(false)};
                     }
                 })
                 .catch((error) => {
                  {setLoading(false)};
                  toastr.error(error.response.data.message);
                 })
-     
+
       }
 
 
-const ResetCategory = () => { 
+const ResetCategory = () => {
   document.getElementById("AddCategory").reset();
 }
 
-  const onChange = (e) => {  
-    e.persist();  
-    setcategory({...category, [e.target.name]: e.target.value});  
-  } 
+  const onChange = (e) => {
+    e.persist();
+    setcategory({...category, [e.target.name]: e.target.value});
+  }
 
 return(
  <React.Fragment>
@@ -121,7 +121,7 @@ return(
                             <div className="col-12">
                                 <div className="card">
                                     <div className="card-body">
-        
+
                                         <h5 className="alert alert-success"><i className="fa fa-comment">&nbsp;Basic Info</i></h5>
 
                                          <div className="mb-3 row">
@@ -129,21 +129,21 @@ return(
                                                 <div className="row">
 
                                                      <div className="col-md-6">
-                                                        <label>Name</label>
+                                                        <label className="required-field">Name</label>
                                                         <input type="text" id="category_name" name="category_name" className="form-control" placeholder="Enter Category Name" onChange={ onChange }  required/>
-                                                    </div>  
-                                                    
+                                                    </div>
+
                                                      <div className="col-md-6">
                                                         <label>Category Parent</label>
 
                                                          {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="parent_category_id" name="parent_category_id" onChange={ onChange } >
                                                              <option value="">Select Category</option>
                                                             { data.map((option, key) => <option value={option.id} key={key} >{option.category_name}</option>) }
-                                                            
-                                                         </select> } 
-                                                    </div> 
-                                                   
-                                                </div>  
+
+                                                         </select> }
+                                                    </div>
+
+                                                </div>
                                             </div>
                                         </div>
 
@@ -158,4 +158,4 @@ return(
   )
 }
 
-export default AddCategory  
+export default AddCategory

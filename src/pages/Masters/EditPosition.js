@@ -43,35 +43,35 @@ constructor(props) {
          const headers = {
           'Content-Type': "application/json",
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 const url = window.location.href
 const position_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
 const edit_position_id = url.substring(url.lastIndexOf('/') + 1)
 
 
-  this.componentDidMount=()=>{ 
+  this.componentDidMount=()=>{
           this.PositionData();
           this.DepartmentList();
-    } 
+    }
 
-  this.PositionData=()=>{ 
-    this.setState({ loading1: true }, () => { 
-      axios.get(`${process.env.REACT_APP_BASE_APIURL}getPosition/`+position_id,{headers})  
-          .then(response => {  
-              this.setState({   
-                mst_departments_id: response.data.data.mst_departments_id, 
-                position_title: response.data.data.position_title,   
+  this.PositionData=()=>{
+    this.setState({ loading1: true }, () => {
+      axios.get(`${process.env.REACT_APP_BASE_APIURL}getPosition/`+position_id,{headers})
+          .then(response => {
+              this.setState({
+                mst_departments_id: response.data.data.mst_departments_id,
+                position_title: response.data.data.position_title,
                  });
-                 this.setState({loading1: false});  
-  
-          })  
-          .catch((error) => {  
+                 this.setState({loading1: false});
+
+          })
+          .catch((error) => {
               this.setState({loading1: false});
               toastr.error(error.response.data.message);
-          })  
+          })
       })
-    } 
+    }
 
 
         this.UpdatePosition = (event)=>{
@@ -79,63 +79,63 @@ const edit_position_id = url.substring(url.lastIndexOf('/') + 1)
 
          const mst_departments_id = this.state.mst_departments_id
          const position_title = this.state.position_title
-     
-         this.setState({ loading: true }, () => { 
+
+         this.setState({ loading: true }, () => {
          //add Group information
 
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}editPosition/`+position_id, 
+         axios.post( `${process.env.REACT_APP_BASE_APIURL}editPosition/`+position_id,
           { mst_departments_id:mst_departments_id, position_title:position_title} , {headers} )
 
                 .then(response => {
                     if(response.data.success == true){
                         this.props.history.push('/position');
                         toastr.success(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }else{
                         this.props.history.push('/edit-position/'+edit_position_id);
                         toastr.error(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }
                 })
                 .catch((error) => {
-                  this.setState({loading: false});  
+                  this.setState({loading: false});
                   toastr.error(error.response.data.message);
                 })
-         }) 
-         return      
+         })
+         return
       }
 
 
         this.DepartmentList = () =>{
-          this.setState({ loading1: true }, () => { 
+          this.setState({ loading1: true }, () => {
       axios.get(`${process.env.REACT_APP_BASE_APIURL}listDepartment?is_dropdown=1`,{headers})
         .then(response => {
                 this.setState({options: response.data.data})
-                 this.setState({loading1: false});  
+                 this.setState({loading1: false});
            })
           .catch((error) => {
               toastr.error(error.response.data.message);
-              this.setState({loading1: false});  
+              this.setState({loading1: false});
           })
 
       })
 
   }
 
-this.onChangeMstDepartmentID = (e) => {  
-    this.setState({  
-        mst_departments_id: e.target.value  
-    });  
-  } 
+this.onChangeMstDepartmentID = (e) => {
+    this.setState({
+        mst_departments_id: e.target.value
+    });
+  }
 
-  this.onChangePositionTitle = (e) => {  
-    this.setState({  
-        position_title: e.target.value  
-    });  
-  } 
+  this.onChangePositionTitle = (e) => {
+    this.setState({
+        position_title: e.target.value
+    });
+  }
 
 }
-  
+
 
 render() {
 const { data, loading } = this.state;
@@ -179,19 +179,19 @@ const { data1, loading1 } = this.state;
 
                     <div className="mb-3 row">
                         <div className="form-group">
-                            {loading1 ? <LoadingSpinner /> : 
+                            {loading1 ? <LoadingSpinner /> :
                             <div className="row">
                                   <div className="col-md-6">
-                                    <label>Department</label>
-                                       
+                                    <label className="required-field">Department</label>
+
                                           <select value={this.state.mst_departments_id} onChange={this.onChangeMstDepartmentID} className="form-select" required>
                                            <option value="">Select Department</option>
                                            { this.state.options.map((option, key) => <option value={option.id} key={key} >{option.department_name}</option>) }
-                                        </select> 
+                                        </select>
                                 </div>
 
                                 <div className="col-md-6">
-                                    <label>Position</label>
+                                    <label className="required-field">Position</label>
                                     <input value={this.state.position_title} onChange={this.onChangePositionTitle} type="text" className="form-control" placeholder="Enter Department Name" required/>
 
                                  </div>

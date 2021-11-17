@@ -369,9 +369,7 @@ const InsertEmployee = (e)=>{
             object[key] = value;
         });
         var educational_data = JSON.stringify(object);
-
-        data.append('education', educational_data);
-
+          data.append('education', educational_data);
         // Employement Details
 
         var object1 = {};
@@ -396,16 +394,40 @@ const InsertEmployee = (e)=>{
         data.append('company[bank_acc_number]', employee.bank_acc_number);
 
         // Document Data
-
-        data.append('document[aadhar_card_photo]', employee.aadhar_card_photo);
+        if(employee.aadhar_card_photo != false)
+        {
+          data.append('document[aadhar_card_photo]', employee.aadhar_card_photo);
+        } else {
+          data.append('document[aadhar_card_photo]', '');
+        }
         data.append('document[aadhar_number]', employee.aadhar_number);
-        data.append('document[election_card_photo]', employee.election_card_photo);
+        if(employee.election_card_photo != false)
+        {
+          data.append('document[election_card_photo]', employee.election_card_photo);
+        } else {
+          data.append('document[election_card_photo]', '');
+        }
         data.append('document[election_card_number]', employee.election_card_number);
-        data.append('document[pan_card_photo]', employee.pan_card_photo);
+        if(employee.pan_card_photo != false)
+        {
+          data.append('document[pan_card_photo]', employee.pan_card_photo);
+        }else{
+          data.append('document[pan_card_photo]', '');
+        }
         data.append('document[pan_card_number]', employee.pan_card_number);
-        data.append('document[passport_photo]', employee.passport_photo);
+        if(employee.passport_photo != false)
+        {
+          data.append('document[passport_photo]', employee.passport_photo);
+        } else {
+          data.append('document[passport_photo]', '');
+        }
         data.append('document[passport_number]', employee.passport_number);
-        data.append('document[driving_license_photo]', employee.driving_license_photo);
+        if(employee.driving_license_photo != false)
+        {
+          data.append('document[driving_license_photo]', employee.driving_license_photo);
+        } else {
+          data.append('document[driving_license_photo]', '');
+        }
         data.append('document[driving_license_number]', employee.driving_license_number);
 
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addEmployee`, data, {headers} )
@@ -536,18 +558,18 @@ const handleAddClick1 = () => {
                                                     </div>
 
                                                     <div className="col-md-2">
-                                                        <label>First Name</label>
-                                                        <input className="form-control" type="text" placeholder="Enter First Name" id="example-text-input" name="first_name" onChange={ onChange }/>
+                                                        <label className="required-field">First Name</label>
+                                                        <input className="form-control" type="text" placeholder="Enter First Name" name="first_name" onChange={ onChange } required/>
                                                     </div>
 
                                                     <div className="col-md-2">
-                                                        <label>Middle Name</label>
-                                                        <input className="form-control" type="text" placeholder="Enter Middle Name" id="example-text-input" name="middle_name" onChange={ onChange }/>
+                                                        <label className="required-field">Middle Name</label>
+                                                        <input className="form-control" type="text" placeholder="Enter Middle Name" name="middle_name" onChange={ onChange } required/>
                                                     </div>
 
                                                     <div className="col-md-2">
-                                                        <label>Last Name</label>
-                                                        <input className="form-control" type="text" name="last_name" placeholder="Enter Last Name" onChange={ onChange }/>
+                                                        <label className="required-field">Last Name</label>
+                                                        <input className="form-control" type="text" name="last_name" placeholder="Enter Last Name" onChange={ onChange } required/>
                                                     </div>
                                                     <div className="col-md-1">
                                                         <label>Blood Group</label>
@@ -572,8 +594,8 @@ const handleAddClick1 = () => {
                                                         </select>
                                                     </div>
                                                     <div className="col-md-3">
-                                                        <label>Birth Date</label>
-                                                        <input className="form-control" type="date"  id="example-date-input" name="birth_date" onChange={ onChange }/>
+                                                        <label className="required-field">Birth Date</label>
+                                                        <input className="form-control" type="date"  id="example-date-input" name="birth_date" onChange={ onChange } required/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -610,8 +632,8 @@ const handleAddClick1 = () => {
                                                     </div>
 
                                                     <div className="col-md-3">
-                                                        <label>Mobile</label>
-                                                        <input className="form-control" type="text" name="mobile" placeholder="Enter Mobile" onChange={ onChange }/>
+                                                        <label className="required-field">Mobile</label>
+                                                        <input className="form-control" type="text" name="mobile" placeholder="Enter Mobile" onChange={ onChange } required/>
                                                     </div>
 
                                                 </div>
@@ -623,13 +645,13 @@ const handleAddClick1 = () => {
                                                 <div className="row">
 
                                                     <div className="col-md-3">
-                                                        <label>Email(Username)</label>
-                                                        <input className="form-control" type="email" name="username_email" placeholder="example@gmail.com" onChange={ onChange }/>
+                                                        <label className="required-field">Email(Username)</label>
+                                                        <input className="form-control" type="email" name="username_email" placeholder="example@gmail.com" onChange={ onChange } required/>
                                                     </div>
 
                                                     <div className="col-md-3">
-                                                        <label>Password</label>
-                                                        <input className="form-control" type="password" name="password" placeholder="Enter Password" onChange={ onChange }/>
+                                                        <label className="required-field">Password</label>
+                                                        <input className="form-control" type="password" name="password" placeholder="Enter Password" onChange={ onChange } required/>
                                                     </div>
 
                                                     <div className="col-md-6">
@@ -761,26 +783,26 @@ const handleAddClick1 = () => {
                                                          <div className="form-group">
                                                              <div className="row">
                                                                 <div className="col-md-6">
-                                                                    <label>Home Street</label>
-                                                                    <input className="form-control" type="text" name="homestreet" placeholder="Enter Homestreet" onChange={ onChange }/><br/>
+                                                                    <label className="required-field">Home Street</label>
+                                                                    <input className="form-control" type="text" name="homestreet" placeholder="Enter Homestreet" onChange={ onChange } required/><br/>
                                                                     <label>Area</label>
                                                                     <input className="form-control" type="text" name="area" placeholder="Enter Area" onChange={ onChange }/><br/>
                                                                     <label>Pincode</label>
                                                                     <input className="form-control" type="text" name="pincode" placeholder="Enter Pincode" onChange={ onChange }/><br/>
-                                                                    <label>Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="country_id" name="country_id" onChange={ onChange } >
+                                                                    <label className="required-field">Country</label>
+                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="country_id" name="country_id" onChange={ onChange } required>
                                                                     <option value="">Select Country</option>
                                                                     { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
-                                                                    <label>Emergency Contact Name</label>
-                                                                    <input className="form-control" type="text" name="emergency_contact_name" placeholder="Enter Emergency Contact Name" onChange={ onChange }/>
+                                                                    <label className="required-field">Emergency Contact Name</label>
+                                                                    <input className="form-control" type="text" name="emergency_contact_name" placeholder="Enter Emergency Contact Name" onChange={ onChange } required/>
                                                                 </div>
                                                                 <div className="col-md-6">
-                                                                    <label>Home Street2</label>
-                                                                    <input className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChange }/><br/>
+                                                                    <label className="required-field">Home Street2</label>
+                                                                    <input className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChange } required/><br/>
                                                                     <label>City</label>
                                                                     <input className="form-control" type="text" name="city" placeholder="Enter City" onChange={ onChange }/><br/>
-                                                                    <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="state_id" name="state_id" onChange={ onChange } >
+                                                                    <label className="required-field">State</label>
+                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="state_id" name="state_id" onChange={ onChange } required>
                                                                     <option value="">Select State</option>
                                                                     { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
                                                                     <label>Email</label>
@@ -805,8 +827,8 @@ const handleAddClick1 = () => {
                                                                     {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChange } >
                                                                     <option value="">Select Country</option>
                                                                     { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
-                                                                    <label>Emergency Contact Number</label>
-                                                                    <input className="form-control" type="text" name="emergency_contact_number" placeholder="Enter Emergency Contact Number" onChange={ onChange }/>
+                                                                    <label className="required-field">Emergency Contact Number</label>
+                                                                    <input className="form-control" type="text" name="emergency_contact_number" placeholder="Enter Emergency Contact Number" onChange={ onChange } required/>
                                                                 </div>
                                                                 <div className="col-md-6">
                                                                     <label>Street2</label>
@@ -964,8 +986,8 @@ const handleAddClick1 = () => {
                                             <div className="form-group">
                                                 <div className="row">
                                                     <div className="col-md-2">
-                                                        <label>Comapny</label>
-                                                        {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="mst_companies_id" name="mst_companies_id" onChange={ onChange } >
+                                                        <label className="required-field">Comapny</label>
+                                                        {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="mst_companies_id" name="mst_companies_id" onChange={ onChange } required>
                                                              <option value="">Select Company</option>
                                                             { data2.map((option, key) => <option value={option.id} key={key} >{option.company_name}</option>) }
                                                         </select> }
@@ -1017,18 +1039,18 @@ const handleAddClick1 = () => {
                                                     </div>
 
                                                     <div className="col-md-3">
-                                                        <label>Department Name</label>
+                                                        <label className="required-field">Department Name</label>
                                                         {loading1 ? <LoadingSpinner /> :
-                                                          <select className="form-select" id="mst_departments_id" name="mst_departments_id" onChange={ onChange }>
+                                                          <select className="form-select" id="mst_departments_id" name="mst_departments_id" onChange={ onChange } required>
                                                              <option value="">Select Department</option>
                                                             { data4.map((option, key) => <option value={option.id} key={key} >{option.department_name}</option>) }
                                                         </select> }
                                                     </div>
 
                                                     <div className="col-md-3">
-                                                        <label>Position</label>
+                                                        <label className="required-field">Position</label>
                                                        {loading1 ? <LoadingSpinner /> :
-                                                        <select className="form-select" id="mst_positions_id" name="mst_positions_id" onChange={ onChange }>
+                                                        <select className="form-select" id="mst_positions_id" name="mst_positions_id" onChange={ onChange } required>
                                                              <option value="">Select Position</option>
                                                             { data3.map((option, key) => <option value={option.id} key={key} >{option.position_title}</option>) }
                                                          </select> }

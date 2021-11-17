@@ -45,101 +45,101 @@ constructor(props) {
         const headers = {
           'Content-Type': "application/json",
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 const url = window.location.href
 const group_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
 const edit_group_id = url.substring(url.lastIndexOf('/') + 1)
 
-        this.UpdateGroup=(e)=> { 
-    this.setState({ loading: true }, () => { 
-    e.preventDefault();   
+        this.UpdateGroup=(e)=> {
+    this.setState({ loading: true }, () => {
+    e.preventDefault();
     axios.post(`${process.env.REACT_APP_BASE_APIURL}editGroup/`+group_id,{group_name : this.state.groupName,
-      group_code : this.state.groupCode,parent_group:this.state.parentGroup},{headers})  
-        .then(response => {  
-          if(response.data.success == true){ 
-            this.props.history.push('/group')  
+      group_code : this.state.groupCode,parent_group:this.state.parentGroup},{headers})
+        .then(response => {
+          if(response.data.success == true){
+            this.props.history.push('/group')
             toastr.success(response.data.message);
-            this.setState({loading: false}); 
+            this.setState({loading: false});
           }
           else{
                 props.history.push('/edit-group/'+edit_group_id);
                 toastr.error(response.data.message);
                 this.setState({loading: false});
-            } 
+            }
         })
-        .catch((error) => {  
+        .catch((error) => {
               this.setState({loading: false});
                toastr.error(error.response.data.message);
           })
-    })  
-  } 
+    })
+  }
 
-        this.componentDidMount=()=>{ 
+        this.componentDidMount=()=>{
           this.listParentGroup();
           this.GroupData();
-    } 
+    }
 
 
         this.listParentGroup = () =>{
-          this.setState({ loading1: true }, () => { 
+          this.setState({ loading1: true }, () => {
       axios.get(`${process.env.REACT_APP_BASE_APIURL}listParentGroup`,{headers})
         .then(response => {
                 this.setState({options: response.data.data})
-                 this.setState({loading1: false});  
+                 this.setState({loading1: false});
            })
           .catch((error) => {
                toastr.error(error.response.data.message);
-               this.setState({loading1: false});  
+               this.setState({loading1: false});
           })
 
       })
 
   }
 
-  this.GroupData=()=>{ 
-    this.setState({ loading1: true }, () => { 
-      axios.get(`${process.env.REACT_APP_BASE_APIURL}getGroup/`+group_id,{headers})  
-          .then(response => {  
-              this.setState({   
-                groupName: response.data.data.group_name, 
+  this.GroupData=()=>{
+    this.setState({ loading1: true }, () => {
+      axios.get(`${process.env.REACT_APP_BASE_APIURL}getGroup/`+group_id,{headers})
+          .then(response => {
+              this.setState({
+                groupName: response.data.data.group_name,
                 groupCode: response.data.data.group_code,
-                parentGroup : response.data.data.parent_group,    
+                parentGroup : response.data.data.parent_group,
                  });
-                 this.setState({loading1: false});  
-  
-          })  
-          .catch((error) => {  
+                 this.setState({loading1: false});
+
+          })
+          .catch((error) => {
               this.setState({loading1: false});
-               toastr.error(error.response.data.message); 
-          })  
+               toastr.error(error.response.data.message);
+          })
       })
-    } 
+    }
 
 
 
 
-this.onChangeGroupName = (e) => {  
-    this.setState({  
-        groupName: e.target.value  
-    });  
-  }  
+this.onChangeGroupName = (e) => {
+    this.setState({
+        groupName: e.target.value
+    });
+  }
 
 
-this.onChangeGroupCode = (e) => {  
-    this.setState({  
-        groupCode: e.target.value  
-    });  
-  } 
+this.onChangeGroupCode = (e) => {
+    this.setState({
+        groupCode: e.target.value
+    });
+  }
 
-  this.onChangeParentGroup = (e) => {  
-    this.setState({  
-        parentGroup: e.target.value  
-    });  
-  }  
+  this.onChangeParentGroup = (e) => {
+    this.setState({
+        parentGroup: e.target.value
+    });
+  }
 //constructor end
 }
-  
+
 
 render() {
 const { data, loading } = this.state;
@@ -167,7 +167,7 @@ const { data1, loading1 } = this.state;
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                     <li><Link to="/group" className="btn btn-primary btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></Link></li>&nbsp;
-                   
+
                     { loading ? <center><LoadingSpinner /></center> :<li>
                        <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
                     </li>}
@@ -182,18 +182,18 @@ const { data1, loading1 } = this.state;
                      <h5> <Alert color="success" role="alert">
                      <i className="fa fa-comment">&nbsp;Basic Info</i>
                     </Alert></h5>
-                    {loading1 ? <LoadingSpinner /> : 
+                    {loading1 ? <LoadingSpinner /> :
                     <div className="mb-3 row">
                         <div className="form-group">
                             <div className="row">
                                 <div className="col-md-4">
-                                    <label>Name</label>
+                                    <label className="required-field">Name</label>
                                     <input type="text" value={this.state.groupName} onChange={this.onChangeGroupName} name="group_name" className="form-control" placeholder="Enter Group Name" required/>
                                 </div>
-                                 
+
                                   <div className="col-md-4">
                                     <label>Parent Group</label>
-                                       
+
                                           {loading1 ? <LoadingSpinner /> : <select value={this.state.parentGroup} onChange={this.onChangeParentGroup} className="form-select" name="parent_group">
                                            <option value="">Select Parent Group</option>
                                            { this.state.options.map((option, key) => <option value={option.id} key={key} >{option.group_name}</option>) }
@@ -201,7 +201,7 @@ const { data1, loading1 } = this.state;
                                 </div>
 
                                 <div className="col-md-4">
-                                    <label>Code</label>
+                                    <label className="required-field">Code</label>
                                     <input value={this.state.groupCode} onChange={this.onChangeGroupCode} type="text" name="group_code" className="form-control" placeholder="Enter Group Code" required/>
 
                                  </div>

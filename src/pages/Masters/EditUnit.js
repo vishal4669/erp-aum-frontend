@@ -27,66 +27,66 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
-function EditUnit(props) { 
+function EditUnit(props) {
 
   const headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
-  const [data, setData] = useState([]); 
-  const [unit, setUnit] = useState({ unit_name: ''});  
+  const [data, setData] = useState([]);
+  const [unit, setUnit] = useState({ unit_name: ''});
 
 const url = window.location.href
 const unit_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
-const edit_unit_id =url.substring(url.lastIndexOf('/') + 1) 
+const edit_unit_id =url.substring(url.lastIndexOf('/') + 1)
 
-useEffect(() => {  
-         {setLoading1(true)} 
-      axios.get(`${process.env.REACT_APP_BASE_APIURL}getUnit/`+unit_id,{headers})  
-          .then(response => {  
-              setUnit(response.data.data); 
-               {setLoading1(false)}   
-  
-          })  
-          .catch((error) => {  
-              {setLoading1(false)} 
+useEffect(() => {
+         {setLoading1(true)}
+      axios.get(`${process.env.REACT_APP_BASE_APIURL}getUnit/`+unit_id,{headers})
+          .then(response => {
+              setUnit(response.data.data);
+               {setLoading1(false)}
+
+          })
+          .catch((error) => {
+              {setLoading1(false)}
               toastr.error(error.response.data.message);
-              this.setState({loading: false}); 
-          })  
-        }, []); 
+              this.setState({loading: false});
+          })
+        }, []);
 
 
 const EditUnit = (e)=>{
          e.preventDefault();
 
         {setLoading(true)};
-        const data = { unit_name:unit.unit_name}; 
+        const data = { unit_name:unit.unit_name};
          axios.post( `${process.env.REACT_APP_BASE_APIURL}editUnit/`+unit_id, data, {headers} )
                 .then(response => {
                     if(response.data.success == true){
                         props.history.push('/unit');
                         toastr.success(response.data.message);
-                        {setLoading(false)}; 
+                        {setLoading(false)};
                     }else{
                         props.history.push('/edit-unit/'+edit_unit_id);
                         toastr.error(response.data.message);
-                        {setLoading(false)};   
+                        {setLoading(false)};
                     }
                 })
                 .catch((error) => {
                  {setLoading(false)};
                  toastr.error(error.response.data.message);
                 })
-     
+
       }
 
-  const onChange = (e) => {  
-    e.persist();  
-    setUnit({...unit, [e.target.name]: e.target.value});  
-  } 
+  const onChange = (e) => {
+    e.persist();
+    setUnit({...unit, [e.target.name]: e.target.value});
+  }
 
 return(
  <React.Fragment>
@@ -121,7 +121,7 @@ return(
                             <div className="col-12">
                                 <div className="card">
                                     <div className="card-body">
-        
+
                                         <h5 className="alert alert-success"><i className="fa fa-comment">&nbsp;Basic Info</i></h5>
 
                                          <div className="mb-3 row">
@@ -129,10 +129,10 @@ return(
                                                 <div className="row">
 
                                                      <div className="col-md-12">
-                                                        <label>Unit Name</label>
-                                                        <input value={unit.unit_name} type="text" id="unit_name" name="unit_name" className="form-control" placeholder="Enter Unit Name" onChange={ onChange }/>
-                                                    </div>  
-                                                </div>  
+                                                        <label className="required-field">Unit Name</label>
+                                                        <input value={unit.unit_name} type="text" id="unit_name" name="unit_name" className="form-control" placeholder="Enter Unit Name" onChange={ onChange } required/>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -147,4 +147,4 @@ return(
   )
 }
 
-export default EditUnit 
+export default EditUnit

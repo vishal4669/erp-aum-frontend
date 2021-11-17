@@ -97,7 +97,7 @@ class ListLedger extends Component {
               ledgergroupname: post.group_name,
               openingbalance: post.ledger_opening_balance+" "+post.balance_type,
               ledgercontacttype : post.ledger_contact_type,
-              action : <div><Link className="btn btn-primary" to={"/edit-ledger/"+base64_encode(post.id)}>
+              action : <div><Link className="btn btn-primary btn-sm" to={"/edit-ledger/"+base64_encode(post.id)}>
               <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;
               <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Ledger?')){ this.deleteLedger(post.id)}}}><i class="fas fa-trash-alt"></i></button>*/}
               </div>

@@ -100,11 +100,11 @@ class ListBranch extends Component {
               branchname: post.branch_name,
               companyname: post.company_name,
               branchtype : post.branch_type,
-              action : <div><Link className="btn btn-primary" to={"/edit-branch/"+base64_encode(post.id)}>
+              action : <div><Link className="btn btn-primary btn-sm" to={"/edit-branch/"+base64_encode(post.id)}>
               <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;
               <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Branch?')){ this.deleteBranch(post.id)}}}><i class="fas fa-trash-alt"></i></button>*/}
               &nbsp;&nbsp;
-              <Link className="btn btn-info" to={"/view-branch/"+base64_encode(post.id)}> <i className="fa fa-eye"></i></Link>
+              <Link className="btn btn-info btn-sm" to={"/view-branch/"+base64_encode(post.id)}> <i className="fa fa-eye"></i></Link>
               </div>
               ,
 

@@ -90,3 +90,10 @@
     border-radius: 10px;
     background: #6d6d6d;
 }
+
+//asterik sign
+.required-field::after {
+    content: "*";
+    color: red;
+		margin-left:1px;
+}

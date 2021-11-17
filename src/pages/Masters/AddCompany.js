@@ -33,46 +33,46 @@ const {toggleSwitchSize, settoggleSwitchSize} = useState(true)
 const [companyName, setCompanyname] = useState('')
 const [loading, setLoading] = useState(false);
 
-const headers = {    
+const headers = {
     'Authorization' : "Bearer "+localStorage.getItem('token')
   }
-const ResetCompany = () => { 
+const ResetCompany = () => {
   document.getElementById("AddCompany").reset();
 }
-const Insertcompany=(event)=>{ 
+const Insertcompany=(event)=>{
   {setLoading(true)};
- event.preventDefault();  
+ event.preventDefault();
  //add year and company id both
  axios.post( `${process.env.REACT_APP_BASE_APIURL}addCompany`, { company_name:companyName } , {headers} )
 
         .then((response) => {
-                        
-            if(response.data.success == true){                
+
+            if(response.data.success == true){
                 props.history.push('/company');
                 toastr.success(response.data.message);
-                { setLoading(false) }              
+                { setLoading(false) }
             }else{
                 props.history.push('/add-company');
                 toastr.error(response.data.message);
                 { setLoading(false) }
             }
-            
-        }) 
 
-          .catch((error) => { 
-              { setLoading(false) } 
-              toastr.error(error.response.data.message);  
-          })  
+        })
+
+          .catch((error) => {
+              { setLoading(false) }
+              toastr.error(error.response.data.message);
+          })
 }
 
 
   return (
     <React.Fragment>
-      <HorizontalLayout/> 
+      <HorizontalLayout/>
       <div className="page-content">
         <Container fluid={true}>
           <Form onSubmit={(e) => {
-                        Insertcompany(e) }} method="POST" id="AddCompany"> 
+                        Insertcompany(e) }} method="POST" id="AddCompany">
         <div className="page-title-box d-flex align-items-center justify-content-between">
 
             <div className="page-title">
@@ -101,25 +101,25 @@ const Insertcompany=(event)=>{
                      <h5> <Alert color="success" role="alert">
                      <i className="fa fa-comment">&nbsp;Basic Info</i>
                     </Alert></h5>
-                   
+
                     <div className="mb-3 row">
-                        <div className="form-group"> 
+                        <div className="form-group">
                             <div className="row">
-                               
+
                                 <div className="col-md-12">
-                                    <label>Company Name</label>
+                                    <label className="required-field">Company Name</label>
                                     <input type="text" onChange={event => setCompanyname(event.target.value)}  name="company_name" className="form-control" placeholder="Enter Company Name" required/>
-                                 </div>        
+                                 </div>
                             </div>
                         </div>
-                    </div> 
+                    </div>
 
-                                           
+
                 </CardBody>
               </Card>
             </Col>
           </Row>
-          </Form> 
+          </Form>
         </Container>
       </div>
     </React.Fragment>

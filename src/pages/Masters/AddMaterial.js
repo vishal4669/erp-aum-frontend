@@ -232,12 +232,12 @@ return(
                                                         </select>
                                                     </div>
                                                     <div className="col-md-4">
-                                                        <label>Material Name</label>
+                                                        <label className="required-field">Material Name</label>
                                                         <input className="form-control" type="text" name="material_name" placeholder="Enter Material Name" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-4">
-                                                        <label>Purchase Rate</label>
+                                                        <label className="required-field">Purchase Rate</label>
                                                         <input className="form-control" type="text" name="material_purchase_rate" placeholder="Enter Purchase Rate" onChange={ onChange }/>
                                                     </div>
                                                 </div>
@@ -248,11 +248,11 @@ return(
                                             <div className="form-group">
                                                 <div className="row">
                                                     <div className="col-md-3">
-                                                        <label>Code</label>
+                                                        <label className="required-field">Code</label>
                                                         <input className="form-control" type="text" name="material_code" placeholder="Enter Material Code" onChange={ onChange }/>
                                                     </div>
                                                     <div className="col-md-3">
-                                                        <label>Category</label> {/*Need to fetch dynamically According to category selection sub category will displayed*/}
+                                                        <label className="required-field">Category</label> {/*Need to fetch dynamically According to category selection sub category will displayed*/}
                                                        <select className="form-select" id="category_id"  name="category_id" onChange={onChange} onChange={getSubCategory}>
                                                              <option value="">Select Category</option>
                                                             { data.map((option, key) => <option value={option.id} key={key} >{option.category_name}</option>) }
@@ -285,16 +285,16 @@ return(
                                             <div className="form-group">
                                                 <div className="row">
                                                     <div className="col-md-4">
-                                                        <label>Rate</label>
+                                                        <label className="required-field">Rate</label>
                                                         <input className="form-control" type="text" name="material_rate" placeholder="Enter Rate" onChange={ onChange }/>
                                                     </div>
                                                     <div className="col-md-4">
-                                                        <label>Amount</label>
+                                                        <label className="required-field">Amount</label>
                                                         <input className="form-control" type="text" name="material_amount" placeholder="Enter Amount" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-4">
-                                                        <label>Qty</label>
+                                                        <label className="required-field">Qty</label>
                                                         <input className="form-control" type="text" name="material_qty" placeholder="Enter Qty" onChange={ onChange }/>
                                                     </div>
                                                 </div>

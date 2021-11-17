@@ -35,8 +35,6 @@ function AddBooking(props) {
   const headers = {
     'Authorization': "Bearer " + localStorage.getItem('token')
   }
-
-  const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
@@ -688,7 +686,6 @@ function AddBooking(props) {
         comments: booking1.comments
       }
     }
-    console.log(data)
     axios.post(`${process.env.REACT_APP_BASE_APIURL}addBooking`, data, { headers })
 
       .then(response => {

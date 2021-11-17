@@ -96,7 +96,7 @@ class ListCategory extends Component {
               srno: this.state.count,
               category_name: post.category_name,
               parent_name: post.parent_name,
-              action : <div><Link className="btn btn-primary" to={"/edit-category/"+base64_encode(post.id)}>
+              action : <div><Link className="btn btn-primary btn-sm" to={"/edit-category/"+base64_encode(post.id)}>
               <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;
               <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Category?')){ this.deleteCategory(post.id)}}}><i class="fas fa-trash-alt"></i></button>
               */}</div>

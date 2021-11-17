@@ -112,7 +112,7 @@ class ListCompany extends React.Component {
 
               name: post.company_name,
 
-              action : <div><Link className="btn btn-primary" to={"/edit-company/"+base64_encode(post.id)}>
+              action : <div><Link className="btn btn-primary btn-sm" to={"/edit-company/"+base64_encode(post.id)}>
               <i className="fa fa-edit"></i></Link>{/*nbsp;&nbsp;{loading ? <a className="btn btn-primary w-100 waves-effect waves-light"
                            > <LoadingSpinner /> </a>  :
               <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Company?')){ this.deleteCompany(post.id)}}}><i class="fas fa-trash-alt"></i></button>}*/}

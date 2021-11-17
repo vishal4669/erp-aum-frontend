@@ -150,10 +150,10 @@ this.deleteCustomer = async(customer_id) =>{
                 tally_alias_name: post.tally_alias_name,
                 contact_no: post.contact_no,
                 is_active: is_active,
-                action : <div><Link className="btn btn-primary" to={"/edit-customer/"+base64_encode(post.id)}>
+                action : <div><Link className="btn btn-primary btn-sm" to={"/edit-customer/"+base64_encode(post.id)}>
                   <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-                  <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Customer Data?')){ this.deleteCustomer(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-                  &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-customer/"+base64_encode(post.id)}>
+                  <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Customer Data?')){ this.deleteCustomer(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+                  &nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-customer/"+base64_encode(post.id)}>
                   <i className="fa fa-eye"></i></Link></div>
 
                 ,

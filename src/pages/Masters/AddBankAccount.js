@@ -41,7 +41,7 @@ constructor() {
         };
         const headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
         this.InsertBankAccount = (event)=>{
@@ -52,45 +52,45 @@ constructor() {
          const customer_id = this.refs.customer_id.value
          const account_no = this.refs.account_no.value
          const micr_code = this.refs.micr_code.value
-         const ifsc_code = this.refs.ifsc_code.value 
+         const ifsc_code = this.refs.ifsc_code.value
 
-         this.setState({ loading: true }, () => { 
+         this.setState({ loading: true }, () => {
          //add Group information
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}addBank`, 
+         axios.post( `${process.env.REACT_APP_BASE_APIURL}addBank`,
           { bank_name:bank_name, branch_name:branch_name, customer_id:customer_id,
-          account_no : account_no, micr_code:micr_code, ifsc_code:ifsc_code} 
+          account_no : account_no, micr_code:micr_code, ifsc_code:ifsc_code}
            , {headers} )
 
                 .then(response => {
                     if(response.data.success == true){
                         this.props.history.push('/bankaccount');
                         toastr.success(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }else{
                         this.props.history.push('/add-bank-account');
                         toastr.error(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }
                 })
                 .catch((error) => {
-                  this.setState({loading: false});  
+                  this.setState({loading: false});
                   toastr.error(error.response.data.message);
                 })
-         }) 
-         return      
+         })
+         return
       }
 
       this.logChange = (e) =>{
-        this.setState({[e.target.name]: e.target.value});  
+        this.setState({[e.target.name]: e.target.value});
     }
 
-    this.ResetBankAccount = () => { 
+    this.ResetBankAccount = () => {
   document.getElementById("AddBankAccount").reset();
 }
 
 
 }
-  
+
 
 render() {
 const { data, loading } = this.state;
@@ -136,19 +136,19 @@ const { data1, loading1 } = this.state;
                                             <div className="form-group">
                                                 <div className="row">
                                                     <div className="col-md-4">
-                                                        <label>Bank Name</label>
-                                                        <input className="form-control" type="text" id="example-text-input" name="bank_name" placeholder="Enter Bank Name" onChange={this.logChange} ref="bank_name"/>
-                                                    </div>  
-                                                    <div className="col-md-4">  
+                                                        <label className="required-field">Bank Name</label>
+                                                        <input className="form-control" type="text" id="example-text-input" name="bank_name" placeholder="Enter Bank Name" onChange={this.logChange} ref="bank_name" required/>
+                                                    </div>
+                                                    <div className="col-md-4">
                                                         <label>Branch Name</label>
                                                         <input className="form-control" type="text" id="example-text-input" name="branch_name" placeholder="Enter Branch Name" onChange={this.logChange} ref="branch_name"/>
-                                                    </div>      
+                                                    </div>
 
-                                                    <div className="col-md-4">  
+                                                    <div className="col-md-4">
                                                         <label>Customer ID</label>
                                                         <input className="form-control" type="text" id="example-text-input" name="customer_id" placeholder="Enter Customer ID" onChange={this.logChange} ref="customer_id"/>
-                                                    </div>  
-                                                </div>  
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -156,22 +156,22 @@ const { data1, loading1 } = this.state;
                                             <div className="form-group">
                                                     <div className="row">
                                                         <div className="col-md-4">
-                                                            <label>Account No</label>
-                                                            <input className="form-control" type="text" id="example-text-input" name="account_no" placeholder="Enter Account No" onChange={this.logChange} ref="account_no"/>
-                                                        </div>  
-                                                        <div className="col-md-4">  
-                                                            <label>MICR Code</label>
-                                                            <input className="form-control" type="text" id="example-text-input" name="micr_code" placeholder="Enter MICR Code" onChange={this.logChange} ref="micr_code"/>
-                                                        </div>      
+                                                            <label className="required-field">Account No</label>
+                                                            <input className="form-control" type="text" id="example-text-input" name="account_no" placeholder="Enter Account No" onChange={this.logChange} ref="account_no" required/>
+                                                        </div>
+                                                        <div className="col-md-4">
+                                                            <label className="required-field">MICR Code</label>
+                                                            <input className="form-control" type="text" id="example-text-input" name="micr_code" placeholder="Enter MICR Code" onChange={this.logChange} ref="micr_code" required/>
+                                                        </div>
 
-                                                        <div className="col-md-4">  
-                                                            <label>IFSC Code</label>
-                                                            <input className="form-control" type="text" id="example-text-input" name="ifsc_code" placeholder="Enter IFSC Code" onChange={this.logChange} ref="ifsc_code"/>
-                                                        </div>  
-                                                    </div>  
+                                                        <div className="col-md-4">
+                                                            <label className="required-field">IFSC Code</label>
+                                                            <input className="form-control" type="text" id="example-text-input" name="ifsc_code" placeholder="Enter IFSC Code" onChange={this.logChange} ref="ifsc_code" required/>
+                                                        </div>
+                                                    </div>
                                             </div>
                                         </div>
-                                      
+
                 </CardBody>
               </Card>
             </Col>

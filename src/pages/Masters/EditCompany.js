@@ -34,86 +34,86 @@ class EditCompany extends Component {
 
         super(props);
 
-    
+
         this.state= {
 
           loading : false,
           loading1 : false,
           Name : '',
           data1 : [],
-          
+
         };
         const headers = {
           'Content-Type': "application/json",
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
 const url = window.location.href
 const company_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
 const edit_company_id = url.substring(url.lastIndexOf('/') + 1)
 
-this.componentDidMount=()=>{ 
-    this.setState({ loading: true }, () => { 
-      axios.get(`${process.env.REACT_APP_BASE_APIURL}getCompany/`+company_id,{headers})  
-          .then(response => {  
-              this.setState({   
-                Name: response.data.data.company_name,   
+this.componentDidMount=()=>{
+    this.setState({ loading: true }, () => {
+      axios.get(`${process.env.REACT_APP_BASE_APIURL}getCompany/`+company_id,{headers})
+          .then(response => {
+              this.setState({
+                Name: response.data.data.company_name,
                  });
-                 this.setState({loading: false});  
-  
-          })  
-          .catch((error) => {  
+                 this.setState({loading: false});
+
+          })
+          .catch((error) => {
               this.setState({loading: false});
-              toastr.error(error.response.data.message); 
-          })  
+              toastr.error(error.response.data.message);
+          })
       })
-    }  
-    
-this.Updatecompany=(e)=> { 
-    this.setState({ loading1: true }, () => { 
-    e.preventDefault();   
-    axios.post(`${process.env.REACT_APP_BASE_APIURL}editCompany/`+company_id,{company_name : this.state.Name},{headers})  
-        .then(response => {  
-          if(response.data.success == true){ 
-            this.props.history.push('/company')  
+    }
+
+this.Updatecompany=(e)=> {
+    this.setState({ loading1: true }, () => {
+    e.preventDefault();
+    axios.post(`${process.env.REACT_APP_BASE_APIURL}editCompany/`+company_id,{company_name : this.state.Name},{headers})
+        .then(response => {
+          if(response.data.success == true){
+            this.props.history.push('/company')
             toastr.success(response.data.message);
-            this.setState({loading1: false}); 
+            this.setState({loading1: false});
           }
           else{
                 props.history.push('/edit-company/'+edit_company_id);
                 toastr.error(response.data.message);
                 this.setState({loading1: false});
-            } 
+            }
         })
-        .catch((error) => {  
+        .catch((error) => {
               this.setState({loading1: false});
-              toastr.error(error.response.data.message); 
+              toastr.error(error.response.data.message);
           })
-    })  
-  } 
+    })
+  }
 
-    this.onChangeName = (e) => {  
-    this.setState({  
-        Name: e.target.value  
-    });  
-  }  
-    //constructor end 
-  }  
+    this.onChangeName = (e) => {
+    this.setState({
+        Name: e.target.value
+    });
+  }
+    //constructor end
+  }
 
 
     render() {
 
 const { data, loading } = this.state;
 const { data1, loading1 } = this.state;
-       
+
         return (
            <React.Fragment>
-      <HorizontalLayout/> 
+      <HorizontalLayout/>
       <div className="page-content">
         <Container fluid={true}>
          <Form onSubmit={(e) => {
-                        this.Updatecompany(e) }} method="POST" id="AddCompany"> 
+                        this.Updatecompany(e) }} method="POST" id="AddCompany">
         <div className="page-title-box d-flex align-items-center justify-content-between">
 
             <div className="page-title">
@@ -128,7 +128,7 @@ const { data1, loading1 } = this.state;
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                     <li><Link to="/company" className="btn btn-primary btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></Link></li>&nbsp;
-                    
+
                     { loading1 ? <center><LoadingSpinner /></center> :<li><button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Update</i></button></li>}
                 </ol>
             </div>
@@ -142,31 +142,31 @@ const { data1, loading1 } = this.state;
                      <h5> <Alert color="success" role="alert">
                      <i className="fa fa-comment">&nbsp;Basic Info</i>
                     </Alert></h5>
-                    
+
                     <div className="mb-3 row">
-                        <div className="form-group"> 
+                        <div className="form-group">
                             <div className="row">
-                               
+
                                 <div className="col-md-12">
-                                    <label>Company Name</label>
+                                    <label className="required-field">Company Name</label>
                                     { loading ? <center><LoadingSpinner /></center> :<input type="text" value={this.state.Name} onChange={this.onChangeName} name="company_name" className="form-control" placeholder="Enter Company Name" required/> }
-                                 </div>        
+                                 </div>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
                 </CardBody>
               </Card>
             </Col>
           </Row>
-          </Form>   
+          </Form>
         </Container>
       </div>
     </React.Fragment>
         )
-      } 
-     
-}        
-  
+      }
+
+}
+
 
 
 export default EditCompany

@@ -97,6 +97,8 @@ import ListBooking from "../pages/Analytics/ListBooking"
 import AddBooking from "../pages/Analytics/AddBooking"
 import EditBooking from "../pages/Analytics/EditBooking"
 import ViewBooking from "../pages/Analytics/ViewBooking"
+//Booking Test flow
+import AssignTest from "../pages/Analytics/AssignTest"
 //Instrument
 import ListInstruments from "../pages/Analytics/ListInstruments"
 import AddInstrument from "../pages/Analytics/AddInstrument"
@@ -145,11 +147,14 @@ const authRoutes = [
     { path: "/add-company", component: AddCompany},
     { path: "/all-company", component: ListCompany},
     { path: "/edit-company", component: EditCompany},
+    //Booking
     { path: "/booking", component: ListBooking},
     { path: "/all-booking", component: ListBooking},
     { path: "/add-booking", component: AddBooking},
     { path: "/edit-booking", component: EditBooking},
     { path: "/view-booking", component: ViewBooking},
+    //Booking Test flow
+    { path: "/assign-test", component: AssignTest},
 
     { path: "/branch", component:ListBranch},
     { path: "/all-branch", component:ListBranch},

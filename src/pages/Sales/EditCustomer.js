@@ -28,7 +28,7 @@ import 'toastr/build/toastr.min.css'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 import {commonpath} from '../../commonPath'
 
-function EditCustomer(props) {    
+function EditCustomer(props) {
 
   const headers = {
            'Content-Type': "application/json",
@@ -44,24 +44,24 @@ function EditCustomer(props) {
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   const [data, setData] = useState([]);
-  const [data1, setData1] = useState([]); 
+  const [data1, setData1] = useState([]);
   const [data3, setData3] = useState([]);
-  const [data4, setData4] = useState([]);  
+  const [data4, setData4] = useState([]);
   const [selectedFiles, setselectedFiles] = useState(null)
   const [customer, setCustomer] = useState({ company_name: '', gst_number: '',contact_person_name:'',tally_alias_name:'',
   user_name:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',is_active:'1',logo:'',
-  education_details:'',prev_details:'',company_tin_no:'',company_service_tax_no:'',company_cust_discount:''});  
+  education_details:'',prev_details:'',company_tin_no:'',company_service_tax_no:'',company_cust_discount:''});
 
   const [pass, setPassword] = useState();
 
-  const [address1, setCustomerAddress1] = useState({ 
+  const [address1, setCustomerAddress1] = useState({
   homestreet:'',homestreet2:'',area:'',city:'',pincode:'',state_id:'',country_id:'',landline:'',admin_contact:'',
-  qc_contact:'',admin_email:'',pancard_no:''}); 
+  qc_contact:'',admin_email:'',pancard_no:''});
 
    const [address2, setCustomerAddress2] = useState({street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
-  corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:''}); 
+  corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:''});
 
-  const [inputList, setInputList]  = useState([{ contact_person_name: "", contact_person_mobile: "", 
+  const [inputList, setInputList]  = useState([{ contact_person_name: "", contact_person_mobile: "",
     contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
   const [selectedFile, setSelectedFile] = useState(false);
   const [isFilePicked, setIsFilePicked] = useState(false);
@@ -78,57 +78,57 @@ function EditCustomer(props) {
         setIsPanFilePicked(true);
     };
 
-useEffect(() => {  
+useEffect(() => {
          fetchCountry();
          fetchStates();
          fetchPosition();
          fetchDepartment();
          GetCustomerData();
-        }, []); 
+        }, []);
 
-const GetCustomerData=()=>{ 
-        {setLoading1(true)} 
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}getCustomer/`+customer_id,{headers})  
-              .then(response => {  
+const GetCustomerData=()=>{
+        {setLoading1(true)}
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}getCustomer/`+customer_id,{headers})
+              .then(response => {
                   setCustomer(response.data.data);
-                  setCustomerAddress1(response.data.data.contact_info[0]);  // setting Permenant address 
+                  setCustomerAddress1(response.data.data.contact_info[0]);  // setting Permenant address
                   setCustomerAddress2(response.data.data.contact_info[1]);
                   setInputList(response.data.data.contact_person);
                   setPassword(response.data.data.password);
-                  {setLoading1(false)}; 
-      
-              })  
-              .catch((error) => {  
-                  {setLoading1(false)} 
+                  {setLoading1(false)};
+
+              })
+              .catch((error) => {
+                  {setLoading1(false)}
                   toastr.error(error.response.data.message);
-                  this.setState({loading: false}); 
-              })  
-        }  
+                  this.setState({loading: false});
+              })
+        }
 
         const fetchCountry = () => {
              {setLoading1(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
             .then(response => {
                      setData(response.data.data);
-                     {setLoading1(false)} 
+                     {setLoading1(false)}
                })
               .catch((error) => {
                   toastr.error(error.response.data.message);
-                   {setLoading1(false)}   
+                   {setLoading1(false)}
               })
-        } 
+        }
 
         const fetchStates = () => {
              {setLoading1(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listStates`,{headers})
             .then(response => {
                      setData1(response.data.data);
-                     {setLoading1(false)} 
+                     {setLoading1(false)}
                })
               .catch((error) => {
                   toastr.error(error.response.data.message);
 
-                   {setLoading1(false)}   
+                   {setLoading1(false)}
               })
         }
 
@@ -137,28 +137,28 @@ const GetCustomerData=()=>{
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listPosition?is_dropdown=1`,{headers})
             .then(response => {
                      setData3(response.data.data);
-                     {setLoading1(false)} 
+                     {setLoading1(false)}
                })
               .catch((error) => {
                   toastr.error(error.response.data.message);
 
-                   {setLoading1(false)}   
+                   {setLoading1(false)}
               })
-        } 
+        }
 
         const fetchDepartment = () => {
              {setLoading1(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listDepartment?is_dropdown=1`,{headers})
             .then(response => {
                      setData4(response.data.data);
-                     {setLoading1(false)} 
+                     {setLoading1(false)}
                })
               .catch((error) => {
                   toastr.error(error.response.data.message);
 
-                   {setLoading1(false)}   
+                   {setLoading1(false)}
               })
-        } 
+        }
 
 
        const copy_data = () => {
@@ -194,7 +194,7 @@ const GetCustomerData=()=>{
 
 
 const EditCustomer = (e)=>{
-         e.preventDefault();        
+         e.preventDefault();
        //const contact_person_data = inputList;
         {setLoading(true)};
         const data1 = new FormData();
@@ -209,7 +209,7 @@ const EditCustomer = (e)=>{
         data1.append('contact_person_name', customer.contact_person_name);
         } else{
              data1.append('contact_person_name', '');
-        } 
+        }
         if(customer.tally_alias_name !== null){
         data1.append('tally_alias_name', customer.tally_alias_name);
         } else {
@@ -237,8 +237,8 @@ const EditCustomer = (e)=>{
             if(customer.logo !== '' || customer.logo !== null && customer.logo !== undefined){
 
                 data1.append('logo', customer.logo);
-               
-            } 
+
+            }
             else if(customer.logo == undefined)
                 {
                 data1.append('logo', '');
@@ -259,7 +259,7 @@ const EditCustomer = (e)=>{
           data1.append('prev_details', customer.prev_details);
         } else {
           data1.append('prev_details', '');
-        } 
+        }
 
         //Company Info Details
         if(customer.company_tin_no !== null){
@@ -328,8 +328,8 @@ const EditCustomer = (e)=>{
         //         data1.append('logo', customer.logo);
 
         //         console.log("null===",customer.logo)
-               
-        //     } 
+
+        //     }
         //     else if(customer.logo == undefined)
         //         {
         //         data1.append('logo', '');
@@ -358,40 +358,40 @@ const EditCustomer = (e)=>{
 
                        props.history.push('/customer');
                       toastr.success(response.data.message);
-                      {setLoading(false)}; 
-                    } 
+                      {setLoading(false)};
+                    }
                     else{
                         props.history.push('/edit-customer/'+edit_customer_id);
                         toastr.error(response.data.message);
-                        {setLoading(false)};   
+                        {setLoading(false)};
                     }
                 })
                 .catch((error) => {
                  {setLoading(false)};
                  toastr.error(error.response.data.message);
                 })
-     
+
       }
 
 
-  const onChange = (e) => {  
-    e.persist();  
-    setCustomer({...customer, [e.target.name]: e.target.value});  
-  } 
+  const onChange = (e) => {
+    e.persist();
+    setCustomer({...customer, [e.target.name]: e.target.value});
+  }
 
-  const onChangeAddress1 = (e) => {  
-    e.persist();  
-    setCustomerAddress1({...address1, [e.target.name]: e.target.value});  
-  } 
+  const onChangeAddress1 = (e) => {
+    e.persist();
+    setCustomerAddress1({...address1, [e.target.name]: e.target.value});
+  }
 
-  const onChangeAddress2 = (e) => {  
-        e.persist();  
-        setCustomerAddress2({...address2, [e.target.name]: e.target.value});  
-    } 
+  const onChangeAddress2 = (e) => {
+        e.persist();
+        setCustomerAddress2({...address2, [e.target.name]: e.target.value});
+    }
 
   // handle click event of the Add button
 const handleAddClick = () => {
-  setInputList([...inputList, { contact_person_name: "", contact_person_mobile: "", 
+  setInputList([...inputList, { contact_person_name: "", contact_person_mobile: "",
     contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
 };
 
@@ -402,7 +402,7 @@ const handleInputChange = (e, index) => {
   list[index][name] = value;
   setInputList(list);
 };
- 
+
 // handle click event of the Remove button
 const handleRemoveClick = index => {
   const list = [...inputList];
@@ -448,34 +448,34 @@ return(
                         </div>
                          <div className="row">
                             <div className="col-12">
-                             {loading1 ? <center><LoadingSpinner /></center> : 
+                             {loading1 ? <center><LoadingSpinner /></center> :
                                 <div className="card">
                                     <div className="card-body">
-        
+
                                         <h5 className="alert alert-success"><i className="fa fa-comment">&nbsp;Personal Info</i></h5>
 
                                          <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
                                                     <div className="col-md-3">
-                                                        <label>Company Name</label>
+                                                        <label className="required-field">Company Name</label>
                                                         <input className="form-control" value={customer.company_name} type="text" placeholder="Enter Company Name" id="example-text-input" name="company_name" onChange={ onChange }/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-3">
                                                         <label>GST No</label>
                                                         <input className="form-control" value={customer.gst_number} type="text" placeholder="Enter GST No" id="example-text-input" name="gst_number" onChange={ onChange }/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-3">
                                                         <label>Contact Person Name</label>
                                                         <input className="form-control" value={customer.contact_person_name} type="text" name="contact_person_name" placeholder="Enter Contact Person Name" onChange={ onChange }/>
-                                                    </div>  
-                                                    <div className="col-md-3">  
+                                                    </div>
+                                                    <div className="col-md-3">
                                                         <label>Tally Alias Name</label>
                                                         <input className="form-control" value={customer.tally_alias_name} type="text"  name="tally_alias_name" placeholder="Enter Tally Alias Name" onChange={ onChange }/>
-                                                    </div>      
-                                                </div>  
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -485,29 +485,29 @@ return(
                                                 <div className="row">
 
                                                     <div className="col-md-4">
-                                                        <label>Username</label>
+                                                        <label className="required-field">Username</label>
                                                         <input className="form-control" value={customer.user_name} type="text" name="user_name" placeholder="Enter Username" onChange={ onChange }/>
-                                                    </div>  
-                                                    <div className="col-md-4">  
-                                                        <label>Password</label>
+                                                    </div>
+                                                    <div className="col-md-4">
+                                                        <label className="required-field">Password</label>
                                                         <input className="form-control" value={customer.password} type="password"  name="password" placeholder="Enter Password" onChange={ onChange }/>
                                                         <input className="form-control" value={pass} type="hidden"/>
-                                                    </div>      
+                                                    </div>
 
-                                                    <div className="col-md-4">  
+                                                    <div className="col-md-4">
                                                         <label>Birth Date</label>
                                                         <input className="form-control" value={customer.birth_date} type="date"  id="example-date-input" name="birth_date" onChange={ onChange }/>
-                                                    </div>    
-                                                </div>  
-                                            </div>  
-                                        </div>    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                       
+
                                         <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
 
-                                                    <div className="col-md-4">  
+                                                    <div className="col-md-4">
                                                         <label>Contact Type</label>
                                                         <select value={customer.contact_type} className="form-select" name="contact_type" onChange={ onChange }>
                                                             <option value="Customer">Customer</option>
@@ -516,47 +516,47 @@ return(
                                                             <option value="Other">Other</option>
                                                             <option value="Ledger">Ledger</option>
                                                         </select>
-                                                    </div>  
-                                                    <div className="col-md-4">  
+                                                    </div>
+                                                    <div className="col-md-4">
                                                         <label>Priority</label>
                                                         <select value={customer.priority} className="form-select" name="priority" onChange={ onChange }>
                                                             <option value="High">High</option>
                                                             <option value="Medium">Medium</option>
                                                             <option value="Low">Low</option>
-                                                          
+
                                                         </select>
-                                                    </div> 
-                                                    
-                                                     <div className="col-md-4">  
+                                                    </div>
+
+                                                     <div className="col-md-4">
                                                         <label>Active/Inactive</label>
                                                         <select value={customer.is_active} className="form-select" name="is_active" onChange={ onChange }>
                                                             <option value="1">Active</option>
                                                             <option value="0">Inactive</option>
                                                         </select>
-                                                    </div>    
+                                                    </div>
 
-                                                </div>  
+                                                </div>
                                             </div>
                                         </div>
 
                                         <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
-                                                    <div className="col-md-8">  
+                                                    <div className="col-md-8">
                                                         <label>Notes</label>
                                                         <textarea value={customer.notes} name="notes" className="form-control" placeholder="Enter Notes" onChange={ onChange }></textarea>
-                                                    </div>   
+                                                    </div>
 
-                                                    <div className="col-md-4">  
+                                                    <div className="col-md-4">
                                                         <label>Logo</label>
                                                         <input className="form-control" type="file" name="logo" onChange={ changeHandler }/>
                                                         <input className="form-control" type="hidden" value={customer.logo}/>
                                                         <img src={logo_path+customer.logo} width="70px" height="50px"/>
-                                                         
-                                                    </div>     
 
-                                                    
-                                                </div>  
+                                                    </div>
+
+
+                                                </div>
                                             </div>
                                         </div>
 
@@ -584,7 +584,7 @@ return(
                                                                     <input value={address1.admin_contact} className="form-control" type="text" name="admin_contact" placeholder="Enter Account/Admin Contact No" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Account/Admin E-mail</label>
                                                                     <input value={address1.admin_email} className="form-control" type="text" name="admin_email" placeholder="Enter Account/Admin E-mail" onChange={ onChangeAddress1 }/>
-                                                                </div> 
+                                                                </div>
                                                                 <div className="col-md-6">
                                                                     <label>Home Street2</label>
                                                                     <input value={address1.homestreet2} className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChangeAddress1 }/><br/>
@@ -602,7 +602,7 @@ return(
                                                                     <input value={address1.pancard_no} className="form-control" type="text" name="pancard_no" placeholder="Enter Pancard No" onChange={ onChangeAddress1 }/>
                                                                 </div>
                                                               </div>
-                                                         </div> 
+                                                         </div>
 
                                                      </div>
                                                      <div className="col-md-6">
@@ -624,7 +624,7 @@ return(
                                                                     <input value={address2.qa_contact} className="form-control" type="text" name="qa_contact" placeholder="Enter QA Contact No" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>QA E-mail</label>
                                                                     <input value={address2.qa_email} className="form-control" type="text" name="qa_email" placeholder="Enter QA E-mail" onChange={ onChangeAddress2 }/>
-                                                                </div> 
+                                                                </div>
                                                                 <div className="col-md-6">
                                                                     <label>Street2</label>
                                                                     <input value={address2.street2} className="form-control" id="street2" type="text" name="street2" placeholder="Enter Street2" onChange={ onChangeAddress2 }/><br/>
@@ -641,16 +641,16 @@ return(
                                                                     <label>Pancard Copy</label>
                                                                     <input className="form-control" type="file" name="other_pan_card_copy" onChange={ changePanHandler }/>
                                                                     <input className="form-control" type="hidden" value={address2.other_pan_card_copy}/>
-                                                                   
+
                                                                 </div>
                                                               </div>
-                                                         </div> 
-                                                     </div>   
+                                                         </div>
+                                                     </div>
                                                 </div>
-                                            </div> 
+                                            </div>
                                         </div>
                                          <div className="mb-3 row">
-                                          
+
                                             <div className="form-group">
                                                 <div className="row">
                                                     <div className="col-md-6">
@@ -662,31 +662,31 @@ return(
                                                     : <span class="btn btn-primary form-control">No Pancard Copy Uploaded</span>}
                                                     </div>
                                                 </div>
-                                            </div>        
-                                        </div> 
+                                            </div>
+                                        </div>
 
                                          <h5 className="alert alert-success"><i className="fa fa-comment">&nbsp;History & Other Details</i></h5>
 
                                           <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
-                                                  
-                                                    <div className="col-md-6">  
+
+                                                    <div className="col-md-6">
                                                         <label>Education Details</label>
                                                         <textarea value={customer.education_details} name="education_details" className="form-control" placeholder="Enter Education Details" onChange={ onChange }></textarea>
-                                                    </div>   
-                                                    
-                                                    <div className="col-md-6">  
+                                                    </div>
+
+                                                    <div className="col-md-6">
                                                         <label>Prev. Details</label>
                                                         <textarea value={customer.prev_details} name="prev_details" className="form-control" placeholder="Enter Previous Details" onChange={ onChange }></textarea>
-                                                    </div>   
-                                                   
-                                                </div>  
+                                                    </div>
+
+                                                </div>
                                             </div>
                                           </div>
 
                                         <h5 className="alert alert-danger"><i className="fa fa-comment">&nbsp;Comapny Info</i></h5>
-                                        
+
                                               <div className="mb-3 row">
                                                 <div className="form-group">
                                                     <div className="row">
@@ -698,25 +698,25 @@ return(
                                                         <div className="col-md-4">
                                                             <label>TIN No</label>
                                                             <input value={customer.company_tin_no} className="form-control" type="text" placeholder="Enter TIN No" name="company_tin_no" onChange={ onChange }/>
-                                                        </div>  
+                                                        </div>
 
                                                         <div className="col-md-4">
                                                             <label>Service Tax No</label>
                                                             <input value={customer.company_service_tax_no} className="form-control" type="text" name="company_service_tax_no" placeholder="Enter Service Tax No" onChange={ onChange }/>
-                                                        </div>  
-                                                        {/*<div className="col-md-2">  
+                                                        </div>
+                                                        {/*<div className="col-md-2">
                                                             <label>CST No</label>
                                                             <input className="form-control" type="text"  name="cst_no" placeholder="Enter CST No" onChange={ onChange }/>
                                                         </div> */}
 
-                                                        <div className="col-md-4">  
+                                                        <div className="col-md-4">
                                                             <label>Customer Discount</label>
                                                             <input value={customer.company_cust_discount} className="form-control" type="text"  name="company_cust_discount" placeholder="Enter Customer Discount" onChange={ onChange }/>
-                                                        </div>        
-                                                    </div>  
+                                                        </div>
+                                                    </div>
                                                 </div>
                                               </div>
-                                        
+
                                         <h5 className="alert alert-danger"><i className="fa fa-comment">&nbsp;Contact Person</i></h5>
                                         {inputList.map((x, i) => (
                                          <React.Fragment key={x}>
@@ -726,78 +726,78 @@ return(
                                                         <div className="col-md-2">
                                                             <label>Name</label>
                                                             <input className="form-control" type="text" placeholder="Enter Name" value={x.contact_person_name} name="contact_person_name" onChange={e => handleInputChange(e, i)}/>
-                                                        </div>  
+                                                        </div>
 
                                                         <div className="col-md-2">
                                                             <label>Mobile</label>
                                                             <input className="form-control" type="text" placeholder="Enter Mobile" value={x.contact_person_mobile} name="contact_person_mobile" onChange={e => handleInputChange(e, i)}/>
-                                                        </div>  
+                                                        </div>
 
                                                         <div className="col-md-3">
                                                             <label>E-mail</label>
                                                             <input className="form-control" type="text" name="contact_person_email" value={x.contact_person_email} placeholder="Enter E-mail" onChange={e => handleInputChange(e, i)}/>
-                                                        </div>  
-                                                        <div className="col-md-2">  
+                                                        </div>
+                                                        <div className="col-md-2">
                                                             <label>Department</label>
-                                                            {loading1 ? <LoadingSpinner /> :  
+                                                            {loading1 ? <LoadingSpinner /> :
                                                           <select className="form-select" id="mst_departments_id" name="mst_departments_id" value={x.mst_departments_id} onChange={e => handleInputChange(e, i)}>
                                                              <option value="">Select Department</option>
                                                             { data4.map((option, key) => <option value={option.id} key={key} >{option.department_name}</option>) }
-                                                        </select> } 
-                                                        </div>  
+                                                        </select> }
+                                                        </div>
 
-                                                        <div className="col-md-2">  
+                                                        <div className="col-md-2">
                                                             <label>Position</label>
-                                                           {loading1 ? <LoadingSpinner /> :  
+                                                           {loading1 ? <LoadingSpinner /> :
                                                         <select className="form-select" id="mst_positions_id" name="mst_positions_id" value={x.mst_positions_id} onChange={e => handleInputChange(e, i)}>
                                                              <option value="">Select Position</option>
                                                             { data3.map((option, key) => <option value={option.id} key={key} >{option.position_title}</option>) }
                                                          </select> }
-                                                        </div>   
+                                                        </div>
 
-                                                        <div className="col-md-1">  
+                                                        <div className="col-md-1">
                                                             <label style={{ visibility:'hidden' }}>Delete</label><br/>
                                                             {inputList.length >= 1 && <button
                                                           className="mr10"
                                                           onClick={() => handleRemoveClick(i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}
-                                                        </div>             
-                                                    </div>  
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
                                            <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
-                                                   <center> 
+                                                   <center>
                                                         <div className="col-md-2">
 
                                                         {inputList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
-                                                        
+
                                                         </div>
                                                     </center>
                                                  </div>
                                             </div>
-                                        </div>   
-                                        
+                                        </div>
+
                                         </React.Fragment>
                                         ))}
                                         <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
-                                                   <center> 
+                                                   <center>
                                                         <div className="col-md-2">
 
                                                         {inputList.length === 0 && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
-                                                        
+
                                                         </div>
                                                     </center>
                                                  </div>
                                             </div>
-                                        </div>   
+                                        </div>
                                     </div>
                                 </div>
                               }
-                            </div> 
+                            </div>
                         </div>
                      </Form>
                     </div>
@@ -806,4 +806,4 @@ return(
   )
 }
 
-export default EditCustomer  
+export default EditCustomer

@@ -53,26 +53,26 @@ constructor(props) {
           branch_fax : '',
           branch_mobile : '',
           branch_email : '',
-          branch_establish_year : '',  
+          branch_establish_year : '',
 
         };
         const headers = {
           'Content-Type': "application/json",
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 const url = window.location.href
 const branch_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
 const edit_branch_id = url.substring(url.lastIndexOf('/') + 1)
- this.componentDidMount=()=>{ 
+ this.componentDidMount=()=>{
           this.BranchData();
           this.fetchcompany();
-    } 
+    }
 
 
-    this.UpdateBranch=(e)=> { 
-    this.setState({ loading: true }, () => { 
-    e.preventDefault();   
+    this.UpdateBranch=(e)=> {
+    this.setState({ loading: true }, () => {
+    e.preventDefault();
     const branch_name = this.state.branch_name
     const company_name = this.state.company_name
     const branch_type = this.state.branch_type
@@ -91,39 +91,39 @@ const edit_branch_id = url.substring(url.lastIndexOf('/') + 1)
     const branch_mobile = this.state.branch_mobile
     const branch_email = this.state.branch_email
     const branch_establish_year = this.state.branch_establish_year
-    axios.post(`${process.env.REACT_APP_BASE_APIURL}editBranch/`+branch_id,{branch_name:branch_name, 
+    axios.post(`${process.env.REACT_APP_BASE_APIURL}editBranch/`+branch_id,{branch_name:branch_name,
       mst_companies_id:company_name, branch_type:branch_type,
           branch_code : branch_code, branch_office_no:branch_office_no, branch_complex_name: branch_complex_name,
            branch_street_name : branch_street_name,branch_land_mark : branch_land_mark, branch_area: branch_area,
-           branch_city : branch_city,branch_state : branch_state,branch_country : branch_country, 
-           branch_pin: branch_pin, branch_phone : branch_phone, branch_fax : branch_fax, 
+           branch_city : branch_city,branch_state : branch_state,branch_country : branch_country,
+           branch_pin: branch_pin, branch_phone : branch_phone, branch_fax : branch_fax,
            branch_mobile : branch_mobile, branch_email: branch_email, branch_establish_year : branch_establish_year}
-           ,{headers})  
-        .then(response => {  
-          if(response.data.success == true){ 
-            this.props.history.push('/branch')  
+           ,{headers})
+        .then(response => {
+          if(response.data.success == true){
+            this.props.history.push('/branch')
            toastr.success(response.data.message);
-            this.setState({loading: false}); 
+            this.setState({loading: false});
           }
           else{
                 props.history.push('/edit-branch/'+edit_branch_id);
                 toastr.error(response.data.message);
                 this.setState({loading: false});
-            } 
+            }
         })
-        .catch((error) => {  
+        .catch((error) => {
               this.setState({loading: false});
-              toastr.error(error.response.data.message); 
+              toastr.error(error.response.data.message);
           })
-    })  
-  } 
+    })
+  }
 
 
-  this.BranchData=()=>{ 
-    this.setState({ loading1: true }, () => { 
-      axios.get(`${process.env.REACT_APP_BASE_APIURL}getBranch/`+branch_id,{headers})  
-          .then(response => {  
-              this.setState({   
+  this.BranchData=()=>{
+    this.setState({ loading1: true }, () => {
+      axios.get(`${process.env.REACT_APP_BASE_APIURL}getBranch/`+branch_id,{headers})
+          .then(response => {
+              this.setState({
                 branch_name : response.data.data.branch_name,
                 company_name : response.data.data.mst_companies_id,
                 branch_type : response.data.data.branch_type,
@@ -141,18 +141,18 @@ const edit_branch_id = url.substring(url.lastIndexOf('/') + 1)
                 branch_fax : response.data.data.branch_fax,
                 branch_mobile : response.data.data.branch_mobile,
                 branch_email : response.data.data.branch_email,
-                branch_establish_year : response.data.data.branch_establish_year,   
+                branch_establish_year : response.data.data.branch_establish_year,
                  });
               //console.log(this.state.company_name)
-                 this.setState({loading1: false});  
-  
-          })  
-          .catch((error) => {  
+                 this.setState({loading1: false});
+
+          })
+          .catch((error) => {
               this.setState({loading1: false});
-              toastr.error(error.response.data.message); 
-          })  
+              toastr.error(error.response.data.message);
+          })
       })
-    } 
+    }
 
 
   this.fetchcompany = () => {
@@ -170,115 +170,115 @@ const edit_branch_id = url.substring(url.lastIndexOf('/') + 1)
       })
   }
 //setting value in fields while editing
-this.onChangeBranchName = (e) => {  
-    this.setState({  
-        branch_name: e.target.value  
-    });  
-  }  
-  
-
-this.onChangeCompany = (e) => {  
-    this.setState({  
-        company_name: e.target.value  
-    });  
-  } 
-
-
-  this.onChangeBranchType = (e) => {  
-    this.setState({  
-        branch_type: e.target.value  
-    });  
-  }  
-   
-   this.onChangeBranchCode = (e) => {  
-    this.setState({  
-        branch_code: e.target.value  
-    });  
+this.onChangeBranchName = (e) => {
+    this.setState({
+        branch_name: e.target.value
+    });
   }
 
-    this.onChangeBranchOfficeNo = (e) => {  
-    this.setState({  
-        branch_office_no: e.target.value  
-    });  
+
+this.onChangeCompany = (e) => {
+    this.setState({
+        company_name: e.target.value
+    });
   }
 
-    this.onChangeBranchComplexName = (e) => {  
-    this.setState({  
-        branch_complex_name: e.target.value  
-    });  
-  }   
 
-    this.onChangeBranchStreetName = (e) => {  
-    this.setState({  
-        branch_street_name: e.target.value  
-    });  
-  } 
-
-    this.onChangeBranchLandMark = (e) => {  
-    this.setState({  
-        branch_land_mark: e.target.value  
-    });  
-  } 
-
-    this.onChangeBranchArea = (e) => {  
-    this.setState({  
-        branch_area: e.target.value  
-    });  
-  } 
-
-    this.onChangeBranchCity = (e) => {  
-    this.setState({  
-        branch_city: e.target.value  
-    });  
-  } 
-
-    this.onChangeBranchState = (e) => {  
-    this.setState({  
-        branch_state: e.target.value  
-    });  
-  } 
-
-    this.onChangeBranchCountry = (e) => {  
-    this.setState({  
-        branch_country: e.target.value  
-    });  
+  this.onChangeBranchType = (e) => {
+    this.setState({
+        branch_type: e.target.value
+    });
   }
 
-  this.onChangeBranchPin = (e) => {  
-    this.setState({  
-        branch_pin: e.target.value  
-    });  
-  }  
+   this.onChangeBranchCode = (e) => {
+    this.setState({
+        branch_code: e.target.value
+    });
+  }
 
-      this.onChangeBranchPhone = (e) => {  
-    this.setState({  
-        branch_phone: e.target.value  
-    });  
-  } 
+    this.onChangeBranchOfficeNo = (e) => {
+    this.setState({
+        branch_office_no: e.target.value
+    });
+  }
 
-      this.onChangeBranchFax = (e) => {  
-    this.setState({  
-        branch_fax: e.target.value  
-    });  
-  } 
+    this.onChangeBranchComplexName = (e) => {
+    this.setState({
+        branch_complex_name: e.target.value
+    });
+  }
 
-      this.onChangeBranchMobile = (e) => {  
-    this.setState({  
-        branch_mobile: e.target.value  
-    });  
-  } 
+    this.onChangeBranchStreetName = (e) => {
+    this.setState({
+        branch_street_name: e.target.value
+    });
+  }
 
-      this.onChangeBranchEmail = (e) => {  
-    this.setState({  
-        branch_email: e.target.value  
-    });  
-  } 
+    this.onChangeBranchLandMark = (e) => {
+    this.setState({
+        branch_land_mark: e.target.value
+    });
+  }
 
-      this.onChangeBranchEstablishYear = (e) => {  
-    this.setState({  
-        branch_establish_year: e.target.value  
-    });  
-  }  
+    this.onChangeBranchArea = (e) => {
+    this.setState({
+        branch_area: e.target.value
+    });
+  }
+
+    this.onChangeBranchCity = (e) => {
+    this.setState({
+        branch_city: e.target.value
+    });
+  }
+
+    this.onChangeBranchState = (e) => {
+    this.setState({
+        branch_state: e.target.value
+    });
+  }
+
+    this.onChangeBranchCountry = (e) => {
+    this.setState({
+        branch_country: e.target.value
+    });
+  }
+
+  this.onChangeBranchPin = (e) => {
+    this.setState({
+        branch_pin: e.target.value
+    });
+  }
+
+      this.onChangeBranchPhone = (e) => {
+    this.setState({
+        branch_phone: e.target.value
+    });
+  }
+
+      this.onChangeBranchFax = (e) => {
+    this.setState({
+        branch_fax: e.target.value
+    });
+  }
+
+      this.onChangeBranchMobile = (e) => {
+    this.setState({
+        branch_mobile: e.target.value
+    });
+  }
+
+      this.onChangeBranchEmail = (e) => {
+    this.setState({
+        branch_email: e.target.value
+    });
+  }
+
+      this.onChangeBranchEstablishYear = (e) => {
+    this.setState({
+        branch_establish_year: e.target.value
+    });
+  }
 
 }
 
@@ -313,26 +313,26 @@ const { data, loading } = this.state;
                        <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
                     </li>}
                 </ol>
-            </div>        
+            </div>
         </div>
 
           { loading1 ? <center><LoadingSpinner /></center> :<Row>
             <Col>
               <Card>
           <CardBody>
-  
+
                      <h5> <Alert color="success" role="alert">
                      <i className="fa fa-comment">&nbsp;Basic Info</i>
-                    </Alert></h5> 
+                    </Alert></h5>
 
                                           <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
 
                                                      <div className="col-md-3">
-                                                        <label>Name</label>
-                                                        <input type="text" value={this.state.branch_name} onChange={this.onChangeBranchName} className="form-control"/>
-                                                    </div>  
+                                                        <label className="required-field">Name</label>
+                                                        <input type="text" value={this.state.branch_name} onChange={this.onChangeBranchName} className="form-control" required/>
+                                                    </div>
 
                                                     <div className="col-md-3">
                                                         <label>Company Name</label>
@@ -341,19 +341,19 @@ const { data, loading } = this.state;
                                                                   { this.state.options.map((option, key) => <option value={option.id} key={key} >{option.company_name}</option>) }
                                                               </select>
                                                           }
-                                                  
-                                                    </div> 
+
+                                                    </div>
 
                                                     <div className="col-md-3">
-                                                        <label>Branch Type</label>
-                                                        <input type="text" value={this.state.branch_type} onChange={this.onChangeBranchType} className="form-control"/>
-                                                    </div>  
+                                                        <label className="required-field">Branch Type</label>
+                                                        <input type="text" value={this.state.branch_type} onChange={this.onChangeBranchType} className="form-control" required/>
+                                                    </div>
 
                                                     <div className="col-md-3">
                                                         <label>Code</label>
                                                         <input type="text" value={this.state.branch_code} onChange={this.onChangeBranchCode} className="form-control"/>
-                                                    </div>       
-                                                </div>  
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -362,25 +362,25 @@ const { data, loading } = this.state;
                                                 <div className="row">
 
                                                     <div className="col-md-3">
-                                                        <label>Office No</label>
-                                                        <input type="text" value={this.state.branch_office_no} onChange={this.onChangeBranchOfficeNo} className="form-control"/>
-                                                    </div>  
+                                                        <label className="required-field">Office No</label>
+                                                        <input type="text" value={this.state.branch_office_no} onChange={this.onChangeBranchOfficeNo} className="form-control" required/>
+                                                    </div>
 
                                                     <div className="col-md-3">
-                                                        <label>Complex Name</label>
-                                                        <input type="text" value={this.state.branch_complex_name} onChange={this.onChangeBranchComplexName} className="form-control"/>
+                                                        <label className="required-field">Complex Name</label>
+                                                        <input type="text" value={this.state.branch_complex_name} onChange={this.onChangeBranchComplexName} className="form-control" required/>
                                                     </div>
 
                                                     <div className="col-md-3">
                                                         <label>Street Name</label>
                                                         <input type="text" value={this.state.branch_street_name} onChange={this.onChangeBranchStreetName} className="form-control"/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-3">
                                                         <label>Land Mark</label>
                                                         <input type="text" value={this.state.branch_land_mark} onChange={this.onChangeBranchLandMark} className="form-control"/>
-                                                    </div>       
-                                                </div>  
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -391,29 +391,29 @@ const { data, loading } = this.state;
                                                     <div className="col-md-3">
                                                         <label>Area</label>
                                                         <input type="text" value={this.state.branch_area} onChange={this.onChangeBranchArea} className="form-control"/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-3">
-                                                        <label>City</label>
-                                                        <input type="text" value={this.state.branch_city} onChange={this.onChangeBranchCity} className="form-control"/>
+                                                        <label className="required-field">City</label>
+                                                        <input type="text" value={this.state.branch_city} onChange={this.onChangeBranchCity} className="form-control" required/>
                                                     </div>
 
                                                     <div className="col-md-2">
-                                                        <label>State</label>
-                                                        <input type="text" value={this.state.branch_state} onChange={this.onChangeBranchState} className="form-control"/>
-                                                    </div>  
+                                                        <label className="required-field">State</label>
+                                                        <input type="text" value={this.state.branch_state} onChange={this.onChangeBranchState} className="form-control" required/>
+                                                    </div>
 
                                                     <div className="col-md-2">
-                                                        <label>Country</label>
-                                                        <input type="text" value={this.state.branch_country} onChange={this.onChangeBranchCountry} className="form-control"/>
-                                                    </div>   
+                                                        <label className="required-field">Country</label>
+                                                        <input type="text" value={this.state.branch_country} onChange={this.onChangeBranchCountry} className="form-control" required/>
+                                                    </div>
 
                                                      <div className="col-md-2">
-                                                        <label>Pincode</label>
-                                                        <input type="text" value={this.state.branch_pin} onChange={this.onChangeBranchPin}className="form-control"/>
-                                                      </div>  
+                                                        <label className="required-field">Pincode</label>
+                                                        <input type="text" value={this.state.branch_pin} onChange={this.onChangeBranchPin}className="form-control" required/>
+                                                      </div>
 
-                                                </div> 
+                                                </div>
                                             </div>
                                         </div>
 
@@ -422,9 +422,9 @@ const { data, loading } = this.state;
                                                 <div className="row">
 
                                                     <div className="col-md-3">
-                                                        <label>Phone</label>
-                                                        <input type="text" value={this.state.branch_phone} onChange={this.onChangeBranchPhone} className="form-control"/>
-                                                    </div>  
+                                                        <label className="required-field">Phone</label>
+                                                        <input type="text" value={this.state.branch_phone} onChange={this.onChangeBranchPhone} className="form-control" required/>
+                                                    </div>
 
                                                     <div className="col-md-3">
                                                         <label>Fax</label>
@@ -432,30 +432,30 @@ const { data, loading } = this.state;
                                                     </div>
 
                                                     <div className="col-md-2">
-                                                        <label>Mobile</label>
-                                                        <input type="text" value={this.state.branch_mobile} onChange={this.onChangeBranchMobile} className="form-control"/>
-                                                    </div>  
+                                                        <label className="required-field">Mobile</label>
+                                                        <input type="text" value={this.state.branch_mobile} onChange={this.onChangeBranchMobile} className="form-control" required/>
+                                                    </div>
 
                                                     <div className="col-md-2">
-                                                        <label>Email</label>
-                                                        <input type="text" value={this.state.branch_email} onChange={this.onChangeBranchEmail} className="form-control"/>
-                                                    </div>   
+                                                        <label className="required-field">Email</label>
+                                                        <input type="text" value={this.state.branch_email} onChange={this.onChangeBranchEmail} className="form-control" required/>
+                                                    </div>
 
                                                      <div className="col-md-2">
-                                                        <label>Establish Year</label>
-                                                        <input type="text" value={this.state.branch_establish_year} onChange={this.onChangeBranchEstablishYear} className="form-control"/>
-                                                    </div>  
+                                                        <label className="required-field">Establish Year</label>
+                                                        <input type="text" value={this.state.branch_establish_year} onChange={this.onChangeBranchEstablishYear} className="form-control" required/>
+                                                    </div>
 
-                                                </div>  
+                                                </div>
                                             </div>
                                         </div>
-                
-                                
+
+
                 </CardBody>
               </Card>
             </Col>
           </Row>}
-         </Form> 
+         </Form>
         </Container>
       </div>
     </React.Fragment>

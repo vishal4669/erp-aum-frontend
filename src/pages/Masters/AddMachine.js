@@ -27,51 +27,51 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 
 
-function AddMachine(props) { 
+function AddMachine(props) {
 
   const headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
-  const [data, setData] = useState([]); 
-  const [machine, setMachine] = useState({ machine_name: ''});  
+  const [data, setData] = useState([]);
+  const [machine, setMachine] = useState({ machine_name: ''});
 
 const InsertMachine = (e)=>{
          e.preventDefault();
 
         {setLoading(true)};
-        const data = { machine_name:machine.machine_name}; 
+        const data = { machine_name:machine.machine_name};
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addMachine`, data, {headers} )
                 .then(response => {
                     if(response.data.success == true){
                         props.history.push('/machine');
                         toastr.success(response.data.message);
-                        {setLoading(false)}; 
+                        {setLoading(false)};
                     }else{
                         props.history.push('/add-machine');
                         toastr.error(response.data.message);
-                        {setLoading(false)};   
+                        {setLoading(false)};
                     }
                 })
                 .catch((error) => {
                  {setLoading(false)};
                  toastr.error(error.response.data.message);
                 })
-     
+
       }
 
 
-const ResetMachine = () => { 
+const ResetMachine = () => {
   document.getElementById("AddMachine").reset();
 }
 
-  const onChange = (e) => {  
-    e.persist();  
-    setMachine({...machine, [e.target.name]: e.target.value});  
-  } 
+  const onChange = (e) => {
+    e.persist();
+    setMachine({...machine, [e.target.name]: e.target.value});
+  }
 
 return(
  <React.Fragment>
@@ -107,7 +107,7 @@ return(
                             <div className="col-12">
                                 <div className="card">
                                     <div className="card-body">
-        
+
                                         <h5 className="alert alert-success"><i className="fa fa-comment">&nbsp;Basic Info</i></h5>
 
                                          <div className="mb-3 row">
@@ -115,10 +115,10 @@ return(
                                                 <div className="row">
 
                                                      <div className="col-md-12">
-                                                        <label>Machine Name</label>
-                                                        <input type="text" id="machine_name" name="machine_name" className="form-control" placeholder="Enter Machine Name" onChange={ onChange }/>
-                                                    </div>  
-                                                </div>  
+                                                        <label className="required-field">Machine Name</label>
+                                                        <input type="text" id="machine_name" name="machine_name" className="form-control" placeholder="Enter Machine Name" onChange={ onChange } required/>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -133,4 +133,4 @@ return(
   )
 }
 
-export default AddMachine  
+export default AddMachine

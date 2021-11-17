@@ -1602,6 +1602,7 @@ function EditBooking(props) {
                                                                      */}<td>
                                         <select name="approved" className="form-select" onChange={e => handleInputChange(e, i)} value={x.approved}>
                                           <option value="Pending">Pending</option>
+                                          <option value="Assigned">Assigned</option>
                                           <option value="Approved">Approved</option>
                                           <option value="Reject">Reject</option>
                                         </select>

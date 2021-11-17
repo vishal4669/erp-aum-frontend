@@ -436,7 +436,7 @@ return(
                                             <div className="form-group">
                                                 <div className="row">
                                                     <div className="col-md-3">
-                                                        <label>Company Name</label>
+                                                        <label className="required-field">Company Name</label>
                                                         <input className="form-control" type="text" placeholder="Enter Company Name" id="example-text-input" name="company_name" onChange={ onChange }/>
                                                     </div>
 
@@ -463,11 +463,11 @@ return(
                                                 <div className="row">
 
                                                     <div className="col-md-4">
-                                                        <label>Username</label>
+                                                        <label className="required-field">Username</label>
                                                         <input className="form-control" type="text" name="username" placeholder="Enter Valid Email" onChange={ onChange }/>
                                                     </div>
                                                     <div className="col-md-4">
-                                                        <label>Password</label>
+                                                        <label className="required-field">Password</label>
                                                         <input className="form-control" type="password"  name="password" placeholder="Enter Password" onChange={ onChange }/>
                                                     </div>
 

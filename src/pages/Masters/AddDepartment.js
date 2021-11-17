@@ -41,7 +41,7 @@ constructor() {
         };
         const headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
 
         this.InsertDepartment = (event)=>{
@@ -49,43 +49,43 @@ constructor() {
 
          const mst_branches_id = this.refs.mst_branches_id.value
          const department_name = this.refs.department_name.value
-     
-         this.setState({ loading: true }, () => { 
+
+         this.setState({ loading: true }, () => {
          //add Group information
 
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}addDepartment`, 
+         axios.post( `${process.env.REACT_APP_BASE_APIURL}addDepartment`,
           { mst_branches_id:mst_branches_id, department_name:department_name} , {headers} )
 
                 .then(response => {
                     if(response.data.success == true){
                         this.props.history.push('/department');
                         toastr.success(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }else{
                         this.props.history.push('/add-department');
                         toastr.error(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }
                 })
                 .catch((error) => {
-                  this.setState({loading: false});  
+                  this.setState({loading: false});
                   toastr.error(error.response.data.message);
                 })
-         }) 
-         return      
+         })
+         return
       }
 
 
         this.componentDidMount = () =>{
-          this.setState({ loading1: true }, () => { 
+          this.setState({ loading1: true }, () => {
       axios.get(`${process.env.REACT_APP_BASE_APIURL}listBranch?is_dropdown=1`,{headers})
         .then(response => {
                 this.setState({options: response.data.data})
-                 this.setState({loading1: false});  
+                 this.setState({loading1: false});
            })
           .catch((error) => {
                 toastr.error(error.response.data.message);
-                this.setState({loading1: false});  
+                this.setState({loading1: false});
           })
 
       })
@@ -93,16 +93,16 @@ constructor() {
   }
 
       this.logChange = (e) =>{
-        this.setState({[e.target.name]: e.target.value});  
+        this.setState({[e.target.name]: e.target.value});
     }
 
-    this.ResetDepartment = () => { 
+    this.ResetDepartment = () => {
   document.getElementById("AddDepartment").reset();
 }
 
 
 }
-  
+
 
 render() {
 const { data, loading } = this.state;
@@ -150,10 +150,10 @@ const { data1, loading1 } = this.state;
                     <div className="mb-3 row">
                         <div className="form-group">
                             <div className="row">
-                                
+
                                   <div className="col-md-6">
-                                    <label>Branch</label>
-                                       
+                                    <label className="required-field">Branch</label>
+
                                           {loading1 ? <LoadingSpinner /> : <select onChange={this.logChange} ref="mst_branches_id" className="form-select" name="mst_branches_id" required>
                                            <option value="">Select Branch</option>
                                            { this.state.options.map((option, key) => <option value={option.id} key={key} >{option.branch_name}</option>) }
@@ -161,7 +161,7 @@ const { data1, loading1 } = this.state;
                                 </div>
 
                                 <div className="col-md-6">
-                                    <label>Department Name</label>
+                                    <label className="required-field">Department Name</label>
                                     <input onChange={this.logChange} ref="department_name" type="text" name="department_name" className="form-control" placeholder="Enter Department Name" required/>
 
                                  </div>

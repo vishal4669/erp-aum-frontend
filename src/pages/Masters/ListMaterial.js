@@ -100,10 +100,10 @@ class ListMaterial extends Component {
               sub_sub_category_name : post.sub_sub_category_name,
               material_amount : post.material_amount,
               material_use_before_date: Moment(post.material_use_before_date).format('DD-MM-YYYY'),
-              action : <div><Link className="btn btn-primary" to={"/edit-material/"+base64_encode(post.id+"/"+post.category_id+"/"+post.sub_category_id)}>
+              action : <div><Link className="btn btn-primary btn-sm" to={"/edit-material/"+base64_encode(post.id+"/"+post.category_id+"/"+post.sub_category_id)}>
               <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Material Data?')){ this.deleteMaterial(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-              &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-material/"+base64_encode(post.id)}>
+              <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Material Data?')){ this.deleteMaterial(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+              &nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-material/"+base64_encode(post.id)}>
               <i className="fa fa-eye"></i></Link></div>
               ,
 

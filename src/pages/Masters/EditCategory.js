@@ -31,10 +31,10 @@ function EditCategory(props){
 const headers = {
           'Content-Type': "application/json",
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
         }
   const [category, setcategory]= useState({category_name : '',parent_category_id : ''})
-  const [data, setData] = useState([]);  
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
 const url = window.location.href
@@ -46,8 +46,8 @@ const edit_category_id =url.substring(url.lastIndexOf('/') + 1)
           category_name: category.category_name,
           parent_category_id :category.parent_category_id,
          };
-        
-     
+
+
         {setLoading(true)};
 
          axios.post( `${process.env.REACT_APP_BASE_APIURL}editCategory/`+category_id,data, {headers} )
@@ -56,59 +56,59 @@ const edit_category_id =url.substring(url.lastIndexOf('/') + 1)
                     if(response.data.success == true){
                         props.history.push('/category');
                         toastr.success(response.data.message);
-                        {setLoading(false)}  
+                        {setLoading(false)}
                     }else{
                         props.history.push('/edit-category/'+edit_category_id);
                         toastr.error(response.data.message);
-                        {setLoading(false)}  
+                        {setLoading(false)}
                     }
                 })
                 .catch((error) => {
-                  {setLoading(false)}   
+                  {setLoading(false)}
                   toastr.error(error.response.data.message);
                   this.setState({loading: false});
-                })      
+                })
       }
 
 
-useEffect(() => {  
-          CategoryList(); 
-          CategoryData(); 
-        }, []);  
+useEffect(() => {
+          CategoryList();
+          CategoryData();
+        }, []);
 
         const CategoryList = () =>{
-       {setLoading1(true)} 
+       {setLoading1(true)}
       axios.get(`${process.env.REACT_APP_BASE_APIURL}listCategory?is_dropdown=1`,{headers})
         .then(response => {
                  setData(response.data.data);
-                 {setLoading1(false)}   
+                 {setLoading1(false)}
            })
           .catch((error) => {
                   toastr.error(error.response.data.message);
                   this.setState({loading: false});
-               {setLoading1(false)}   
+               {setLoading1(false)}
           })
 
   }
 
-    const CategoryData=()=>{ 
-    {setLoading1(true)} 
-      axios.get(`${process.env.REACT_APP_BASE_APIURL}getCategory/`+category_id,{headers})  
-          .then(response => {  
-              setcategory(response.data.data); 
-               {setLoading1(false)}   
-  
-          })  
-          .catch((error) => {  
-              {setLoading1(false)} 
+    const CategoryData=()=>{
+    {setLoading1(true)}
+      axios.get(`${process.env.REACT_APP_BASE_APIURL}getCategory/`+category_id,{headers})
+          .then(response => {
+              setcategory(response.data.data);
+               {setLoading1(false)}
+
+          })
+          .catch((error) => {
+              {setLoading1(false)}
               toastr.error(error.response.data.message);
-              this.setState({loading: false}); 
-          })  
-    } 
+              this.setState({loading: false});
+          })
+    }
 
       const logChange = (e) =>{
-        e.persist();  
-        setcategory({...category,[e.target.name]: e.target.value});  
+        e.persist();
+        setcategory({...category,[e.target.name]: e.target.value});
     }
 
   return (
@@ -134,7 +134,7 @@ useEffect(() => {
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                     <li><Link to="/category" className="btn btn-primary btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></Link></li>&nbsp;
-                   
+
                     { loading ? <center><LoadingSpinner /></center> :<li>
                        <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
                     </li>}
@@ -149,26 +149,26 @@ useEffect(() => {
                      <h5> <Alert color="success" role="alert">
                      <i className="fa fa-comment">&nbsp;Basic Info</i>
                     </Alert></h5>
-{loading1 ? <center><LoadingSpinner /></center> : 
+{loading1 ? <center><LoadingSpinner /></center> :
                     <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
 
                                                      <div className="col-md-6">
-                                                        <label>Name</label>
+                                                        <label className="required-field">Name</label>
                                                         <input type="text" value={category.category_name} name="category_name" onChange={logChange} className="form-control" placeholder="Enter Category Name" required/>
-                                                    </div>  
+                                                    </div>
 
                                                     <div className="col-md-6">
                                                         <label>Category Parent</label>
-                                                        
+
                                                         {loading1 ? <LoadingSpinner /> :  <select className="form-select" name="parent_category_id" value={category.parent_category_id} onChange={logChange}>
-                                                              <option value="">Select Category</option>                  
+                                                              <option value="">Select Category</option>
                                                             { data.map((option, key) => <option value={option.id} key={key} >{option.category_name}</option>) }
-                                                            
+
                                                          </select> }
-                                                    </div>  
-                                                </div>  
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>}
                 </CardBody>
