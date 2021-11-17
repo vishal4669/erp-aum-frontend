@@ -440,13 +440,7 @@ function toggleCustomJustified(tab) {
                     </TabPane>
                     <TabPane tabId="2" className="p-3">
                       <p className="mb-0">
-                        Food truck fixie locavore, accusamus mcsweeney's marfa nulla
-                        single-origin coffee squid. Exercitation +1 labore velit, blog
-                        sartorial PBR leggings next level wes anderson artisan four loko
-                        farm-to-table craft beer twee. Qui photo booth letterpress,
-                        commodo enim craft beer mlkshk aliquip jean shorts ullamco ad
-                        vinyl cillum PBR. Homo nostrud organic, assumenda labore
-                        aesthetic magna delectus.
+                      here
                                             </p>
                     </TabPane>
                     <TabPane tabId="3" className="p-3">

@@ -81,11 +81,12 @@ this.onChangeChemistId = (e) => {
 
 this.AssignTest = (e) => {
     e.preventDefault();
+  this.setState({ loading1: true }, () => {
     const data = {
       chemist_name : this.state.chemist_id,
       test_id :  this.state.test_id
     }
-    console.log(data)
+
   if(this.state.test_id.length >= 1){
      axios.post(`${process.env.REACT_APP_BASE_APIURL}assignTests`, data, { headers })
 
@@ -93,19 +94,22 @@ this.AssignTest = (e) => {
          if (response.data && response.data.success == true) {
            props.history.push('dashboard');
            toastr.success(response.data.message);
+           this.setState({loading: false});
          } else {
            props.history.push('/assign-test');
            toastr.error(response.data.message);
+           this.setState({loading1: false});
          }
        })
        .catch((error) => {
          toastr.error(error.response.data.message);
+         this.setState({loading1: false});
        })
    } else {
      toastr.error("Please Select Any One Test To Assign the Test");
    }
 
-
+ })
 }
 
 this.componentWillMount=async() => {
@@ -177,46 +181,57 @@ render() {
       {
         label:'SR No',
         field:'srno',
+      //  width:98
       },
       {
         label:'',
         field:'test_id',
+      //  width:54
       },
       {
         label:'Aum Sr. No.',
         field:'aum_serial_no',
+      //  width:146
       },
       {
         label:'P Sr. No.',
         field:'p_sr_no',
+        //width:119
       },
       {
         label:'Receipt Date',
         field:'receipt_date',
+      //  width:119
       },
       {
         label:'Report Type',
         field:'report_type',
+      //  width:119
       },
       {
         label:'Booking No',
         field:'booking_no',
+      //  width:119
       },
       {
         label:'Customer Name',
         field:'customer_name',
+      //  width:119
       },
       {
         label:'Sample Name',
         field:'sample_name',
+      //  width:119
       },
       {
         label:'Pharmacopeia',
         field:'pharmacopeia_name',
+      //  width:119
       },
       {
         label:'Test Name',
         field: 'test_name',
+        //width:119
       },
 
     ],
@@ -319,7 +334,8 @@ render() {
                         </tr>
                        </tbody>
                     </table>*/}
-                      <MDBDataTable striped bordered data={data1} style={{textAlign:'center'}}/>
+                      {/*<MDBDataTable striped bordered data={data1} style={{textAlign:'center'}} paging={false} small maxHeight="400px" maxWidth="100%" scrollX style={{border:'black 2px solid'}}/>*/}
+                      <MDBDataTable striped bordered data={data1} style={{textAlign:'center'}} paging={false} small maxHeight="400px" className="overflow-scrolling"/>
 
                   </CardBody>
                 </Card>
