@@ -22,6 +22,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import { ToastContainer } from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
+import moment from 'moment'
 
 class AssignTest extends Component {
   constructor(props){
@@ -148,12 +149,11 @@ this.assemblePosts= () => {
           return (
 
             {
-
               srno: this.state.count,
               test_id: <div><input type="checkbox" name="test_id" value={post.test_id} onChange={this.onAddingItem.bind(this)}/></div>,
               aum_serial_no : post.aum_serial_no,
               p_sr_no: post.p_sr_no,
-              receipt_date: post.receipte_date,
+              receipt_date: moment(post.receipte_date).format('MM-DD-YYYY'),
               report_type: post.report_type,
               booking_no: post.booking_no,
               customer_name: post.customer_name,
@@ -181,57 +181,46 @@ render() {
       {
         label:'SR No',
         field:'srno',
-      //  width:98
       },
       {
         label:'',
         field:'test_id',
-      //  width:54
       },
       {
         label:'Aum Sr. No.',
         field:'aum_serial_no',
-      //  width:146
       },
       {
         label:'P Sr. No.',
         field:'p_sr_no',
-        //width:119
       },
       {
         label:'Receipt Date',
         field:'receipt_date',
-      //  width:119
       },
       {
         label:'Report Type',
         field:'report_type',
-      //  width:119
       },
       {
         label:'Booking No',
         field:'booking_no',
-      //  width:119
       },
       {
         label:'Customer Name',
         field:'customer_name',
-      //  width:119
       },
       {
         label:'Sample Name',
         field:'sample_name',
-      //  width:119
       },
       {
         label:'Pharmacopeia',
         field:'pharmacopeia_name',
-      //  width:119
       },
       {
         label:'Test Name',
         field: 'test_name',
-        //width:119
       },
 
     ],
@@ -334,8 +323,7 @@ render() {
                         </tr>
                        </tbody>
                     </table>*/}
-                      {/*<MDBDataTable striped bordered data={data1} style={{textAlign:'center'}} paging={false} small maxHeight="400px" maxWidth="100%" scrollX style={{border:'black 2px solid'}}/>*/}
-                      <MDBDataTable striped bordered data={data1} style={{textAlign:'center'}} paging={false} small maxHeight="400px" className="overflow-scrolling"/>
+                    <MDBDataTable striped bordered data={data1} style={{textAlign:'center'}} paging={false}  small/>
 
                   </CardBody>
                 </Card>

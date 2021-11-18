@@ -11,8 +11,9 @@ import { loginUser, apiError, socialLogin } from "../../store/actions"
 // import images
 import logo from "../../assets/images/logo-dark.png"
 import logolight from "../../assets/images/logo-light.png"
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer } from "react-toastr";
+import toastr from 'toastr'
+import 'toastr/build/toastr.min.css'
 import Select from "react-select";
 
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -52,17 +53,17 @@ props = "";
             localStorage.setItem('selected_year',values.selected_year);
             localStorage.setItem('company_id',values.company_id);
             this.props.history.push('/dashboard');
-            toast.success(response.data.message);
+            toastr.success(response.data.message);
             this.setState({loading: false});
           }
           else {
             // success data is false need to set to true
-            toast.error(response.data.message);
+            toastr.error(response.data.message);
             this.setState({loading: false});
           }
         })
         .catch( (error) => {
-              toast.error(error.response.data.message);
+              toastr.error(error.response.data.message);
               this.setState({loading: false});
 
           })
@@ -79,11 +80,11 @@ props = "";
  checklogin = () => {
 const del_headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
 }
     axios.get(`${process.env.REACT_APP_BASE_APIURL}user`,{headers: del_headers})
-     .then(response => { 
-      
+     .then(response => {
+
       if(response.data.status === 200 && response.data.success === true) {
 
                   window.location.href = '/dashboard';
@@ -92,16 +93,14 @@ const del_headers = {
      if(response.data.status == 401 && response.data.success == true) {
         document.getElementById('home_contianer').style.display = 'block';
       }
-
-      console.log("here")
     })
 
 
-    .catch((error) => {  
-      //toast.error(error.response.data.message);
-      document.getElementById('home_contianer').style.display = 'block'; 
+    .catch((error) => {
+      //toastr.error(error.response.data.message);
+      document.getElementById('home_contianer').style.display = 'block';
       this.setState({loading: false});
-    }) 
+    })
   }
 
   fetchyear = () => {
@@ -114,7 +113,7 @@ const del_headers = {
                 this.setState({loading: false})
            })
           .catch((error) => {
-              toast.error(error.response.data.message);
+              toastr.error(error.response.data.message);
               this.setState({loading: false})
           })
         })
@@ -129,7 +128,7 @@ const del_headers = {
                   this.setState({loading: false})
              })
               .catch((error) => {
-                  toast.error(error.response.data.message);
+                  toastr.error(error.response.data.message);
                   this.setState({loading: false})
             })
       })

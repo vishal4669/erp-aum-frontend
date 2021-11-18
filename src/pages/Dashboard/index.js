@@ -1,10 +1,10 @@
-import React, { useState } from "react"
+import React, { useState,useEffect } from "react"
 import {   TabContent,
   TabPane,
   Collapse,
   NavLink,
   NavItem,
-  Nav,Container, Row, Col, CardBody, Card,CardTitle,Badge} from "reactstrap"
+  Nav,Container, Row, Col, CardBody, Card,CardTitle,Badge,Table} from "reactstrap"
 import { Link } from "react-router-dom"
 
 //Import Breadcrumb
@@ -18,8 +18,12 @@ import RecentActivity from "./recent-activity"
 import classnames from "classnames"
 
 import HorizontalLayout from "../../components/HorizontalLayout/index"
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer } from "react-toastr";
+import toastr from 'toastr'
+import 'toastr/build/toastr.min.css'
+import axios from 'axios';
+
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
 const series1 = [{
   data: [25, 66, 41, 89, 63, 25, 44, 20, 36, 40, 54]
@@ -173,6 +177,45 @@ const options4 = {
 };
 
 const Dashboard = () => {
+const headers = {
+    'Authorization': "Bearer " + localStorage.getItem('token')
+}
+
+const analytics_style = {
+  	display: 'table',
+  	width: '100%',
+  	tableLayout: 'fixed'
+}
+/*const analytics_header_style = {
+  background: '#c7c3c3'
+}*/
+
+  useEffect(() => {
+    analytics_data()
+    }, []);
+
+const [analytics,setAnalytics] = useState([{id:'',test_name:'',aum_serial_no:'',booking_no:'',
+product_name:'',assigned_date:''}])
+
+const analytics_data = () => {
+  axios.get(`${process.env.REACT_APP_BASE_APIURL}statusWiseTests?approved_status=Assigned`, { headers })
+    .then(response => {
+        const analytics_data_set = response.data.data.map((d, index) => ({
+          "id": d.id,
+          "test_name": d.test_name,
+          "aum_serial_no": d.booking_detail.aum_serial_no,
+          "booking_no": d.booking_detail.booking_no,
+          "product_name": d.booking_samples_detail.product_detail.product_name,
+          "assigned_date": d.assigned_date
+
+        }))
+        setAnalytics(analytics_data_set)
+      })
+      .catch((error) => {
+        toastr.error(error.response.data.message);
+      })
+}
+
 const [activeTabJustify, setactiveTabJustify] = useState("1")
 function toggleCustomJustified(tab) {
   if (activeTabJustify !== tab) {
@@ -281,14 +324,11 @@ function toggleCustomJustified(tab) {
     <React.Fragment>
       <div className="page-content">
       <HorizontalLayout/>
-      <ToastContainer autoClose={1500}/>
         <Container fluid>
                   <Breadcrumbs title="Home" breadcrumbItem="Dashboard" />
           <Row>
             <MiniWidget reports={reports} />
           </Row>
-
-
             <Row>
               <Col xl={12}>
               <Card>
@@ -320,7 +360,7 @@ function toggleCustomJustified(tab) {
                           toggleCustomJustified("2")
                         }}
                       >
-                        <i className="fas fa-chart-line"></i>
+                        <i className="fas fa-chart-line"></i>&nbsp;<span className="badge bg-soft-dark">{analytics.length}</span>
                         <span className="d-none d-sm-block">Analytics</span>
                       </NavLink>
                     </NavItem>
@@ -439,9 +479,39 @@ function toggleCustomJustified(tab) {
                                             </p>
                     </TabPane>
                     <TabPane tabId="2" className="p-3">
-                      <p className="mb-0">
-                      here
-                                            </p>
+                      <div className="table-responsive">
+                        <table className="table table-bordered table-striped mb-0 table-sm text-center">
+                            <thead style={{background: 'rgb(237 236 236)', display: 'table',width: '100%',
+                              	tableLayout: 'fixed'}}>
+                              <tr>
+                                <th>SR No</th>
+                                <th>Test Name</th>
+                                <th>Aum SR. No.</th>
+                                <th>Booking Number</th>
+                                <th>Product Name</th>
+                                <th>Assign Date</th>
+                                <th>Result</th>
+                              </tr>
+                            </thead>
+                            <tbody style={{height:'300px',overflow:'auto',display:'block'}}>
+                            {analytics.map((analytic, i) => {
+                              return(
+                                <tr style={analytics_style}>
+                                  <td>{i+1}</td>
+                                  <td>{analytic.test_name}</td>
+                                  <td>{analytic.aum_serial_no}</td>
+                                  <td>{analytic.booking_no}</td>
+                                  <td>{analytic.product_name}</td>
+                                  <td>{analytic.assigned_date}</td>
+                                  <td><Link className="btn btn-warning btn-sm" to={"/add-test-result/"+base64_encode(analytic.id)}>
+                                    Add Result <i className="fa fa-share"></i></Link></td>
+                                </tr>
+                              )
+                            })
+                          }
+                            </tbody>
+                        </table>
+                      </div>
                     </TabPane>
                     <TabPane tabId="3" className="p-3">
                        <p className="mb-0">

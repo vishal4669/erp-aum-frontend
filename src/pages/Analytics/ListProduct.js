@@ -196,10 +196,10 @@ this.ExportToExcel = () => {
                 marker_specification: post.marker_specification,
                 generic_product_name: generic_product,
                 is_generic: is_generic_data,
-                action : <div><Link className="btn btn-primary" to={"/edit-product/"+base64_encode(post.id)}>
+                action : <div><Link className="btn btn-primary btn-sm" to={"/edit-product/"+base64_encode(post.id)}>
                   <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-                  <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Product Data?')){ this.deleteProduct(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-                  &nbsp;&nbsp;<Link className="btn btn-info" to={"/view-product/"+base64_encode(post.id)}>
+                  <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Product Data?')){ this.deleteProduct(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+                  &nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-product/"+base64_encode(post.id)}>
                   <i className="fa fa-eye"></i></Link></div>
 
                 ,

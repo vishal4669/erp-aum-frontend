@@ -326,7 +326,7 @@ const UpdateProduct = (e)=>{
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-3">
-                                <label>Product Name</label>
+                                <label className="required-field">Product Name</label>
                                 <input value={product.product_name} className="form-control" type="text" placeholder="Enter Product Name" name="product_name" onChange={ onChange }/>
                             </div>
 
@@ -344,7 +344,7 @@ const UpdateProduct = (e)=>{
                                 <input value={product.marker_specification} className="form-control" type="text" name="marker_specification" placeholder="Enter Marker/Specifiction" onChange={ onChange }/>
                             </div>
                             <div class="col-md-3">
-                                <label>Pharmacopeia</label>
+                                <label className="required-field">Pharmacopeia</label>
 
                                 {loading1 ? <LoadingSpinner /> :
                                     <select className="form-select" value={product.pharmacopeia_id} id="pharmocopiea" name="pharmacopeia_id" onChange={ onChange }>

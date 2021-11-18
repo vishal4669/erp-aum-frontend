@@ -131,7 +131,7 @@ class ListPharmacopiea extends Component {
               volno: post.vol_no,
               year : post.pharmacopeia_year,
               edition : post.pharmacopeia_edition,
-              action : <div><Link className="btn btn-primary" to={"/edit-pharmacopiea/"+base64_encode(post.id)}>
+              action : <div><Link className="btn btn-primary btn-sm" to={"/edit-pharmacopiea/"+base64_encode(post.id)}>
               <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;
               <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Pharmacopiea?')){ this.deletePharmacopiea(post.id)}}}><i class="fas fa-trash-alt"></i></button>
               */}</div>

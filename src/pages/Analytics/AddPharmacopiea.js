@@ -28,7 +28,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 
 
 class AddPhramacopiea extends Component {
- 
+
  props = "";
 constructor() {
 
@@ -41,7 +41,7 @@ constructor() {
 
         };
         const headers = {
-          'Authorization' : "Bearer "+localStorage.getItem('token') 
+          'Authorization' : "Bearer "+localStorage.getItem('token')
         }
         this.InsertPharamacopiea = (event)=>{
          event.preventDefault();
@@ -50,11 +50,11 @@ constructor() {
          const vol_no = this.refs.vol_no.value
          const pharmacopeia_year = this.refs.pharmacopeia_year.value
          const pharmacopeia_edition = this.refs.pharmacopeia_edition.value
-     
-         this.setState({ loading: true }, () => { 
+
+         this.setState({ loading: true }, () => {
          //add Group information
 
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}addPharmacopeia`, 
+         axios.post( `${process.env.REACT_APP_BASE_APIURL}addPharmacopeia`,
           { pharmacopeia_name:pharmacopeia_name, vol_no:vol_no, pharmacopeia_year:pharmacopeia_year,
             pharmacopeia_edition:pharmacopeia_edition} , {headers} )
 
@@ -62,27 +62,27 @@ constructor() {
                     if(response.data.success == true){
                         this.props.history.push('/pharmacopiea');
                         toastr.success(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }else{
                         this.props.history.push('/add-pharmacopiea');
                         toastr.error(response.data.message);
-                        this.setState({loading: false});  
+                        this.setState({loading: false});
                     }
                 })
                 .catch((error) => {
-                  this.setState({loading: false});  
+                  this.setState({loading: false});
                   toastr.error(error.response.data.message);
                 })
-         }) 
-         return      
+         })
+         return
       }
 
 
  this.logChange = (e) =>{
-        this.setState({[e.target.name]: e.target.value});  
+        this.setState({[e.target.name]: e.target.value});
     }
 
-    this.ResetPharmacopiea = () => { 
+    this.ResetPharmacopiea = () => {
   document.getElementById("AddPharmacopeia").reset();
 }
 
@@ -92,7 +92,7 @@ render(){
   const { data, loading } = this.state;
   return (
     <React.Fragment>
-      <HorizontalLayout/>  
+      <HorizontalLayout/>
       <div className="page-content">
         <Container fluid={true}>
         <Form onSubmit={ (e) => {
@@ -116,7 +116,7 @@ render(){
                     { loading ? <center><LoadingSpinner /></center> :<li>
                        <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Submit</i></button>
                     </li>}
-                    
+
                 </ol>
             </div>
 
@@ -129,33 +129,33 @@ render(){
                      <h5> <Alert color="success" role="alert">
                      <i className="fa fa-comment">&nbsp;Basic Info</i>
                     </Alert></h5>
-                     
+
                     <div className="mb-3 row">
                         <div className="form-group">
                             <div className="row">
                                 <div className="col-md-3">
-                                    <label>Pharmacopeia Name</label>
+                                    <label className="required-field">Pharmacopeia Name</label>
                                     <input onChange={this.logChange} ref="pharmacopeia_name" className="form-control" type="text" name="pharmacopeia_name" placeholder="Enter Pharmacopeia Name" required/>
-                                </div>  
+                                </div>
 
                                 <div className="col-md-3">
-                                    <label>Vol No</label>
+                                    <label className="required-field">Vol No</label>
                                     <input onChange={this.logChange} ref="vol_no" className="form-control" type="text" name="vol_no" placeholder="Enter Vol No" required/>
-                                </div>  
+                                </div>
 
                                 <div className="col-md-3">
-                                    <label>Year</label>
+                                    <label className="required-field">Year</label>
                                     <input onChange={this.logChange} ref="pharmacopeia_year" className="form-control" type="text" name="year" placeholder="Enter Year" required/>
-                                </div>  
+                                </div>
 
                                 <div className="col-md-3">
-                                    <label>Edition</label>
+                                    <label className="required-field">Edition</label>
                                     <input onChange={this.logChange} ref="pharmacopeia_edition" className="form-control" type="text" name="edition" placeholder="Enter Edition" required/>
-                                </div>  
+                                </div>
                             </div>
                         </div>
-                    </div>                                   
-                        
+                    </div>
+
                 </CardBody>
               </Card>
             </Col>
