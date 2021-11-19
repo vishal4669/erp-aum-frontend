@@ -24,6 +24,8 @@ import 'toastr/build/toastr.min.css'
 import axios from 'axios';
 
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
+import moment from 'moment'
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 const series1 = [{
   data: [25, 66, 41, 89, 63, 25, 44, 20, 36, 40, 54]
@@ -190,14 +192,21 @@ const analytics_style = {
   background: '#c7c3c3'
 }*/
 
-  useEffect(() => {
-    analytics_data()
-    }, []);
-
 const [analytics,setAnalytics] = useState([{id:'',test_name:'',aum_serial_no:'',booking_no:'',
 product_name:'',assigned_date:''}])
+const [approved,setApprovedData] = useState([{id:'',test_name:'',aum_serial_no:'',booking_no:'',
+product_name:'',result:'',approval_date_time:''}])
+const [dashboardCount,setdashboardCount] = useState([{PendingTests_Count:'',Analitics_count:'',ForApproval_count:'',
+Approved_count:'',Rejected_count:''}])
+const [loading, setLoading] = useState(false);
+const [loading1, setLoading1] = useState(false);
+
+useEffect(() => {
+    counter_data();
+        }, []);
 
 const analytics_data = () => {
+  {setLoading1(true)};
   axios.get(`${process.env.REACT_APP_BASE_APIURL}statusWiseTests?approved_status=Assigned`, { headers })
     .then(response => {
         const analytics_data_set = response.data.data.map((d, index) => ({
@@ -210,9 +219,46 @@ const analytics_data = () => {
 
         }))
         setAnalytics(analytics_data_set)
+        {setLoading1(false)}
       })
       .catch((error) => {
         toastr.error(error.response.data.message);
+        {setLoading1(false)}
+      })
+}
+
+const approved_data = () => {
+  {setLoading1(true)};
+  axios.get(`${process.env.REACT_APP_BASE_APIURL}statusWiseTests?approved_status=Approved`, { headers })
+    .then(response => {
+        const approved_data_set = response.data.data.map((d, index) => ({
+          "id": d.id,
+          "test_name": d.test_name,
+          "aum_serial_no": d.booking_detail.aum_serial_no,
+          "booking_no": d.booking_detail.booking_no,
+          "product_name": d.booking_samples_detail.product_detail.product_name,
+          "result" : d.result,
+          "approval_date_time" : d.approval_date_time
+        }))
+        setApprovedData(approved_data_set)
+        {setLoading1(false)}
+      })
+      .catch((error) => {
+        toastr.error(error.response.data.message);
+        {setLoading1(false)}
+      })
+}
+
+const counter_data = () => {
+//  {setLoading1(true)};
+  axios.get(`${process.env.REACT_APP_BASE_APIURL}listCounts`, { headers })
+    .then(response => {
+        setdashboardCount(response.data.data)
+      //  {setLoading1(false)}
+      })
+      .catch((error) => {
+        toastr.error(error.response.data.message);
+        //{setLoading1(false)}
       })
 }
 
@@ -221,6 +267,7 @@ function toggleCustomJustified(tab) {
   if (activeTabJustify !== tab) {
     setactiveTabJustify(tab)
   }
+
 }
 
   const reports = [
@@ -350,7 +397,7 @@ function toggleCustomJustified(tab) {
                         <span className="d-none d-sm-block">Task</span>
                       </NavLink>
                     </NavItem>
-                    <NavItem>
+                    <NavItem onClick={analytics_data}>
                       <NavLink
                         style={{ cursor: "pointer" }}
                         className={classnames({
@@ -360,7 +407,7 @@ function toggleCustomJustified(tab) {
                           toggleCustomJustified("2")
                         }}
                       >
-                        <i className="fas fa-chart-line"></i>&nbsp;<span className="badge bg-soft-dark">{analytics.length}</span>
+                        <i className="fas fa-chart-line"></i>&nbsp;<span className="badge bg-soft-dark">{dashboardCount.Analitics_count}</span>
                         <span className="d-none d-sm-block">Analytics</span>
                       </NavLink>
                     </NavItem>
@@ -374,8 +421,8 @@ function toggleCustomJustified(tab) {
                           toggleCustomJustified("3")
                         }}
                       >
-                        <i className="fa fa-thumbs-up"></i>&nbsp;<span className="badge bg-soft-dark">1</span>
-                        <span className="d-none d-sm-block">Assign</span>
+                        <i className="fa fa-thumbs-up"></i>&nbsp;<span className="badge bg-soft-dark">{dashboardCount.PendingTests_Count}</span>
+                        <span className="d-none d-sm-block">Need to Assign</span>
                       </NavLink>
                     </NavItem>
                     <NavItem>
@@ -388,13 +435,13 @@ function toggleCustomJustified(tab) {
                           toggleCustomJustified("4")
                         }}
                       >
-                        <i className="fa fa-file"></i>
-                        <span className="d-none d-sm-block">Approve</span>
+                        <i className="fa fa-file"></i>&nbsp;<span className="badge bg-soft-dark">{dashboardCount.ForApproval_count}</span>
+                        <span className="d-none d-sm-block">For Approval</span>
                       </NavLink>
                     </NavItem>
 
                     <NavItem>
-                      <NavLink
+                      <NavLink onClick={approved_data}
                         style={{ cursor: "pointer" }}
                         className={classnames({
                           active: activeTabJustify === "5",
@@ -403,7 +450,7 @@ function toggleCustomJustified(tab) {
                           toggleCustomJustified("5")
                         }}
                       >
-                        <i className="fa fa-check"></i>
+                        <i className="fa fa-check"></i>&nbsp;<span className="badge bg-soft-dark">{dashboardCount.Approved_count}</span>
                         <span className="d-none d-sm-block">Approved</span>
                       </NavLink>
                     </NavItem>
@@ -418,7 +465,7 @@ function toggleCustomJustified(tab) {
                           toggleCustomJustified("6")
                         }}
                       >
-                        <i className="fa fa-times"></i>
+                        <i className="fa fa-times"></i>&nbsp;<span className="badge bg-soft-dark">{dashboardCount.Rejected_count}</span>
                         <span className="d-none d-sm-block">Reject</span>
                       </NavLink>
                     </NavItem>
@@ -479,7 +526,7 @@ function toggleCustomJustified(tab) {
                                             </p>
                     </TabPane>
                     <TabPane tabId="2" className="p-3">
-                      <div className="table-responsive">
+                      {loading1 ? <center><LoadingSpinner /></center> : <div className="table-responsive">
                         <table className="table table-bordered table-striped mb-0 table-sm text-center">
                             <thead style={{background: 'rgb(237 236 236)', display: 'table',width: '100%',
                               	tableLayout: 'fixed'}}>
@@ -490,7 +537,7 @@ function toggleCustomJustified(tab) {
                                 <th>Booking Number</th>
                                 <th>Product Name</th>
                                 <th>Assign Date</th>
-                                <th>Result</th>
+                                <th>Add Result</th>
                               </tr>
                             </thead>
                             <tbody style={{height:'300px',overflow:'auto',display:'block'}}>
@@ -502,7 +549,7 @@ function toggleCustomJustified(tab) {
                                   <td>{analytic.aum_serial_no}</td>
                                   <td>{analytic.booking_no}</td>
                                   <td>{analytic.product_name}</td>
-                                  <td>{analytic.assigned_date}</td>
+                                  <td>{analytic.assigned_date ? moment(analytic.assigned_date).format('DD-MM-YYYY hh:mm:ss') : ''}</td>
                                   <td><Link className="btn btn-warning btn-sm" to={"/add-test-result/"+base64_encode(analytic.id)}>
                                     Add Result <i className="fa fa-share"></i></Link></td>
                                 </tr>
@@ -511,11 +558,11 @@ function toggleCustomJustified(tab) {
                           }
                             </tbody>
                         </table>
-                      </div>
+                      </div> }
                     </TabPane>
                     <TabPane tabId="3" className="p-3">
                        <p className="mb-0">
-                           <i className="fas fa-chart-bar"></i>&nbsp;&nbsp;Total Pending Assign :28 to chemist.
+                           <i className="fas fa-chart-bar"></i>&nbsp;&nbsp;Total Pending Assign :{dashboardCount.PendingTests_Count} to chemist.
                            &nbsp;&nbsp;<Link type="button" to="/assign-test" class="btn btn-primary waves-effect waves-light btn-sm">
                            Assign <i class="fa fa-share"></i></Link>
                        </p>
@@ -533,15 +580,38 @@ function toggleCustomJustified(tab) {
                                             </p>
                     </TabPane>
                     <TabPane tabId="5" className="p-3">
-                      <p className="mb-0">
-                        Trust fund seitan letterpress, keytar raw denim keffiyeh etsy
-                        art party before they sold out master cleanse gluten-free squid
-                        scenester freegan cosby sweater. Fanny pack portland seitan DIY,
-                        art party locavore wolf cliche high life echo park Austin. Cred
-                        vinyl keffiyeh DIY salvia PBR, banh mi before they sold out
-                        farm-to-table VHS viral locavore cosby sweater. Lomo wolf viral,
-                        mustache readymade keffiyeh craft.
-                                            </p>
+                    {loading1 ? <center><LoadingSpinner /></center> : <div className="table-responsive">
+                      <table className="table table-bordered table-striped mb-0 table-sm text-center">
+                          <thead style={{background: 'rgb(237 236 236)', display: 'table',width: '100%',
+                              tableLayout: 'fixed'}}>
+                            <tr>
+                              <th>SR No</th>
+                              <th>Test Name</th>
+                              <th>Aum SR. No.</th>
+                              <th>Booking Number</th>
+                              <th>Product Name</th>
+                              <th>Approval Date Time</th>
+                              <th>Result</th>
+                            </tr>
+                          </thead>
+                          <tbody style={{height:'300px',overflow:'auto',display:'block'}}>
+                          {approved.map((approve, i) => {
+                            return(
+                              <tr style={analytics_style}>
+                                <td>{i+1}</td>
+                                <td>{approve.test_name}</td>
+                                <td>{approve.aum_serial_no}</td>
+                                <td>{approve.booking_no}</td>
+                                <td>{approve.product_name}</td>
+                                <td>{approve.approval_date_time ? moment(approve.approval_date_time).format('DD-MM-YYYY hh:mm:ss') : ''}</td>
+                                <td>{approve.result}</td>
+                              </tr>
+                            )
+                          })
+                        }
+                          </tbody>
+                      </table>
+                    </div> }
                     </TabPane>
                     <TabPane tabId="6" className="p-3">
                       <p className="mb-0">

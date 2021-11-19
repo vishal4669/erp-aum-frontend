@@ -270,6 +270,7 @@ render() {
                         <div className="form-group">
                           <div className="row">
                             <div className="col-md-12">
+                            <label className="required-field">Chemist Name</label>
                             <select value={this.state.chemist_id} onChange={this.onChangeChemistId} className="form-select" name="chemist_id" required>
                              <option value="">Select Chemist</option>
                              { this.state.options.map((option, key) => <option value={option.id} key={key} >{option.first_name}</option>) }
