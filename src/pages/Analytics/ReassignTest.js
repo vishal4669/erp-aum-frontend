@@ -24,7 +24,7 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import moment from 'moment'
 
-class AssignTest extends Component {
+class ReassignTest extends Component {
   constructor(props){
     super(props);
     this.state= {
@@ -80,13 +80,14 @@ this.onChangeChemistId = (e) => {
   });
 }
 
-this.AssignTest = (e) => {
+this.ReAssignTest = (e) => {
     e.preventDefault();
   this.setState({ loading: true }, () => {
     const data = {
       chemist_name : this.state.chemist_id,
       test_id :  this.state.test_id
     }
+    console.log(data)
 
   if(this.state.test_id.length >= 1){
      axios.post(`${process.env.REACT_APP_BASE_APIURL}assignTests`, data, { headers })
@@ -116,7 +117,7 @@ this.AssignTest = (e) => {
 
 this.componentWillMount=async() => {
 this.setState({ loading1: true }, () => {
-  axios.get(`${process.env.REACT_APP_BASE_APIURL}listAssignTests`, { headers: headers})
+  axios.get(`${process.env.REACT_APP_BASE_APIURL}statusWiseTests?approved_status=Assigned`, { headers: headers})
 
     .then(response => response.data.data)
     .then(data => {
@@ -151,17 +152,17 @@ this.assemblePosts= () => {
 
             {
               srno: this.state.count,
-              test_id: <div><input type="checkbox" name="test_id" value={post.test_id} onChange={this.onAddingItem.bind(this)}/></div>,
-              aum_serial_no : post.aum_serial_no,
+              test_id: <div><input type="checkbox" name="test_id" value={post.id} onChange={this.onAddingItem.bind(this)}/></div>,
+              aum_serial_no : post.booking_detail.aum_serial_no,
               p_sr_no: post.p_sr_no,
-              receipt_date: moment(post.receipte_date).format('MM-DD-YYYY'),
-              report_type: post.report_type,
-              booking_no: post.booking_no,
-              customer_name: post.customer_name,
-              sample_name: post.sample_name,
-              pharmacopeia_name : post.pharmacopeia,
+              receipt_date: moment(post.booking_detail.receipte_date).format('MM-DD-YYYY'),
+              report_type: post.booking_detail.report_type,
+              booking_no: post.booking_detail.booking_no,
+              customer_name: post.booking_detail.customer_id.company_name,
+              sample_name: post.booking_samples_detail.product_detail.product_name,
+              pharmacopeia_name : post.booking_samples_detail.product_detail.pharmacopiea_detail.pharmacopeia_name,
               test_name : post.test_name,
-
+              chemist_name : post.chemist_detail.first_name+" "+post.chemist_detail.middle_name+" "+post.chemist_detail.last_name,
             }
 
           )
@@ -223,6 +224,10 @@ render() {
         label:'Test Name',
         field: 'test_name',
       },
+      {
+        label:'Chemist Name',
+        field: 'chemist_name',
+      },
 
     ],
     rows:this.state.tableRows,
@@ -233,7 +238,7 @@ render() {
       <div className="page-content">
         <Container fluid={true}>
           <Form onSubmit={ (e) => {
-             this.AssignTest(e) }} method="POST">
+             this.ReAssignTest(e) }} method="POST">
             <div className="page-title-box d-flex align-items-center justify-content-between">
 
               <div className="page-title">
@@ -248,7 +253,6 @@ render() {
               <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                   <li><Link to="/dashboard" className="btn btn-dark btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></Link></li>&nbsp;
-                  <li><Link to="/reassign-test" className="btn btn-primary btn-sm"><i className="fa fa-chevron-left">&nbsp;Reassign</i></Link></li>&nbsp;
                   {loading ? <center><LoadingSpinner /></center> :
                     <li>
                       <button type="submit" className="btn btn-success btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
@@ -341,4 +345,4 @@ render() {
 
 }
 
-export default AssignTest
+export default ReassignTest

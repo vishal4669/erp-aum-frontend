@@ -73,7 +73,7 @@ function TestResultAdd(props) {
                   "product_name": d.booking_samples_detail.product_detail.product_name,
                   "generic_name": d.booking_samples_detail.product_detail.generic_product_id.product_name,
                   "batch_no": d.booking_samples_detail.batch_no,
-                  "parent" : d.parent.parent_name,
+                  "parent" : d.parent !== null ? d.parent.parent_name : '',
                   "test_name" : d.test_name,
                   "min_limit" : d.min_limit,
                   "max_limit" : d.max_limit,
@@ -85,7 +85,6 @@ function TestResultAdd(props) {
                        {setLoading1(false)}
                  })
                 .catch((error) => {
-                  console.log(error)
                     toastr.error(error.response.data.message);
                     {setLoading1(false)}
                 })
@@ -142,7 +141,7 @@ function TestResultAdd(props) {
 
               <div className="page-title-right">
                 <ol className="breadcrumb m-0">
-                  <li><Link to="/dashboard" className="btn btn-primary btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></Link></li>&nbsp;
+                  <li><Link to="/analytics-test-data" className="btn btn-primary btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></Link></li>&nbsp;
                   <li><button type="reset" className="btn btn-primary btn-sm" onClick={ResetResultData}><i className="fa fa-reply">&nbsp;Reset</i></button></li>
                   &nbsp;  <li>
                       {loading ? <LoadingSpinner/> : <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>

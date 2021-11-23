@@ -77,7 +77,7 @@ function AddBooking(props) {
 
   const [testData, setTestData] = useState([{
     parent_child: 'Parent', p_sr_no: '1', by_pass: '2', parent_id: '', product_details: '',
-    test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
+    test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending'
   }])
 
   useEffect(() => {
@@ -104,7 +104,7 @@ function AddBooking(props) {
 
     setTestData([...testData, {
       parent_child: 'Parent', p_sr_no: '1', by_pass: '2', parent_id: '', product_details: '',
-      test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
+      test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending'
     }]);
 
   /*  let setdata = () => {
@@ -124,7 +124,7 @@ function AddBooking(props) {
           //setdata();
           setTestData([...testData, {
             parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
+            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending'
           }]);
 
         }
@@ -132,7 +132,7 @@ function AddBooking(props) {
           testData[i]['p_sr_no'] = '';
           setTestData([...testData, {
             parent_child: 'Parent', p_sr_no: '', by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
+            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending'
           }]);
         }
       }
@@ -142,7 +142,7 @@ function AddBooking(props) {
           //setdata();
           setTestData([...testData, {
             parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
+            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending'
           }]);
         }
       }
@@ -392,6 +392,7 @@ function AddBooking(props) {
           "min_limit": d.min_limit,
           "max_limit": d.max_limit,
           "amount": d.amount,
+          "approved":'Pending'
 
         }))
         setTestData(tests_data)
@@ -684,6 +685,7 @@ function AddBooking(props) {
         comments: booking1.comments
       }
     }
+    console.log(data)
     axios.post(`${process.env.REACT_APP_BASE_APIURL}addBooking`, data, { headers })
 
       .then(response => {

@@ -23,8 +23,9 @@ import { ToastContainer } from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import moment from 'moment'
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
-class AssignTest extends Component {
+class AnalyticsData extends Component {
   constructor(props){
     super(props);
     this.state= {
@@ -80,13 +81,14 @@ this.onChangeChemistId = (e) => {
   });
 }
 
-this.AssignTest = (e) => {
+this.ReAssignTest = (e) => {
     e.preventDefault();
   this.setState({ loading: true }, () => {
     const data = {
       chemist_name : this.state.chemist_id,
       test_id :  this.state.test_id
     }
+    console.log(data)
 
   if(this.state.test_id.length >= 1){
      axios.post(`${process.env.REACT_APP_BASE_APIURL}assignTests`, data, { headers })
@@ -116,7 +118,7 @@ this.AssignTest = (e) => {
 
 this.componentWillMount=async() => {
 this.setState({ loading1: true }, () => {
-  axios.get(`${process.env.REACT_APP_BASE_APIURL}listAssignTests`, { headers: headers})
+  axios.get(`${process.env.REACT_APP_BASE_APIURL}statusWiseTests?approved_status=Assigned`, { headers: headers})
 
     .then(response => response.data.data)
     .then(data => {
@@ -151,17 +153,19 @@ this.assemblePosts= () => {
 
             {
               srno: this.state.count,
-              test_id: <div><input type="checkbox" name="test_id" value={post.test_id} onChange={this.onAddingItem.bind(this)}/></div>,
-              aum_serial_no : post.aum_serial_no,
+              aum_serial_no : post.booking_detail.aum_serial_no,
               p_sr_no: post.p_sr_no,
-              receipt_date: moment(post.receipte_date).format('MM-DD-YYYY'),
-              report_type: post.report_type,
-              booking_no: post.booking_no,
-              customer_name: post.customer_name,
-              sample_name: post.sample_name,
-              pharmacopeia_name : post.pharmacopeia,
+              receipt_date: moment(post.booking_detail.receipte_date).format('MM-DD-YYYY'),
+              report_type: post.booking_detail.report_type,
+              booking_no: post.booking_detail.booking_no,
+              customer_name: post.booking_detail.customer_id.company_name,
+              sample_name: post.booking_samples_detail.product_detail.product_name,
+              pharmacopeia_name : post.booking_samples_detail.product_detail.pharmacopiea_detail.pharmacopeia_name,
               test_name : post.test_name,
-
+              chemist_name : post.chemist_detail.first_name+" "+post.chemist_detail.middle_name+" "+post.chemist_detail.last_name,
+              assigned_date: post.assigned_date,
+              add_result:<div><Link className="btn btn-warning btn-sm" to={"/add-test-result/"+base64_encode(post.id)} style={{width:"100px"}}>
+                Add Result <i className="fa fa-share"></i></Link></div>
             }
 
           )
@@ -182,10 +186,6 @@ render() {
       {
         label:'SR No',
         field:'srno',
-      },
-      {
-        label:'',
-        field:'test_id',
       },
       {
         label:'Aum Sr. No.',
@@ -223,6 +223,18 @@ render() {
         label:'Test Name',
         field: 'test_name',
       },
+      {
+        label:'Chemist Name',
+        field: 'chemist_name',
+      },
+      {
+        label:'Assigned Date',
+        field: 'assigned_date',
+      },
+      {
+        label:'Add Result',
+        field: 'add_result',
+      },
 
     ],
     rows:this.state.tableRows,
@@ -233,7 +245,7 @@ render() {
       <div className="page-content">
         <Container fluid={true}>
           <Form onSubmit={ (e) => {
-             this.AssignTest(e) }} method="POST">
+             this.ReAssignTest(e) }} method="POST">
             <div className="page-title-box d-flex align-items-center justify-content-between">
 
               <div className="page-title">
@@ -241,19 +253,13 @@ render() {
                   <li className="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
                   <li className="breadcrumb-item">Analytics</li>
                   <li className="breadcrumb-item"><a href="/booking">Booking</a></li>
-                  <li className="breadcrumb-item active">Assign Tests</li>
+                  <li className="breadcrumb-item active">Analytics Data</li>
                 </ol>
               </div>
 
               <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                   <li><Link to="/dashboard" className="btn btn-dark btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></Link></li>&nbsp;
-                  <li><Link to="/reassign-test" className="btn btn-primary btn-sm"><i className="fa fa-chevron-left">&nbsp;Reassign</i></Link></li>&nbsp;
-                  {loading ? <center><LoadingSpinner /></center> :
-                    <li>
-                      <button type="submit" className="btn btn-success btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
-                    </li>
-                  }
                 </ol>
               </div>
 
@@ -263,70 +269,7 @@ render() {
               <Col>
                 <Card>
                   <CardBody>
-                    <h5> <Alert color="success" role="alert">
-                      <i className="fa fa-comment">&nbsp;Basic Info</i>
-                      </Alert>
-                    </h5>
-                    <div className="mb-3 row">
-                        <div className="form-group">
-                          <div className="row">
-                            <div className="col-md-12">
-                            <label className="required-field">Chemist Name</label>
-                            <select value={this.state.chemist_id} onChange={this.onChangeChemistId} className="form-select" name="chemist_id" required>
-                             <option value="">Select Chemist</option>
-                             { this.state.options.map((option, key) => <option value={option.id} key={key} >{option.first_name}</option>) }
-                             </select>
-                            </div>
-                          </div>
-                        </div>
-                    </div>
-                    {/*<table className="table table-bordered table-striped dataTable text-center">
-                       <thead>
-                         <tr>
-                           <th scope="col">SR No</th>
-                           <th scope="col"></th>
-                           <th scope="col">Aum Sr. No.</th>
-                           <th scope="col">P Sr. No.</th>
-                           <th scope="col">Receipt Date</th>
-                           <th scope="col">Report Type</th>
-                           <th scope="col">Booking No</th>
-                           <th scope="col">Customer Name</th>
-                           <th scope="col">Sample Name</th>
-                           <th scope="col">Pharmacopeia</th>
-                           <th scope="col">Test Name</th>
-                         </tr>
-                       </thead>
-                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td><input type="checkbox" name="test_id"/></td>
-                          <td>48433</td>
-                          <td>2.1</td>
-                          <td>11/11/2021</td>
-                          <td>FP</td>
-                          <td>ARL/COA/FP/211111/046</td>
-                          <td>Alicon Pharmaceutical Pvt Ltd</td>
-                          <td>Acistat Liquid</td>
-                          <td>IHS</td>
-                          <td>Deglycyrrhizinated Liquorice (Eq to liquorice IP)</td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td><input type="checkbox" name="test_id"/></td>
-                          <td>48433</td>
-                          <td>3</td>
-                          <td>11/11/2021</td>
-                          <td>FP</td>
-                          <td>ARL/COA/FP/211111/046</td>
-                          <td>Alicon Pharmaceutical Pvt Ltd</td>
-                          <td>Acistat Liquid</td>
-                          <td>IHS</td>
-                          <td>Deglycyrrhizinated Liquorice (Eq to liquorice IP)</td>
-                        </tr>
-                       </tbody>
-                    </table>*/}
-                    <MDBDataTable striped responsive bordered data={data1} style={{textAlign:'center'}} paging={false}  small/>
-
+                    <MDBDataTable striped responsive bordered data={data1} style={{textAlign:'center'}} small/>
                   </CardBody>
                 </Card>
               </Col>
@@ -341,4 +284,4 @@ render() {
 
 }
 
-export default AssignTest
+export default AnalyticsData

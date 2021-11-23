@@ -24,7 +24,7 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import moment from 'moment'
 
-class AssignTest extends Component {
+class ForApprovalTest extends Component {
   constructor(props){
     super(props);
     this.state= {
@@ -35,28 +35,13 @@ class AssignTest extends Component {
       count :0,
       options : [],
       test_id: [],
-      chemist_id : '',
+      approved : "Approved",
     }
     //this.handlePageChange = this.handlePageChange.bind(this);
      const headers = {
     'Content-Type': 'application/json',
     'Authorization' : 'Bearer '+localStorage.getItem('token')
     };
-
-this.componentDidMount = () => {
-  this.setState({ loading1: true }, () => {
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}listEmployee?is_chemist=1`, { headers })
-      .then(response => {
-        this.setState({options: response.data.data})
-        this.setState({loading1: false});
-        //  { setLoading1(false) }
-        })
-        .catch((error) => {
-          toastr.error(error.response.data.message);
-          this.setState({loading1: false});
-        })
-  })
-}
 
 this.onAddingItem = (e) => {
   const test_id = this.state.test_id
@@ -73,23 +58,27 @@ this.onAddingItem = (e) => {
 
     // update the state with the new array of options
     this.setState({ test_id: test_id })
+    console.log(this.state.test_id)
 }
-this.onChangeChemistId = (e) => {
+
+this.onChangeapproved = (e) => {
   this.setState({
-      chemist_id: e.target.value
+      approved: e.target.value
   });
 }
 
-this.AssignTest = (e) => {
+this.ApproveTest = (e) => {
     e.preventDefault();
   this.setState({ loading: true }, () => {
     const data = {
-      chemist_name : this.state.chemist_id,
+      approved : this.state.approved,
       test_id :  this.state.test_id
     }
 
+    console.log(data)
+
   if(this.state.test_id.length >= 1){
-     axios.post(`${process.env.REACT_APP_BASE_APIURL}assignTests`, data, { headers })
+     axios.post(`${process.env.REACT_APP_BASE_APIURL}TestApproveReject`, data, { headers })
 
        .then(response => {
          if (response.data && response.data.success == true) {
@@ -97,7 +86,7 @@ this.AssignTest = (e) => {
            toastr.success(response.data.message);
            this.setState({loading: false});
          } else {
-           props.history.push('/assign-test');
+           props.history.push('/for-approval-test-result');
            toastr.error(response.data.message);
            this.setState({loading: false});
          }
@@ -107,7 +96,7 @@ this.AssignTest = (e) => {
          this.setState({loading: false});
        })
    } else {
-     toastr.error("Please Select Any One Test To Assign the Test");
+     toastr.error("Please Select Any One Test To Approve OR Reject the Test");
      this.setState({loading: false});
    }
 
@@ -116,7 +105,7 @@ this.AssignTest = (e) => {
 
 this.componentWillMount=async() => {
 this.setState({ loading1: true }, () => {
-  axios.get(`${process.env.REACT_APP_BASE_APIURL}listAssignTests`, { headers: headers})
+  axios.get(`${process.env.REACT_APP_BASE_APIURL}statusWiseTests?approved_status=ForApproval`, { headers: headers})
 
     .then(response => response.data.data)
     .then(data => {
@@ -151,17 +140,24 @@ this.assemblePosts= () => {
 
             {
               srno: this.state.count,
-              test_id: <div><input type="checkbox" name="test_id" value={post.test_id} onChange={this.onAddingItem.bind(this)}/></div>,
-              aum_serial_no : post.aum_serial_no,
+              test_id: <div><input type="checkbox" name="test_id" value={post.id} onChange={this.onAddingItem.bind(this)}/></div>,
+              aum_serial_no : post.booking_detail.aum_serial_no,
               p_sr_no: post.p_sr_no,
-              receipt_date: moment(post.receipte_date).format('MM-DD-YYYY'),
-              report_type: post.report_type,
-              booking_no: post.booking_no,
-              customer_name: post.customer_name,
-              sample_name: post.sample_name,
-              pharmacopeia_name : post.pharmacopeia,
+              receipte_date: moment(post.booking_detail.receipte_date).format('MM-DD-YYYY'),
+              report_type: post.booking_detail.report_type,
+              booking_no: post.booking_detail.booking_no,
+              customer_name: post.booking_detail.customer_id.company_name,
+              sample_name: post.booking_samples_detail.product_detail.product_name,
+              pharmacopeia_name : post.booking_samples_detail.product_detail.pharmacopiea_detail.pharmacopeia_name,
               test_name : post.test_name,
-
+              batch_no : post.booking_samples_detail.batch_no,
+              chemist_name : post.chemist_detail.first_name+" "+post.chemist_detail.middle_name+" "+post.chemist_detail.last_name,
+              label_claim : post.label_claim,
+              result : post.result,
+              unit : post.unit_detail.unit_name,
+              method:post.method,
+              min_limit : post.min_limit,
+              max_limit: post.max_limit
             }
 
           )
@@ -197,7 +193,7 @@ render() {
       },
       {
         label:'Receipt Date',
-        field:'receipt_date',
+        field:'receipte_date',
       },
       {
         label:'Report Type',
@@ -223,6 +219,44 @@ render() {
         label:'Test Name',
         field: 'test_name',
       },
+      {
+        label:'Batch No',
+        field: 'batch_no',
+      },
+
+      {
+        label:'Chemist Name',
+        field: 'chemist_name',
+      },
+
+      {
+        label:'Label Claim',
+        field: 'label_claim',
+      },
+
+      {
+        label:'Result',
+        field: 'result',
+      },
+
+      {
+        label:'Unit',
+        field: 'unit',
+      },
+
+      {
+        label:'Method',
+        field: 'method',
+      },
+
+      {
+        label:'Min Limit',
+        field: 'min_limit',
+      },
+      {
+        label:'Max Limit',
+        field: 'max_limit',
+      },
 
     ],
     rows:this.state.tableRows,
@@ -233,7 +267,7 @@ render() {
       <div className="page-content">
         <Container fluid={true}>
           <Form onSubmit={ (e) => {
-             this.AssignTest(e) }} method="POST">
+             this.ApproveTest(e) }} method="POST">
             <div className="page-title-box d-flex align-items-center justify-content-between">
 
               <div className="page-title">
@@ -241,14 +275,13 @@ render() {
                   <li className="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
                   <li className="breadcrumb-item">Analytics</li>
                   <li className="breadcrumb-item"><a href="/booking">Booking</a></li>
-                  <li className="breadcrumb-item active">Assign Tests</li>
+                  <li className="breadcrumb-item active">For Approval Tests</li>
                 </ol>
               </div>
 
               <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                   <li><Link to="/dashboard" className="btn btn-dark btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></Link></li>&nbsp;
-                  <li><Link to="/reassign-test" className="btn btn-primary btn-sm"><i className="fa fa-chevron-left">&nbsp;Reassign</i></Link></li>&nbsp;
                   {loading ? <center><LoadingSpinner /></center> :
                     <li>
                       <button type="submit" className="btn btn-success btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
@@ -271,11 +304,11 @@ render() {
                         <div className="form-group">
                           <div className="row">
                             <div className="col-md-12">
-                            <label className="required-field">Chemist Name</label>
-                            <select value={this.state.chemist_id} onChange={this.onChangeChemistId} className="form-select" name="chemist_id" required>
-                             <option value="">Select Chemist</option>
-                             { this.state.options.map((option, key) => <option value={option.id} key={key} >{option.first_name}</option>) }
-                             </select>
+                            <label className="required-field">Select Status</label>
+                            <select className="form-select" name="approved" value={this.state.approved} onChange={this.onChangeapproved} required>
+                              <option value="Approved">Approved</option>
+                              <option value="Rejected">Rejected</option>
+                            </select>
                             </div>
                           </div>
                         </div>
@@ -325,7 +358,7 @@ render() {
                         </tr>
                        </tbody>
                     </table>*/}
-                    <MDBDataTable striped responsive bordered data={data1} style={{textAlign:'center'}} paging={false}  small/>
+                    <MDBDataTable striped responsive bordered data={data1} style={{textAlign:'center'}} paging={false} small/>
 
                   </CardBody>
                 </Card>
@@ -341,4 +374,4 @@ render() {
 
 }
 
-export default AssignTest
+export default ForApprovalTest

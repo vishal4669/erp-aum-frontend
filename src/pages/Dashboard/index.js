@@ -22,8 +22,6 @@ import { ToastContainer } from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import axios from 'axios';
-
-import {decode as base64_decode, encode as base64_encode} from 'base-64';
 import moment from 'moment'
 import LoadingSpinner from '../../components/LoadingSpinner';
 import PropTypes from 'prop-types';
@@ -193,179 +191,28 @@ const analytics_style = {
   background: '#c7c3c3'
 }*/
 
-const [analytics,setAnalytics] = useState([{id:'',test_name:'',aum_serial_no:'',booking_no:'',
-product_name:'',assigned_date:'',chemist_name:''}])
-const [approved,setApprovedData] = useState([{id:'',test_name:'',aum_serial_no:'',booking_no:'',
-product_name:'',result:'',approval_date_time:''}])
-const [approval,setApproval] = useState([{test_id:'',aum_serial_no:'',p_sr_no:'',receipte_date:'',report_type:'',booking_no:'',
-customer_name:'',sample_name:'',pharmacopeia_name:'',test_name:'',batch_no:'',first_name:'',middle_name:'',last_name:'',label_claim:'',result:'',unit:'',method:'',
-min_limit:'',max_limit:'',approved:"Approved"}])
 const [dashboardCount,setdashboardCount] = useState([{PendingTests_Count:'',Analitics_count:'',ForApproval_count:'',
 Approved_count:'',Rejected_count:''}])
 const [loading, setLoading] = useState(false);
 const [loading1, setLoading1] = useState(false);
-const [checkedItems, setCheckedItems] = useState([{}]); //plain object as state
 
 useEffect(() => {
     counter_data();
         }, []);
 
-const analytics_data = () => {
-  {setLoading1(true)};
-  axios.get(`${process.env.REACT_APP_BASE_APIURL}statusWiseTests?approved_status=Assigned`, { headers })
-    .then(response => {
-        const analytics_data_set = response.data.data.map((d, index) => ({
-          "id": d.id,
-          "test_name": d.test_name,
-          "aum_serial_no": d.booking_detail.aum_serial_no,
-          "booking_no": d.booking_detail.booking_no,
-          "product_name": d.booking_samples_detail.product_detail.product_name,
-          "assigned_date": d.assigned_date
-
-        }))
-        setAnalytics(analytics_data_set)
-        {setLoading1(false)}
-      })
-      .catch((error) => {
-        toastr.error(error.response.data.message);
-        {setLoading1(false)}
-      })
-}
-
-const approved_data = () => {
-  {setLoading1(true)};
-  console.log("here")
-  axios.get(`${process.env.REACT_APP_BASE_APIURL}statusWiseTests?approved_status=Approved`, { headers })
-    .then(response => {
-        const approved_data_set = response.data.data.map((d, index) => ({
-          "id": d.id,
-          "test_name": d.test_name,
-          "aum_serial_no": d.booking_detail.aum_serial_no,
-          "booking_no": d.booking_detail.booking_no,
-          "product_name": d.booking_samples_detail.product_detail.product_name,
-          "result" : d.result,
-          "approval_date_time" : d.approval_date_time
-        }))
-        setApprovedData(approved_data_set)
-        {setLoading1(false)}
-      })
-      .catch((error) => {
-        toastr.error(error.response.data.message);
-        {setLoading1(false)}
-      })
-}
-
-const approval_data = () => {
-  {setLoading1(true)};
-  axios.get(`${process.env.REACT_APP_BASE_APIURL}statusWiseTests?approved_status=ForApproval`, { headers })
-    .then(response => {
-        const approval_data_set = response.data.data.map((d, index) => ({
-          "test_id": d.id,
-          "aum_serial_no" : d.booking_detail.aum_serial_no,
-          "p_sr_no": d.p_sr_no,
-          "receipte_date": moment(d.booking_detail.receipte_date).format('MM-DD-YYYY'),
-          "report_type": d.booking_detail.report_type,
-          "booking_no": d.booking_detail.booking_no,
-          "customer_name": d.booking_detail.customer_id.company_name,
-          "sample_name": d.booking_samples_detail.product_detail.product_name,
-          "pharmacopeia_name" : d.booking_samples_detail.product_detail.pharmacopiea_detail.pharmacopeia_name,
-          "test_name" : d.test_name,
-          "batch_no" : d.booking_samples_detail.batch_no,
-          "first_name" : d.chemist_detail.first_name,
-          "middle_name" : d.chemist_detail.middle_name,
-          "last_name" : d.chemist_detail.last_name,
-          "label_claim" : d.label_claim,
-          "result" : d.result,
-          "unit" : d.unit,
-          "method":d.method,
-          "min_limit" : d.min_limit,
-          "max_limit" : d.max_limit,
-        }))
-
-        setApproval(approval_data_set)
-        {setLoading1(false)}
-      })
-      .catch((error) => {
-        console.log(error)
-        toastr.error(error.response.data.message);
-        {setLoading1(false)}
-      })
-}
-
-const onAddingItem = (e) => {
-  const test_id = checkedItems
-    let index
-    // check if the check box is checked or unchecked
-    if (e.target.checked) {
-      // add the numerical value of the checkbox to options array
-      test_id.push(+e.target.value)
-      /*if(checkedItems.length == 1){
-              //setCheckedItems([checkedItems,+e.target.value])
-      } else {
-              console.log("2")
-              setCheckedItems(checkedItems => [...checkedItems, +e.target.value])
-      }*/
-      //setCheckedItems([...checkedItems,{ checkedItems: e.target.value} ]);
-      //setCheckedItems({ ...checkedItems, [e.target.name]: e.target.value });
-
-    } else {
-      // or remove the value from the unchecked checkbox from the array
-      index = test_id.indexOf(+e.target.value)
-      test_id.splice(index, 1)
-      //setCheckedItems({ checkedItems: test_id })
-
-    }
-
-    // update the state with the new array of options
-    setCheckedItems(checkedItems => [...checkedItems, test_id])
-    console.log(checkedItems)
-}
-
 const counter_data = () => {
-//  {setLoading1(true)};
+ {setLoading1(true)};
   axios.get(`${process.env.REACT_APP_BASE_APIURL}listCounts`, { headers })
     .then(response => {
         setdashboardCount(response.data.data)
-      //  {setLoading1(false)}
+      {setLoading1(false)}
       })
       .catch((error) => {
         toastr.error(error.response.data.message);
-        //{setLoading1(false)}
+        {setLoading1(false)}
       })
 }
 
-const forapprovalTest = (e) => {
-    e.preventDefault();
-  {setLoading1(true)};
-    const data = {
-      approved : approval.approved,
-      test_id :  checkedItems
-    }
-    console.log(data)
-    return
-
-  if(approval.test_id.length >= 1){
-     axios.post(`${process.env.REACT_APP_BASE_APIURL}TestApproveReject`, data, { headers })
-
-       .then(response => {
-         if (response.data && response.data.success == true) {
-           props.history.push('dashboard');
-           toastr.success(response.data.message);
-             {setLoading1(false)};
-         } else {
-           props.history.push('/dashboard');
-           toastr.error(response.data.message);
-           {setLoading1(false)};
-         }
-       })
-       .catch((error) => {
-         toastr.error(error.response.data.message);
-         {setLoading1(false)};
-       })
-   } else {
-     toastr.error("Please Select Any One Test To Approve OR Reject the Test");
-   }
-}
 
 const [activeTabJustify, setactiveTabJustify] = useState("1")
 function toggleCustomJustified(tab) {
@@ -484,6 +331,7 @@ function toggleCustomJustified(tab) {
             <Row>
               <Col xl={12}>
               <Card>
+              { loading1 ? <center><LoadingSpinner /><br/></center> :
                 <CardBody>
                   <CardTitle className="h4">Quick Access Tabs</CardTitle>
 
@@ -502,7 +350,7 @@ function toggleCustomJustified(tab) {
                         <span className="d-none d-sm-block">Task</span>
                       </NavLink>
                     </NavItem>
-                    <NavItem onClick={analytics_data}>
+                    <NavItem>
                       <NavLink
                         style={{ cursor: "pointer" }}
                         className={classnames({
@@ -530,7 +378,7 @@ function toggleCustomJustified(tab) {
                         <span className="d-none d-sm-block">Need to Assign</span>
                       </NavLink>
                     </NavItem>
-                    <NavItem onClick = {approval_data}>
+                    <NavItem>
                       <NavLink
                         style={{ cursor: "pointer" }}
                         className={classnames({
@@ -545,7 +393,7 @@ function toggleCustomJustified(tab) {
                       </NavLink>
                     </NavItem>
 
-                    <NavItem onClick={approved_data}>
+                    <NavItem>
                       <NavLink
                         style={{ cursor: "pointer" }}
                         className={classnames({
@@ -631,170 +479,31 @@ function toggleCustomJustified(tab) {
                                             </p>
                     </TabPane>
                     <TabPane tabId="2" className="p-3">
-                      {dashboardCount.Analitics_count == 0 ? <h6 className="text-center">No Matching Records Found</h6>: loading1 ? <center><LoadingSpinner /></center> : <div className="table-responsive">
-                        <table className="table table-bordered table-striped mb-0 table-sm text-center">
-                            <thead style={{background: 'rgb(237 236 236)', display: 'table',width: '100%',
-                              	tableLayout: 'fixed'}}>
-                              <tr>
-                                <th>SR No</th>
-                                <th>Test Name</th>
-                                <th>Aum SR. No.</th>
-                                <th>Booking Number</th>
-                                <th>Product Name</th>
-                                <th>Assign Date</th>
-                                <th>Add Result</th>
-                              </tr>
-                            </thead>
-                            <tbody style={{height:'300px',overflow:'auto',display:'block'}}>
-                            {analytics.map((analytic, i) => {
-                              return(
-                                <tr style={analytics_style}>
-                                  <td>{i+1}</td>
-                                  <td>{analytic.test_name}</td>
-                                  <td>{analytic.aum_serial_no}</td>
-                                  <td>{analytic.booking_no}</td>
-                                  <td>{analytic.product_name}</td>
-                                  <td>{analytic.assigned_date ? moment(analytic.assigned_date).format('DD-MM-YYYY hh:mm:ss') : ''}</td>
-                                  <td><Link className="btn btn-warning btn-sm" to={"/add-test-result/"+base64_encode(analytic.id)}>
-                                    Add Result <i className="fa fa-share"></i></Link></td>
-                                </tr>
-                              )
-                            })
-                          }
-                            </tbody>
-                        </table>
-                      </div> }
+                    <i className="fas fa-chart-bar"></i>&nbsp;&nbsp;Total Assinged Test For Analytics To Chemist Count is <span className="badge bg-soft-primary" style={{fontSize:"100%"}}>{dashboardCount.Analitics_count}</span> . Click on Add Result Button to Add the result for the test.
+                    &nbsp;&nbsp;<Link type="button" to="/analytics-test-data" class="btn btn-warning waves-effect waves-light btn-sm">
+                    Add Result <i class="fa fa-share"></i></Link>
                     </TabPane>
                     <TabPane tabId="3" className="p-3">
-                       <p className="mb-0">
-                           <i className="fas fa-chart-bar"></i>&nbsp;&nbsp;Total Pending Assign :{dashboardCount.PendingTests_Count} to chemist.
-                           &nbsp;&nbsp;<Link type="button" to="/assign-test" class="btn btn-primary waves-effect waves-light btn-sm">
-                           Assign <i class="fa fa-share"></i></Link>
-                       </p>
+                      <i className="fas fa-chart-bar"></i>&nbsp;&nbsp;Total Pending Assign : <span className="badge bg-soft-primary" style={{fontSize:"100%"}}>{dashboardCount.PendingTests_Count}</span> to chemist.
+                      &nbsp;&nbsp;<Link type="button" to="/assign-test" class="btn btn-primary waves-effect waves-light btn-sm">
+                      Assign <i class="fa fa-share"></i></Link>
                     </TabPane>
 
                     <TabPane tabId="4" className="p-3">
-                      {dashboardCount.ForApproval_count == 0 ? <h6 className="text-center">No Matching Records Found</h6>: loading1 ? <center><LoadingSpinner /></center> :
-                      <div className="table-responsive">
-                          <Form onSubmit={ (e) => { forapprovalTest(e) }} method="POST">
+                    <i className="fas fa-chart-bar"></i>&nbsp;&nbsp;Total Pending For Approval Test is <span className="badge bg-soft-info" style={{fontSize:"100%"}}>{dashboardCount.ForApproval_count}</span> .
+                    To Approve OR Reject Test Result Click on For Approval Button to Approve/Reject Data. &nbsp;&nbsp; <Link type="button" to="/for-approval-test-result" class="btn btn-info waves-effect waves-light btn-sm">
+                    For Approval <i class="fa fa-share"></i></Link>
 
-                          <div className="page-title-box d-flex align-items-center justify-content-between">
-                            <div className="page-title">
-                              <select className="form-select" name="approved">
-                                <option value="Approved">Approved</option>
-                                <option value="Reject">Reject</option>
-                              </select>
-                            </div>
-                            <div className="page-title-right">
-                              <ol className="breadcrumb m-0">
-                                {loading ? <center><LoadingSpinner /></center> :
-                                  <li>
-                                    <button type="submit" className="btn btn-success btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
-                                  </li>
-                                }
-                              </ol>
-                            </div>
-                          </div>
-                          <table className="table table-bordered table-striped mb-0 table-sm text-center">
-                              <thead style={{background: 'rgb(237 236 236)', display: 'table',width: '100%',
-                                  tableLayout: 'fixed'}}>
-                                <tr>
-                                  <th>SR No</th>
-                                  <th></th>
-                                  <th>Aum SR. No.</th>
-                                  <th>P. SR. No.</th>
-                                  <th>Receipt Date</th>
-                                  <th>Report Type</th>
-                                  <th>Booking Number</th>
-                                  <th>Customer Name</th>
-                                  <th>Sample Name</th>
-                                  <th>Pharmacopeia</th>
-                                  <th>Test Name</th>
-                                  <th>Batch No</th>
-                                  <th>Chemist Name</th>
-                                  <th>Label Claim</th>
-                                  <th>Result</th>
-                                  <th>Unit</th>
-                                  <th>Method</th>
-                                  <th>Limit</th>
-                                </tr>
-                              </thead>
-                              <tbody style={{height:'300px',overflow:'auto',display:'block'}}>
-                              {approval.map((appe, i) => {
-                                return(
-                                  <tr style={analytics_style}>
-                                    <td>{i+1}</td>
-                                    <td><input type="checkbox" name="test_id" value={appe.test_id} onChange={onAddingItem.bind(this)}/></td>
-                                    <td>{appe.aum_serial_no}</td>
-                                    <td>{appe.p_sr_no}</td>
-                                    <td>{appe.receipte_date}</td>
-                                    <td>{appe.report_type}</td>
-                                    <td>{appe.booking_no}</td>
-                                    <td>{appe.customer_name}</td>
-                                    <td>{appe.sample_name}</td>
-                                    <td>{appe.pharmacopeia_name}</td>
-                                    <td>{appe.test_name}</td>
-                                    <td>{appe.batch_no}</td>
-                                    <td>{appe.first_name}<br/>{appe.middle_name}<br/>{appe.last_name}</td>
-                                    <td>{appe.label_claim}</td>
-                                    <td>{appe.result}</td>
-                                    <td>{appe.unit}</td>
-                                    <td>{appe.method}</td>
-                                    <td>{appe.min_limit}<br/>{appe.max_limit}</td>
-                                  </tr>
-                                )
-                              })
-                            }
-                              </tbody>
-                          </table>
-
-                        </Form>
-                     </div>   }
                     </TabPane>
                     <TabPane tabId="5" className="p-3">
-                    {dashboardCount.Approved_count == 0 ? <h6 className="text-center">No Matching Records Found</h6>: loading1 ? <center><LoadingSpinner /></center> : <div className="table-responsive">
-                      <table className="table table-bordered table-striped mb-0 table-sm text-center">
-                          <thead style={{background: 'rgb(237 236 236)', display: 'table',width: '100%',
-                              tableLayout: 'fixed'}}>
-                            <tr>
-                              <th>SR No</th>
-                              <th>Test Name</th>
-                              <th>Aum SR. No.</th>
-                              <th>Booking Number</th>
-                              <th>Product Name</th>
-                              <th>Approval Date Time</th>
-                              <th>Result</th>
-                            </tr>
-                          </thead>
-                          <tbody style={{height:'300px',overflow:'auto',display:'block'}}>
-                          {approved.map((approve, i) => {
-                            return(
-                              <tr style={analytics_style}>
-                                <td>{i+1}</td>
-                                <td>{approve.test_name}</td>
-                                <td>{approve.aum_serial_no}</td>
-                                <td>{approve.booking_no}</td>
-                                <td>{approve.product_name}</td>
-                                <td>{approve.approval_date_time ? moment(approve.approval_date_time).format('DD-MM-YYYY hh:mm:ss') : ''}</td>
-                                <td>{approve.result}</td>
-                              </tr>
-                            )
-                          })
-                        }
-                          </tbody>
-                      </table>
-                    </div> }
+                    <i className="fas fa-chart-bar"></i>&nbsp;&nbsp;Total Approved Test Count is <span className="badge bg-soft-success" style={{fontSize:"100%"}}>{dashboardCount.Approved_count}</span> . For More Details to See Approved Data Click on View Button to View Data.
+                    &nbsp;&nbsp;<Link type="button" to="/view-approved-data-list" class="btn btn-success waves-effect waves-light btn-sm">
+                    View Approved Data List <i class="fa fa-share"></i></Link>
                     </TabPane>
                     <TabPane tabId="6" className="p-3">
-                      <p className="mb-0">
-                        Trust fund seitan letterpress, keytar raw denim keffiyeh etsy
-                        art party before they sold out master cleanse gluten-free squid
-                        scenester freegan cosby sweater. Fanny pack portland seitan DIY,
-                        art party locavore wolf cliche high life echo park Austin. Cred
-                        vinyl keffiyeh DIY salvia PBR, banh mi before they sold out
-                        farm-to-table VHS viral locavore cosby sweater. Lomo wolf viral,
-                        mustache readymade keffiyeh craft.
-                                            </p>
+                    <i className="fas fa-chart-bar"></i>&nbsp;&nbsp;Total Rejected Test Count is <span className="badge bg-soft-danger" style={{fontSize:"100%"}}>{dashboardCount.Rejected_count}</span> . For More Details to See Rejected Data Click on View Button to View Data.
+                    &nbsp;&nbsp;<Link type="button" to="/view-rejected-data-list" class="btn btn-danger waves-effect waves-light btn-sm">
+                    View Rejected Data List <i class="fa fa-share"></i></Link>
                     </TabPane>
                     <TabPane tabId="7" className="p-3">
                       <p className="mb-0">
@@ -831,15 +540,16 @@ function toggleCustomJustified(tab) {
                     </TabPane>
                   </TabContent>
                 </CardBody>
+              }
               </Card>
               </Col>
             </Row>
 
-          <Row>
+          {/*<Row>
             <Col xl={12}>
               <SalesAnalyticsChart />
             </Col>
-          </Row>
+          </Row>*/}
 
         </Container>
       </div>

@@ -55,6 +55,7 @@ function EditBooking(props) {
   const [data4, setData4] = useState([]);
   const [data5, setData5] = useState([]);
   const [chemist, setChemist] = useState([]);
+  const [unitList, setUnitData] = useState([]);
 
   var date1 = new Date(Date.UTC(2012, 11, 12, 3, 0, 0));
   var dateString1 = date1.toLocaleTimeString();
@@ -94,6 +95,7 @@ function EditBooking(props) {
     fetchPharamcopiea();
     fetchparentList();
     GetBookingData();
+    UnitList();
     // chemist_data();
   }, []);
 
@@ -549,6 +551,7 @@ function EditBooking(props) {
           "min_limit": d.min_limit,
           "max_limit": d.max_limit,
           "amount": d.amount,
+          "approved": "Pending"
 
         }))
         setTestData(tests_data)
@@ -563,6 +566,20 @@ function EditBooking(props) {
         console.log(error)
         toastr.error(error.response.data.message);
       })
+  }
+
+  const UnitList = ()=>{
+
+      {setLoading1(true)};
+            axios.get(`${process.env.REACT_APP_BASE_APIURL}listUnit?is_dropdown=1`,{headers})
+              .then(response => {
+                       setUnitData(response.data.data);
+                       {setLoading1(false)}
+                 })
+                .catch((error) => {
+                    toastr.error(error.response.data.message);
+                    {setLoading1(false)}
+                })
   }
 
   /*  const fetchCustomerData = () => {
@@ -823,6 +840,7 @@ function EditBooking(props) {
       }
     }
 
+    console.log(data)
 
     axios.post(`${process.env.REACT_APP_BASE_APIURL}editBooking/` + booking_id, data, { headers })
 
@@ -1569,7 +1587,14 @@ function EditBooking(props) {
                                       <td><input value={x.mean} type="text" name="mean" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       <td><input value={x.na_content} type="text" name="na_content" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       <td><input value={x.final_na_content} type="text" name="final_na_content" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      <td><input value={x.unit} type="text" name="unit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                      <td>
+                                      {loading1 ? <LoadingSpinner /> : <select className="form-select" name="unit" value={x.unit} onChange={e => handleInputChange(e, i)}>
+                                            <option value="">Select Unit</option>
+                                           { unitList.map((option, key) => <option value={option.id} key={key} >{option.unit_name}</option>) }
+
+                                        </select>}
+                                      {/*<input value={} type="text" name="unit" onChange={e => handleInputChange(e, i)} className="form-control" />*/}
+                                      </td>
                                       <td><input value={x.expanded_uncertanity} type="text" name="expanded_uncertanity" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       {//end
                                       }
@@ -1604,7 +1629,8 @@ function EditBooking(props) {
                                           <option value="Pending">Pending</option>
                                           <option value="Assigned">Assigned</option>
                                           <option value="Approved">Approved</option>
-                                          <option value="Reject">Reject</option>
+                                          <option value="Rejected">Rejected</option>
+                                          <option value="ForApproval">ForApproval</option>
                                         </select>
                                       </td>
 

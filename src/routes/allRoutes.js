@@ -100,6 +100,11 @@ import ViewBooking from "../pages/Analytics/ViewBooking"
 //Booking Test flow
 import AssignTest from "../pages/Analytics/AssignTest"
 import TestResultAdd from "../pages/Analytics/TestResultAdd"
+import ForApprovalTest from "../pages/Analytics/ForApprovalTest"
+import ReassignTest from "../pages/Analytics/ReassignTest"
+import ApprovedData from "../pages/Analytics/ApprovedData"
+import RejectedData from "../pages/Analytics/RejectedData"
+import AnalyticsData from "../pages/Analytics/AnalyticsData"
 //Instrument
 import ListInstruments from "../pages/Analytics/ListInstruments"
 import AddInstrument from "../pages/Analytics/AddInstrument"
@@ -157,6 +162,11 @@ const authRoutes = [
     //Booking Test flow
     { path: "/assign-test", component: AssignTest},
     { path: "/add-test-result", component: TestResultAdd},
+    { path: "/for-approval-test-result", component: ForApprovalTest},
+    { path: "/reassign-test", component: ReassignTest},
+    { path: "/view-approved-data-list", component: ApprovedData},
+    { path: "/view-rejected-data-list", component: RejectedData},
+    {path:"/analytics-test-data", component:AnalyticsData},
 
     { path: "/branch", component:ListBranch},
     { path: "/all-branch", component:ListBranch},
