@@ -61,7 +61,7 @@ function EditBooking(props) {
   var dateString1 = date1.toLocaleTimeString();
 
   const [booking1, setBooking1] = useState({
-    booking_type: 'Received', report_type: '', receipte_date: '',
+    booking_type: 'Entry', report_type: '', receipte_date: '',
     booking_no: '', aum_serial_no: '', reference_no: '', remarks: '', mfg_date: '', mfg_options: 'N/S', exp_date: '', exp_options: 'N/S',
     analysis_date: '', d_format: '', d_format_options: 'N/S', grade: '', grade_options: 'N/S', project_name: '',
     project_options: 'N/S', mfg_lic_no: '', is_report_dispacthed: '0', signature: '0', verified_by: 'None', nabl_scope: '0',
@@ -907,12 +907,8 @@ function EditBooking(props) {
                           <div className="col-md-3">
                             <label>Booking Type</label>
                             <select className="form-select" value={booking1.booking_type} name="booking_type" onChange={onChange}>
-                              <option value="Received">Received</option>
                               <option value="Entry">Entry</option>
-                              <option value="Temp">Temp</option>
-                              <option value="W">W</option>
                               <option value="Testing">Testing</option>
-                              <option value="Data Fillup">Data Fillup</option>
                               <option value="Report">Report</option>
                               <option value="Dispatched">Dispatched</option>
                               <option value="Invoice">Invoice</option>
@@ -920,7 +916,7 @@ function EditBooking(props) {
                             </select>
                           </div>
                           <div className="col-md-3">
-                            <label>Report Type</label>
+                            <label className="required-field">Report Type</label>
                             <select className="form-select" value={booking1.report_type} name="report_type" isOptionDisabled={(option) => option.disabled}>
                               <option value="">None</option>
                               <option value="FP">FP</option>
@@ -932,7 +928,7 @@ function EditBooking(props) {
                             </select>
                           </div>
                           <div className="col-md-3">
-                            <label>Receipt Date</label>
+                            <label className="required-field">Receipt Date</label>
                             <input className="form-control" value={booking1.receipte_date} type="date" id="example-date-input" name="receipte_date" onChange={onChange} readOnly />
                           </div>
                           <div className="col-md-3">
@@ -987,7 +983,7 @@ function EditBooking(props) {
                       <div className="form-group">
                         <div className="row">
                           <div className="col-md-3">
-                            <label>Customer</label>
+                            <label className="required-field">Customer</label>
                             {loading1 ? <LoadingSpinner /> : <Select value={data1.find(obj => obj.value === customer.id)} onChange={changeCustomer} options={data1} name="customer_id"
                               placeholder="Select Customer" isClearable />}
                           </div>
@@ -1036,7 +1032,7 @@ function EditBooking(props) {
                           </div>
 
                           <div className="col-md-2">
-                            <label>Mfg Date</label>
+                            <label className="required-field">Mfg Date</label>
                             <input className="form-control" value={booking1.mfg_date} type="date" id="example-date-input" name="mfg_date" onChange={onChange} />
                           </div>
 
@@ -1050,7 +1046,7 @@ function EditBooking(props) {
                           </div>
 
                           <div className="col-md-2">
-                            <label>Exp Date</label>
+                            <label className="required-field">Exp Date</label>
                             <input className="form-control" value={booking1.exp_date} type="date" id="example-date-input" name="exp_date" onChange={onChange} />
                           </div>
                           <div className="col-md-1">
@@ -1331,7 +1327,7 @@ function EditBooking(props) {
                       <div className="form-group">
                         <div className="row">
                           <div className="col-md-4">
-                            <label>Product</label>
+                            <label className="required-field">Product</label>
                             {loading1 ? <LoadingSpinner /> : <Select value={data4.find(obj => obj.value === product)} options={data4} name="product_id"
                               placeholder="Select Product" onChange={changeProductID} isClearable />}
                           </div>

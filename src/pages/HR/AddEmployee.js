@@ -430,6 +430,8 @@ const InsertEmployee = (e)=>{
         }
         data.append('document[driving_license_number]', employee.driving_license_number);
 
+        console.log(employee.photo)
+
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addEmployee`, data, {headers} )
 
                 .then(response => {
@@ -784,25 +786,25 @@ const handleAddClick1 = () => {
                                                              <div className="row">
                                                                 <div className="col-md-6">
                                                                     <label className="required-field">Home Street</label>
-                                                                    <input className="form-control" type="text" name="homestreet" placeholder="Enter Homestreet" onChange={ onChange } required/><br/>
+                                                                    <input className="form-control" type="text" name="homestreet" placeholder="Enter Homestreet" onChange={ onChange }/><br/>
                                                                     <label>Area</label>
                                                                     <input className="form-control" type="text" name="area" placeholder="Enter Area" onChange={ onChange }/><br/>
                                                                     <label>Pincode</label>
                                                                     <input className="form-control" type="text" name="pincode" placeholder="Enter Pincode" onChange={ onChange }/><br/>
                                                                     <label className="required-field">Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="country_id" name="country_id" onChange={ onChange } required>
+                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="country_id" name="country_id" onChange={ onChange }>
                                                                     <option value="">Select Country</option>
                                                                     { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
                                                                     <label className="required-field">Emergency Contact Name</label>
-                                                                    <input className="form-control" type="text" name="emergency_contact_name" placeholder="Enter Emergency Contact Name" onChange={ onChange } required/>
+                                                                    <input className="form-control" type="text" name="emergency_contact_name" placeholder="Enter Emergency Contact Name" onChange={ onChange }/>
                                                                 </div>
                                                                 <div className="col-md-6">
                                                                     <label className="required-field">Home Street2</label>
-                                                                    <input className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChange } required/><br/>
+                                                                    <input className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChange }/><br/>
                                                                     <label>City</label>
                                                                     <input className="form-control" type="text" name="city" placeholder="Enter City" onChange={ onChange }/><br/>
                                                                     <label className="required-field">State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="state_id" name="state_id" onChange={ onChange } required>
+                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="state_id" name="state_id" onChange={ onChange }>
                                                                     <option value="">Select State</option>
                                                                     { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
                                                                     <label>Email</label>
@@ -828,7 +830,7 @@ const handleAddClick1 = () => {
                                                                     <option value="">Select Country</option>
                                                                     { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
                                                                     <label className="required-field">Emergency Contact Number</label>
-                                                                    <input className="form-control" type="text" name="emergency_contact_number" placeholder="Enter Emergency Contact Number" onChange={ onChange } required/>
+                                                                    <input className="form-control" type="text" name="emergency_contact_number" placeholder="Enter Emergency Contact Number" onChange={ onChange }/>
                                                                 </div>
                                                                 <div className="col-md-6">
                                                                     <label>Street2</label>
@@ -987,7 +989,7 @@ const handleAddClick1 = () => {
                                                 <div className="row">
                                                     <div className="col-md-2">
                                                         <label className="required-field">Comapny</label>
-                                                        {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="mst_companies_id" name="mst_companies_id" onChange={ onChange } required>
+                                                        {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="mst_companies_id" name="mst_companies_id" onChange={ onChange }>
                                                              <option value="">Select Company</option>
                                                             { data2.map((option, key) => <option value={option.id} key={key} >{option.company_name}</option>) }
                                                         </select> }
@@ -1041,7 +1043,7 @@ const handleAddClick1 = () => {
                                                     <div className="col-md-3">
                                                         <label className="required-field">Department Name</label>
                                                         {loading1 ? <LoadingSpinner /> :
-                                                          <select className="form-select" id="mst_departments_id" name="mst_departments_id" onChange={ onChange } required>
+                                                          <select className="form-select" id="mst_departments_id" name="mst_departments_id" onChange={ onChange }>
                                                              <option value="">Select Department</option>
                                                             { data4.map((option, key) => <option value={option.id} key={key} >{option.department_name}</option>) }
                                                         </select> }
@@ -1050,7 +1052,7 @@ const handleAddClick1 = () => {
                                                     <div className="col-md-3">
                                                         <label className="required-field">Position</label>
                                                        {loading1 ? <LoadingSpinner /> :
-                                                        <select className="form-select" id="mst_positions_id" name="mst_positions_id" onChange={ onChange } required>
+                                                        <select className="form-select" id="mst_positions_id" name="mst_positions_id" onChange={ onChange }>
                                                              <option value="">Select Position</option>
                                                             { data3.map((option, key) => <option value={option.id} key={key} >{option.position_title}</option>) }
                                                          </select> }

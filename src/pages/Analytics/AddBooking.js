@@ -56,8 +56,7 @@ function AddBooking(props) {
   const [aumserialno, setaumserialno] = useState({ aum_serial_no: '' });
 
   const [booking1, setBooking1] = useState({
-    booking_type: 'Received',
-    booking_no: '', reference_no: '', remarks: '', mfg_date: '', mfg_options: 'N/S', exp_date: '', exp_options: 'N/S',
+    booking_type: 'Entry',booking_no: '', reference_no: '', remarks: '', mfg_date: '', mfg_options: 'N/S', exp_date: '', exp_options: 'N/S',
     analysis_date: '', d_format: '', d_format_options: 'N/S', grade: '', grade_options: 'N/S', project_name: '',
     project_options: 'N/S', mfg_lic_no: '', is_report_dispacthed: '0', signature: '0', verified_by: 'None', nabl_scope: '0',
     cancel: 'None', cancel_remarks: '', priority: 'High', discipline: 'Chemical', booking_group: 'Drugs and Pharmaceuticals',
@@ -66,8 +65,7 @@ function AddBooking(props) {
   });
 
   const [bookingSamples, setBookingSamples] = useState({
-    batch_no: '',
-    packsize: '', request_quantity: '', sample_code: '', sample_description: '', sample_quantity: '', sample_location: '',
+    batch_no: '',packsize: '', request_quantity: '', sample_code: '', sample_description: '', sample_quantity: '', sample_location: '',
     sample_packaging: '', sample_type: '', sampling_date_from: '', sampling_date_from_options: 'N/S',
     sampling_date_to: '', sampling_date_to_options: 'N/S', sample_received_through: 'By Courier', chemist: '1', sample_condition: '',
     is_sample_condition: '0', batch_size_qty_rec: '', notes: '', sample_drawn_by: ''
@@ -751,20 +749,16 @@ function AddBooking(props) {
                           <div className="col-md-3">
                             <label>Booking Type</label>
                             <select className="form-select" name="booking_type" onChange={onChange}>
-                              <option value="Received">Received</option>
                               <option value="Entry">Entry</option>
-                              <option value="Temp">Temp</option>
-                              <option value="W">W</option>
-                              <option value="Testing">Testing</option>
-                              <option value="Data Fillup">Data Fillup</option>
+                              {/*<option value="Testing">Testing</option>
                               <option value="Report">Report</option>
                               <option value="Dispatched">Dispatched</option>
                               <option value="Invoice">Invoice</option>
-                              <option value="Cancel">Cancel</option>
+                              <option value="Cancel">Cancel</option>*/}
                             </select>
                           </div>
                           <div className="col-md-3">
-                            <label>Report Type</label>
+                            <label className="required-field">Report Type</label>
                             <select className="form-select" name="report_type" onChange={reporttypeonChange}>
                               <option value="">None</option>
                               <option value="FP">FP</option>
@@ -776,7 +770,7 @@ function AddBooking(props) {
                             </select>
                           </div>
                           <div className="col-md-3">
-                            <label>Receipt Date</label>
+                            <label className="required-field">Receipt Date</label>
                             <input className="form-control" type="date" id="example-date-input" name="receipte_date" onChange={reporttypeonChange} />
                           </div>
                           <div className="col-md-3">
@@ -810,7 +804,7 @@ function AddBooking(props) {
                       <div className="form-group">
                         <div className="row">
                           <div className="col-md-3">
-                            <label>Customer</label>
+                            <label className="required-field">Customer</label>
                             {loading1 ? <LoadingSpinner /> : <Select onChange={changeCustomer} options={data1} name="customer_id"
                               placeholder="Select Customer" isClearable />}
                           </div>
@@ -860,7 +854,7 @@ function AddBooking(props) {
                           </div>
 
                           <div className="col-md-2">
-                            <label>Mfg Date</label>
+                            <label className="required-field">Mfg Date</label>
                             <input className="form-control" type="date" id="example-date-input" name="mfg_date" onChange={onChange} />
                           </div>
 
@@ -874,7 +868,7 @@ function AddBooking(props) {
                           </div>
 
                           <div className="col-md-2">
-                            <label>Exp Date</label>
+                            <label className="required-field">Exp Date</label>
                             <input className="form-control" type="date" id="example-date-input" name="exp_date" onChange={onChange} />
                           </div>
                           <div className="col-md-1">
@@ -1100,7 +1094,7 @@ function AddBooking(props) {
                       <div className="form-group">
                         <div className="row">
                           <div className="col-md-4">
-                            <label>Product</label>
+                            <label className="required-field">Product</label>
                             {loading1 ? <LoadingSpinner /> : <Select options={data4} name="product_id"
                               placeholder="Select Product" onChange={changeProductID} isClearable />}
                           </div>
