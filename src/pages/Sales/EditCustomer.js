@@ -95,6 +95,7 @@ const GetCustomerData=()=>{
                   setCustomerAddress2(response.data.data.contact_info[1]);
                   setInputList(response.data.data.contact_person);
                   setPassword(response.data.data.password);
+                    console.log(customer.logo)
                   {setLoading1(false)};
 
               })

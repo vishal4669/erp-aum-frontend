@@ -34,40 +34,40 @@ const Header = props => {
   if (localStorage.getItem('email') === null && localStorage.getItem('token') === null) {
     window.location.href = "/";
     return
-} 
+}
 
 const del_headers = {
           'Authorization' : "Bearer "+localStorage.getItem('token')
-          
+
 }
 
     axios.get(`${process.env.REACT_APP_BASE_APIURL}user`,{ headers: del_headers})
-     .then(response => { 
-          
+     .then(response => {
+
       if(response.data.status === 401 && response.data.success === true) {
                   localStorage.clear();
                   localStorage.setItem('setLoggedOut', 'true');
                   window.location.href = '/login';
-              } 
+              }
     })
 
 
-    .catch((error) => {  
+    .catch((error) => {
       if(error.response.data.status === 401 && error.response.data.success === true) {
                   localStorage.clear();
                   localStorage.setItem('setLoggedOut', 'true');
                   window.location.href = '/login';
-              } 
+              }
       toast.error(error.response.data.message);
-    }) 
+    })
 
 
   const logout = () => {
     {setLoading(true)};
      axios.post(`${process.env.REACT_APP_BASE_APIURL}logout`,null, { headers: del_headers})
-     .then(response => {  
+     .then(response => {
       // chnage success to true when it is done
-      if(response.data.success == true && response.data.status == 200){  
+      if(response.data.success == true && response.data.status == 200){
         localStorage.clear();
         window.location.href = '/';
         toast.success(response.data.message);
@@ -76,10 +76,10 @@ const del_headers = {
        //toast is not working
       }
     })
-    .catch((error) => {  
+    .catch((error) => {
               { setLoading(false) }
-              toast.error(error.response.data.message);  
-    }) 
+              toast.error(error.response.data.message);
+    })
   }
 
   function toggleFullscreen() {
@@ -144,7 +144,7 @@ const del_headers = {
               <i className="fa fa-fw fa-bars"/>
             </button>
 
-            
+
           </div>
 
           <div className="d-flex">

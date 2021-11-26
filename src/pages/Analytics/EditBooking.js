@@ -87,6 +87,7 @@ function EditBooking(props) {
     division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
   }])
 
+
   useEffect(() => {
     // fetchCustomerData();
     //   fetchManufacturerData();
@@ -149,7 +150,9 @@ function EditBooking(props) {
           testData[i]['p_sr_no'] = '';
           setTestData([...testData, {
             parent_child: 'Parent', p_sr_no: '', by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
+            test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
+            label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
+            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
           }]);
         }
       }
@@ -410,7 +413,6 @@ function EditBooking(props) {
       })
       .catch((error) => {
         { setLoading1(false) }
-        console.log(error)
         toastr.error(error.response.data.message);
         this.setState({ loading: false });
       })
@@ -839,8 +841,6 @@ function EditBooking(props) {
         comments: booking1.comments
       }
     }
-
-    console.log(data)
 
     axios.post(`${process.env.REACT_APP_BASE_APIURL}editBooking/` + booking_id, data, { headers })
 
@@ -1548,7 +1548,8 @@ function EditBooking(props) {
                                     <tr>
                                       {/*<td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
                                                                     <td><input type="checkbox"/></td>*/}
-                                      <td><select name="parent_child" value={x.parent_child} onChange={e => handleInputChange(e, i)} style={my_style} id={'parent_child_' + i} className="form-select">
+                                      <td>
+                                      <select name="parent_child" value={x.parent_child} onChange={e => handleInputChange(e, i)} style={my_style} id={'parent_child_' + i} className="form-select">
                                         <option value="Parent">Parent</option>
                                         <option value="Child">Child</option>
                                       </select></td>
@@ -1620,13 +1621,14 @@ function EditBooking(props) {
                                       </td>
                                       {/*<td><input value={x.test_date_time} type="text" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
                                                                      <td><input value={x.approval_date_time} type="text" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                     */}<td>
+                                                                     */}
+                                      <td>
                                         <select name="approved" className="form-select" onChange={e => handleInputChange(e, i)} value={x.approved}>
                                           <option value="Pending">Pending</option>
                                           <option value="Assigned">Assigned</option>
+                                          <option value="ForApproval">ForApproval</option>
                                           <option value="Approved">Approved</option>
                                           <option value="Rejected">Rejected</option>
-                                          <option value="ForApproval">ForApproval</option>
                                         </select>
                                       </td>
 

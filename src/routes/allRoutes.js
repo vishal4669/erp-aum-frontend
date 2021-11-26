@@ -97,6 +97,9 @@ import ListBooking from "../pages/Analytics/ListBooking"
 import AddBooking from "../pages/Analytics/AddBooking"
 import EditBooking from "../pages/Analytics/EditBooking"
 import ViewBooking from "../pages/Analytics/ViewBooking"
+import GenerateROA from "../pages/Analytics/generate_roa_coa/GenerateROA"
+import GenerateCOA from "../pages/Analytics/generate_roa_coa/GenerateCOA"
+import CoaView from "../pages/Analytics/generate_roa_coa/CoaView"
 //Booking Test flow
 import AssignTest from "../pages/Analytics/AssignTest"
 import TestResultAdd from "../pages/Analytics/TestResultAdd"
@@ -159,6 +162,9 @@ const authRoutes = [
     { path: "/add-booking", component: AddBooking},
     { path: "/edit-booking", component: EditBooking},
     { path: "/view-booking", component: ViewBooking},
+    { path: "/generate-roa", component: GenerateROA},
+    { path: "/generate-coa", component: GenerateCOA},
+    { path: "/view-coa", component: CoaView},
     //Booking Test flow
     { path: "/assign-test", component: AssignTest},
     { path: "/add-test-result", component: TestResultAdd},

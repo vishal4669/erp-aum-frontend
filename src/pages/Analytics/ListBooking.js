@@ -192,8 +192,8 @@ this.deleteBooking = async(booking_id) =>{
               {
 
                 srno: this.state.count,
-                generate_data: <div><Link className="btn btn-secondary btn-sm">
-                ROA</Link>&nbsp;&nbsp;<Link className="btn btn-warning btn-sm">
+                generate_data: <div><Link to={"/generate-roa/"+base64_encode(post.id)} className="btn btn-secondary btn-sm">
+                ROA</Link>&nbsp;&nbsp;<Link to={"/generate-coa/"+base64_encode(post.id)} className="btn btn-warning btn-sm">
                 COA</Link>&nbsp;&nbsp;<Link className="btn btn-success btn-sm">
                 <i className="fa fa-barcode"></i></Link></div>,
                 coa_print: post.coa_print,

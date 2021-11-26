@@ -1,7 +1,7 @@
 const commonpath = {
 
-  logo_path : "https://erpaum-api.divineinfosyshosting.com/public/images/customers/logo/",
-  pancard_copy_path : "https://erpaum-api.divineinfosyshosting.com/public/images/customers/pancard_copy/"
+  logo_path : "https://erpaum-api.divineinfosyshosting.com/images/customers/logo/",
+  pancard_copy_path : "https://erpaum-api.divineinfosyshosting.com/images/customers/pancard_copy/"
 
 };
 

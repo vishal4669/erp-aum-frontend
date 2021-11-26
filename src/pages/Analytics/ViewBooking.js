@@ -141,7 +141,7 @@ const GetBookingData=()=>{
             </div>
 
         </div>
-
+        {loading1 ? <center><LoadingSpinner /></center> :
           <Row>
             <Col>
               <Card>
@@ -779,6 +779,7 @@ const GetBookingData=()=>{
               </Card>
             </Col>
           </Row>
+        }
         </Form>
         </Container>
       </div>
