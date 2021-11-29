@@ -38,7 +38,7 @@ function GenerateCOA(props) {
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
 
-  const [booking1, setBooking1] = useState({booking_no:'',customer_name:'',aum_serial_no:''})
+  const [booking1, setBooking1] = useState({booking_no:'',customer_name:'',aum_serial_no:'',coa_format:'COA PRINT'})
 
   useEffect(() => {
     {setLoading1(true)}
@@ -47,7 +47,8 @@ function GenerateCOA(props) {
       setBooking1({
         booking_no: response.data.data.booking_no,
         aum_serial_no : response.data.data.aum_serial_no,
-        customer_name: response.data.data.customer_id.company_name
+        customer_name: response.data.data.customer_id.company_name,
+        coa_format:'COA PRINT'
       });
       {setLoading1(false)}
     })
@@ -57,8 +58,20 @@ function GenerateCOA(props) {
     })
   }, []);
 
+  const onChange = (e) => {
+      e.persist();
+      setBooking1({...booking1, [e.target.name]: e.target.value});
+    }
+
   const generate_coa =() => {
-    window.open('/view-coa/' + edit_booking_id,"_blank");
+    console.log(booking1.coa_format)
+    if(booking1.coa_format == 'COA PRINT'){
+        window.open('/view-coa/' + edit_booking_id,"_blank");
+    } else if(booking1.coa_format == 'NABL PRINT'){
+        window.open('/view-nabl/' + edit_booking_id,"_blank");
+    } else if(booking1.coa_format == 'COA AYUSH') {
+        window.open('/view-aayush/' + edit_booking_id,"_blank");
+    }
   }
 
   return (
@@ -101,7 +114,7 @@ function GenerateCOA(props) {
                           <td>COA</td>
                           <th>Format</th>
                           <td>
-                            <select name="coa_format" class="form-select">
+                            <select name="coa_format" class="form-select" onChange={onChange}>
                               <option value="COA PRINT">COA PRINT</option>
                               <option value="NABL PRINT">NABL PRINT</option>
                               <option value="COA AYUSH">COA AYUSH</option>
