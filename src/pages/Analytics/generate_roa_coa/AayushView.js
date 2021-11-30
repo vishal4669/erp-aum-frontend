@@ -45,7 +45,7 @@ function AayushView(props) {
 
   useEffect(() => {
     {setLoading1(true)}
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id,{ headers })
+    axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaShow/`+ booking_id,{ headers })
     .then(response => {
       setBooking1({
         customer_name:response.data.data[0].customer_data.company_name,
@@ -64,12 +64,21 @@ function AayushView(props) {
         date_of_manufacturing:response.data.data[0].date_of_manufacturing,
         supplier:response.data.data[0].supplier.company_name,
         date_of_expiry:response.data.data[0].date_of_expiry,
-        pharmacopeia_name: response.data.data[0].sample_data[0].product_data.pharmacopiea_data.pharmacopeia_name
+        pharmacopeia_name: response.data.data[0].sample_data[0].product_data.pharmacopiea_data.pharmacopeia_name,
+        street1 : response.data.data[0].customer_data.customer_contact_data.street_1,
+        street2:response.data.data[0].customer_data.customer_contact_data.street_2,
+        area:response.data.data[0].customer_data.customer_contact_data.area,
+        pin:response.data.data[0].customer_data.customer_contact_data.pin,
+        city:response.data.data[0].customer_data.customer_contact_data.city,
+        state:response.data.data[0].customer_data.customer_contact_data.state.state_name,
+        country:response.data.data[0].customer_data.customer_contact_data.country.country_name,
       })
       setTestData(response.data.data[0].tests_data)
+      console.log(response.data.data[0])
       {setLoading1(false)}
     })
     .catch((error) => {
+      console.log(error)
       if(error.response.data.message == "Token is Expired" || error.response.data.status == "401"){
         props.history.push('/');
       } else {
@@ -77,7 +86,7 @@ function AayushView(props) {
       }
       {setLoading1(false)}
     })
-   document.addEventListener('contextmenu', (e) => {
+    document.addEventListener('contextmenu', (e) => {
      e.preventDefault();
    });
   }, []);
@@ -103,20 +112,25 @@ function AayushView(props) {
                           </tr>
                           <tr>
                             <th rowspan="3">
-                              <u>{booking1.customer_name}</u><br/>
-                              10,12,13, Trimul Estate, Near Khatraj Chokdi, After Vadsar<br/>
-                              Village,Kalol--,Gandhinagar.,GUJARAT,India
+                              <u><h5>{booking1.customer_name}</h5></u>
+                              {booking1.street1}{booking1.street1 && booking1.street2 ? <br/> : ''}
+                              {booking1.street2}<br/>
+                              {booking1.area ? booking1.area : ''}{booking1.area && booking1.pin ? ',' : ''}{booking1.pin ? booking1.pin : ''}
+                              {booking1.pin && booking1.city ? ',' : ''}{booking1.city}{booking1.city && booking1.state ? ',' : ''}
+                              {booking1.state}{booking1.state && booking1.country ? ',' : ''}
+                              {booking1.country ? ',' : ''}{booking1.country}
+
                             </th>
                             <th colspan="2">Certificate No</th>
                             <td colspan="2">{booking1.certificate_no}</td>
                           </tr>
                           <tr>
                             <th colspan="2">COA Release Date</th>
-                            <td colspan="2">{booking1.coa_release_date ? moment(booking1.coa_release_date).format('DD-MM-YYYY'): ''}</td>
+                            <td colspan="2">{booking1.coa_release_date ? moment(booking1.coa_release_date).format('DD-MM-YYYY'): 'Not Specified'}</td>
                           </tr>
                           <tr>
                             <th colspan="2">Sample Received Date</th>
-                            <td colspan="2">{booking1.sample_received_date ? moment(booking1.sample_received_date).format('DD-MM-YYYY hh:mm:ss a'): ''}</td>
+                            <td colspan="2">{booking1.sample_received_date ? moment(booking1.sample_received_date).format('DD-MM-YYYY hh:mm:ss a'): 'Not Specified'}</td>
                           </tr>
                       </MDBTableBody>
                     </MDBTable>

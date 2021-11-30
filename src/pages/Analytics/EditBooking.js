@@ -56,6 +56,7 @@ function EditBooking(props) {
   const [data5, setData5] = useState([]);
   const [chemist, setChemist] = useState([]);
   const [unitList, setUnitData] = useState([]);
+  const [resultList, setResultData] = useState([]);
 
   var date1 = new Date(Date.UTC(2012, 11, 12, 3, 0, 0));
   var dateString1 = date1.toLocaleTimeString();
@@ -86,7 +87,6 @@ function EditBooking(props) {
     label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
     division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
   }])
-
 
   useEffect(() => {
     // fetchCustomerData();
@@ -142,7 +142,7 @@ function EditBooking(props) {
             parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
             test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
             label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
+            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: ''
           }]);
 
         }
@@ -152,7 +152,7 @@ function EditBooking(props) {
             parent_child: 'Parent', p_sr_no: '', by_pass: '2', parent_id: '', product_details: '',
             test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
             label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
+            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: ''
           }]);
         }
       }
@@ -163,7 +163,7 @@ function EditBooking(props) {
             parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
             test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
             label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
+            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: ''
           }]);
           //setdata();
         }
@@ -378,6 +378,10 @@ function EditBooking(props) {
           setTestData(response.data.data.tests)
         }
 
+        if(response.data.data.result_dropdown !== null || response.data.data.result_dropdown !== ''){
+          setResultData(response.data.data.result_dropdown)
+        }
+
         //set customer dropdown data
         const options = response.data.data.contact_type_Customer.map(d => ({
           "value": d.id,
@@ -408,10 +412,12 @@ function EditBooking(props) {
         if(response.data.data.chemist_dropdown.id !== null || response.data.data.chemist_dropdown.id !== ''){
           setChemist(response.data.data.chemist_dropdown);
         }
+
         { setLoading1(false) };
 
       })
       .catch((error) => {
+        console.log(error)
         { setLoading1(false) }
         toastr.error(error.response.data.message);
         this.setState({ loading: false });
@@ -1521,22 +1527,22 @@ function EditBooking(props) {
                                       <th style={table_textarea_th_style}>Product Details</th>
                                       <th style={table_textarea_th_style}>Test Name</th>
                                       <th style={table_th_style}>Label Claim</th>
-                                      <th style={table_th_style}>% of Label Claim</th>
+                                      {/*<th style={table_th_style}>% of Label Claim</th>*/}
                                       <th style={table_th_style}>Min. Limit</th>
                                       <th style={table_th_style}>Max. Limit</th>
                                       <th style={table_th_style}>Result</th>
                                       <th style={table_th_style}>Label Claim Result</th>
                                       <th style={table_th_style}>Label Claim Unit</th>
-                                      <th style={table_th_style}>Result2</th>
+                                      {/*<th style={table_th_style}>Result2</th>*/}
                                       <th style={table_th_style}>Mean</th>
-                                      <th style={table_th_style}>Na Content</th>
-                                      <th style={table_th_style}>Final Na Content</th>
+                                      {/*<th style={table_th_style}>Na Content</th>
+                                      <th style={table_th_style}>Final Na Content</th>*/}
                                       <th style={table_th_style}>Unit</th>
-                                      <th style={table_th_style}>Expanded Uncertainty</th>
+                                      {/*<th style={table_th_style}>Expanded Uncertainty</th>*/}
                                       <th style={table_th_style}>Amount</th>
-                                      <th style={table_th_style}>Division</th>
+                                      {/*<th style={table_th_style}>Division</th>*/}
                                       <th style={table_th_style}>Method</th>
-                                      <th style={table_th_style}>Test Time</th>
+                                      {/*<th style={table_th_style}>Test Time</th>*/}
                                       <th style={table_th_style}>Test Date Time</th>
                                       <th style={table_th_style}>Approval Date Time</th>
                                       <th style={table_th_style}>Approved</th>
@@ -1566,24 +1572,32 @@ function EditBooking(props) {
                                       <td><input value={x.test_name} className="form-control" onChange={e => handleInputChange(e, i)} name="test_name" style={{ width: '150px !important' }} />
                                       </td>
                                       <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      {//
-                                      }
-                                      <td><input value={x.percentage_of_label_claim} type="text" name="percentage_of_label_claim" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      {//end
-                                      }
+
+                                      {/*<td><input value={x.percentage_of_label_claim} type="text"
+                                      name="percentage_of_label_claim" onChange={e => handleInputChange(e, i)}
+                                      className="form-control" /></td>*/}
+
 
                                       <td><input value={x.min_limit} type="text" name="min_limit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       <td><input value={x.max_limit} type="text" name="max_limit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
 
-                                      {//
-                                      }
-                                      <td><input value={x.result} type="text" name="result" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                      <td>
+                                        <input value={x.result} onChange={e => handleInputChange(e, i)} name="result" className="form-control"
+                                        list="result" placeholder="Type to search For Result..." autoComplete="off" readOnly={x.approved === 'ForApproval' ? false  : true} />
+                                        <datalist id="result">
+                                          { resultList.map((option, key) => <option data-value={option.result} value={option.result} key={key} >
+                                        </option>) }
+                                        </datalist>
+                                      </td>
                                       <td><input value={x.label_claim_result} type="text" name="label_claim_result" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       <td><input value={x.label_claim_unit} type="text" name="label_claim_unit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      <td><input value={x.result2} type="text" name="result2" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                      {/*<td><input value={x.result2} type="text" name="result2"
+                                      onChange={e => handleInputChange(e, i)} className="form-control" /></td>*/}
                                       <td><input value={x.mean} type="text" name="mean" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      <td><input value={x.na_content} type="text" name="na_content" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      <td><input value={x.final_na_content} type="text" name="final_na_content" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                      {/*<td><input value={x.na_content} type="text" name="na_content"
+                                      onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                      <td><input value={x.final_na_content} type="text" name="final_na_content"
+                                      onChange={e => handleInputChange(e, i)} className="form-control" /></td>*/}
                                       <td>
                                       {loading1 ? <LoadingSpinner /> : <select className="form-select" name="unit" value={x.unit} onChange={e => handleInputChange(e, i)}>
                                             <option value="">Select Unit</option>
@@ -1592,49 +1606,52 @@ function EditBooking(props) {
                                         </select>}
                                       {/*<input value={} type="text" name="unit" onChange={e => handleInputChange(e, i)} className="form-control" />*/}
                                       </td>
-                                      <td><input value={x.expanded_uncertanity} type="text" name="expanded_uncertanity" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      {//end
-                                      }
+                                      {/*<td><input value={x.expanded_uncertanity} type="text" name="expanded_uncertanity"
+                                      onChange={e => handleInputChange(e, i)} className="form-control" /></td>*/}
 
                                       <td><input value={x.amount} type="text" name="amount" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
 
                                       {//
                                       }
-                                      <td><input value={x.division} type="text" name="division" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                      {/*<td><input value={x.division} type="text" name="division" onChange={e => handleInputChange(e, i)}
+                                       className="form-control" /></td>*/}
                                       <td><input value={x.method} type="text" name="method" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      <td><input value={x.test_time} type="text" name="test_time" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      <td> {x.test_date_time !== null || x.test_date_time !== '' ?
+                                      {/*<td><input value={x.test_time} type="text" name="test_time" onChange={e => handleInputChange(e, i)}
+                                      className="form-control" /></td>*/}
+                                      <td> {loading1 ? <LoadingSpinner /> : x.test_date_time !== null || x.test_date_time !== '' ?
                                         (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
-                                          <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control" />
-                                          : <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control" />)
+                                          <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={x.approved === 'ForApproval' ? false  : true} />
+                                          : <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"  readOnly={x.approved === 'ForApproval' ? false  : true}/>)
                                         :
-                                        <input value={x.test_date_time} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control" />
+                                        <input value={x.test_date_time} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={x.approved === 'ForApproval' ? false  : true}/>
                                       }
                                       </td>
                                       <td> {x.approval_date_time !== null || x.approval_date_time !== '' ?
                                         (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
-                                          <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" />
-                                          : <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" />)
+                                          <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={x.approved === 'Approved' || x.approved === 'Rejected' ? false  : true}/>
+                                          : <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={x.approved === 'Approved' || x.approved === 'Rejected' ? false  : true}/>)
                                         :
-                                        <input value={x.approval_date_time} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" />
+                                        <input value={x.approval_date_time} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={x.approved === 'Approved' || x.approved === 'Rejected' ? false  : true}/>
                                       }
                                       </td>
                                       {/*<td><input value={x.test_date_time} type="text" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
                                                                      <td><input value={x.approval_date_time} type="text" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
                                                                      */}
                                       <td>
+                                      <b><u>{x.approved}</u></b>
                                         <select name="approved" className="form-select" onChange={e => handleInputChange(e, i)} value={x.approved}>
-                                          <option value="Pending">Pending</option>
-                                          <option value="Assigned">Assigned</option>
-                                          <option value="ForApproval">ForApproval</option>
-                                          <option value="Approved">Approved</option>
-                                          <option value="Rejected">Rejected</option>
+                                          {x.approved !== '' ? <option value="">Select Status</option> : ''}
+                                          {x.approved == '' ? <option value="Pending">Pending</option> : ''}
+                                          {x.approved == "Pending" ? <option value="Assigned">Assigned</option> : ''}
+                                          {x.approved == "Assigned" ? <option value="ForApproval">ForApproval</option> : ''}
+                                          {x.approved == "ForApproval" ? <option value="Approved">Approved</option> : ''}
+                                          {x.approved == "ForApproval" ? <option value="Rejected">Rejected</option> : ''}
                                         </select>
                                       </td>
 
                                       <td>
                                         {loading1 ? <LoadingSpinner /> :
-                                          <select className="form-select" value={x.chemist_name} name="chemist_name" onChange={e => handleInputChange(e, i)}>
+                                          <select className="form-select" value={x.chemist_name} name="chemist_name" onChange={e => handleInputChange(e, i)} disabled={x.approved === 'Assigned' ? false  : true}>
                                             <option value="">Select Chemist</option>
                                             {chemist.map((option, key) => <option value={option.id} key={key} >
                                               {option.first_name + " " + option.middle_name + " " + option.last_name}</option>)}

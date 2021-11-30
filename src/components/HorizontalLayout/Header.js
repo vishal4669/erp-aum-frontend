@@ -21,8 +21,9 @@ import { withTranslation } from "react-i18next"
 import { extendWith } from "lodash"
 
 import axios from 'axios'
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer } from "react-toastr";
+import toastr from 'toastr'
+import 'toastr/build/toastr.min.css'
 import LoadingSpinner from '../../components/LoadingSpinner'
 
 const Header = props => {
@@ -30,6 +31,23 @@ const Header = props => {
   const [socialDrp, setsocialDrp] = useState(false)
   const [loggedOut, setLoggedOut] = useState(false)
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
+  const [yearList, setYearList] = useState([]);
+
+  useEffect(() => {
+    {setLoading1(true)};
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}listYears`)
+          .then(response => {
+            setYearList(response.data.data);
+            console.log(response.data.data)
+            { setLoading1(false) }
+          })
+          .catch((error) => {
+            toastr.error(error.response.data.message);
+
+            { setLoading1(false) }
+          })
+  }, []);
 
   if (localStorage.getItem('email') === null && localStorage.getItem('token') === null) {
     window.location.href = "/";
@@ -58,7 +76,7 @@ const del_headers = {
                   localStorage.setItem('setLoggedOut', 'true');
                   window.location.href = '/login';
               }
-      toast.error(error.response.data.message);
+      toastr.error(error.response.data.message);
     })
 
 
@@ -70,7 +88,7 @@ const del_headers = {
       if(response.data.success == true && response.data.status == 200){
         localStorage.clear();
         window.location.href = '/';
-        toast.success(response.data.message);
+        toastr.success(response.data.message);
         localStorage.setItem('setLoggedOut', 'true');
         { setLoading(false) }
        //toast is not working
@@ -78,7 +96,7 @@ const del_headers = {
     })
     .catch((error) => {
               { setLoading(false) }
-              toast.error(error.response.data.message);
+              toastr.error(error.response.data.message);
     })
   }
 
@@ -212,6 +230,15 @@ const del_headers = {
                 <i className="uil-cog"></i>
               </button>
             </div>*/}
+
+            <div className="dropdown d-none d-lg-inline-block ms-1">
+            {loading1 ? <a className="btn btn-primary w-100 waves-effect waves-light" style={{marginTop : '16px'}}
+                         > <LoadingSpinner /> </a> : <select type="select" value={localStorage.getItem('selected_year')} name="selected_year" label="Select Years"
+                         style={{marginTop: '15px',background: '#8d9ad9',color: 'azure'}} className="form-select">
+                  <option value="">Select Year</option>
+                  { yearList.map((option, key) => <option value={option} key={key} >{option}</option>)}
+              </select> }
+            </div>
 
             <div className="dropdown d-none d-lg-inline-block ms-1">
               {loading ? <a className="btn btn-primary w-100 waves-effect waves-light" style={{marginTop : '16px'}}

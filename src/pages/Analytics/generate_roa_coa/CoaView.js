@@ -45,7 +45,7 @@ function CoaView(props) {
 
   useEffect(() => {
     {setLoading1(true)}
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id,{ headers })
+    axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaShow/`+ booking_id,{ headers })
     .then(response => {
       setBooking1({
         customer_name:response.data.data[0].customer_data.company_name,
@@ -65,15 +65,16 @@ function CoaView(props) {
         supplier:response.data.data[0].supplier.company_name,
         date_of_expiry:response.data.data[0].date_of_expiry,
         pharmacopeia_name: response.data.data[0].sample_data[0].product_data.pharmacopiea_data.pharmacopeia_name,
-        street1 : response.data.data[0].customer_contact_data.street_1,
-        street2:response.data.data[0].customer_contact_data.street_2,
-        area:response.data.data[0].customer_contact_data.area,
-        pin:response.data.data[0].customer_contact_data.pin,
-        city:response.data.data[0].customer_contact_data.city,
-        state:response.data.data[0].customer_contact_data.state,
-        country:response.data.data[0].customer_contact_data.country,
+        street1 : response.data.data[0].customer_data.customer_contact_data.street_1,
+        street2:response.data.data[0].customer_data.customer_contact_data.street_2,
+        area:response.data.data[0].customer_data.customer_contact_data.area,
+        pin:response.data.data[0].customer_data.customer_contact_data.pin,
+        city:response.data.data[0].customer_data.customer_contact_data.city,
+        state:response.data.data[0].customer_data.customer_contact_data.state.state_name,
+        country:response.data.data[0].customer_data.customer_contact_data.country.country_name,
       })
       setTestData(response.data.data[0].tests_data)
+      console.log(response.data.data[0])
       {setLoading1(false)}
     })
     .catch((error) => {
@@ -85,9 +86,9 @@ function CoaView(props) {
       }
       {setLoading1(false)}
     })
-  /* document.addEventListener('contextmenu', (e) => {
+    document.addEventListener('contextmenu', (e) => {
      e.preventDefault();
-   });*/
+   });
   }, []);
 
   return (
@@ -111,9 +112,13 @@ function CoaView(props) {
                           </tr>
                           <tr>
                             <th rowspan="3">
-                              <u>{booking1.customer_name}</u><br/>
-                              {booking1.street1}<br/>{booking1.street2}<br/>
-                              {booking1.area+" "+ booking1.pin +" "+ booking1.city + " "+booking1.state+" "+booking1.country}
+                              <u><h5>{booking1.customer_name}</h5></u>
+                              {booking1.street1}{booking1.street1 && booking1.street2 ? <br/> : ''}
+                              {booking1.street2}<br/>
+                              {booking1.area ? booking1.area : ''}{booking1.area && booking1.pin ? ',' : ''}{booking1.pin ? booking1.pin : ''}
+                              {booking1.pin && booking1.city ? ',' : ''}{booking1.city}{booking1.city && booking1.state ? ',' : ''}
+                              {booking1.state}{booking1.state && booking1.country ? ',' : ''}
+                              {booking1.country ? ',' : ''}{booking1.country}
 
                             </th>
                             <th colspan="2">Certificate No</th>

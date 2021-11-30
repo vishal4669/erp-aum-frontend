@@ -196,7 +196,7 @@ this.deleteBooking = async(booking_id) =>{
                 ROA</Link>&nbsp;&nbsp;<Link to={"/generate-coa/"+base64_encode(post.id)} className="btn btn-warning btn-sm">
                 COA</Link>&nbsp;&nbsp;<Link className="btn btn-success btn-sm">
                 <i className="fa fa-barcode"></i></Link></div>,
-                coa_print: post.coa_print,
+                coa_print: post.coa_print_count,
                 aum_serial_no: post.aum_serial_no,
                 booking_type: post.booking_type,
                 booking_no: post.booking_no,
