@@ -38,7 +38,8 @@ function GenerateROA(props) {
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
 
-  const [booking1, setBooking1] = useState({booking_no:'',customer_name:'',aum_serial_no:''})
+  const [booking1, setBooking1] = useState({booking_no:'',customer_name:'',aum_serial_no:'',
+  letter_head:'No',action:'VIEW'})
 
   useEffect(() => {
     {setLoading1(true)}
@@ -47,7 +48,9 @@ function GenerateROA(props) {
       setBooking1({
         booking_no: response.data.data.booking_no,
         aum_serial_no : response.data.data.aum_serial_no,
-        customer_name: response.data.data.customer_id.company_name
+        customer_name: response.data.data.customer_id.company_name,
+        letter_head:'No',
+        action:'VIEW'
       });
       {setLoading1(false)}
     })
@@ -56,6 +59,15 @@ function GenerateROA(props) {
       {setLoading1(false)}
     })
   }, []);
+
+  const onChange = (e) => {
+      e.persist();
+      setBooking1({...booking1, [e.target.name]: e.target.value});
+    }
+
+  const generate_roa =() => {
+    window.open('/view-roa/'+edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
+  }
     return (
 
       <React.Fragment>
@@ -102,7 +114,7 @@ function GenerateROA(props) {
                         <tr>
                           <th>Action</th>
                           <td>
-                            <select name="action" class="form-select">
+                            <select name="action" class="form-select" onChange={onChange}>
                               <option value="VIEW">VIEW</option>
                               <option value="PRINT">PRINT</option>
                               <option value="PDF">PDF</option>
@@ -111,14 +123,14 @@ function GenerateROA(props) {
                           </td>
                           <th>Letter Head</th>
                           <td>
-                            <select name="coa_format" class="form-select">
+                            <select name="letter_head" class="form-select" onChange={onChange}>
                               <option value="No">No</option>
                               <option value="Yes">Yes</option>
                             </select>
                           </td>
                         </tr>
                         <tr>
-                          <td colspan="4" className="text-center"><input type="button" name="generate" value="Generate" className="btn btn-info"/></td>
+                          <td colspan="4" className="text-center"><input type="button" name="generate" value="Generate" onClick={generate_roa} className="btn btn-info"/></td>
                         </tr>
                       </MDBTableBody>
                     </MDBTable>

@@ -27,14 +27,20 @@ import { decode as base64_decode, encode as base64_encode } from 'base-64';
 import { MDBTable, MDBTableBody} from 'mdbreact';
 import viewOnly from "../../../assets/images/Viewonly.png"
 import moment from 'moment'
+import jsPDF from "jspdf";
+import html2canvas from 'html2canvas';
+import $ from 'jquery'
 
 function CoaView(props) {
   const headers = {
     'Authorization': "Bearer " + localStorage.getItem('token')
   }
   const url = window.location.href
-  const booking_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
-  const edit_booking_id = url.substring(url.lastIndexOf('/') + 1)
+  const split_url = url.split( '/' )
+  const booking_id = base64_decode(split_url[4])
+  const edit_booking_id = split_url[4]
+  const coa_action = split_url[5]
+  const letterhead = split_url[6]
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
@@ -74,11 +80,38 @@ function CoaView(props) {
         country:response.data.data[0].customer_data.customer_contact_data.country.country_name,
       })
       setTestData(response.data.data[0].tests_data)
-      console.log(response.data.data[0])
       {setLoading1(false)}
+      if(coa_action === "PDF"){
+        var HTML_Width = $(".pdfDiv").width();
+        		var HTML_Height = $(".pdfDiv").height();
+        		var top_left_margin = 15;
+        		var PDF_Width = HTML_Width+(top_left_margin*2);
+        		var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
+        		var canvas_image_width = HTML_Width;
+        		var canvas_image_height = HTML_Height;
+
+        		var totalPDFPages = Math.ceil(HTML_Height/PDF_Height)-1;
+
+
+        		html2canvas($(".pdfDiv")[0],{allowTaint:true}).then(function(canvas) {
+        			canvas.getContext('2d');
+        			var imgData = canvas.toDataURL("image/jpeg", 1.0);
+        			var pdf = new jsPDF('p', 'pt',  [PDF_Width, PDF_Height]);
+        		    pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
+
+
+        			for (var i = 1; i <= totalPDFPages; i++) {
+        				pdf.addPage(PDF_Width, PDF_Height);
+        				pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
+        			}
+
+        		    pdf.save("coa_print_"+response.data.data[0].certificate_no+".pdf");
+                toastr.info("Pdf is Generated Successfully For COA Print")
+                props.history.push('/generate-coa/'+edit_booking_id);
+            });
+      }
     })
     .catch((error) => {
-      console.log(error)
       if(error.response.data.message == "Token is Expired" || error.response.data.status == "401"){
         props.history.push('/');
       } else {
@@ -101,40 +134,42 @@ function CoaView(props) {
             <Row>
               <Col>
                 <Card>
-                  <CardBody>
-                    <img src={viewOnly} id="watermark" style={{width:'100%',opacity:'0.4'}}/>
+                  <CardBody className="pdfDiv">
+                  {/*if viewonly than need to show viewonly image*/}
+                    {coa_action == 'VIEW' ? <img src={viewOnly} id="watermark" style={{width:'100%',opacity:'0.4'}}/> : ''}
 
-                    <MDBTable bordered style={{border:'2px solid #000000',fontWeight:'500'}} small responsive>
+                    <MDBTable bordered style={{border:'1px solid #000000',fontWeight:'500'}} small responsive>
                       <MDBTableBody>
                           <tr><th colspan="4"><h6 style={{float:'right',fontSize:'15px'}}>FDCA Licence No : GTL/37/57</h6></th></tr>
                           <tr>
                             <th colspan="4" className="text-center" style={{fontSize:'18px'}}>Certificate of Analysis</th>
                           </tr>
                           <tr>
-                            <th rowspan="3">
+                            <th colspan="4" className="text-center" style={{fontSize:'13px'}}>Form-39<br/>(150 - E(f) Report of test or Analysis by Approved Institution)</th>
+                          </tr>
+                          <tr>
+                            <th>
                               <u><h5>{booking1.customer_name}</h5></u>
-                              {booking1.street1}{booking1.street1 && booking1.street2 ? <br/> : ''}
-                              {booking1.street2}<br/>
-                              {booking1.area ? booking1.area : ''}{booking1.area && booking1.pin ? ',' : ''}{booking1.pin ? booking1.pin : ''}
-                              {booking1.pin && booking1.city ? ',' : ''}{booking1.city}{booking1.city && booking1.state ? ',' : ''}
-                              {booking1.state}{booking1.state && booking1.country ? ',' : ''}
-                              {booking1.country ? ',' : ''}{booking1.country}
-
                             </th>
                             <th colspan="2">Certificate No</th>
                             <td colspan="2">{booking1.certificate_no}</td>
                           </tr>
                           <tr>
+                            <td>Street 1 : {booking1.street1}</td>
                             <th colspan="2">COA Release Date</th>
                             <td colspan="2">{booking1.coa_release_date ? moment(booking1.coa_release_date).format('DD-MM-YYYY'): 'Not Specified'}</td>
                           </tr>
                           <tr>
+                            <td>Street 2 : {booking1.street2}<br/>{booking1.area ? booking1.area : ''}{booking1.area && booking1.pin ? ',' : ''}{booking1.pin ? booking1.pin : ''}
+                            {booking1.pin && booking1.city ? ',' : ''}{booking1.city}{booking1.city && booking1.state ? ',' : ''}
+                            {booking1.state}{booking1.state && booking1.country ? ',' : ''}
+                            {booking1.country ? ',' : ''}{booking1.country}</td>
                             <th colspan="2">Sample Received Date</th>
                             <td colspan="2">{booking1.sample_received_date ? moment(booking1.sample_received_date).format('DD-MM-YYYY hh:mm:ss a'): 'Not Specified'}</td>
                           </tr>
                       </MDBTableBody>
                     </MDBTable>
-                    <MDBTable bordered style={{border:'2px solid #000000'}} small responsive>
+                    <MDBTable bordered style={{border:'1px solid #000000'}} small responsive>
                       <MDBTableBody>
                         <tr>
                           <th>Name of Sample</th>
@@ -197,7 +232,7 @@ function CoaView(props) {
                         </tr>
                       </MDBTableBody>
                     </MDBTable>
-                    <h6>In the Opinion of the undersigned the sample reffered to above is of standard Quality as definded in USP & Act or the rules made there under.</h6>
+                    <h6>In the Opinion of the undersigned the sample reffered to above is of standard Quality as definded in {booking1.pharmacopeia_name} & Act or the rules made there under.</h6>
                     <br/>
                     <h6 style={{float:'right',fontSize:'15px'}}>Authorized Sign</h6>
                     <br/><h6 style={{fontSize:'15px'}}>Disclamer :</h6>

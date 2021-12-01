@@ -39,7 +39,6 @@ const Header = props => {
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listYears`)
           .then(response => {
             setYearList(response.data.data);
-            console.log(response.data.data)
             { setLoading1(false) }
           })
           .catch((error) => {

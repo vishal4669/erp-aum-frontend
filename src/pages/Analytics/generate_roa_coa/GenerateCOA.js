@@ -38,7 +38,8 @@ function GenerateCOA(props) {
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
 
-  const [booking1, setBooking1] = useState({booking_no:'',customer_name:'',aum_serial_no:'',coa_format:'COA PRINT'})
+  const [booking1, setBooking1] = useState({booking_no:'',customer_name:'',aum_serial_no:'',
+  coa_format:'COA PRINT',letter_head:'No',action:'VIEW'})
 
   useEffect(() => {
     {setLoading1(true)}
@@ -48,7 +49,9 @@ function GenerateCOA(props) {
         booking_no: response.data.data.booking_no,
         aum_serial_no : response.data.data.aum_serial_no,
         customer_name: response.data.data.customer_id.company_name,
-        coa_format:'COA PRINT'
+        coa_format:'COA PRINT',
+        letter_head:'No',
+        action:'VIEW'
       });
       {setLoading1(false)}
     })
@@ -64,13 +67,12 @@ function GenerateCOA(props) {
     }
 
   const generate_coa =() => {
-    console.log(booking1.coa_format)
     if(booking1.coa_format == 'COA PRINT'){
-        window.open('/view-coa/' + edit_booking_id,"_blank");
+      window.open('/view-coa/'+edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
     } else if(booking1.coa_format == 'NABL PRINT'){
-        window.open('/view-nabl/' + edit_booking_id,"_blank");
+        window.open('/view-nabl/' + edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
     } else if(booking1.coa_format == 'COA AYUSH') {
-        window.open('/view-aayush/' + edit_booking_id,"_blank");
+        window.open('/view-aayush/' + edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
     }
   }
 
@@ -124,7 +126,7 @@ function GenerateCOA(props) {
                         <tr>
                           <th>Action</th>
                           <td>
-                            <select name="action" class="form-select">
+                            <select name="action" class="form-select" onChange={onChange}>
                               <option value="VIEW">VIEW</option>
                               <option value="PRINT">PRINT</option>
                               <option value="PDF">PDF</option>
@@ -133,7 +135,7 @@ function GenerateCOA(props) {
                           </td>
                           <th>Letter Head</th>
                           <td>
-                            <select name="coa_format" class="form-select">
+                            <select name="letter_head" class="form-select" onChange={onChange}>
                               <option value="No">No</option>
                               <option value="Yes">Yes</option>
                             </select>
