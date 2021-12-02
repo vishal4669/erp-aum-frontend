@@ -104,28 +104,13 @@ function AayushView(props) {
 
         			for (var i = 1; i <= totalPDFPages; i++) {
         				pdf.addPage(PDF_Width, PDF_Height);
-        				pdf.addImage(imgData, 'JPG', 0,0);
+        				pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
         			}
 
         		    pdf.save("coa_aayush_"+response.data.data[0].certificate_no+".pdf");
                 toastr.info("Pdf is Generated Successfully For COA Aayush")
-              //  props.history.push('/generate-coa/'+edit_booking_id);
+                props.history.push('/generate-coa/'+edit_booking_id);
             });
-
-            /*const input = document.getElementById('pdfdiv');
-                html2canvas(input)
-                  .then((canvas) => {
-                    var imgWidth = 220;
-                    var pageHeight = 320;
-                    var imgHeight = canvas.height * imgWidth / canvas.width;
-                    var heightLeft = imgHeight;
-                    const imgData = canvas.toDataURL('image/png');
-                    const pdf = new jsPDF('p', 'mm', 'a4')
-                    var position = 0;
-                    var heightLeft = imgHeight;
-                    pdf.addImage(imgData, 'JPEG', 0, 0);
-                    pdf.save("test.pdf");
-                })*/
       }
     })
     .catch((error) => {
@@ -151,14 +136,14 @@ function AayushView(props) {
           {loading1 ? <center><LoadingSpinner /></center> :
             <Row>
               <Col>
-                <Card style={{width:'60%'}}>
+                <Card style={{margin: '0 auto',width: '60%',boxShadow: '0 2px 4px rgb(15 34 58)'}}>
                   <CardBody className="pdfDiv" id="pdfdiv" style={{fontFamily:'Bell MT'}}>
                   {/*if viewonly than need to show viewonly image*/}
                     {coa_action == 'VIEW' ? <img src={viewOnly} id="watermark" style={{width:'100%',opacity:'0.4',zIndex:'-1'}}/> : ''}
 
-                    <MDBTable bordered style={{border:'1px solid #000000',fontWeight:'800'}} small responsive>
+                    <MDBTable bordered style={{border:'1px solid #000000',fontWeight:'800',color:'black'}} small responsive>
                       <MDBTableBody>
-                          <tr><th colspan="4"><h6 style={{float:'right',fontSize:'18px',fontWeight:'bold'}}>Aayush Approval No : GATL/05</h6></th></tr>
+                          <tr><th colspan="4"><h6 style={{float:'right',fontSize:'18px',fontWeight:'bold',color:'black'}}>Aayush Approval No : GATL/05</h6></th></tr>
                           <tr>
                             <th colspan="4" className="text-center" style={{fontSize:'24px'}}>Certificate of Analysis</th>
                           </tr>
@@ -167,7 +152,7 @@ function AayushView(props) {
                           </tr>
                           <tr>
                             <th>
-                              <u><h5 style={{fontWeight:'bold',fontSize:'20px'}}>{booking1.customer_name}</h5></u>
+                              <u><h5 style={{fontWeight:'bold',fontSize:'20px',color:'black'}}>{booking1.customer_name}</h5></u>
                             </th>
                             <th colspan="1" style={{fontSize:'16px'}}>Certificate No</th>
                             <td colspan="1" style={{fontSize:'16px'}}>{booking1.certificate_no}</td>
@@ -187,7 +172,7 @@ function AayushView(props) {
                           </tr>
                       </MDBTableBody>
                     </MDBTable>
-                    <MDBTable bordered style={{border:'1px solid #000000'}} small responsive>
+                    <MDBTable bordered style={{border:'1px solid #000000',color:'black'}} small responsive>
                       <MDBTableBody>
                         <tr>
                           <th colspan="2" style={{fontSize:'16px'}}>Name of Sample</th>
@@ -244,34 +229,34 @@ function AayushView(props) {
                             <td style={{fontSize:'17px'}}>{x.test_parameter}</td>
                             <td style={{fontSize:'17px'}}>{x.label_claim}</td>
                             <td style={{fontSize:'17px'}}>{x.result}</td>
-                            <td style={{fontSize:'17px'}} style={{width:'350px'}}>{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}</td>
+                            <td style={{width:'350px',fontSize:'17px'}}>{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}</td>
                             <td style={{fontSize:'17px'}}>{x.method_used}</td>
                           </tr>
                        )) : <tr class="text-center"><td colspan="6">No Data Available</td></tr>}
 
                         <tr>
-                          <th style={{fontSize:'16px'}} colspan="6">Party Asked For Above Test Only</th>
+                          <th style={{fontSize:'18px'}} colspan="6">Party Asked For Above Test Only</th>
                         </tr>
                       </MDBTableBody>
                     </MDBTable>
-                    <h6 style={{fontSize:'18px'}}>In the Opinion of the undersigned the sample reffered to above is of standard Quality as definded in {booking1.pharmacopeia_name} & Act or the rules made there under.</h6>
+                    <h6 style={{fontSize:'18px',color:'black'}}>In the Opinion of the undersigned the sample reffered to above is of standard Quality as definded in {booking1.pharmacopeia_name} & Act or the rules made there under.</h6>
                     <br/>
-                    <h6 style={{float:'right',fontSize:'17px',fontWeight:'bold'}}><center>Signature</center>Technical Incharge of Testing</h6><br/><br/>
-                    <br/><h6 style={{fontSize:'18px',fontWeight:'bold'}}>Disclamer :</h6>
-                    <p style={{fontSize:'16px'}}>
+                    <h6 style={{float:'right',fontSize:'17px',fontWeight:'bold',color:'black'}}><center>Signature</center>Technical Incharge of Testing</h6><br/><br/>
+                    <br/><h6 style={{fontSize:'18px',fontWeight:'bold',color:'black'}}>Disclamer :</h6>
+                    <p style={{fontSize:'16px',color:'black'}}>
                        (a) The Sample(s) to which the findings recorded herein (the finding) relate to information and sample provided by the client or by a third party acting at the client's direction and that
                        time environment. The finding constitute no warranty of the sample's representativeness of any goods and strictly relate to the sample(s). The company accepts no liability with regard to
                        the origin or source from which the sample(s) is are extracted.
                     </p>
-                    <p style={{fontSize:'16px'}}>
+                    <p style={{fontSize:'16px',color:'black'}}>
                       (b) Unless otherwise stated the result shown in this test report refer only to the sample) tested and such sample(s) are remained for 7 days in case of perishable and 15 days for all other
                       samples. The samples from regulatory bodies are to be retained as specified.
                     </p>
-                    <p style={{fontSize:'16px'}}>
+                    <p style={{fontSize:'16px',color:'black'}}>
                       (c) This document can't be reproduced except in full, without prior written approval of company. Information contained here on reflects the company's finding at the time of its
                       intervention only and within the limit of client's instruction if any.
                     </p>
-                    <p style={{fontSize:'16px'}}>
+                    <p style={{fontSize:'16px',color:'black'}}>
                       (d) In case of any dispute judicially matter will be subject to kalol jurisdiction only.
                     </p>
                   </CardBody>
