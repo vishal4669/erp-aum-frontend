@@ -75,7 +75,7 @@ function AddBooking(props) {
 
   const [testData, setTestData] = useState([{
     parent_child: 'Parent', p_sr_no: '1', by_pass: '2', parent_id: '', product_details: '',
-    test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending'
+    test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending',assigned_date:''
   }])
 
   useEffect(() => {
@@ -102,7 +102,7 @@ function AddBooking(props) {
 
     setTestData([...testData, {
       parent_child: 'Parent', p_sr_no: '1', by_pass: '2', parent_id: '', product_details: '',
-      test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending'
+      test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending',assigned_date:''
     }]);
 
   /*  let setdata = () => {
@@ -122,7 +122,7 @@ function AddBooking(props) {
           //setdata();
           setTestData([...testData, {
             parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending'
+            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending',assigned_date:''
           }]);
 
         }
@@ -130,7 +130,7 @@ function AddBooking(props) {
           testData[i]['p_sr_no'] = '';
           setTestData([...testData, {
             parent_child: 'Parent', p_sr_no: '', by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending'
+            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending',assigned_date:''
           }]);
         }
       }
@@ -140,7 +140,7 @@ function AddBooking(props) {
           //setdata();
           setTestData([...testData, {
             parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending'
+            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending',assigned_date:''
           }]);
         }
       }
@@ -390,7 +390,8 @@ function AddBooking(props) {
           "min_limit": d.min_limit,
           "max_limit": d.max_limit,
           "amount": d.amount,
-          "approved":'Pending'
+          "approved":'Pending',
+          "assigned_date":''
 
         }))
         setTestData(tests_data)

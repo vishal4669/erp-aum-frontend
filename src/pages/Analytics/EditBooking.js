@@ -85,7 +85,8 @@ function EditBooking(props) {
     parent_child: 'Parent', p_sr_no: '', by_pass: '2', parent_id: '', product_details: '',
     test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
     label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-    division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
+    division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: '',
+    assign_date:''
   }])
 
   useEffect(() => {
@@ -120,7 +121,8 @@ function EditBooking(props) {
       parent_child: 'Parent', p_sr_no: 1, by_pass: '2', parent_id: '', product_details: '',
       test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
       label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-      division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
+      division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: '',
+      assign_date:''
     }]);
     /*let setdata = () => {
       setTestData([...testData, {
@@ -142,7 +144,8 @@ function EditBooking(props) {
             parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
             test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
             label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: ''
+            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: '',
+            assign_date:''
           }]);
 
         }
@@ -152,7 +155,8 @@ function EditBooking(props) {
             parent_child: 'Parent', p_sr_no: '', by_pass: '2', parent_id: '', product_details: '',
             test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
             label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: ''
+            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: '',
+            assign_date:''
           }]);
         }
       }
@@ -163,7 +167,8 @@ function EditBooking(props) {
             parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
             test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
             label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: ''
+            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: '',
+            assign_date:''
           }]);
           //setdata();
         }
@@ -1609,7 +1614,10 @@ function EditBooking(props) {
                                       {/*<td><input value={x.expanded_uncertanity} type="text" name="expanded_uncertanity"
                                       onChange={e => handleInputChange(e, i)} className="form-control" /></td>*/}
 
-                                      <td><input value={x.amount} type="text" name="amount" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                      <td>
+                                      <input value={x.amount} type="text" name="amount" onChange={e => handleInputChange(e, i)} className="form-control" />
+                                      <input type="hidden" value={x.assigned_date}/>
+                                      </td>
 
                                       {//
                                       }
@@ -1628,10 +1636,10 @@ function EditBooking(props) {
                                       </td>
                                       <td> {x.approval_date_time !== null || x.approval_date_time !== '' ?
                                         (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
-                                          <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={x.approved === 'Approved' || x.approved === 'Rejected' ? false  : true}/>
-                                          : <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={x.approved === 'Approved' || x.approved === 'Rejected' ? false  : true}/>)
+                                          <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={(x.approved === 'Approved' || x.approved === 'Rejected') && (x.approval_date_time == '' || x.approval_date_time == null ) ? false  : true}/>
+                                          : <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={(x.approved === 'Approved' || x.approved === 'Rejected') && (x.approval_date_time == '' || x.approval_date_time == null ) ? false  : true}/>)
                                         :
-                                        <input value={x.approval_date_time} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={x.approved === 'Approved' || x.approved === 'Rejected' ? false  : true}/>
+                                        <input value={x.approval_date_time} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={(x.approved === 'Approved' || x.approved === 'Rejected') && (x.approval_date_time == '' || x.approval_date_time == null ) ? false  : true}/>
                                       }
                                       </td>
                                       {/*<td><input value={x.test_date_time} type="text" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
