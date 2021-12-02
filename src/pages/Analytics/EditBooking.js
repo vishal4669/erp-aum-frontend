@@ -1653,8 +1653,8 @@ function EditBooking(props) {
                                         {loading1 ? <LoadingSpinner /> :
                                           <select className="form-select" value={x.chemist_name} name="chemist_name" onChange={e => handleInputChange(e, i)} disabled={x.approved === 'Assigned' ? false  : true}>
                                             <option value="">Select Chemist</option>
-                                            {chemist.map((option, key) => <option value={option.id} key={key} >
-                                              {option.first_name + " " + option.middle_name + " " + option.last_name}</option>)}
+                                            {chemist && chemist.length ? chemist.map((option, key) => <option value={option.id} key={key} >
+                                              {option.first_name + " " + option.middle_name + " " + option.last_name}</option>) : <option>None</option>}
                                           </select>
                                         }
                                       </td>

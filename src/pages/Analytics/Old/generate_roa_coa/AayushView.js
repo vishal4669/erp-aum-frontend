@@ -83,8 +83,7 @@ function AayushView(props) {
       setTestData(response.data.data[0].tests_data)
       {setLoading1(false)}
       if(coa_action === "PDF"){
-      var HTML_Width = $(".pdfDiv").width();
-      console.log(HTML_Width)
+        var HTML_Width = $(".pdfDiv").width();
         		var HTML_Height = $(".pdfDiv").height();
         		var top_left_margin = 15;
         		var PDF_Width = HTML_Width+(top_left_margin*2);
@@ -97,39 +96,23 @@ function AayushView(props) {
 
         		html2canvas($(".pdfDiv")[0],{allowTaint:true}).then(function(canvas) {
         			canvas.getContext('2d');
-        			var imgData = canvas.toDataURL("image/png", 10.0);
+        			var imgData = canvas.toDataURL("image/jpeg", 1.0);
         			var pdf = new jsPDF('p', 'pt',  [PDF_Width, PDF_Height]);
-        		    pdf.addImage(imgData, 'JPG',top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
+        		    pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
 
 
         			for (var i = 1; i <= totalPDFPages; i++) {
         				pdf.addPage(PDF_Width, PDF_Height);
-        				pdf.addImage(imgData, 'JPG', 0,0);
+        				pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
         			}
 
         		    pdf.save("coa_aayush_"+response.data.data[0].certificate_no+".pdf");
                 toastr.info("Pdf is Generated Successfully For COA Aayush")
-              //  props.history.push('/generate-coa/'+edit_booking_id);
+                props.history.push('/generate-coa/'+edit_booking_id);
             });
-
-            /*const input = document.getElementById('pdfdiv');
-                html2canvas(input)
-                  .then((canvas) => {
-                    var imgWidth = 220;
-                    var pageHeight = 320;
-                    var imgHeight = canvas.height * imgWidth / canvas.width;
-                    var heightLeft = imgHeight;
-                    const imgData = canvas.toDataURL('image/png');
-                    const pdf = new jsPDF('p', 'mm', 'a4')
-                    var position = 0;
-                    var heightLeft = imgHeight;
-                    pdf.addImage(imgData, 'JPEG', 0, 0);
-                    pdf.save("test.pdf");
-                })*/
       }
     })
     .catch((error) => {
-      console.log(error)
       if(error.response.data.message == "Token is Expired" || error.response.data.status == "401"){
         props.history.push('/');
       } else {
@@ -137,9 +120,9 @@ function AayushView(props) {
       }
       {setLoading1(false)}
     })
-  /*  document.addEventListener('contextmenu', (e) => {
+    document.addEventListener('contextmenu', (e) => {
      e.preventDefault();
-   });*/
+   });
   }, []);
 
   return (
@@ -151,127 +134,127 @@ function AayushView(props) {
           {loading1 ? <center><LoadingSpinner /></center> :
             <Row>
               <Col>
-                <Card style={{width:'60%'}}>
-                  <CardBody className="pdfDiv" id="pdfdiv" style={{fontFamily:'Bell MT'}}>
+                <Card>
+                  <CardBody className="pdfDiv">
                   {/*if viewonly than need to show viewonly image*/}
-                    {coa_action == 'VIEW' ? <img src={viewOnly} id="watermark" style={{width:'100%',opacity:'0.4',zIndex:'-1'}}/> : ''}
+                    {coa_action == 'VIEW' ? <img src={viewOnly} id="watermark" style={{width:'100%',opacity:'0.4'}}/> : ''}
 
-                    <MDBTable bordered style={{border:'1px solid #000000',fontWeight:'800'}} small responsive>
+                    <MDBTable bordered style={{border:'1px solid #000000',fontWeight:'500'}} small responsive>
                       <MDBTableBody>
-                          <tr><th colspan="4"><h6 style={{float:'right',fontSize:'18px',fontWeight:'bold'}}>Aayush Approval No : GATL/05</h6></th></tr>
+                          <tr><th colspan="4"><h6 style={{float:'right',fontSize:'15px'}}>Aayush Approval No : GATL/05</h6></th></tr>
                           <tr>
-                            <th colspan="4" className="text-center" style={{fontSize:'24px'}}>Certificate of Analysis</th>
+                            <th colspan="4" className="text-center" style={{fontSize:'18px'}}>Certificate of Analysis</th>
                           </tr>
                           <tr>
-                            <th colspan="4" className="text-center" style={{fontSize:'18px'}}>Form-50<br/>(160 - D(f) Report of test or Analysis by Approved Laboratory)</th>
+                            <th colspan="4" className="text-center" style={{fontSize:'13px'}}>Form-50<br/>(160 - D(f) Report of test or Analysis by Approved Laboratory)</th>
                           </tr>
                           <tr>
                             <th>
-                              <u><h5 style={{fontWeight:'bold',fontSize:'20px'}}>{booking1.customer_name}</h5></u>
+                              <u><h5>{booking1.customer_name}</h5></u>
                             </th>
-                            <th colspan="1" style={{fontSize:'16px'}}>Certificate No</th>
-                            <td colspan="1" style={{fontSize:'16px'}}>{booking1.certificate_no}</td>
+                            <th colspan="1">Certificate No</th>
+                            <td colspan="1">{booking1.certificate_no}</td>
                           </tr>
                           <tr>
-                            <td style={{fontSize:'16px'}}>Street 1 : {booking1.street1}</td>
-                            <th colspan="1" style={{fontSize:'16px'}}>COA Release Date</th>
-                            <td colspan="1" style={{fontSize:'16px'}}>{booking1.coa_release_date ? moment(booking1.coa_release_date).format('DD-MM-YYYY'): 'Not Specified'}</td>
+                            <td>Street 1 : {booking1.street1}</td>
+                            <th colspan="1">COA Release Date</th>
+                            <td colspan="1">{booking1.coa_release_date ? moment(booking1.coa_release_date).format('DD-MM-YYYY'): 'Not Specified'}</td>
                           </tr>
                           <tr>
-                            <td style={{fontSize:'16px'}}>Street 2 : {booking1.street2}<br/>{booking1.area ? booking1.area : ''}{booking1.area && booking1.pin ? ',' : ''}{booking1.pin ? booking1.pin : ''}
+                            <td>Street 2 : {booking1.street2}<br/>{booking1.area ? booking1.area : ''}{booking1.area && booking1.pin ? ',' : ''}{booking1.pin ? booking1.pin : ''}
                             {booking1.pin && booking1.city ? ',' : ''}{booking1.city}{booking1.city && booking1.state ? ',' : ''}
                             {booking1.state}{booking1.state && booking1.country ? ',' : ''}
                             {booking1.country ? ',' : ''}{booking1.country}</td>
-                            <th colspan="1" style={{fontSize:'16px'}}>Sample Received Date</th>
-                            <td colspan="1" style={{fontSize:'16px'}}>{booking1.sample_received_date ? moment(booking1.sample_received_date).format('DD-MM-YYYY hh:mm:ss a'): 'Not Specified'}</td>
+                            <th colspan="1">Sample Received Date</th>
+                            <td colspan="1">{booking1.sample_received_date ? moment(booking1.sample_received_date).format('DD-MM-YYYY hh:mm:ss a'): 'Not Specified'}</td>
                           </tr>
                       </MDBTableBody>
                     </MDBTable>
                     <MDBTable bordered style={{border:'1px solid #000000'}} small responsive>
                       <MDBTableBody>
                         <tr>
-                          <th colspan="2" style={{fontSize:'16px'}}>Name of Sample</th>
-                          <th colspan="2" style={{fontSize:'16px'}}>{booking1.name_of_sample}</th>
-                          <th colspan="1" style={{fontSize:'16px'}}>Generic Name</th>
-                          <th colspan="1" style={{fontSize:'16px'}}>{booking1.generic_name ? booking1.generic_name : 'Not Specified'}</th>
+                          <th colspan="2">Name of Sample</th>
+                          <th colspan="2">{booking1.name_of_sample}</th>
+                          <th colspan="1">Generic Name</th>
+                          <th colspan="1">{booking1.generic_name ? booking1.generic_name : 'Not Specified'}</th>
                         </tr>
                         <tr>
-                          <td colspan="2" style={{fontSize:'16px'}}>Details Of Product</td>
-                          <td colspan="2" style={{fontSize:'16px'}}>{booking1.product_generic ? booking1.product_generic : 'Not Specified'}</td>
-                          <td colspan="1" style={{fontSize:'16px'}}>Party Mfg. Licence No</td>
-                          <td colspan="1" style={{fontSize:'16px'}}>{booking1.party_mfg_licence_no ? booking1.party_mfg_licence_no : 'Not Specified'}</td>
+                          <td colspan="2">Details Of Product</td>
+                          <td colspan="2">{booking1.product_generic ? booking1.product_generic : 'Not Specified'}</td>
+                          <td colspan="1">Party Mfg. Licence No</td>
+                          <td colspan="1">{booking1.party_mfg_licence_no ? booking1.party_mfg_licence_no : 'Not Specified'}</td>
                         </tr>
                         <tr>
-                          <td colspan="2" style={{fontSize:'16px'}}>Lot/Batch No</td>
-                          <td colspan="2" style={{fontSize:'16px'}}>{booking1.lot_batch_no ? booking1.lot_batch_no : 'Not Specified'}</td>
-                          <td colspan="1" style={{fontSize:'16px'}}>Client Ref No</td>
-                          <td colspan="1" style={{fontSize:'16px'}}>{booking1.client_ref_no ? booking1.client_ref_no : 'Not Specified'}</td>
+                          <td colspan="2">Lot/Batch No</td>
+                          <td colspan="2">{booking1.lot_batch_no ? booking1.lot_batch_no : 'Not Specified'}</td>
+                          <td colspan="1">Client Ref No</td>
+                          <td colspan="1">{booking1.client_ref_no ? booking1.client_ref_no : 'Not Specified'}</td>
                         </tr>
                         <tr>
-                          <td colspan="2" style={{fontSize:'16px'}}>Batch Size/Qty Received</td>
-                          <td colspan="2" style={{fontSize:'16px'}}>{booking1.batch_size_qty_rec ? booking1.batch_size_qty_rec : 'Not Specified'}</td>
-                          <td colspan="1" style={{fontSize:'16px'}}>Sample Qty Received</td>
-                          <td colspan="1" style={{fontSize:'16px'}}>{booking1.sample_qty_rec ? booking1.sample_qty_rec : 'Not Specified'}</td>
+                          <td colspan="2">Batch Size/Qty Received</td>
+                          <td colspan="2">{booking1.batch_size_qty_rec ? booking1.batch_size_qty_rec : 'Not Specified'}</td>
+                          <td colspan="1">Sample Qty Received</td>
+                          <td colspan="1">{booking1.sample_qty_rec ? booking1.sample_qty_rec : 'Not Specified'}</td>
                         </tr>
                         <tr>
-                          <td colspan="2" style={{fontSize:'16px'}}>Original Manufacturer</td>
-                          <td colspan="2" style={{fontSize:'16px'}}>{booking1.original_manufacturer ? booking1.original_manufacturer : 'Not Specified'}</td>
-                          <td colspan="1" style={{fontSize:'16px'}}>Date of Manufacturing</td>
-                          <td colspan="1" style={{fontSize:'16px'}}>{booking1.date_of_manufacturing ? moment(booking1.date_of_manufacturing).format('DD-MM-YYYY') : 'Not Specified'}</td>
+                          <td colspan="2">Original Manufacturer</td>
+                          <td colspan="2">{booking1.original_manufacturer ? booking1.original_manufacturer : 'Not Specified'}</td>
+                          <td colspan="1">Date of Manufacturing</td>
+                          <td colspan="1">{booking1.date_of_manufacturing ? moment(booking1.date_of_manufacturing).format('DD-MM-YYYY') : 'Not Specified'}</td>
                         </tr>
                         <tr>
-                          <td colspan="2" style={{fontSize:'16px'}}>Supplier</td>
-                          <td colspan="2" style={{fontSize:'16px'}}>{booking1.supplier ? booking1.supplier : 'Not Specified'}</td>
-                          <td colspan="1" style={{fontSize:'16px'}}>Date of Expiry</td>
-                          <td colspan="1" style={{fontSize:'16px'}}>{booking1.date_of_expiry ? moment(booking1.date_of_expiry).format('DD-MM-YYYY') : 'Not Specified'}</td>
+                          <td colspan="2">Supplier</td>
+                          <td colspan="2">{booking1.supplier ? booking1.supplier : 'Not Specified'}</td>
+                          <td colspan="1">Date of Expiry</td>
+                          <td colspan="1">{booking1.date_of_expiry ? moment(booking1.date_of_expiry).format('DD-MM-YYYY') : 'Not Specified'}</td>
                         </tr>
                         <tr>
-                          <th colspan="6" className="text-center" style={{fontSize:'24px'}}>Analysis Result</th>
+                          <th colspan="6" className="text-center" style={{fontSize:'18px'}}>Analysis Result</th>
                         </tr>
                         <tr className="text-center">
-                          <th style={{fontSize:'18px'}}>No</th>
-                          <th style={{fontSize:'18px'}}>Test Parameter</th>
-                          <th style={{fontSize:'18px'}}>Label Claims</th>
-                          <th style={{fontSize:'18px'}}>Result</th>
-                          <th style={{fontSize:'18px'}}>Specification {booking1.pharmacopeia_name}</th>
-                          <th style={{fontSize:'18px'}}>Method Used</th>
+                          <th>No</th>
+                          <th>Test Parameter</th>
+                          <th>Label Claims</th>
+                          <th>Result</th>
+                          <th>Specification {booking1.pharmacopeia_name}</th>
+                          <th>Method Used</th>
                         </tr>
 
                       {testData.length ?
                         testData.map((x, i) => (
                           <tr className="text-center">
-                            <td style={{fontSize:'17px'}}>{i+1}</td>
-                            <td style={{fontSize:'17px'}}>{x.test_parameter}</td>
-                            <td style={{fontSize:'17px'}}>{x.label_claim}</td>
-                            <td style={{fontSize:'17px'}}>{x.result}</td>
-                            <td style={{fontSize:'17px'}} style={{width:'350px'}}>{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}</td>
-                            <td style={{fontSize:'17px'}}>{x.method_used}</td>
+                            <td>{i+1}</td>
+                            <td>{x.test_parameter}</td>
+                            <td>{x.label_claim}</td>
+                            <td>{x.result}</td>
+                            <td style={{width:'350px'}}>{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}</td>
+                            <td>{x.method_used}</td>
                           </tr>
                        )) : <tr class="text-center"><td colspan="6">No Data Available</td></tr>}
 
                         <tr>
-                          <th style={{fontSize:'16px'}} colspan="6">Party Asked For Above Test Only</th>
+                          <th colspan="6">Party Asked For Above Test Only</th>
                         </tr>
                       </MDBTableBody>
                     </MDBTable>
-                    <h6 style={{fontSize:'18px'}}>In the Opinion of the undersigned the sample reffered to above is of standard Quality as definded in {booking1.pharmacopeia_name} & Act or the rules made there under.</h6>
+                    <h6>In the Opinion of the undersigned the sample reffered to above is of standard Quality as definded in {booking1.pharmacopeia_name} & Act or the rules made there under.</h6>
                     <br/>
-                    <h6 style={{float:'right',fontSize:'17px',fontWeight:'bold'}}><center>Signature</center>Technical Incharge of Testing</h6><br/><br/>
-                    <br/><h6 style={{fontSize:'18px',fontWeight:'bold'}}>Disclamer :</h6>
-                    <p style={{fontSize:'16px'}}>
+                    <h6 style={{float:'right',fontSize:'15px'}}><center>Signature</center>Technical Incharge of Testing</h6><br/><br/>
+                    <br/><h6 style={{fontSize:'15px'}}>Disclamer :</h6>
+                    <p style={{fontSize:'13px'}}>
                        (a) The Sample(s) to which the findings recorded herein (the finding) relate to information and sample provided by the client or by a third party acting at the client's direction and that
-                       time environment. The finding constitute no warranty of the sample's representativeness of any goods and strictly relate to the sample(s). The company accepts no liability with regard to
-                       the origin or source from which the sample(s) is are extracted.
+                       time environment. The finding constitute no warranty of the sample's representativeness of any goods and strictly relate to the sample(). The company accepts no liability with regard to
+                       the origin or source from which the sample() is are extracted.
                     </p>
-                    <p style={{fontSize:'16px'}}>
+                    <p style={{fontSize:'13px'}}>
                       (b) Unless otherwise stated the result shown in this test report refer only to the sample) tested and such sample(s) are remained for 7 days in case of perishable and 15 days for all other
                       samples. The samples from regulatory bodies are to be retained as specified.
                     </p>
-                    <p style={{fontSize:'16px'}}>
+                    <p style={{fontSize:'13px'}}>
                       (c) This document can't be reproduced except in full, without prior written approval of company. Information contained here on reflects the company's finding at the time of its
                       intervention only and within the limit of client's instruction if any.
                     </p>
-                    <p style={{fontSize:'16px'}}>
+                    <p style={{fontSize:'13px'}}>
                       (d) In case of any dispute judicially matter will be subject to kalol jurisdiction only.
                     </p>
                   </CardBody>
