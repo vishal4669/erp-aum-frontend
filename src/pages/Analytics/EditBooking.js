@@ -86,7 +86,7 @@ function EditBooking(props) {
     test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
     label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
     division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: '',
-    assign_date:''
+    assigned_date:''
   }])
 
   useEffect(() => {
@@ -122,7 +122,7 @@ function EditBooking(props) {
       test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
       label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
       division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: '',
-      assign_date:''
+      assigned_date:''
     }]);
     /*let setdata = () => {
       setTestData([...testData, {
@@ -145,7 +145,7 @@ function EditBooking(props) {
             test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
             label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
             division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: '',
-            assign_date:''
+            assigned_date:''
           }]);
 
         }
@@ -156,7 +156,7 @@ function EditBooking(props) {
             test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
             label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
             division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: '',
-            assign_date:''
+            assigned_date:''
           }]);
         }
       }
@@ -168,7 +168,7 @@ function EditBooking(props) {
             test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
             label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
             division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: '',
-            assign_date:''
+            assigned_date:''
           }]);
           //setdata();
         }

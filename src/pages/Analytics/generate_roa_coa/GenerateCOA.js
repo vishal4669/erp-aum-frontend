@@ -130,7 +130,7 @@ function GenerateCOA(props) {
                               <option value="VIEW">VIEW</option>
                               <option value="PRINT">PRINT</option>
                               <option value="PDF">PDF</option>
-                              <option value="EMAIL">EMAIL</option>
+                              {/*<option value="EMAIL">EMAIL</option>*/}
                             </select>
                           </td>
                           <th>Letter Head</th>

@@ -95,7 +95,7 @@ function CoaView(props) {
 
         		html2canvas($(".pdfDiv")[0],{allowTaint:true}).then(function(canvas) {
         			canvas.getContext('2d');
-        			var imgData = canvas.toDataURL("image/jpeg", 1.0);
+        			var imgData = canvas.toDataURL("image/jpeg", 8.0);
         			var pdf = new jsPDF('p', 'pt',  [PDF_Width, PDF_Height]);
         		    pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
 
@@ -131,90 +131,99 @@ function CoaView(props) {
         <Container fluid={true}>
 
           {loading1 ? <center><LoadingSpinner /></center> :
-            <Row>
-              <Col>
-                <Card>
-                  <CardBody className="pdfDiv">
+            <Row style={{width:'60%'}}>
+              <Col className="pdfDiv" style={{fontFamily:'Times New Roman'}}>
                   {/*if viewonly than need to show viewonly image*/}
                     {coa_action == 'VIEW' ? <img src={viewOnly} id="watermark" style={{width:'100%',opacity:'0.4'}}/> : ''}
-
-                    <MDBTable bordered style={{border:'1px solid #000000',fontWeight:'500'}} small responsive>
-                      <MDBTableBody>
-                          <tr><th colspan="4"><h6 style={{float:'right',fontSize:'15px'}}>FDCA Licence No : GTL/37/57</h6></th></tr>
-                          <tr>
-                            <th colspan="4" className="text-center" style={{fontSize:'18px'}}>Certificate of Analysis</th>
-                          </tr>
-                          <tr>
-                            <th colspan="4" className="text-center" style={{fontSize:'13px'}}>Form-39<br/>(150 - E(f) Report of test or Analysis by Approved Institution)</th>
-                          </tr>
+                    <table style={{color:'black',width:'100%'}}>
+                      <tbody>
                           <tr>
                             <th>
-                              <u><h5>{booking1.customer_name}</h5></u>
+                              <h6 style={{fontSize:'15px',fontWeight:'bold',color:'black',float:'right'}}>FDCA Licence No : GTL/37/57
+                              </h6>
                             </th>
-                            <th colspan="2">Certificate No</th>
-                            <td colspan="2">{booking1.certificate_no}</td>
                           </tr>
                           <tr>
-                            <td>Street 1 : {booking1.street1}</td>
-                            <th colspan="2">COA Release Date</th>
-                            <td colspan="2">{booking1.coa_release_date ? moment(booking1.coa_release_date).format('DD-MM-YYYY'): 'Not Specified'}</td>
+                            <td><center><h1 style={{color:'black',fontSize:'28px',fontWeight:'bolder'}}>Certificate of Analysis</h1></center><hr style={{border: '1px solid #000000',opacity:'unset'}}/></td>
                           </tr>
                           <tr>
-                            <td>Street 2 : {booking1.street2}<br/>{booking1.area ? booking1.area : ''}{booking1.area && booking1.pin ? ',' : ''}{booking1.pin ? booking1.pin : ''}
-                            {booking1.pin && booking1.city ? ',' : ''}{booking1.city}{booking1.city && booking1.state ? ',' : ''}
-                            {booking1.state}{booking1.state && booking1.country ? ',' : ''}
-                            {booking1.country ? ',' : ''}{booking1.country}</td>
-                            <th colspan="2">Sample Received Date</th>
-                            <td colspan="2">{booking1.sample_received_date ? moment(booking1.sample_received_date).format('DD-MM-YYYY hh:mm:ss a'): 'Not Specified'}</td>
+                            <td className="text-center" style={{fontSize:'16px'}}><b>Form-39</b></td>
                           </tr>
-                      </MDBTableBody>
-                    </MDBTable>
-                    <MDBTable bordered style={{border:'1px solid #000000'}} small responsive>
+                          <tr>
+                            <td className="text-center" style={{fontSize:'16px'}}><b>(150 - E(f) Report of test or Analysis by Approved Institution)</b></td>
+                          </tr>
+                      </tbody>
+                    </table>
+                    <MDBTable style={{border:'1px solid grey',color:'black'}} small>
                       <MDBTableBody>
                         <tr>
-                          <th>Name of Sample</th>
-                          <th>{booking1.name_of_sample}</th>
-                          <th>Generic Name</th>
-                          <th>{booking1.generic_name ? booking1.generic_name : 'Not Specified'}</th>
+                          <td style={{width:'400px'}}><b>{booking1.customer_name}</b></td>
+                          <td colspan="2" style={{borderLeft:'1px solid grey'}}><b>Certificate No</b></td>
+                          <td colspan="2" style={{borderLeft:'1px solid grey'}}><b>{booking1.certificate_no}</b></td>
                         </tr>
                         <tr>
-                          <td>Details Of Product</td>
-                          <td>{booking1.product_generic ? booking1.product_generic : 'Not Specified'}</td>
-                          <td>Party Mfg. Licence No</td>
-                          <td>{booking1.party_mfg_licence_no ? booking1.party_mfg_licence_no : 'Not Specified'}</td>
+                          <td style={{borderTopColor:'#f5f6f8'}}><b>{booking1.street1},{booking1.street2}</b></td>
+                          <td colspan="2" style={{borderLeft:'1px solid grey'}}><b>COA Release Date</b></td>
+                          <td colspan="2" style={{borderLeft:'1px solid grey'}}><b>{booking1.coa_release_date ? moment(booking1.coa_release_date).format('DD-MM-YYYY'): 'Not Specified'}</b></td>
                         </tr>
                         <tr>
-                          <td>Lot/Batch No</td>
-                          <td>{booking1.lot_batch_no ? booking1.lot_batch_no : 'Not Specified'}</td>
-                          <td>Client Ref No</td>
-                          <td>{booking1.client_ref_no ? booking1.client_ref_no : 'Not Specified'}</td>
+                          <td style={{borderTopColor:'#f5f6f8'}}><b>{booking1.area ? booking1.area : ''}{booking1.area && booking1.pin ? ',' : ''}{booking1.pin ? booking1.pin : ''}
+                            {booking1.pin && booking1.city ? ',' : ''}{booking1.city}{booking1.city && booking1.state ? ',' : ''}
+                            {booking1.state}{booking1.state && booking1.country ? ',' : ''}
+                            {booking1.country ? ',' : ''}{booking1.country}</b></td>
+                          <td colspan="2" style={{borderLeft:'1px solid grey'}}>Sample Received Date</td>
+                          <td colspan="2" style={{borderLeft:'1px solid grey'}}>{booking1.sample_received_date ? moment(booking1.sample_received_date).format('DD-MM-YYYY hh:mm:ss a'): 'Not Specified'}</td>
+                        </tr>
+                      </MDBTableBody>
+                    </MDBTable>
+                    <MDBTable bordered style={{border:'1px solid grey',color:'black'}} small>
+                      <MDBTableBody>
+                        <tr>
+                          <th style={{width:'145px'}}>Name of Sample</th>
+                          <th colspan="2">{booking1.name_of_sample}</th>
+                          <th style={{width:'145px'}}>Generic Name</th>
+                          <th colspan="2">{booking1.generic_name ? booking1.generic_name : 'Not Specified'}</th>
                         </tr>
                         <tr>
-                          <td>Batch Size/Qty Received</td>
-                          <td>{booking1.batch_size_qty_rec ? booking1.batch_size_qty_rec : 'Not Specified'}</td>
-                          <td>Sample Qty Received</td>
-                          <td>{booking1.sample_qty_rec ? booking1.sample_qty_rec : 'Not Specified'}</td>
+                          <td style={{width:'145px'}}>Details Of Product</td>
+                          <td colspan="2">{booking1.product_generic ? booking1.product_generic : 'Not Specified'}</td>
+                          <td style={{width:'145px'}}>Party Mfg. Licence No</td>
+                          <td colspan="2">{booking1.party_mfg_licence_no ? booking1.party_mfg_licence_no : 'Not Specified'}</td>
                         </tr>
                         <tr>
-                          <td>Original Manufacturer</td>
-                          <td>{booking1.original_manufacturer ? booking1.original_manufacturer : 'Not Specified'}</td>
-                          <td>Date of Manufacturing</td>
-                          <td>{booking1.date_of_manufacturing ? moment(booking1.date_of_manufacturing).format('DD-MM-YYYY') : 'Not Specified'}</td>
+                          <td style={{width:'145px'}}>Lot/Batch No</td>
+                          <td colspan="2">{booking1.lot_batch_no ? booking1.lot_batch_no : 'Not Specified'}</td>
+                          <td style={{width:'145px'}}>Client Ref No</td>
+                          <td colspan="2">{booking1.client_ref_no ? booking1.client_ref_no : 'Not Specified'}</td>
                         </tr>
                         <tr>
-                          <td>Supplier</td>
-                          <td>{booking1.supplier ? booking1.supplier : 'Not Specified'}</td>
-                          <td>Date of Expiry</td>
-                          <td>{booking1.date_of_expiry ? moment(booking1.date_of_expiry).format('DD-MM-YYYY') : 'Not Specified'}</td>
+                          <td style={{width:'145px'}}>Batch Size/Qty Received</td>
+                          <td colspan="2">{booking1.batch_size_qty_rec ? booking1.batch_size_qty_rec : 'Not Specified'}</td>
+                          <td style={{width:'145px'}}>Sample Qty Received</td>
+                          <td colspan="2">{booking1.sample_qty_rec ? booking1.sample_qty_rec : 'Not Specified'}</td>
                         </tr>
                         <tr>
-                          <th colspan="4" className="text-center" style={{fontSize:'18px'}}>Analysis Result</th>
+                          <td style={{width:'145px'}}>Original Manufacturer</td>
+                          <td colspan="2">{booking1.original_manufacturer ? booking1.original_manufacturer : 'Not Specified'}</td>
+                          <td style={{width:'145px'}}>Date of Manufacturing</td>
+                          <td colspan="2">{booking1.date_of_manufacturing ? moment(booking1.date_of_manufacturing).format('DD-MM-YYYY') : 'Not Specified'}</td>
                         </tr>
+                        <tr>
+                          <td style={{width:'145px'}}>Supplier</td>
+                          <td colspan="2">{booking1.supplier ? booking1.supplier : 'Not Specified'}</td>
+                          <td style={{width:'145px'}}>Date of Expiry</td>
+                          <td colspan="2">{booking1.date_of_expiry ? moment(booking1.date_of_expiry).format('DD-MM-YYYY') : 'Not Specified'}</td>
+                        </tr>
+                      </MDBTableBody>
+                    </MDBTable>
+                      <h3 style={{fontSize:'14px',fontWeight:'600',color:'black'}}>Analysis Result</h3>
+                    <MDBTable bordered style={{border:'1px solid grey',color:'black'}} small>
+                      <MDBTableBody>
                             <tr className="text-center">
                               <th>No</th>
                               <th>Test Parameter</th>
-                              <th>Result</th>
-                              <th>Specification {booking1.pharmacopeia_name}</th>
+                              <th style={{width:'100px'}}>Result</th>
+                              <th colspan="2">Specification {booking1.pharmacopeia_name}</th>
                             </tr>
 
                           {testData.length ?
@@ -223,37 +232,35 @@ function CoaView(props) {
                                 <td>{i+1}</td>
                                 <td>{x.test_parameter}</td>
                                 <td>{x.result}</td>
-                                <td style={{width:'350px'}}>{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}</td>
+                                <td colspan="2">{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}</td>
                               </tr>
-                           )) : <tr class="text-center"><td colspan="4">No Data Available</td></tr>}
-
-                        <tr>
-                          <th colspan="4">Party Asked For Above Test Only</th>
-                        </tr>
+                           )) : <tr class="text-center"><td colspan="6">No Data Available</td></tr>}
                       </MDBTableBody>
                     </MDBTable>
-                    <h6>In the Opinion of the undersigned the sample reffered to above is of standard Quality as definded in {booking1.pharmacopeia_name} & Act or the rules made there under.</h6>
+                    <h3 style={{fontSize:'14px',fontWeight:'600',color:'black'}}>Party Asked For Above Test Only</h3>
+                    <hr style={{border: '1px double black',opacity:'unset'}}/>
+                    <h6 style={{color:'black',fontWeight:'bold'}}>In the Opinion of the undersigned the sample reffered to above is of standard Quality as definded in {booking1.pharmacopeia_name} & Act or the rules<br/> made there under.</h6>
                     <br/>
-                    <h6 style={{float:'right',fontSize:'15px'}}>Authorized Sign</h6>
-                    <br/><h6 style={{fontSize:'15px'}}>Disclamer :</h6>
-                    <p style={{fontSize:'13px'}}>
+                    <p style={{height:'30px'}}></p>
+                    <h6 style={{float:'right',fontSize:'15px',color:'black',fontWeight:'bold'}}>Authorized Sign:</h6>
+                    <br/><h6 style={{fontSize:'15px',color:'black',fontWeight:'bold'}}>Disclamer :</h6>
+                    <p style={{fontSize:'13px',color:'black'}}>
                        (a) The Sample(s) to which the findings recorded herein (the finding) relate to information and sample provided by the client or by a third party acting at the client's direction and that
-                       time environment. The finding constitute no warranty of the sample's representativeness of any goods and strictly relate to the sample(). The company accepts no liability with regard to
-                       the origin or source from which the sample() is are extracted.
+                       time environment. The finding constitute no warranty of the sample's representativeness of any goods and strictly relate to the sample(s). The company accepts no liability with regard to
+                       the origin or source from which the sample(s) is are extracted.
                     </p>
-                    <p style={{fontSize:'13px'}}>
+                    <p style={{fontSize:'13px',color:'black'}}>
                       (b) Unless otherwise stated the result shown in this test report refer only to the sample) tested and such sample(s) are remained for 7 days in case of perishable and 15 days for all other
                       samples. The samples from regulatory bodies are to be retained as specified.
                     </p>
-                    <p style={{fontSize:'13px'}}>
+                    <p style={{fontSize:'13px',color:'black'}}>
                       (c) This document can't be reproduced except in full, without prior written approval of company. Information contained here on reflects the company's finding at the time of its
                       intervention only and within the limit of client's instruction if any.
                     </p>
-                    <p style={{fontSize:'13px'}}>
+                    <p style={{fontSize:'13px',color:'black'}}>
                       (d) In case of any dispute judicially matter will be subject to kalol jurisdiction only.
                     </p>
-                  </CardBody>
-                </Card>
+
               </Col>
             </Row>
           }
