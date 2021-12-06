@@ -110,8 +110,27 @@ function CoaView(props) {
                 props.history.push('/generate-coa/'+edit_booking_id);
             });
       }
+      if(coa_action === "PRINT"){
+        var div = document.getElementById("pdfDiv").innerHTML;
+        var restorepage = $('body').html();
+        var printcontent = $(div).clone();
+        $('body').empty().html(printcontent);
+        window.print();
+
+        if(window.close()){
+          alert('Print is Not Generated For COA Print')
+        } else {
+          alert("Print is Generated Successfully For COA Print")
+        }
+      //  window.onafterprint = function(){
+        //toastr.info("Print is Generated Successfully For COA Print")
+        //props.history.push('/generate-coa/'+edit_booking_id);
+      //}
+        //$('body').html(restorepage);
+      }
     })
     .catch((error) => {
+      console.log(error)
       if(error.response.data.message == "Token is Expired" || error.response.data.status == "401"){
         props.history.push('/');
       } else {
@@ -132,7 +151,7 @@ function CoaView(props) {
 
           {loading1 ? <center><LoadingSpinner /></center> :
             <Row style={{width:'60%'}}>
-              <Col className="pdfDiv" style={{fontFamily:'Times New Roman'}}>
+              <Col className="pdfDiv" id="pdfDiv" style={{fontFamily:'Times New Roman'}}>
                   {/*if viewonly than need to show viewonly image*/}
                     {coa_action == 'VIEW' ? <img src={viewOnly} id="watermark" style={{width:'100%',opacity:'0.4'}}/> : ''}
                     <table style={{color:'black',width:'100%'}}>

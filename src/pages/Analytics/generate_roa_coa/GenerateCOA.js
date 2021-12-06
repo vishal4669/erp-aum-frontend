@@ -128,7 +128,7 @@ function GenerateCOA(props) {
                           <td>
                             <select name="action" class="form-select" onChange={onChange}>
                               <option value="VIEW">VIEW</option>
-                              <option value="PRINT">PRINT</option>
+                              <option value="PRINT" disabled={booking1.coa_print_count==1 ? true : false}>{booking1.coa_print_count==1 ? 'PRINT Done' :'PRINT'}</option>
                               <option value="PDF">PDF</option>
                               {/*<option value="EMAIL">EMAIL</option>*/}
                             </select>
