@@ -67,12 +67,18 @@ function GenerateCOA(props) {
     }
 
   const generate_coa =() => {
-    if(booking1.coa_format == 'COA PRINT'){
-      window.open('/view-coa/'+edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
-    } else if(booking1.coa_format == 'NABL PRINT'){
-        window.open('/view-nabl/' + edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
-    } else if(booking1.coa_format == 'COA AYUSH') {
-        window.open('/view-aayush/' + edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
+
+    if(window.confirm("Are you sure you want to Perfrom this Action?")){
+        if(booking1.coa_format == 'COA PRINT'){
+          window.open('/view-coa/'+edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
+        } else if(booking1.coa_format == 'NABL PRINT'){
+            window.open('/view-nabl/' + edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
+        } else if(booking1.coa_format == 'COA AYUSH') {
+            window.open('/view-aayush/' + edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
+        }
+    }
+    else{
+        return false;
     }
   }
 

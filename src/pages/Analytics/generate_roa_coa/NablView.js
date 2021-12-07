@@ -26,6 +26,7 @@ import 'toastr/build/toastr.min.css'
 import { decode as base64_decode, encode as base64_encode } from 'base-64';
 import { MDBTable, MDBTableBody} from 'mdbreact';
 import viewOnly from "../../../assets/images/Viewonly.png"
+import letterHeadImg from "../../../assets/images/letterhead.png"
 import moment from 'moment'
 import jsPDF from "jspdf";
 import html2canvas from 'html2canvas';
@@ -46,7 +47,8 @@ function NablView(props) {
   const [loading1, setLoading1] = useState(false);
 
   const [booking1, setBooking1] = useState({})
-  const [testData, setTestData] = useState([{test_parameter:'',result:'',product_details:'',max_limit:'',label_claim:'',method_used:''}])
+  const [testData, setTestData] = useState([{p_sr_no:'',test_parameter:'',result:'',product_details:'',max_limit:'',
+  parent_name:'',parent_child:''}])
 
 
   useEffect(() => {
@@ -138,6 +140,7 @@ function NablView(props) {
                           <Col className="pdfDiv" style={{fontFamily:'Times New Roman'}}>
                               {/*if viewonly than need to show viewonly image*/}
                                 {coa_action == 'VIEW' ? <img src={viewOnly} id="watermark" style={{width:'100%',opacity:'0.4'}}/> : ''}
+                                {letterhead == 'Yes' ? <img src={letterHeadImg} style={{float:'right',width:'20%',marginBottom:'20px'}}/> : ''}
                                 <table style={{color:'black',width:'100%'}}>
                                   <tbody>
                                       <tr>
@@ -240,7 +243,7 @@ function NablView(props) {
                                             <td>{x.test_parameter}</td>
             																<td>{x.label_claim}</td>
                                             <td>{x.result}</td>
-                                            <td colspan="2">{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}</td>
+                                            <td colspan="2">{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}{x.parent_child == 'Parent' && x.parent_data.parent_name !== '' ? '('+x.parent_data.parent_name+")" : ''}</td>
             																<td>{x.method_used}</td>
             															</tr>
                                        )) : <tr class="text-center"><td colspan="6">No Data Available</td></tr>}

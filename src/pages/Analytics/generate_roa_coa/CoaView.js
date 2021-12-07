@@ -26,6 +26,7 @@ import 'toastr/build/toastr.min.css'
 import { decode as base64_decode, encode as base64_encode } from 'base-64';
 import { MDBTable, MDBTableBody} from 'mdbreact';
 import viewOnly from "../../../assets/images/Viewonly.png"
+import letterHeadImg from "../../../assets/images/letterhead.png"
 import moment from 'moment'
 import jsPDF from "jspdf";
 import html2canvas from 'html2canvas';
@@ -46,41 +47,58 @@ function CoaView(props) {
   const [loading1, setLoading1] = useState(false);
 
   const [booking1, setBooking1] = useState({})
-  const [testData, setTestData] = useState([{test_parameter:'',result:'',product_details:'',max_limit:''}])
+  const [testData, setTestData] = useState([{p_sr_no:'',test_parameter:'',result:'',product_details:'',max_limit:'',
+  parent_name:'',parent_child:''}])
 
 
   useEffect(() => {
+    let url = ''
     {setLoading1(true)}
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaShow/`+ booking_id,{ headers })
+    if(coa_action == "PDF" || coa_action == "VIEW"){
+      url = `${process.env.REACT_APP_BASE_APIURL}RoaCoaShow/`+ booking_id
+    }
+    else {
+      url = `${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/COA_PRINT"
+      console.log(`${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/COA_PRINT")
+    }
+    axios.get(url,{ headers })
     .then(response => {
-      setBooking1({
-        customer_name:response.data.data[0].customer_data.company_name,
-        certificate_no:response.data.data[0].certificate_no,
-        coa_release_date:response.data.data[0].coa_release_date,
-        sample_received_date:response.data.data[0].sample_received_date,
-        name_of_sample:response.data.data[0].sample_data[0].product_data.name_of_sample,
-        generic_name:response.data.data[0].sample_data[0].product_data.generic_product_data.generic_name,
-        product_generic:response.data.data[0].sample_data[0].product_data.product_generic,
-        party_mfg_licence_no:response.data.data[0].party_mfg_licence_no,
-        lot_batch_no:response.data.data[0].sample_data[0].lot_batch_no,
-        client_ref_no:response.data.data[0].client_ref_no,
-        batch_size_qty_rec:response.data.data[0].sample_data[0].batch_size_qty_rec,
-        sample_qty_rec:response.data.data[0].sample_data[0].sample_qty_rec,
-        original_manufacturer:response.data.data[0].original_manufacturer.company_name,
-        date_of_manufacturing:response.data.data[0].date_of_manufacturing,
-        supplier:response.data.data[0].supplier.company_name,
-        date_of_expiry:response.data.data[0].date_of_expiry,
-        pharmacopeia_name: response.data.data[0].sample_data[0].product_data.pharmacopiea_data.pharmacopeia_name,
-        street1 : response.data.data[0].customer_data.customer_contact_data.street_1,
-        street2:response.data.data[0].customer_data.customer_contact_data.street_2,
-        area:response.data.data[0].customer_data.customer_contact_data.area,
-        pin:response.data.data[0].customer_data.customer_contact_data.pin,
-        city:response.data.data[0].customer_data.customer_contact_data.city,
-        state:response.data.data[0].customer_data.customer_contact_data.state.state_name,
-        country:response.data.data[0].customer_data.customer_contact_data.country.country_name,
-      })
-      setTestData(response.data.data[0].tests_data)
-      {setLoading1(false)}
+
+      if(response.data.success == true) {
+         setBooking1({
+            customer_name:response.data.data[0].customer_data.company_name,
+            certificate_no:response.data.data[0].certificate_no,
+            coa_release_date:response.data.data[0].coa_release_date,
+            sample_received_date:response.data.data[0].sample_received_date,
+            name_of_sample:response.data.data[0].sample_data[0].product_data.name_of_sample,
+            generic_name:response.data.data[0].sample_data[0].product_data.generic_product_data.generic_name,
+            product_generic:response.data.data[0].sample_data[0].product_data.product_generic,
+            party_mfg_licence_no:response.data.data[0].party_mfg_licence_no,
+            lot_batch_no:response.data.data[0].sample_data[0].lot_batch_no,
+            client_ref_no:response.data.data[0].client_ref_no,
+            batch_size_qty_rec:response.data.data[0].sample_data[0].batch_size_qty_rec,
+            sample_qty_rec:response.data.data[0].sample_data[0].sample_qty_rec,
+            original_manufacturer:response.data.data[0].original_manufacturer.company_name,
+            date_of_manufacturing:response.data.data[0].date_of_manufacturing,
+            supplier:response.data.data[0].supplier.company_name,
+            date_of_expiry:response.data.data[0].date_of_expiry,
+            pharmacopeia_name: response.data.data[0].sample_data[0].product_data.pharmacopiea_data.pharmacopeia_name,
+            street1 : response.data.data[0].customer_data.customer_contact_data.street_1,
+            street2:response.data.data[0].customer_data.customer_contact_data.street_2,
+            area:response.data.data[0].customer_data.customer_contact_data.area,
+            pin:response.data.data[0].customer_data.customer_contact_data.pin,
+            city:response.data.data[0].customer_data.customer_contact_data.city,
+            state:response.data.data[0].customer_data.customer_contact_data.state.state_name,
+            country:response.data.data[0].customer_data.customer_contact_data.country.country_name,
+          })
+        setTestData(response.data.data[0].tests_data)
+      } else {
+        toastr.error(response.data.message)
+        props.history.push('/generate-coa/' + edit_booking_id);
+        return false
+      }
+    {setLoading1(false)}
+
       if(coa_action === "PDF"){
         var HTML_Width = $(".pdfDiv").width();
         		var HTML_Height = $(".pdfDiv").height();
@@ -111,24 +129,13 @@ function CoaView(props) {
             });
       }
       if(coa_action === "PRINT"){
-        var div = document.getElementById("pdfDiv").innerHTML;
-        var restorepage = $('body').html();
-        var printcontent = $(div).clone();
-        $('body').empty().html(printcontent);
-        window.print();
-
-        if(window.close()){
-          alert('Print is Not Generated For COA Print')
-        } else {
-          alert("Print is Generated Successfully For COA Print")
-        }
-      //  window.onafterprint = function(){
-        //toastr.info("Print is Generated Successfully For COA Print")
-        //props.history.push('/generate-coa/'+edit_booking_id);
-      //}
-        //$('body').html(restorepage);
-      }
-    })
+          var div = document.getElementById("pdfDiv").innerHTML;
+          var restorepage = $('body').html();
+          var printcontent = $(div).clone();
+          $('body').empty().html(printcontent);
+          window.print();
+    }
+  })
     .catch((error) => {
       console.log(error)
       if(error.response.data.message == "Token is Expired" || error.response.data.status == "401"){
@@ -154,6 +161,7 @@ function CoaView(props) {
               <Col className="pdfDiv" id="pdfDiv" style={{fontFamily:'Times New Roman'}}>
                   {/*if viewonly than need to show viewonly image*/}
                     {coa_action == 'VIEW' ? <img src={viewOnly} id="watermark" style={{width:'100%',opacity:'0.4'}}/> : ''}
+                    {letterhead == 'Yes' ? <img src={letterHeadImg} style={{float:'right',width:'20%',marginBottom:'20px'}}/> : ''}
                     <table style={{color:'black',width:'100%'}}>
                       <tbody>
                           <tr>
@@ -248,10 +256,10 @@ function CoaView(props) {
                           {testData.length ?
                             testData.map((x, i) => (
                               <tr className="text-center">
-                                <td>{i+1}</td>
+                                <td>{x.p_sr_no}</td>
                                 <td>{x.test_parameter}</td>
                                 <td>{x.result}</td>
-                                <td colspan="2">{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}</td>
+                                <td colspan="2">{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}{x.parent_child == 'Parent' && x.parent_data.parent_name !== '' ? '('+x.parent_data.parent_name+")" : ''}</td>
                               </tr>
                            )) : <tr class="text-center"><td colspan="6">No Data Available</td></tr>}
                       </MDBTableBody>
