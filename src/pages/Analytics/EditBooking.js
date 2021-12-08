@@ -715,7 +715,7 @@ function EditBooking(props) {
   // }
 
   const multiply = (num1, num2,index) => {
-    return num1.join("") * num2.join("");
+    return num1.join("") * num2.join("") / 100;
   };
   const UpdateBooking = (e) => {
     e.preventDefault();
@@ -1604,11 +1604,11 @@ function EditBooking(props) {
                                         </datalist>
                                       </td>
                                       <td>
-                                      <input value={x.result.includes('%') && x.label_claim !== '' ? multiply(x.result.match( /\d/g),x.label_claim.match( /\d/g)) / 100 : x.label_claim_result} type="text" name="label_claim_result" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                      <input value={x.result.includes('%') && x.label_claim !== '' ? multiply(x.result.match( /\d/g),x.label_claim.match( /\d/g)) : ''} type="text" name="label_claim_result" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       <td><input value={x.label_claim_unit} type="text" name="label_claim_unit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       {/*<td><input value={x.result2} type="text" name="result2"
                                       onChange={e => handleInputChange(e, i)} className="form-control" /></td>*/}
-                                      <td><input value={x.mean} type="text" name="mean" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                      <td><input value={x.result.includes('%') && x.label_claim !== '' ? (multiply(x.result.match( /\d/g),x.label_claim.match( /\d/g)) / 100) / 10 : x.mean} type="text" name="mean" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       {/*<td><input value={x.na_content} type="text" name="na_content"
                                       onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       <td><input value={x.final_na_content} type="text" name="final_na_content"
