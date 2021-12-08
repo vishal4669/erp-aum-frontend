@@ -59,7 +59,6 @@ function CoaView(props) {
     }
     else {
       url = `${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/COA_PRINT"
-      console.log(`${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/COA_PRINT")
     }
     axios.get(url,{ headers })
     .then(response => {
@@ -134,10 +133,11 @@ function CoaView(props) {
           var printcontent = $(div).clone();
           $('body').empty().html(printcontent);
           window.print();
+          window.close();
+          alert("Print is Successfully Generated for COA Print")
     }
   })
     .catch((error) => {
-      console.log(error)
       if(error.response.data.message == "Token is Expired" || error.response.data.status == "401"){
         props.history.push('/');
       } else {
@@ -259,7 +259,7 @@ function CoaView(props) {
                                 <td>{x.p_sr_no}</td>
                                 <td>{x.test_parameter}</td>
                                 <td>{x.result}</td>
-                                <td colspan="2">{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}{x.parent_child == 'Parent' && x.parent_data.parent_name !== '' ? '('+x.parent_data.parent_name+")" : ''}</td>
+                                <td colspan="2">{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}{x.parent_child == 'Parent' && x.parent_data.parent_name !== '' ? ' ('+x.parent_data.parent_name+")" : ''}</td>
                               </tr>
                            )) : <tr class="text-center"><td colspan="6">No Data Available</td></tr>}
                       </MDBTableBody>

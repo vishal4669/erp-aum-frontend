@@ -29,6 +29,7 @@ class ListBooking extends Component{
       tableRows: [],
       loading: false,
       loading1: false,
+      loading3: false,
       ExportPDFData:[],
       count :0
     }
@@ -159,6 +160,36 @@ this.deleteBooking = async(booking_id) =>{
               })
             })
  }
+
+ this.generate_coa = (booking_id) => {
+  this.setState({ loading3: true }, () => {
+   axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/Check_Coa", { headers: del_headers})
+  .then(response => {
+          if(response.data.success == true){
+            props.history.push("/generate-coa/"+base64_encode(booking_id));
+            this.setState({loading3: false});
+        }else{
+          toastr.error(response.data.message);
+          this.setState({loading3: false});
+        }
+  })
+})
+ }
+
+ this.generate_roa = (booking_id) => {
+  //this.setState({ loading3: true }, () => {
+   axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/Check_Roa", { headers: del_headers})
+  .then(response => {
+          if(response.data.success == true){
+            props.history.push("/generate-roa/"+base64_encode(booking_id));
+            //this.setState({loading3: false});
+        }else{
+          toastr.error(response.data.message);
+        //  this.setState({loading3: false});
+        }
+  })
+//})
+ }
  /*this.handlePageChange = (pageNumber) =>{
    this.setState({ loading: true }, () => {
     this.handlePageChange.bind(this)
@@ -184,6 +215,8 @@ this.deleteBooking = async(booking_id) =>{
   this.assemblePosts= () => {
           let posts =this.state.posts.map((post) => {
               const { data1, loading } = this.state;
+              const { data2, loading1 } = this.state;
+              const { data3, loading3 } = this.state;
               this.setState({
         count: this.state.count + 1
       });
@@ -192,9 +225,11 @@ this.deleteBooking = async(booking_id) =>{
               {
 
                 srno: this.state.count,
-                generate_data: <div><Link to={"/generate-roa/"+base64_encode(post.id)} className="btn btn-secondary btn-sm">
-                ROA</Link>&nbsp;&nbsp;<Link to={"/generate-coa/"+base64_encode(post.id)} className="btn btn-warning btn-sm">
-                COA</Link>&nbsp;&nbsp;<Link className="btn btn-success btn-sm">
+                generate_data:<div><button class=" btn btn-secondary btn-sm" onClick={() => this.generate_roa(post.id)}>ROA</button>&nbsp;&nbsp;
+
+                <button class=" btn btn-warning btn-sm" onClick={() => this.generate_coa(post.id)}>COA</button>
+
+                &nbsp;&nbsp;<Link className="btn btn-success btn-sm">
                 <i className="fa fa-barcode"></i></Link></div>,
                 coa_print: post.coa_print_count,
                 aum_serial_no: post.aum_serial_no,
@@ -224,6 +259,7 @@ this.deleteBooking = async(booking_id) =>{
           render() {
               const { data, loading } = this.state;
               const { data2, loading1 } = this.state;
+              const { data3, loading3 } = this.state;
 
               const data1 = {
 

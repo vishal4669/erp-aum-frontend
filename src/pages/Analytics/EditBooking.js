@@ -372,12 +372,21 @@ function EditBooking(props) {
         }
 
         if (response.data.data.booking_type == "Report") {
-          setBooking1(prevState => ({
-            ...prevState,
-            audit_reamrks: response.data.data.audit[0].audit_remarks,
-            reason: response.data.data.audit[0].reason,
-            comments: response.data.data.audit[0].comments
-          }))
+          if(Array. isArray(response.data.data.audit) && response.data.data.audit. length){
+            setBooking1(prevState => ({
+              ...prevState,
+              audit_reamrks: response.data.data.audit[0].audit_remarks,
+              reason: response.data.data.audit[0].reason,
+              comments: response.data.data.audit[0].comments
+            }))
+          } else {
+            setBooking1(prevState => ({
+              ...prevState,
+              audit_reamrks: '',
+              reason: '',
+              comments: ''
+            }))
+          }
         }
         if(response.data.data.tests !== null || response.data.data.tests !== ''){
           setTestData(response.data.data.tests)
@@ -425,7 +434,6 @@ function EditBooking(props) {
         console.log(error)
         { setLoading1(false) }
         toastr.error(error.response.data.message);
-        this.setState({ loading: false });
       })
   }
 
@@ -706,7 +714,9 @@ function EditBooking(props) {
   //     })
   // }
 
-
+  const multiply = (num1, num2,index) => {
+    return num1.join("") * num2.join("");
+  };
   const UpdateBooking = (e) => {
     e.preventDefault();
     { setLoading(true) };
@@ -776,7 +786,6 @@ function EditBooking(props) {
 
 
     const test_details = testData;
-
 
     const data = {
       booking_type: booking1.booking_type,
@@ -1588,13 +1597,14 @@ function EditBooking(props) {
 
                                       <td>
                                         <input value={x.result} onChange={e => handleInputChange(e, i)} name="result" className="form-control"
-                                        list="result" placeholder="Type to search For Result..." autoComplete="off" readOnly={x.approved === 'ForApproval' ? false  : true} />
+                                        list="result" placeholder="Type to search For Result..." autoComplete="off"/>
                                         <datalist id="result">
                                           { resultList.map((option, key) => <option data-value={option.result} value={option.result} key={key} >
                                         </option>) }
                                         </datalist>
                                       </td>
-                                      <td><input value={x.label_claim_result} type="text" name="label_claim_result" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                      <td>
+                                      <input value={x.result.includes('%') && x.label_claim !== '' ? multiply(x.result.match( /\d/g),x.label_claim.match( /\d/g)) / 100 : x.label_claim_result} type="text" name="label_claim_result" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       <td><input value={x.label_claim_unit} type="text" name="label_claim_unit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       {/*<td><input value={x.result2} type="text" name="result2"
                                       onChange={e => handleInputChange(e, i)} className="form-control" /></td>*/}
@@ -1628,18 +1638,18 @@ function EditBooking(props) {
                                       className="form-control" /></td>*/}
                                       <td> {loading1 ? <LoadingSpinner /> : x.test_date_time !== null || x.test_date_time !== '' ?
                                         (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
-                                          <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={x.approved === 'ForApproval' ? false  : true} />
-                                          : <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"  readOnly={x.approved === 'ForApproval' ? false  : true}/>)
+                                          <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control" />
+                                          : <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>)
                                         :
-                                        <input value={x.test_date_time} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={x.approved === 'ForApproval' ? false  : true}/>
+                                        <input value={x.test_date_time} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>
                                       }
                                       </td>
                                       <td> {x.approval_date_time !== null || x.approval_date_time !== '' ?
                                         (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
-                                          <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={(x.approved === 'Approved' || x.approved === 'Rejected') && (x.approval_date_time == '' || x.approval_date_time == null ) ? false  : true}/>
-                                          : <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={(x.approved === 'Approved' || x.approved === 'Rejected') && (x.approval_date_time == '' || x.approval_date_time == null ) ? false  : true}/>)
+                                          <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" />
+                                          : <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>)
                                         :
-                                        <input value={x.approval_date_time} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" readOnly={(x.approved === 'Approved' || x.approved === 'Rejected') && (x.approval_date_time == '' || x.approval_date_time == null ) ? false  : true}/>
+                                        <input value={x.approval_date_time} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" />
                                       }
                                       </td>
                                       {/*<td><input value={x.test_date_time} type="text" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
@@ -1659,7 +1669,7 @@ function EditBooking(props) {
 
                                       <td>
                                         {loading1 ? <LoadingSpinner /> :
-                                          <select className="form-select" value={x.chemist_name} name="chemist_name" onChange={e => handleInputChange(e, i)} disabled={x.approved === 'Assigned' ? false  : true}>
+                                          <select className="form-select" value={x.chemist_name} name="chemist_name" onChange={e => handleInputChange(e, i)}>
                                             <option value="">Select Chemist</option>
                                             {chemist && chemist.length ? chemist.map((option, key) => <option value={option.id} key={key} >
                                               {option.first_name + " " + option.middle_name + " " + option.last_name}</option>) : <option>None</option>}
@@ -1748,17 +1758,17 @@ function EditBooking(props) {
 
                               <div className="col-md-4">
                                 <label>Audit Remarks</label>
-                                <textarea name="audit_reamrks" value={booking1.audit_reamrks} id="audit_reamrks" className="form-control" placeholder="Enter Remarks" onChange={onChange}></textarea>
+                                <textarea name="audit_reamrks" value={booking1.audit_reamrks} id="audit_reamrks" className="form-control" placeholder="Enter Remarks" onChange={onChange} required></textarea>
                               </div>
 
                               <div className="col-md-4">
                                 <label>Reason</label>
-                                <textarea name="reason" id="reason" value={booking1.reason} className="form-control" placeholder="Enter Reason" onChange={onChange}></textarea>
+                                <textarea name="reason" id="reason" value={booking1.reason} className="form-control" placeholder="Enter Reason" onChange={onChange} required></textarea>
                               </div>
 
                               <div className="col-md-4">
                                 <label>Comments</label>
-                                <textarea name="comments" id="comments" value={booking1.comments} className="form-control" placeholder="Enter Comments" onChange={onChange}></textarea>
+                                <textarea name="comments" id="comments" value={booking1.comments} className="form-control" placeholder="Enter Comments" onChange={onChange} required></textarea>
                               </div>
 
                             </div>

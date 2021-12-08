@@ -52,9 +52,17 @@ function AayushView(props) {
 
 
   useEffect(() => {
+    let url = ''
     {setLoading1(true)}
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaShow/`+ booking_id,{ headers })
+    if(coa_action == "PDF" || coa_action == "VIEW"){
+      url = `${process.env.REACT_APP_BASE_APIURL}RoaCoaShow/`+ booking_id
+    }
+    else {
+      url = `${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/COA_AYUSH"
+    }
+    axios.get(url,{ headers })
     .then(response => {
+     if(response.data.success == true) {
       setBooking1({
         customer_name:response.data.data[0].customer_data.company_name,
         certificate_no:response.data.data[0].certificate_no,
@@ -82,6 +90,11 @@ function AayushView(props) {
         country:response.data.data[0].customer_data.customer_contact_data.country.country_name,
       })
       setTestData(response.data.data[0].tests_data)
+      } else {
+        toastr.error(response.data.message)
+        props.history.push('/generate-coa/' + edit_booking_id);
+        return false
+      }
       {setLoading1(false)}
       if(coa_action === "PDF"){
       var HTML_Width = $(".pdfDiv").width();
@@ -113,9 +126,17 @@ function AayushView(props) {
                 props.history.push('/generate-coa/'+edit_booking_id);
             });
       }
+        if(coa_action === "PRINT"){
+            var div = document.getElementById("pdfDiv").innerHTML;
+            var restorepage = $('body').html();
+            var printcontent = $(div).clone();
+            $('body').empty().html(printcontent);
+            window.print();
+            window.close();
+            alert("Print is Successfully Generated for COA AYUSH")
+      }
     })
     .catch((error) => {
-      console.log(error)
       if(error.response.data.message == "Token is Expired" || error.response.data.status == "401"){
         props.history.push('/');
       } else {
@@ -137,7 +158,7 @@ function AayushView(props) {
           {loading1 ? <center><LoadingSpinner /></center> :
 
                         <Row style={{width:'60%'}}>
-                          <Col className="pdfDiv" style={{fontFamily:'Times New Roman'}}>
+                          <Col className="pdfDiv" id="pdfDiv" style={{fontFamily:'Times New Roman'}}>
                               {/*if viewonly than need to show viewonly image*/}
                                 {coa_action == 'VIEW' ? <img src={viewOnly} id="watermark" style={{width:'100%',opacity:'0.4'}}/> : ''}
                                 {letterhead == 'Yes' ? <img src={letterHeadImg} style={{float:'right',width:'20%',marginBottom:'20px'}}/> : ''}
@@ -241,7 +262,7 @@ function AayushView(props) {
                                             <td>{x.test_parameter}</td>
             																<td>{x.label_claim}</td>
                                             <td>{x.result}</td>
-                                            <td colspan="2">{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}{x.parent_child == 'Parent' && x.parent_data.parent_name !== '' ? '('+x.parent_data.parent_name+")" : ''}</td>
+                                            <td colspan="2">{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}{x.parent_child == 'Parent' && x.parent_data.parent_name !== '' ? ' ('+x.parent_data.parent_name+")" : ''}</td>
             																<td>{x.method_used}</td>
             															</tr>
                                        )) : <tr class="text-center"><td colspan="6">No Data Available</td></tr>}

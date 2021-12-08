@@ -39,7 +39,7 @@ function GenerateCOA(props) {
   const [loading1, setLoading1] = useState(false);
 
   const [booking1, setBooking1] = useState({booking_no:'',customer_name:'',aum_serial_no:'',
-  coa_format:'COA PRINT',letter_head:'No',action:'VIEW'})
+  coa_format:'COA PRINT',letter_head:'No',action:'VIEW',coa_print_count:'',coa_print:''})
 
   useEffect(() => {
     {setLoading1(true)}
@@ -51,7 +51,9 @@ function GenerateCOA(props) {
         customer_name: response.data.data.customer_id.company_name,
         coa_format:'COA PRINT',
         letter_head:'No',
-        action:'VIEW'
+        action:'VIEW',
+        coa_print_count: response.data.data.coa_print_count,
+        coa_print: response.data.data.coa_print
       });
       {setLoading1(false)}
     })
@@ -134,7 +136,7 @@ function GenerateCOA(props) {
                           <td>
                             <select name="action" class="form-select" onChange={onChange}>
                               <option value="VIEW">VIEW</option>
-                              <option value="PRINT" disabled={booking1.coa_print_count==1 ? true : false}>{booking1.coa_print_count==1 ? 'PRINT Done' :'PRINT'}</option>
+                              <option value="PRINT" disabled={booking1.coa_print_count==1 ? true : false}>PRINT</option>
                               <option value="PDF">PDF</option>
                               {/*<option value="EMAIL">EMAIL</option>*/}
                             </select>
@@ -143,10 +145,14 @@ function GenerateCOA(props) {
                           <td>
                             <select name="letter_head" class="form-select" onChange={onChange}>
                               <option value="No">No</option>
-                              <option value="Yes">Yes</option>
+                              {booking1.action !== 'PRINT' ? <option value="Yes">Yes</option> : ''}
                             </select>
                           </td>
                         </tr>
+                        {booking1.coa_print_count == "1" ? <tr>
+                          <th>Print is Generated For</th>
+                          <th>{booking1.coa_print.replace("_"," ")}</th>
+                        </tr> : ''}
                         <tr>
                           <td colspan="4" className="text-center"><input type="button" name="generate" value="Generate" onClick={generate_coa} className="btn btn-info"/></td>
                         </tr>
