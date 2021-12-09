@@ -66,6 +66,9 @@ function GenerateCOA(props) {
   const onChange = (e) => {
       e.persist();
       setBooking1({...booking1, [e.target.name]: e.target.value});
+      if(e.target.name == 'action' && e.target.value == "PRINT"){
+        setBooking1(prevState => ({ ...prevState, letter_head: 'No'}))
+      }
     }
 
   const generate_coa =() => {

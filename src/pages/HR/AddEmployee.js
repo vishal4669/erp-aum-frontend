@@ -351,16 +351,16 @@ const InsertEmployee = (e)=>{
 
         // Address Info - Correspondence Address
 
-        data.append('address[0][street1]', employee.street);
-        data.append('address[0][street2]', employee.street2);
-        data.append('address[0][area]', employee.area1);
-        data.append('address[0][city]', employee.city1);
-        data.append('address[0][pincode]', employee.pincode1);
-        data.append('address[0][mst_states_id]', employee.corr_state_id);
-        data.append('address[0][mst_countries_id]', employee.corr_country_id);
-        data.append('address[0][website]', employee.website);
-        data.append('address[0][emergency_contact_number]', employee.emergency_contact_number);
-        data.append('address[0][address_type]', 2);
+        data.append('address[1][street1]', employee.street);
+        data.append('address[1][street2]', employee.street2);
+        data.append('address[1][area]', employee.area1);
+        data.append('address[1][city]', employee.city1);
+        data.append('address[1][pincode]', employee.pincode1);
+        data.append('address[1][mst_states_id]', employee.corr_state_id);
+        data.append('address[1][mst_countries_id]', employee.corr_country_id);
+        data.append('address[1][website]', employee.website);
+        data.append('address[1][emergency_contact_number]', employee.emergency_contact_number);
+        data.append('address[1][address_type]', 2);
 
         // Educational Details
 

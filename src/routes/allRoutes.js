@@ -103,6 +103,8 @@ import CoaView from "../pages/Analytics/generate_roa_coa/CoaView"
 import AayushView from "../pages/Analytics/generate_roa_coa/AayushView"
 import NablView from "../pages/Analytics/generate_roa_coa/NablView"
 import RoaView from "../pages/Analytics/generate_roa_coa/RoaView"
+import NablRoaView1 from "../pages/Analytics/generate_roa_coa/NablRoaView1"
+import NablRoaView2 from "../pages/Analytics/generate_roa_coa/NablRoaView2"
 //Booking Test flow
 import AssignTest from "../pages/Analytics/AssignTest"
 import TestResultAdd from "../pages/Analytics/TestResultAdd"
@@ -171,6 +173,8 @@ const authRoutes = [
     { path: "/view-aayush", component: AayushView},
     { path: "/view-nabl", component: NablView},
     { path: "/view-roa", component: RoaView},
+    { path: "/view-nabl-roa1", component: NablRoaView1},
+    { path: "/view-nabl-roa2", component: NablRoaView2},
     //Booking Test flow
     { path: "/assign-test", component: AssignTest},
     { path: "/add-test-result", component: TestResultAdd},

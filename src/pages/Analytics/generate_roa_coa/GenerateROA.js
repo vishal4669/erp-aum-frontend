@@ -39,8 +39,7 @@ function GenerateROA(props) {
   const [loading1, setLoading1] = useState(false);
 
   const [booking1, setBooking1] = useState({booking_no:'',customer_name:'',aum_serial_no:'',
-  letter_head:'No',action:'VIEW'})
-
+  letter_head:'No',action:'VIEW',nabl_scope:'',roa_format:'ROA PRINT 1',roa_print_count:'',roa_print:''})
   useEffect(() => {
     {setLoading1(true)}
     axios.get(`${process.env.REACT_APP_BASE_APIURL}getBooking/` + booking_id, { headers })
@@ -48,9 +47,12 @@ function GenerateROA(props) {
       setBooking1({
         booking_no: response.data.data.booking_no,
         aum_serial_no : response.data.data.aum_serial_no,
+        nabl_scope : response.data.data.nabl_scope,
         customer_name: response.data.data.customer_id.company_name,
         letter_head:'No',
-        action:'VIEW'
+        action:'VIEW',
+        roa_print_count: response.data.data.roa_print_count,
+        roa_print: response.data.data.roa_print
       });
       {setLoading1(false)}
     })
@@ -63,10 +65,22 @@ function GenerateROA(props) {
   const onChange = (e) => {
       e.persist();
       setBooking1({...booking1, [e.target.name]: e.target.value});
+      if(e.target.name == 'action' && e.target.value == "PRINT"){
+        setBooking1(prevState => ({ ...prevState, letter_head: 'No'}))
+      }
     }
 
   const generate_roa =() => {
-    window.open('/view-roa/'+edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
+
+    if(booking1.nabl_scope == '1'){
+      if(booking1.roa_format == 'ROA PRINT 1'){
+            window.open('/view-nabl-roa1/'+edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
+      } else {
+        window.open('/view-nabl-roa2/'+edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
+      }
+    } else {
+       window.open('/view-roa/'+edit_booking_id+"/"+booking1.action+"/"+booking1.letter_head,"_blank");
+    }
   }
     return (
 
@@ -108,7 +122,16 @@ function GenerateROA(props) {
                           <td>ROA</td>
                           <th>Format</th>
                           <td>
-                            ROA Print
+                            {booking1.nabl_scope == '1' ?
+                              <select name="roa_format" class="form-select" onChange={onChange}>
+                                <option value="ROA PRINT 1">ROA PRINT 1</option>
+                                <option value="ROA PRINT 2">ROA PRINT 2</option>
+                              </select>
+                             :
+                             <select name="roa_format" class="form-select" onChange={onChange}>
+                               <option value="ROA PRINT 1">ROA PRINT 1</option>
+                             </select>
+                            }
                           </td>
                         </tr>
                         <tr>
@@ -116,7 +139,7 @@ function GenerateROA(props) {
                           <td>
                             <select name="action" class="form-select" onChange={onChange}>
                               <option value="VIEW">VIEW</option>
-                              <option value="PRINT">PRINT</option>
+                              <option value="PRINT" disabled={booking1.roa_print_count==1 ? true : false}>PRINT</option>
                               {/*<option value="PDF">PDF</option>
                               <option value="EMAIL">EMAIL</option>*/}
                             </select>
@@ -125,10 +148,14 @@ function GenerateROA(props) {
                           <td>
                             <select name="letter_head" class="form-select" onChange={onChange}>
                               <option value="No">No</option>
-                              <option value="Yes">Yes</option>
+                              {booking1.action !== 'PRINT' ? <option value="Yes">Yes</option> : ''}
                             </select>
                           </td>
                         </tr>
+                        {booking1.roa_print_count == "1" ? <tr>
+                          <th>Print is Generated For</th>
+                          <th>{booking1.roa_print.replace(/_/g, ' ')}</th>
+                        </tr> : ''}
                         <tr>
                           <td colspan="4" className="text-center"><input type="button" name="generate" value="Generate" onClick={generate_roa} className="btn btn-info"/></td>
                         </tr>

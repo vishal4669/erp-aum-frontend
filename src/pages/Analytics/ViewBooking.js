@@ -87,6 +87,10 @@ const edit_booking_id =url.substring(url.lastIndexOf('/') + 1)
   minWidth: '140px',
 }
 
+const multiply = (num1, num2) => {
+  return num1.join("") * num2.join("") / 100;
+};
+
 const GetBookingData=()=>{
       {setLoading1(true)}
         axios.get(`${process.env.REACT_APP_BASE_APIURL}getBooking/`+booking_id,{headers})
@@ -96,7 +100,6 @@ const GetBookingData=()=>{
                 setManufacturer(response.data.data.manufacturer_id)
                 setSupplier(response.data.data.supplier_id)
                 setProduct(response.data.data.samples[0].get_product)
-                console.log(product)
                 setPharmacopeia(response.data.data.samples[0].get_product.pharmacopeia_id.pharmacopeia_name)
                 setBookingSamples(response.data.data.samples[0])
                 if(response.data.data.booking_type == "Report"){
@@ -642,22 +645,22 @@ const GetBookingData=()=>{
                                                                                                       <th style={table_textarea_th_style}>Product Details</th>
                                                                                                       <th style={table_textarea_th_style}>Test Name</th>
                                                                                                       <th style={table_th_style}>Label Claim</th>
-                                                                                                      <th style={table_th_style}>% of Label Claim</th>
+                                                                                                      {/*<th style={table_th_style}>% of Label Claim</th>*/}
                                                                                                       <th style={table_th_style}>Min. Limit</th>
                                                                                                       <th style={table_th_style}>Max. Limit</th>
                                                                                                       <th style={table_th_style}>Result</th>
                                                                                                       <th style={table_th_style}>Label Claim Result</th>
                                                                                                       <th style={table_th_style}>Label Claim Unit</th>
-                                                                                                      <th style={table_th_style}>Result2</th>
+                                                                                                      {/*<th style={table_th_style}>Result2</th>*/}
                                                                                                       <th style={table_th_style}>Mean</th>
-                                                                                                      <th style={table_th_style}>Na Content</th>
-                                                                                                      <th style={table_th_style}>Final Na Content</th>
+                                                                                                      {/*<th style={table_th_style}>Na Content</th>
+                                                                                                      <th style={table_th_style}>Final Na Content</th>*/}
                                                                                                       <th style={table_th_style}>Unit</th>
-                                                                                                      <th style={table_th_style}>Expanded Uncertainty</th>
+                                                                                                      {/*<th style={table_th_style}>Expanded Uncertainty</th>*/}
                                                                                                       <th style={table_th_style}>Amount</th>
-                                                                                                      <th style={table_th_style}>Division</th>
+                                                                                                      {/*<th style={table_th_style}>Division</th>*/}
                                                                                                       <th style={table_th_style}>Method</th>
-                                                                                                      <th style={table_th_style}>Test Time</th>
+                                                                                                      {/*<th style={table_th_style}>Test Time</th>*/}
                                                                                                       <th style={table_th_style}>Test Date Time</th>
                                                                                                       <th style={table_th_style}>Approval Date Time</th>
                                                                                                       <th style={table_th_style}>Approved</th>
@@ -686,22 +689,22 @@ const GetBookingData=()=>{
                                                                                                           <td><textarea className="form-control" style={{width:'120px !important'}} value={x.product_details} readOnly></textarea></td>
                                                                                                           <td><input value={x.test_name} type="text" className="form-control" readOnly/></td>
                                                                                                           <td><input value={x.label_claim} type="text" className="form-control" readOnly/></td>
-                                                                                                          <td><input value={x.percentage_of_label_claim} type="text" className="form-control" readOnly/></td>
+                                                                                                        {/*<td><input value={x.percentage_of_label_claim} type="text" className="form-control" readOnly/></td>*/}
                                                                                                            <td><input value={x.min_limit} type="text" className="form-control" readOnly/></td>
                                                                                                           <td><input value={x.max_limit} type="text" className="form-control" readOnly/></td>
                                                                                                           <td><input value={x.result} type="text" className="form-control" readOnly/></td>
-                                                                                                          <td><input value={x.label_claim_result} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.result.includes('%') && x.label_claim !== '' ? multiply(x.result.match( /\d/g),x.label_claim.match( /\d/g)) : ''} type="text" className="form-control" readOnly/></td>
                                                                                                           <td><input value={x.label_claim_unit} type="text" className="form-control" readOnly/></td>
-                                                                                                          <td><input value={x.result2} type="text" className="form-control" readOnly/></td>
-                                                                                                          <td><input value={x.mean} type="text" className="form-control" readOnly/></td>
-                                                                                                          <td><input value={x.na_content} type="text" className="form-control" readOnly/></td>
-                                                                                                          <td><input value={x.final_na_content} type="text"  className="form-control" readOnly/></td>
-                                                                                                          <td><input value={x.unit} type="text" className="form-control" readOnly/></td>
-                                                                                                          <td><input value={x.expanded_uncertanity} type="text"  className="form-control" readOnly/></td>
+                                                                                                          {/*<td><input value={x.result2} type="text" className="form-control" readOnly/></td>*/}
+                                                                                                          <td><input value={x.result.includes('%') && x.label_claim !== '' ? multiply(x.result.match( /\d/g),x.label_claim.match( /\d/g)) / 10 : ''} type="text" className="form-control" readOnly/></td>
+                                                                                                          {/*<td><input value={x.na_content} type="text" className="form-control" readOnly/></td>
+                                                                                                          <td><input value={x.final_na_content} type="text"  className="form-control" readOnly/></td>*/}
+                                                                                                          <td><input value={x.unit == 0 ? '' : x.unit_data.unit_name} type="text" className="form-control" readOnly/></td>
+                                                                                                          {/*<td><input value={x.expanded_uncertanity} type="text"  className="form-control" readOnly/></td>*/}
                                                                                                            <td><input value={x.amount} type="text"  className="form-control" readOnly/></td>
-                                                                                                           <td><input value={x.division} type="text" className="form-control" readOnly/></td>
+                                                                                                           {/*<td><input value={x.division} type="text" className="form-control" readOnly/></td>*/}
                                                                                                            <td><input value={x.method} type="text"  className="form-control" readOnly/></td>
-                                                                                                           <td><input value={x.test_time} type="text" className="form-control" readOnly/></td>
+                                                                                                          {/*<td><input value={x.test_time} type="text" className="form-control" readOnly/></td>*/}
                                                                                                            <td> {x.test_date_time !== null || x.test_date_time !== '' ?
                                                                                                            (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
                                                                                                             <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local"  className="form-control" readOnly/>
