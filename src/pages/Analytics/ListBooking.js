@@ -16,7 +16,7 @@ import 'toastr/build/toastr.min.css'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import axios from 'axios'
-import Moment from 'moment';
+import moment from 'moment';
 import Pagination from "react-js-pagination";
 import * as XLSX from 'xlsx';
 
@@ -163,7 +163,7 @@ this.deleteBooking = async(booking_id) =>{
 
  this.generate_coa = (booking_id) => {
   this.setState({ loading3: true }, () => {
-   axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/Check_Coa", { headers: del_headers})
+   axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/Check_Coa", { headers: headers})
   .then(response => {
           if(response.data.success == true){
             props.history.push("/generate-coa/"+base64_encode(booking_id));
@@ -177,18 +177,18 @@ this.deleteBooking = async(booking_id) =>{
  }
 
  this.generate_roa = (booking_id) => {
-  //this.setState({ loading3: true }, () => {
-   axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/Check_Roa", { headers: del_headers})
+  this.setState({ loading3: true }, () => {
+   axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/Check_Roa", { headers: headers})
   .then(response => {
           if(response.data.success == true){
             props.history.push("/generate-roa/"+base64_encode(booking_id));
-            //this.setState({loading3: false});
+            this.setState({loading3: false});
         }else{
           toastr.error(response.data.message);
-        //  this.setState({loading3: false});
+          this.setState({loading3: false});
         }
   })
-//})
+})
  }
  /*this.handlePageChange = (pageNumber) =>{
    this.setState({ loading: true }, () => {
@@ -223,12 +223,11 @@ this.deleteBooking = async(booking_id) =>{
             return (
 
               {
-
                 srno: this.state.count,
-                generate_data:<div><button class=" btn btn-secondary btn-sm" onClick={() => this.generate_roa(post.id)}>ROA</button>&nbsp;&nbsp;
-
-                <button class=" btn btn-warning btn-sm" onClick={() => this.generate_coa(post.id)}>COA</button>
-
+                generate_data:<div>
+                <button class=" btn btn-secondary btn-sm" onClick={() => this.generate_roa(post.id)}>ROA</button>&nbsp;&nbsp;
+                {loading3 ? <LoadingSpinner/> : <Link className="btn btn-warning btn-sm" onClick={() => this.generate_coa(post.id)}>
+                COA</Link> }
                 &nbsp;&nbsp;<Link className="btn btn-success btn-sm">
                 <i className="fa fa-barcode"></i></Link></div>,
                 coa_print: post.coa_print_count,
@@ -236,7 +235,7 @@ this.deleteBooking = async(booking_id) =>{
                 booking_type: post.booking_type,
                 booking_no: post.booking_no,
                 product_type: post.product_generic,
-                receipte_date: post.receipte_date,
+                receipte_date: moment(post.receipte_date).format('DD-MM-YYYY'),
                 product_name : post.product_name,
                 action : <div><Link className="btn btn-primary btn-sm" to={"/edit-booking/"+base64_encode(post.id)}>
                 <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-booking/"+base64_encode(post.id)}>

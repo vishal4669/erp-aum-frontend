@@ -74,6 +74,7 @@ import AddCustomer from "../pages/Sales/AddCustomer"
 import ListCustomer from "../pages/Sales/ListCustomer"
 import EditCustomer from "../pages/Sales/EditCustomer"
 import ViewCustomer from "../pages/Sales/ViewCustomer"
+import ExportCustomerData from "../pages/Sales/ExportCustomerData"
 //HR
 import ListEmployee from "../pages/HR/ListEmployee"
 import AddEmployee from "../pages/HR/AddEmployee"
@@ -189,10 +190,12 @@ const authRoutes = [
     { path: "/add-branch", component:AddBranch},
     { path: "/view-branch", component:ViewBranch},
     { path: "/edit-branch", component:EditBranch},
+
     { path: "/department", component:ListDepartment},
     { path: "/all-department", component:ListDepartment},
     { path: "/add-department", component:AddDepartment},
     { path: "/edit-department", component:EditDepartment},
+
     { path: "/position", component:ListPosition},
     { path: "/all-position", component:ListPosition},
     { path: "/add-position", component:AddPosition},
@@ -240,6 +243,7 @@ const authRoutes = [
     { path: "/all-customer" ,component: ListCustomer},
     { path: "/edit-customer" ,component: EditCustomer},
     { path: "/view-customer" ,component: ViewCustomer},
+    { path: "/export-customer-data" ,component: ExportCustomerData},
     //Instrument
     { path: "/instruments" ,component: ListInstruments},
     { path: "/add-instrument" ,component: AddInstrument},

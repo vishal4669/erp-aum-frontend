@@ -18,6 +18,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import axios from 'axios'
 import Moment from 'moment';
 import Pagination from "react-js-pagination";
+import * as XLSX from 'xlsx';
 class ListCustomer extends Component{
 
   constructor(props){
@@ -110,6 +111,50 @@ this.deleteCustomer = async(customer_id) =>{
               })
             })
  }
+
+ this.print_customer_list = () => {
+   window.print()
+ }
+ this.ExportToExcel = () => {
+   this.setState({ loading1: true }, () => {
+   axios.get(`${process.env.REACT_APP_BASE_APIURL}exportCustomerData`, { headers: headers})
+
+   .then(response => {
+       if(response.data.success == true){
+          var customer_data = response.data.data.map((post,index)=>({
+             "SR No" : index+1,
+             "Name" : post.Company_name,
+             "Contact Person" : post.contact_person_name,
+             "Tally Alias Name" : post.tally_alias_name,
+             "Account/Admin Contact No." : post.home_contact_no.account_admin_contact_no,
+             "QA Contact No." : post.other_contact_no.qa_contact_no,
+             "QC Contact No." : post.home_contact_no.home_qc_contact_no,
+             "Landline" : '',
+             "Account/Admin E-mail" : '',
+             "QC Email" : '',
+             "QA E-mail" : '',
+             "Corporate Address" : '',
+             "Correspondence Address" : '',
+             "GST No" : '',
+            }))
+         const sheet = XLSX.utils.json_to_sheet(customer_data);
+         const workbook = XLSX.utils.book_new();
+         XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet 1');
+         XLSX.writeFile(workbook, `CustomerData.csv`);
+         this.setState({loading1: false});
+      }else{
+        toastr.error(response.data.message);
+        this.setState({loading1: false});
+      }
+
+   })
+   .catch(error => {
+       toastr.error(error.response.data.message);
+       this.setState({ loading1: false });
+     })
+ })
+ }
+
  /*this.handlePageChange = (pageNumber) =>{
    this.setState({ loading: true }, () => {
     this.handlePageChange.bind(this)
@@ -233,19 +278,20 @@ this.deleteCustomer = async(customer_id) =>{
                       <Link to="/add-customer" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Customer</Link>
                     </li>&nbsp;
                     <li>
-                      <div className="btn-group">
+
+                      { loading1 ? <LoadingSpinner /> :<div className="btn-group">
                       <DropdownButton  title="Actions" drop="left">
-                        <DropdownItem><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
-                        <DropdownItem><i class="fas fa-file-export"></i> &nbsp;Export To Excel </DropdownItem>
-                        <DropdownItem><Link style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export To PDF</Link></DropdownItem>
-                        <DropdownItem><i class="fas fa-file-export"></i> &nbsp;Export As HTML </DropdownItem>
+                        <DropdownItem onClick={this.print_customer_list}><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
+                        <DropdownItem  onClick={this.ExportToExcel}><i class="fas fa-file-export"></i> &nbsp;Export To Excel </DropdownItem>
+                        <DropdownItem><Link to="/export-customer-data/pdf" style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export To PDF</Link></DropdownItem>
+                        <DropdownItem><Link to="/export-customer-data/html" style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export As HTML </Link></DropdownItem>
                       </DropdownButton>
-                    </div>
+                    </div>}
                   </li>
                 </ol>
             </div>
         </div>
-          <Row>
+          <Row id="pdfdiv">
             <Col className="col-12">
               <Card>
                 <CardBody>
@@ -302,6 +348,7 @@ this.deleteCustomer = async(customer_id) =>{
                      </tfoot>
                   </table>*/}
                   {loading ?  <center><LoadingSpinner /></center> :
+
                       <MDBDataTable striped bordered data={data1} />
                      }
                     {/*<div>

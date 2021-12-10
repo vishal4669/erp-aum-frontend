@@ -180,10 +180,36 @@ function EditBooking(props) {
 
   // handle input change for Degree Details
   const handleInputChange = (e, index) => {
+   var set_label_claim = ''
+    var set_result = ''
+    var set_label_claim_result = ''
+    var set_mean = ''
+    if(e.target.name == "label_claim" ){
+      set_label_claim = e.target.value
+    } else {
+      set_label_claim = testData[index].label_claim
+    }
+    if(e.target.name == 'result'){
+      set_result = e.target.value
+    } else {
+      set_result = testData[index].result
+    }
+
+    if(set_label_claim !== null && set_result !== null){
+      if(set_result.includes('%')){
+        if(set_result.match( /\d/g)){
+          set_label_claim_result = multiply(set_result.match( /\d/g),set_label_claim.match( /\d/g))
+          set_mean = set_label_claim_result / 10
+        }
+      }
+    }
     const { name, value } = e.target;
     const list = [...testData];
     list[index][name] = value;
+    list[index]['label_claim_result'] = set_label_claim_result
+    list[index]['mean'] = set_mean
     setTestData(list);
+    console.log(testData)
     // ========================
     if ($.isEmptyObject(testData[index + 1])) {
       console.log("No Child Available");
@@ -1604,11 +1630,11 @@ function EditBooking(props) {
                                         </datalist>
                                       </td>
                                       <td>
-                                      <input value={x.result.includes('%') && x.label_claim !== '' ? multiply(x.result.match( /\d/g),x.label_claim.match( /\d/g)) : ''} type="text" name="label_claim_result" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      <td><input value={x.label_claim_unit} type="text" name="label_claim_unit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      {/*<td><input value={x.result2} type="text" name="result2"
-                                      onChange={e => handleInputChange(e, i)} className="form-control" /></td>*/}
-                                      <td><input value={x.result.includes('%') && x.label_claim !== '' ? multiply(x.result.match( /\d/g),x.label_claim.match( /\d/g)) / 10 : ''} type="text" name="mean" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                  <input value={x.label_claim_result} type="text" name="label_claim_result" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                  <td><input value={x.label_claim_unit} type="text" name="label_claim_unit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                  {/*<td><input value={x.result2} type="text" name="result2"
+                                  onChange={e => handleInputChange(e, i)} className="form-control" /></td>*/}
+                                  <td><input value={x.mean} type="text" name="mean" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       {/*<td><input value={x.na_content} type="text" name="na_content"
                                       onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       <td><input value={x.final_na_content} type="text" name="final_na_content"
