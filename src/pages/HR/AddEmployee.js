@@ -430,8 +430,6 @@ const InsertEmployee = (e)=>{
         }
         data.append('document[driving_license_number]', employee.driving_license_number);
 
-        console.log(employee.photo)
-
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addEmployee`, data, {headers} )
 
                 .then(response => {
@@ -442,6 +440,10 @@ const InsertEmployee = (e)=>{
                     }else{
                         props.history.push('/add-employee');
                         toastr.error(response.data.message);
+                        //how to console.log form data in javascript
+                        /*for (var pair of data.entries()) {
+                            console.log(pair[0]+ ', ' + pair[1]);
+                        }*/
                         {setLoading(false)};
                     }
                 })
@@ -881,7 +883,7 @@ const handleAddClick1 = () => {
 
                                                     <div className="col-md-2">
                                                         <label>Percentage/Grade</label>
-                                                        <input className="form-control" type="text"  name="percentage_grade" value={x.percentage_grader} onChange={e => handleInputChange(e, i)}/>
+                                                        <input className="form-control" type="text"  name="percentage_grade" value={x.percentage_grade} onChange={e => handleInputChange(e, i)}/>
                                                     </div>
 
                                                     <div className="col-md-2">

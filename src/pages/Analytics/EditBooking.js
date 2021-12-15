@@ -813,6 +813,14 @@ function EditBooking(props) {
 
     const test_details = testData;
 
+    if(booking1.booking_type == 'Report'){
+      if(booking1.audit_reamrks == '' ||  booking1.comments == '' || booking1.reason == ''){
+        toastr.error("Audit Details is required when Booking type is Report")
+        { setLoading(false) };
+        return
+      }
+    }
+
     const data = {
       booking_type: booking1.booking_type,
       report_type: booking1.report_type,
@@ -1783,18 +1791,18 @@ function EditBooking(props) {
                             <div className="row">
 
                               <div className="col-md-4">
-                                <label>Audit Remarks</label>
-                                <textarea name="audit_reamrks" value={booking1.audit_reamrks} id="audit_reamrks" className="form-control" placeholder="Enter Remarks" onChange={onChange} required></textarea>
+                                <label className="required-field">Audit Remarks</label>
+                                <textarea name="audit_reamrks" value={booking1.audit_reamrks} id="audit_reamrks" className="form-control" placeholder="Enter Remarks" onChange={onChange}></textarea>
                               </div>
 
                               <div className="col-md-4">
-                                <label>Reason</label>
-                                <textarea name="reason" id="reason" value={booking1.reason} className="form-control" placeholder="Enter Reason" onChange={onChange} required></textarea>
+                                <label className="required-field">Reason</label>
+                                <textarea name="reason" id="reason" value={booking1.reason} className="form-control" placeholder="Enter Reason" onChange={onChange}></textarea>
                               </div>
 
                               <div className="col-md-4">
-                                <label>Comments</label>
-                                <textarea name="comments" id="comments" value={booking1.comments} className="form-control" placeholder="Enter Comments" onChange={onChange} required></textarea>
+                                <label className="required-field">Comments</label>
+                                <textarea name="comments" id="comments" value={booking1.comments} className="form-control" placeholder="Enter Comments" onChange={onChange}></textarea>
                               </div>
 
                             </div>

@@ -408,7 +408,7 @@ function toggleCustomJustified(tab) {
                       </NavLink>
                     </NavItem>
 
-                    <NavItem>
+                    {/*<NavItem>
                       <NavLink
                         style={{ cursor: "pointer" }}
                         className={classnames({
@@ -421,7 +421,7 @@ function toggleCustomJustified(tab) {
                         <i className="fa fa-times"></i>&nbsp;<span className="badge bg-soft-dark">{dashboardCount.Rejected_count}</span>
                         <span className="d-none d-sm-block">Reject</span>
                       </NavLink>
-                    </NavItem>
+                    </NavItem>*/}
                     <NavItem>
                       <NavLink
                         style={{ cursor: "pointer" }}
@@ -500,11 +500,11 @@ function toggleCustomJustified(tab) {
                     &nbsp;&nbsp;<Link type="button" to="/view-approved-data-list" class="btn btn-success waves-effect waves-light btn-sm">
                     View Approved Data List <i class="fa fa-share"></i></Link>
                     </TabPane>
-                    <TabPane tabId="6" className="p-3">
+                    {/*<TabPane tabId="6" className="p-3">
                     <i className="fas fa-chart-bar"></i>&nbsp;&nbsp;Total Rejected Test Count is <span className="badge bg-soft-danger" style={{fontSize:"100%"}}>{dashboardCount.Rejected_count}</span> . For More Details to See Rejected Data Click on View Button to View Data.
                     &nbsp;&nbsp;<Link type="button" to="/view-rejected-data-list" class="btn btn-danger waves-effect waves-light btn-sm">
                     View Rejected Data List <i class="fa fa-share"></i></Link>
-                    </TabPane>
+                    </TabPane>*/}
                     <TabPane tabId="7" className="p-3">
                       <p className="mb-0">
                         Trust fund seitan letterpress, keytar raw denim keffiyeh etsy

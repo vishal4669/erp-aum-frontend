@@ -162,30 +162,30 @@ this.deleteBooking = async(booking_id) =>{
  }
 
  this.generate_coa = (booking_id) => {
-  this.setState({ loading3: true }, () => {
+  this.setState({ loading: true }, () => {
    axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/Check_Coa", { headers: headers})
   .then(response => {
           if(response.data.success == true){
             props.history.push("/generate-coa/"+base64_encode(booking_id));
-            this.setState({loading3: false});
+            this.setState({loading: false});
         }else{
           toastr.error(response.data.message);
-          this.setState({loading3: false});
+          this.setState({loading: false});
         }
   })
 })
  }
 
  this.generate_roa = (booking_id) => {
-  this.setState({ loading3: true }, () => {
+  this.setState({ loading: true }, () => {
    axios.get(`${process.env.REACT_APP_BASE_APIURL}RoaCoaPrint/`+ booking_id + "/Check_Roa", { headers: headers})
   .then(response => {
           if(response.data.success == true){
             props.history.push("/generate-roa/"+base64_encode(booking_id));
-            this.setState({loading3: false});
+            this.setState({loading: false});
         }else{
           toastr.error(response.data.message);
-          this.setState({loading3: false});
+          this.setState({loading: false});
         }
   })
 })
@@ -225,9 +225,9 @@ this.deleteBooking = async(booking_id) =>{
               {
                 srno: this.state.count,
                 generate_data:<div>
-                <button class=" btn btn-secondary btn-sm" onClick={() => this.generate_roa(post.id)}>ROA</button>&nbsp;&nbsp;
-                {loading3 ? <LoadingSpinner/> : <Link className="btn btn-warning btn-sm" onClick={() => this.generate_coa(post.id)}>
-                COA</Link> }
+                {loading ? <LoadingSpinner/> : <button class=" btn btn-secondary btn-sm" onClick={() => this.generate_roa(post.id)}>ROA</button>}&nbsp;&nbsp;
+                {loading ? <LoadingSpinner/> : <button className="btn btn-warning btn-sm" onClick={() => this.generate_coa(post.id)}>
+                COA</button> }
                 &nbsp;&nbsp;<Link className="btn btn-success btn-sm">
                 <i className="fa fa-barcode"></i></Link></div>,
                 coa_print: post.coa_print_count,

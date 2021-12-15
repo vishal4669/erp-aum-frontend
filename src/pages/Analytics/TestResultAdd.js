@@ -33,7 +33,8 @@ import moment from 'moment'
 function TestResultAdd(props) {
   const [unit, setUnitData] = useState([]);
   const [testData, settestData] = useState({booking_type:'',report_type:'',receipte_date:'',booking_no:'',product_name:'',
-  generic_name:'',batch_no:'',parent:'',test_name:'',min_limit:'',max_limit:'',result:'',method:'',unit:''});
+  generic_name:'',batch_no:'',parent:'',test_name:'',min_limit:'',max_limit:'',result:'',method:'',unit:'',label_claim_unit:'',
+  label_claim_result:'',label_claim:''});
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   const headers = {
@@ -71,7 +72,8 @@ function TestResultAdd(props) {
                   "receipte_date": moment(d.booking_detail.receipte_date).format('DD-MM-YYYY'),
                   "booking_no": d.booking_detail.booking_no,
                   "product_name": d.booking_samples_detail.product_detail.product_name,
-                  "generic_name": d.booking_samples_detail.product_detail.generic_product_id.product_name,
+                  "generic_name": d.booking_samples_detail.product_detail.generic_product_id !==null ?
+                  d.booking_samples_detail.product_detail.generic_product_id.product_name : '',
                   "batch_no": d.booking_samples_detail.batch_no,
                   "parent" : d.parent !== null ? d.parent.parent_name : '',
                   "test_name" : d.test_name,
@@ -79,12 +81,18 @@ function TestResultAdd(props) {
                   "max_limit" : d.max_limit,
                   "result" : d.result,
                   "method" : d.method,
-                  "unit" : d.unit
+                  "unit" : d.unit,
+                  "label_claim_result" : d.label_claim_result,
+                  "label_claim_unit" : d.label_claim !== null ? d.label_claim.replace(/[^A-Z]+/gi,'') : d.label_claim_unit,
+                  "label_claim" : d.label_claim,
                 }))
                 settestData(tests_data[0])
+
+                console.log(testData.label_claim_unit)
                        {setLoading1(false)}
                  })
                 .catch((error) => {
+                  console.log(error)
                     toastr.error(error.response.data.message);
                     {setLoading1(false)}
                 })
@@ -248,20 +256,21 @@ function TestResultAdd(props) {
                         </div>
                       </div>
                     </div>
-                    {/*<div className="mb-3 row">
+                    <div className="mb-3 row">
                       <div className="form-group">
                         <div className="row">
                           <div className="col-md-6">
-                            <label>Result2 With Label Claim</label>
-                            <input className="form-control" type="text" value="" name="result2_label_claim" readOnly />
+                            <label>Label Claim Unit</label>
+                            <input className="form-control" value={testData.label_claim_unit} type="text" name="label_claim_unit" readOnly />
                           </div>
                           <div className="col-md-6">
-                            <label>Result2 With Label Claim Unit</label>
-                            <input className="form-control" type="text" value="" name="result2_label_claim_unit" readOnly />
+                            <label>Label Claim Result</label>
+                            <input className="form-control" value={testData.label_claim_result} type="text" name="label_claim_result" readOnly />
                           </div>
+                          {/*mean hidden calculations*/}
                         </div>
                       </div>
-                    </div>*/}
+                    </div>
                   </CardBody>
                 </Card>
               </Col>

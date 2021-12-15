@@ -99,6 +99,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
           this.setState({
       count: this.state.count + 1
     });
+    const { data, loading } = this.state;
           return (
             {
 
@@ -117,13 +118,12 @@ import LoadingSpinner from '../../components/LoadingSpinner';
                           </DropdownButton>
 
                         </div>,
-              action : <div className="btn-group">
-                          <DropdownButton variant="dark btn-sm" title="Actions" drop="left">
-                            <DropdownItem><i class="fa fa-edit"></i><Link to={"/edit-employee/"+base64_encode(post.id)} style={{color:"black"}}> &nbsp;Edit </Link></DropdownItem>
-                            <DropdownItem><i class="fa fa-trash"></i> &nbsp;Delete </DropdownItem>
-                            <DropdownItem><i class="fa fa-eye"></i> <Link to={"/view-employee/"+base64_encode(post.id)} style={{color:"black"}}>&nbsp;View </Link></DropdownItem>
-                          </DropdownButton>
-
+              action : <div>
+              <Link className="btn btn-primary btn-sm" to={"/edit-employee/"+base64_encode(post.id)}>
+              <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-employee/"+base64_encode(post.id)}>
+              <i className="fa fa-eye"></i></Link>&nbsp;&nbsp;{loading ? <a className="btn btn-primary w-100 waves-effect waves-light"
+                           > <LoadingSpinner /> </a>  :
+              <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Employee Data?')){ this.deleteEmployee(post.id)}}}><i class="fas fa-trash-alt"></i></button>}
                         </div>
            }
           )
@@ -192,7 +192,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
                   </div>
                   <div className="page-title-right">
                       <ol className="breadcrumb m-0">
-                          <li><a href="" className="btn btn-primary"><i className="fa fa-check">&nbsp;Assign Rights</i></a></li>&nbsp;
+                          <li><a href="/assign-right" className="btn btn-primary"><i className="fa fa-check">&nbsp;Assign Rights</i></a></li>&nbsp;
                           <li><a href="/add-employee" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>
                          &nbsp;New Employee</a></li>
                       </ol>

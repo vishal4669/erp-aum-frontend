@@ -552,7 +552,7 @@ return(
                                                         <label>Logo</label>
                                                         <input className="form-control" type="file" name="logo" onChange={ changeHandler }/>
                                                         <input className="form-control" type="hidden" value={customer.logo}/>
-                                                        <img src={logo_path+customer.logo} width="70px" height="50px"/>
+                                                        {customer.logo !== null ? <img src={logo_path+customer.logo} width="70px" height="50px"/> : ''}
 
                                                     </div>
 
@@ -659,8 +659,8 @@ return(
                                                     </div>
                                                     <div className="col-md-6 align-items-center">
                                                     {address2.other_pan_card_copy !== null ?
-                                                        <a href={pancard_copy_path+address2.other_pan_card_copy} class="btn btn-primary form-control" target="_blank">Click To Open PanCard Copy</a>
-                                                    : <span class="btn btn-primary form-control">No Pancard Copy Uploaded</span>}
+                                                        <a href={pancard_copy_path+address2.other_pan_card_copy} className="btn btn-primary form-control" target="_blank">Click To Open PanCard Copy</a>
+                                                    : <span className="btn btn-primary form-control">No Pancard Copy Uploaded</span>}
                                                     </div>
                                                 </div>
                                             </div>

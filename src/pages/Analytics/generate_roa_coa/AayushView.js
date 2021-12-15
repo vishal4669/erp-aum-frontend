@@ -259,13 +259,13 @@ function AayushView(props) {
                                         testData.map((x, i) => (
                                           <tr className="text-center">
                                             <td>{i+1}</td>
-                                            <td>{x.test_parameter}</td>
+                                            <td>{x.test_parameter}<td>{x.test_parameter}{x.parent_child == 'Parent' && x.parent_data.parent_name !== '' ? ' : ('+x.parent_data.parent_name+")" : ''}</td></td>
             																<td>{x.label_claim}</td>
                                             <td>{x.result}</td>
-                                            <td colspan="2">{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}{x.parent_child == 'Parent' && x.parent_data.parent_name !== '' ? ' ('+x.parent_data.parent_name+")" : ''}</td>
+                                            <td colspan="2">{x.product_details}{x.product_details && x.max_limit ? <br/> : ''}{x.max_limit}</td>
             																<td>{x.method_used}</td>
             															</tr>
-                                       )) : <tr class="text-center"><td colspan="6">No Data Available</td></tr>}
+                                       )) : <tr className="text-center"><td colspan="6">No Data Available</td></tr>}
                                   </MDBTableBody>
                                 </MDBTable>
                                 <h3 style={{fontSize:'14px',fontWeight:'600',color:'black'}}>Party Asked For Above Test Only</h3>

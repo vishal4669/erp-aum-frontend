@@ -80,6 +80,7 @@ import ListEmployee from "../pages/HR/ListEmployee"
 import AddEmployee from "../pages/HR/AddEmployee"
 import EditEmployee from "../pages/HR/EditEmployee"
 import ViewEmployee from "../pages/HR/ViewEmployee"
+import AssignRights from "../pages/HR/AssignRights"
 //Analytics
 //Pharmacopiea
 import ListPharmacopiea from "../pages/Analytics/ListPharmacopiea"
@@ -140,16 +141,19 @@ const authRoutes = [
     { path: "/all-group", component: ListGroups},
     { path: "/add-group", component: AddGroup},
     { path: "/edit-group", component: EditGroup},
+    //Employee Routes
     { path: "/employee" ,component: ListEmployee},
     { path: "/add-employee" ,component: AddEmployee},
     { path: "/edit-employee" ,component: EditEmployee},
     { path: "/view-employee" ,component: ViewEmployee},
+    { path: "/assign-right" ,component: AssignRights},
+    //Pharmacopeia Routes
     { path: "/pharmacopiea", component:ListPharmacopiea},
     { path: "/all-pharmacopiea", component:ListPharmacopiea},
     { path: "/add-pharmacopiea", component:AddPhramacopiea},
     { path: "/edit-pharmacopiea", component:EditPharmacopiea},
     { path: "/export-pdf-pharmacopiea", component:ExportPdf},
-
+    //Product Routes
     { path: "/products", component:ListProduct},
     { path: "/add-product", component:AddProduct},
     { path: "/all-products", component: ListProduct},
