@@ -34,7 +34,7 @@ function TestResultAdd(props) {
   const [unit, setUnitData] = useState([]);
   const [testData, settestData] = useState({booking_type:'',report_type:'',receipte_date:'',booking_no:'',product_name:'',
   generic_name:'',batch_no:'',parent:'',test_name:'',min_limit:'',max_limit:'',result:'',method:'',unit:'',label_claim_unit:'',
-  label_claim_result:'',label_claim:''});
+  label_claim_result:'',label_claim:'',mean:''});
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   const headers = {
@@ -85,20 +85,35 @@ function TestResultAdd(props) {
                   "label_claim_result" : d.label_claim_result,
                   "label_claim_unit" : d.label_claim !== null ? d.label_claim.replace(/[^A-Z]+/gi,'') : d.label_claim_unit,
                   "label_claim" : d.label_claim,
+                  "mean" : d.mean
                 }))
                 settestData(tests_data[0])
-
-                console.log(testData.label_claim_unit)
                        {setLoading1(false)}
                  })
                 .catch((error) => {
-                  console.log(error)
                     toastr.error(error.response.data.message);
                     {setLoading1(false)}
                 })
   }
+
+  const multiply = (num1, num2) => {
+    return num1.join("") * num2.join("") / 100;
+  };
   const onChange = (e) => {
     settestData({ ...testData, [e.target.name]: e.target.value });
+
+    if(e.target.name == 'unit' && e.target.value !== ''){
+        if(testData.label_claim !== '' && testData.result !== ''){
+            if(testData.result.match(/^[0-9.]+$/) && testData.label_claim.match(/[0-9.]+/)){
+              var set_label_claim_result = multiply(testData.result.match(/^[0-9.]+$/),testData.label_claim.match(/[0-9.]+/))
+              var set_mean = set_label_claim_result / 10
+              settestData(prevState => ({
+                ...prevState,
+                label_claim_result: set_label_claim_result,mean:set_mean
+              }))
+            }
+        }
+    }
   }
   const ResetResultData = () => {
     document.getElementById("AddTestResult").reset();
@@ -110,7 +125,10 @@ function TestResultAdd(props) {
     const data = {
       result : testData.result,
       method: testData.method,
-      unit: testData.unit
+      unit: testData.unit,
+      label_claim_result : testData.label_claim_result,
+      label_claim_unit : testData.label_claim_unit,
+      mean : testData.mean
     }
     axios.post(`${process.env.REACT_APP_BASE_APIURL}updateTestResult/`+test_id, data, { headers })
 
@@ -172,19 +190,19 @@ function TestResultAdd(props) {
                         <div className="row">
                           <div className="col-md-3">
                             <label>Booking Type</label>
-                            <input className="form-control" type="text" value={testData.booking_type} name="booking_type" readOnly />
+                            <input className="form-control" placeholder="Booking Type" type="text" value={testData.booking_type} name="booking_type" readOnly />
                           </div>
                           <div className="col-md-3">
                             <label>Report Type</label>
-                            <input className="form-control" type="text" value={testData.report_type} name="report_type" readOnly />
+                            <input className="form-control" placeholder="Report Type" type="text" value={testData.report_type} name="report_type" readOnly />
                           </div>
                           <div className="col-md-3">
                             <label>Receipt Date</label>
-                            <input className="form-control" type="text" value={testData.receipte_date} name="receipte_date" readOnly />
+                            <input className="form-control" placeholder="Receipt Date" type="text" value={testData.receipte_date} name="receipte_date" readOnly />
                           </div>
                           <div className="col-md-3">
                             <label>Booking No</label>
-                            <input className="form-control" type="text" value={testData.booking_no} name="booking_no" readOnly />
+                            <input className="form-control" placeholder="Booking No" type="text" value={testData.booking_no} name="booking_no" readOnly />
                           </div>
                         </div>
                       </div>
@@ -194,15 +212,15 @@ function TestResultAdd(props) {
                         <div className="row">
                           <div className="col-md-6">
                             <label>Product Name</label>
-                            <input className="form-control" type="text" value={testData.product_name} name="product_name" readOnly />
+                            <input className="form-control" placeholder="Product Name" type="text" value={testData.product_name} name="product_name" readOnly />
                           </div>
                           <div className="col-md-3">
                             <label>Generic Name</label>
-                            <input className="form-control" type="text" value={testData.generic_name} name="generic_name" readOnly />
+                            <input className="form-control" placeholder="Generic Name" type="text" value={testData.generic_name} name="generic_name" readOnly />
                           </div>
                           <div className="col-md-3">
                             <label>Batch No</label>
-                            <input className="form-control" type="text" value={testData.batch_no} name="batch_no" readOnly />
+                            <input className="form-control" placeholder="Batch No" type="text" value={testData.batch_no} name="batch_no" readOnly />
                           </div>
                         </div>
                       </div>
@@ -217,19 +235,19 @@ function TestResultAdd(props) {
                         <div className="row">
                           <div className="col-md-3">
                             <label>Parent</label>
-                            <input className="form-control" type="text" value={testData.parent} name="parent" readOnly />
+                            <input className="form-control" type="text" value={testData.parent} placeholder="Parent Name" name="parent" readOnly />
                           </div>
                           <div className="col-md-3">
                             <label>Test Name</label>
-                            <input className="form-control" type="text" value={testData.test_name} name="test_name" readOnly />
+                            <input className="form-control" type="text" placeholder="Test Name" value={testData.test_name} name="test_name" readOnly />
                           </div>
                           <div className="col-md-3">
                             <label>Min Limit</label>
-                            <input className="form-control" type="text" value={testData.min_limit} name="min_limit" readOnly />
+                            <input className="form-control" type="text" placeholder="Min Limit" value={testData.min_limit} name="min_limit" readOnly />
                           </div>
                           <div className="col-md-3">
                             <label>Max Limit</label>
-                            <input className="form-control" type="text" value={testData.max_limit} name="max_limit" readOnly />
+                            <input className="form-control" type="text" placeholder="Max Limit" value={testData.max_limit} name="max_limit" readOnly />
                           </div>
                         </div>
                       </div>
@@ -237,11 +255,11 @@ function TestResultAdd(props) {
                     <div className="mb-3 row">
                       <div className="form-group">
                         <div className="row">
-                          <div className="col-md-6">
+                          <div className="col-md-3">
                             <label>Result</label>
                             <input className="form-control" type="text" value={testData.result} name="result" placeholder="Enter Result" required onChange={onChange}/>
                           </div>
-                          <div className="col-md-4">
+                          <div className="col-md-3">
                             <label>Method</label>
                             <input className="form-control" type="text" value={testData.method} name="method" placeholder="Enter Method" onChange={onChange}/>
                           </div>
@@ -253,21 +271,15 @@ function TestResultAdd(props) {
 
                               </select>}
                           </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mb-3 row">
-                      <div className="form-group">
-                        <div className="row">
-                          <div className="col-md-6">
+                          <div className="col-md-2">
                             <label>Label Claim Unit</label>
-                            <input className="form-control" value={testData.label_claim_unit} type="text" name="label_claim_unit" readOnly />
+                            <input className="form-control" value={testData.label_claim_unit} placeholder="Label Claim Unit" type="text" name="label_claim_unit" readOnly />
                           </div>
-                          <div className="col-md-6">
+                          <div className="col-md-2">
                             <label>Label Claim Result</label>
-                            <input className="form-control" value={testData.label_claim_result} type="text" name="label_claim_result" readOnly />
+                            <input className="form-control" value={testData.label_claim_result} placeholder="Label Claim Result" type="text" name="label_claim_result" readOnly />
+                            <input className="form-control" value={testData.mean} type="hidden" name="mean" readOnly />
                           </div>
-                          {/*mean hidden calculations*/}
                         </div>
                       </div>
                     </div>

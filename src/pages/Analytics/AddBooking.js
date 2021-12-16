@@ -379,12 +379,14 @@ function AddBooking(props) {
     var index = 0
     axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/` + final_product_id, { headers })
       .then(response => {
+        const sample_description = response.data.data.sample_description
         const tests_data = response.data.data.samples.map((d, index) => ({
           "parent_child": "Parent",
           "p_sr_no": index + 1,
           "by_pass": d.by_pass,
           "parent_id": d.parent.id,
-          "product_details": d.description,
+          "product_details": d.description == '' && d.parameter.procedure_name.toLowerCase() == "description" ?
+          sample_description : d.description,
           "test_name": d.parameter.procedure_name,
           "label_claim": d.label_claim,
           "min_limit": d.min_limit,
@@ -1310,7 +1312,7 @@ function AddBooking(props) {
                                           {option.parent_name}</option>)}
                                       </select></td>
 
-                                      <td><textarea name="product_details" onChange={e => handleInputChange(e, i)} className="form-control" style={{ width: '120px !important' }} value={x.product_details}></textarea></td>
+                                      <td><textarea value={x.product_details} name="product_details" onChange={e => handleInputChange(e, i)} className="form-control" style={{ width: '120px !important' }}></textarea></td>
 
                                       <td><input value={x.test_name} className="form-control" onChange={e => handleInputChange(e, i)} name="test_name" style={{ width: '150px !important' }} />
                                       </td>

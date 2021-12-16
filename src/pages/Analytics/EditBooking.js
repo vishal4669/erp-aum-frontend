@@ -180,33 +180,31 @@ function EditBooking(props) {
 
   // handle input change for Degree Details
   const handleInputChange = (e, index) => {
-   var set_label_claim = ''
-    var set_result = ''
-    var set_label_claim_result = ''
+    var set_label_claim_unit = ''
     var set_mean = ''
-    if(e.target.name == "label_claim" ){
-      set_label_claim = e.target.value
+    var set_label_claim_unit = ''
+    var set_label_claim_result = ''
+  /*  if(e.target.name == "label_claim" && e.target.value !== ''){
+        //Taking alphabetic values form label claim and showing into label claim unit
+        set_label_claim_unit =  testData[index].label_claim.replace(/[^A-Z]+/gi,'')
     } else {
-      set_label_claim = testData[index].label_claim
-    }
-    if(e.target.name == 'result'){
-      set_result = e.target.value
-    } else {
-      set_result = testData[index].result
-    }
+      set_label_claim_unit = testData[index].label_claim_unit
+    }*/
 
-    if(set_label_claim !== null && set_result !== null){
-      if(set_result.includes('%')){
-        if(set_result.match( /\d/g)){
-          set_label_claim_result = multiply(set_result.match( /\d/g),set_label_claim.match( /\d/g))
-          set_mean = set_label_claim_result / 10
+
+    if(e.target.name == 'unit'){
+        if(testData[index].label_claim !== '' && testData[index].result !== ''){
+            if(testData[index].result.match(/^[0-9.]+$/) && testData[index].label_claim.match(/[0-9.]+/)){
+              set_label_claim_result = multiply(testData[index].result.match(/^[0-9.]+$/),testData[index].label_claim.match(/[0-9.]+/))
+              set_mean = set_label_claim_result / 10
+            }
         }
-      }
     }
     const { name, value } = e.target;
     const list = [...testData];
     list[index][name] = value;
     list[index]['label_claim_result'] = set_label_claim_result
+    list[index]['label_claim_unit'] = testData[index].label_claim.replace(/[^A-Z]+/gi,'')
     list[index]['mean'] = set_mean
     setTestData(list);
     console.log(testData)
@@ -350,7 +348,7 @@ function EditBooking(props) {
     }
   };
 
-  const GetBookingData = () => {
+  const GetBookingData = (e,i) => {
     { setLoading1(true) }
     axios.get(`${process.env.REACT_APP_BASE_APIURL}getBooking/` + booking_id, { headers })
       .then(response => {
@@ -416,6 +414,16 @@ function EditBooking(props) {
         }
         if(response.data.data.tests !== null || response.data.data.tests !== ''){
           setTestData(response.data.data.tests)
+          /*var label_claim_unit_data = response.data.data.tests.map((d,index) => ({
+            "label_claim_unit": d.label_claim !== null ? d.label_claim.replace(/[^A-Z]+/gi,'') : d.label_claim_unit
+
+          }))
+          var i = ""
+          setTestData(prevState => ({
+            ...prevState,
+            label_claim_unit: label_claim_unit_data[i].label_claim_unit,
+          }))
+          console.log(label_claim_unit_data)*/
         }
 
         if(response.data.data.result_dropdown !== null || response.data.data.result_dropdown !== ''){
@@ -587,18 +595,27 @@ function EditBooking(props) {
     var index = 0
     axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/` + final_product_id, { headers })
       .then(response => {
+        const sample_description = response.data.data.sample_description
+        //deleting current sample and setting selected product sample data
+        const list = [...testData];
+        list.splice(index, 1);
+        setTestData(list);
         const tests_data = response.data.data.samples.map((d, index) => ({
           "parent_child": "Parent",
           "p_sr_no": index + 1,
           "by_pass": d.by_pass,
           "parent_id": d.parent.id,
-          "product_details": d.description,
+          "product_details": d.description == '' && d.parameter.procedure_name.toLowerCase() == "description" ?
+          sample_description : d.description,
           "test_name": d.parameter.procedure_name,
           "label_claim": d.label_claim,
           "min_limit": d.min_limit,
           "max_limit": d.max_limit,
           "amount": d.amount,
-          "approved": "Pending"
+          "approved": "Pending",
+          "method" : d.method,
+          "label_claim_unit" : d.label_claim !== '' ? d.label_claim.replace(/[^A-Z]+/gi,'') : '',
+          "assigned_date" : ''
 
         }))
         setTestData(tests_data)
@@ -1560,6 +1577,8 @@ function EditBooking(props) {
                     </Alert></h5>
 
                     {testData.map((x, i) => (
+
+
                       <React.Fragment key={x}>
                         <div className="mb-3 row">
                           <div className="form-group">
@@ -1633,13 +1652,17 @@ function EditBooking(props) {
                                         <input value={x.result} onChange={e => handleInputChange(e, i)} name="result" className="form-control"
                                         list="result" placeholder="Type to search For Result..." autoComplete="off"/>
                                         <datalist id="result">
-                                          { resultList.map((option, key) => <option data-value={option.result} value={option.result} key={key} >
-                                        </option>) }
+                                          { resultList.length ? resultList.map((option, key) => <option data-value={option.result} value={option.result} key={key} >
+                                        </option>)  : ''}
                                         </datalist>
                                       </td>
                                       <td>
-                                  <input value={x.label_claim_result} type="text" name="label_claim_result" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                  <td><input value={x.label_claim_unit} type="text" name="label_claim_unit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
+                                  <input value={x.label_claim_result} type="text" name="label_claim_result" className="form-control"
+                                  onChange={e => handleInputChange(e, i)}/></td>
+
+                                  <td><input value={x.label_claim_unit} type="text" name="label_claim_unit" className="form-control"
+                                  onChange={e => handleInputChange(e, i)}/>
+                                  </td>
                                   {/*<td><input value={x.result2} type="text" name="result2"
                                   onChange={e => handleInputChange(e, i)} className="form-control" /></td>*/}
                                   <td><input value={x.mean} type="text" name="mean" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
