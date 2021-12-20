@@ -12,7 +12,7 @@ import {
   Input,
   FormGroup,
   Button,
-  Alert,
+  Alert,Table
 } from 'reactstrap';
 
 //Import Breadcrumb
@@ -46,9 +46,9 @@ function AddEmployee (props) {
         const [data4, setData4] = useState([]);
         const [data5, setData5] = useState([]);
 
-        const [employee, setemployee] = useState({ title: 'Mr.',first_name: '',middle_name: '',last_name: '',username_email: '',password: '',
+        const [employee, setemployee] = useState({ title: 'Mr.',first_name: '',middle_name: '',last_name: '',
         blood_group: 'None',gender: 'M',birth_date: '',marital_status:'Single',photo: '',machine_code: '',phone: '',mobile: '',
-        notes: '',attendance:'1',signature:'',booking_action:'0',booking_sms:'0',booking_email:'0',is_resigned:'0',booking_copy: '0',nationality:'',
+        notes: '',attendance:'1',signature:'',booking_action:'0',booking_sms:'0',booking_email:'0',booking_copy: '0',nationality:'',
         religion: '',caste: '',is_reporting_authority:'0', deposit: '0',booking_rate: '0',homestreet: '', area: '',
         pincode:'',country_id:'',emergency_contact_name:'',homestreet2: '',city: '',state_id:'',email: '',street:'',
         area1:'',pincode1:'',corr_country_id:'',emergency_contact_number:'',street2:'',city1:'',corr_state_id:'',website:'',
@@ -194,6 +194,8 @@ function AddEmployee (props) {
 const InsertEmployee = (e)=>{
          e.preventDefault();
 
+         //resigned date is not empty than need to send is_resigned 1
+
               const final_edu_detail = inputList;
               const final_emp_detail = employmentList;
 
@@ -302,8 +304,6 @@ const InsertEmployee = (e)=>{
         data.append('first_name', employee.first_name);
         data.append('middle_name', employee.middle_name);
         data.append('last_name', employee.last_name);
-        data.append('email', employee.username_email);
-        data.append('password', employee.password);
         data.append('blood_group', employee.blood_group);
         data.append('birth_date', employee.birth_date);
         data.append('marital_status', employee.marital_status);
@@ -327,7 +327,11 @@ const InsertEmployee = (e)=>{
         data.append('booking_action', employee.booking_action);
         data.append('booking_sms', employee.booking_sms);
         data.append('booking_email', employee.booking_email);
-        data.append('is_resigned', employee.is_resigned);
+        if(employee.resign_date !== null || employee.resign_date !== ''){
+          data.append('is_resigned', "1");
+        } else {
+          data.append('is_resigned', "0");
+        }
         data.append('booking_copy', employee.booking_copy);
         data.append('nationality', employee.nationality);
         data.append('religion', employee.religion);
@@ -468,7 +472,8 @@ const handleInputChange = (e, index) => {
 };
 
 // handle click event of the Remove button
-const handleRemoveClick = index => {
+const handleRemoveClick = (e,index) => {
+  e.preventDefault()
   const list = [...inputList];
   list.splice(index, 1);
   setInputList(list);
@@ -489,7 +494,8 @@ const handleInputChange1 = (e, index) => {
 };
 
 // handle click event of the Remove button
-const handleRemoveClick1 = index => {
+const handleRemoveClick1 = (e,index) => {
+  e.preventDefault()
   const list = [...employmentList];
   list.splice(index, 1);
   setEmploymentList(list);
@@ -648,7 +654,7 @@ const handleAddClick1 = () => {
                                             <div className="form-group">
                                                 <div className="row">
 
-                                                    <div className="col-md-3">
+                                                    {/*<div className="col-md-3">
                                                         <label className="required-field">Email(Username)</label>
                                                         <input className="form-control" type="email" name="username_email" placeholder="example@gmail.com" onChange={ onChange } required/>
                                                     </div>
@@ -656,9 +662,9 @@ const handleAddClick1 = () => {
                                                     <div className="col-md-3">
                                                         <label className="required-field">Password</label>
                                                         <input className="form-control" type="password" name="password" placeholder="Enter Password" onChange={ onChange } required/>
-                                                    </div>
+                                                    </div>*/}
 
-                                                    <div className="col-md-6">
+                                                    <div className="col-md-12">
                                                         <label>Notes</label>
                                                         <textarea name="notes" className="form-control" placeholder="Enter Notes" onChange={ onChange }></textarea>
                                                     </div>
@@ -671,7 +677,7 @@ const handleAddClick1 = () => {
                                             <div className="form-group">
                                                 <div className="row">
 
-                                                    <div className="col-md-2">
+                                                    <div className="col-md-3">
                                                         <label>Attendance</label>
                                                         <select className="form-select" name="attendance" onChange={ onChange }>
                                                             <option value="1">Yes</option>
@@ -708,13 +714,13 @@ const handleAddClick1 = () => {
                                                         </select>
                                                     </div>
 
-                                                    <div className="col-md-1">
+                                                    {/*<div className="col-md-1">
                                                         <label>Resigned</label>
                                                         <select className="form-select" name="is_resigned" onChange={ onChange }>
                                                             <option value="0">No</option>
                                                             <option value="1">Yes</option>
                                                         </select>
-                                                    </div>
+                                                    </div>*/}
 
                                                 </div>
                                             </div>
@@ -856,131 +862,108 @@ const handleAddClick1 = () => {
                     <h5> <Alert color="success" role="alert">
                      <i className="fa fa-comment">&nbsp;Educational Details</i>
                     </Alert></h5>
-            {inputList.map((x, i) => (
-                <React.Fragment key={x}>
-                            <div className="mb-3 row">
-                                            <div className="form-group">
-                                                <div className="row">
-                                                    <div className="col-md-2">
-                                                        <label>Degree</label>
-                                                        <input className="form-control" type="text" name="degree" value={x.degree} onChange={e => handleInputChange(e, i)}/>
-
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>University/ Institute</label>
-                                                        <input className="form-control" type="text" name="university" value={x.university} onChange={e => handleInputChange(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>From</label>
-                                                        <input className="form-control" type="text" name="from_year" value={x.from_year} onChange={e => handleInputChange(e, i)}/>
-                                                    </div>
-                                                    <div className="col-md-1">
-                                                        <label>To</label>
-                                                        <input className="form-control" type="text"  name="to_year" value={x.to_year} onChange={e => handleInputChange(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>Percentage/Grade</label>
-                                                        <input className="form-control" type="text"  name="percentage_grade" value={x.percentage_grade} onChange={e => handleInputChange(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>Specialization</label>
-                                                        <input className="form-control" type="text"  name="specialization" value={x.specialization} onChange={e => handleInputChange(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-1">
-                                                        <label style={{ visibility:'hidden' }} >Delete</label>
-                                                         {/*<p><i className="fa fa-trash"></i></p>*/}
-                                                         {inputList.length !== 1 && <button
-                                                          className="mr10"
-                                                          onClick={() => handleRemoveClick(i)} className="btn btn-primary">Delete</button>}
-
-
-                            </div>
+                    <div className="mb-3 row">
+                      <div className="form-group">
+                        <div className="row">
+                          <div className="table-responsive">
+                            <Table className="table mb-0 border">
+                                <thead className="table-light">
+                                    <tr>
+                                        <th>Degree</th>
+                                        <th>University/ Institute</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Percentage/Grade</th>
+                                        <th>Specialization</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {inputList.map((x, i) => (
+                                  <React.Fragment key={x}>
+                                  <tr>
+                                    <td><input className="form-control" placeholder="Enter The Degree" type="text" name="degree" value={x.degree} onChange={e => handleInputChange(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter University Name" type="text" name="university" value={x.university} onChange={e => handleInputChange(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter Education From Year" type="text" name="from_year" value={x.from_year} onChange={e => handleInputChange(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter Education To Year" type="text"  name="to_year" value={x.to_year} onChange={e => handleInputChange(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter Percentage Grade" type="text"  name="percentage_grade" value={x.percentage_grade} onChange={e => handleInputChange(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter Specialization" type="text"  name="specialization" value={x.specialization} onChange={e => handleInputChange(e, i)}/></td>
+                                    <td>{inputList.length > 1 ? <button
+                                                      className="mr10"
+                                                      onClick={e => handleRemoveClick(e,i)} className="btn btn-danger"><i class="fa fa-trash"></i></button> : ''}</td>
+                                  </tr>
+                                  </React.Fragment>
+                                                  ))}
+                                </tbody>
+                              </Table>
+                          </div>
                         </div>
+                      </div>
                     </div>
-
-                </div>
-
-                <div className="mb-3 row">
-                                            <div className="form-group">
-                                                <div className="row">
-                                                   <center>
-                                                        <div className="col-md-2">
-
-                                                        {inputList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
-
-                                                        </div>
-                                                    </center>
-                                                 </div>
-                                            </div>
-                                        </div>
-
-
-    </React.Fragment>
-                    ))}
+                                  <div className="mb-3 row">
+                                    <div className="form-group">
+                                        <div className="row">
+                                           <center>
+                                                {inputList.map((x, i) => ( <div className="col-md-2">
+                                                {inputList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
+                                                </div>))}
+                                            </center>
+                                         </div>
+                                    </div>
+                                </div>
 
 
 
                      <h5> <Alert color="success" role="alert">
                      <i className="fa fa-comment">&nbsp;Employment Details</i>
                     </Alert></h5>
-              {employmentList.map((x, i) => (
-                <React.Fragment key={x}>
                             <div className="mb-3 row">
-                                            <div className="form-group">
-                                                <div className="row">
-                                                <div className="col-md-3">
-                                                        <label>Organisation</label>
-                                                        <input className="form-control" type="text" name="organisation" value={x.organisation} onChange={e => handleInputChange1(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>Designation</label>
-                                                        <input className="form-control" type="text" name="designation" value={x.designation} onChange={e => handleInputChange1(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>From</label>
-                                                        <input className="form-control" type="text" name="emp_from_year" value={x.emp_from_year} onChange={e => handleInputChange1(e, i)}/>
-                                                    </div>
-                                                    <div className="col-md-2">
-                                                        <label>To</label>
-                                                        <input className="form-control" type="text"  name="emp_to_year" value={x.emp_to_year} onChange={e => handleInputChange1(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>Annual CTC</label>
-                                                        <input className="form-control" type="text"  name="annual_ctc" value={x.annual_ctc} onChange={e => handleInputChange1(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-1">
-                                                        <label style={{ visibility:'hidden' }} >Delete</label>
-                                                       {employmentList.length !== 1 && <button
-                                                          className="mr10"
-                                                          onClick={() => handleRemoveClick1(i)} className="btn btn-primary">Delete</button>}
-
-                                                    </div>
-
-                        </div>
-                    </div>
-        </div>
+                              <div className="form-group">
+                                <div className="row">
+                                  <div className="table-responsive">
+                                    <Table className="table mb-0 border text-center">
+                                        <thead className="table-light">
+                                            <tr>
+                                                <th>Organisation</th>
+                                                <th>Designation</th>
+                                                <th>From</th>
+                                                <th>To</th>
+                                                <th>Annual CTC</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        {employmentList.map((x, i) => (
+                                          <React.Fragment key={x}>
+                                          <tr>
+                                            <td><input className="form-control" placeholder= "Enter Name of Organisation" type="text" name="organisation" value={x.organisation} onChange={e => handleInputChange1(e, i)}/></td>
+                                            <td><input className="form-control" placeholder="Enter Designation" type="text" name="designation" value={x.designation} onChange={e => handleInputChange1(e, i)}/></td>
+                                            <td><input className="form-control" placeholder="Enter Employment From Year" type="text" name="emp_from_year" value={x.emp_from_year} onChange={e => handleInputChange1(e, i)}/></td>
+                                            <td><input className="form-control" placeholder="Enter Employment To Year" type="text"  name="emp_to_year" value={x.emp_to_year} onChange={e => handleInputChange1(e, i)}/></td>
+                                            <td><input className="form-control" placeholder="Enter Annual CTC" type="text"  name="annual_ctc" value={x.annual_ctc} onChange={e => handleInputChange1(e, i)}/></td>
+                                            <td>{employmentList.length > 1 ? <button
+                                                              className="mr10"
+                                                              onClick={e => handleRemoveClick1(e,i)} className="btn btn-danger"><i class="fa fa-trash"></i></button> : ''}</td>
+                                          </tr>
+                                          </React.Fragment>
+                                                          ))}
+                                        </tbody>
+                                      </Table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                                           <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
                                                    <center>
-                                                        <div className="col-md-2">
+                                                        {employmentList.map((x, i) => ( <div className="col-md-2">
                                                         {employmentList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick1}>Add More</button>}
-                                                        </div>
+                                                        </div>))}
                                                     </center>
                                                  </div>
                                             </div>
                                         </div>
-    </React.Fragment>
-                    ))}
 
 
                                         <h5> <Alert color="danger" role="alert">
@@ -1032,17 +1015,17 @@ const handleAddClick1 = () => {
                                             <div className="form-group">
                                                 <div className="row">
 
-                                                    <div className="col-md-3">
+                                                    <div className="col-md-2">
                                                         <label>Salary Per Month</label>
                                                         <input className="form-control" type="text" name="salary_per_month" placeholder="Salary Per Month" onChange={ onChange }/>
                                                     </div>
 
-                                                    <div className="col-md-3">
+                                                    <div className="col-md-2">
                                                         <label>Bank A/C No</label>
                                                         <input className="form-control" type="text" name="bank_acc_number" placeholder="Bank Account No" onChange={ onChange }/>
                                                     </div>
 
-                                                    <div className="col-md-3">
+                                                    <div className="col-md-2">
                                                         <label className="required-field">Department Name</label>
                                                         {loading1 ? <LoadingSpinner /> :
                                                           <select className="form-select" id="mst_departments_id" name="mst_departments_id" onChange={ onChange }>
@@ -1051,7 +1034,7 @@ const handleAddClick1 = () => {
                                                         </select> }
                                                     </div>
 
-                                                    <div className="col-md-3">
+                                                    <div className="col-md-2">
                                                         <label className="required-field">Position</label>
                                                        {loading1 ? <LoadingSpinner /> :
                                                         <select className="form-select" id="mst_positions_id" name="mst_positions_id" onChange={ onChange }>
@@ -1059,37 +1042,80 @@ const handleAddClick1 = () => {
                                                             { data3.map((option, key) => <option value={option.id} key={key} >{option.position_title}</option>) }
                                                          </select> }
                                                     </div>
+                                                    <div className="col-md-2">
+                                                        <label>Username</label>
+                                                        <input className="form-control" placeholder="Enter Username" type="text" name="username" onChange={ onChange }/>
+                                                    </div>
+
+                                                    <div className="col-md-2">
+                                                        <label>Password</label>
+                                                        <input className="form-control" placeholder="Enter Password" type="password" name="password" onChange={ onChange }/>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {/*<div className="mb-3 row">
+                                        <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
 
                                                     <div className="col-md-2">
                                                         <label>In Time</label>
-                                                        <input className="form-control" type="time" name="in_time" id="example-time-input"/>
+                                                        <input className="form-control" type="time" name="in_time" id="example-time-input" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-2">
                                                         <label>Out Time</label>
-                                                        <input className="form-control" type="time" name="out_time" id="example-time-input"/>
+                                                        <input className="form-control" type="time" name="out_time" id="example-time-input" onChange={ onChange }/>
                                                     </div>
 
 
                                                     <div className="col-md-4">
                                                         <label>Email Username</label>
-                                                        <input className="form-control" type="text" name="email_username"/>
+                                                        <input className="form-control" type="text" name="email_username" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-4">
                                                         <label>Email Password</label>
-                                                        <input className="form-control" type="password" name="email_password"/>
+                                                        <input className="form-control" type="password" name="email_password" onChange={ onChange }/>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>*/}
+                                        </div>
+
+                                        <div className="mb-3 row">
+                                            <div className="form-group">
+                                                <div className="row">
+                                                    <div className="col-md-2">
+                                                        <label>Incoming Mail Type</label>
+                                                        <select name="incoming_mail_type" className="form-select" onChange={ onChange }>
+                                                            <option value="IMAP">IMAP</option>
+                                                            <option value="POP">POP</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div className="col-md-3">
+                                                        <label>Incoming Mail Server</label>
+                                                        <input className="form-control" type="text" name="email_username" onChange={ onChange }/>
+                                                    </div>
+
+                                                    <div className="col-md-2">
+                                                        <label>Incoming Mail Server Port</label>
+                                                        <input className="form-control" type="password" name="email_password" onChange={ onChange }/>
+                                                    </div>
+
+                                                    <div className="col-md-3">
+                                                        <label>Outgoing Mail Server</label>
+                                                        <input className="form-control" type="text" name="email_username" onChange={ onChange }/>
+                                                    </div>
+
+                                                    <div className="col-md-2">
+                                                        <label>Outgoing Mail Server Port</label>
+                                                        <input className="form-control" type="password" name="email_password" onChange={ onChange }/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <h5> <Alert color="danger" role="alert">
                                          <i className="fa fa-comment">&nbsp;Employee Document's No And Upload</i>
