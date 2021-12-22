@@ -12,7 +12,7 @@ import {
   Input,
   FormGroup,
   Button,
-  Alert,
+  Alert,Table
 } from 'reactstrap';
 
 //Import Breadcrumb
@@ -28,6 +28,8 @@ import 'toastr/build/toastr.min.css';
 import $ from 'jquery';
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 import {commonpath} from '../../commonPath'
+import moment from 'moment'
+import MD5 from "crypto-js/md5"
 
 function EditEmployee (props) {
     var employee_document_path = commonpath.employee_document_path;
@@ -50,14 +52,16 @@ function EditEmployee (props) {
         const [data4, setData4] = useState([]);
         const [data5, setData5] = useState([]);
 
-        const [employee, setemployee] = useState({ title: 'Mr.',first_name: '',middle_name: '',last_name: '',username_email: '',password: '',
+        const [employee, setemployee] = useState({ title: 'Mr.',first_name: '',middle_name: '',last_name: '',
         blood_group: 'None',gender: 'M',birth_date: '',marital_status:'Single',photo: '',machine_code: '',phone: '',mobile: '',
-        notes: '',attendance:'1',signature:'',booking_action:'0',booking_sms:'0',booking_email:'0',is_resigned:'0',booking_copy: '0',nationality:'',
+        notes: '',attendance:'1',signature:'',booking_action:'0',booking_sms:'0',booking_email:'0',booking_copy: '0',nationality:'',
         religion: '',caste: '',is_reporting_authority:'0', deposit: '0',booking_rate: '0',homestreet: '', area: '',
         pincode:'',country_id:'',emergency_contact_name:'',homestreet2: '',city: '',state_id:'',email: '',street:'',
         area1:'',pincode1:'',corr_country_id:'',emergency_contact_number:'',street2:'',city1:'',corr_state_id:'',website:'',
         mst_companies_id:'',reporting_authority_id: '',mst_departments_id:'',mst_positions_id:'',join_date:'',resign_date:'',
-        bank_name:'',bank_branch_name:'',salary_per_month:'',bank_acc_number:'',aadhar_card_photo:'',aadhar_number:'',
+        bank_name:'',bank_branch_name:'',salary_per_month:'',bank_acc_number:'',username:'',password:'',in_time:'',
+        out_time:'',email_username:'',email_password:'',incoming_mail_type:'IMAP',incoming_mail_server:'',
+        incoming_mail_server_port:'',outgoing_mail_server:'',outgoing_mail_server_port:'',aadhar_card_photo:'',aadhar_number:'',
         election_card_photo:'',election_card_number:'',pan_card_photo:'',pan_card_number:'',passport_photo:'',passport_number:'',
         driving_license_photo:'',driving_license_number:''
         });
@@ -66,6 +70,8 @@ function EditEmployee (props) {
           percentage_grade: "",specialization:"" }]);
         const [employmentList, setEmploymentList]  = useState([{ organisation: "", designation: "", emp_from_year: "", emp_to_year:"",
           annual_ctc: ""}]);
+
+          const [pass, setPassword] = useState();
 
           // Photo Change Event
           const changePhotoHandler = event => {
@@ -120,16 +126,28 @@ function EditEmployee (props) {
                   setInputList(response.data.data.education);
                   setEmploymentList(response.data.data.employment);
                   setemployee(prevState => ({ ...prevState,
-                   mst_companies_id:response.data.data.company[0].mst_companies_id,
-                   reporting_authority_id: response.data.data.company[0].reporting_authority_id,
-                   mst_departments_id:response.data.data.company[0].mst_departments_id,
-                   mst_positions_id:response.data.data.company[0].mst_positions_id,
-                   join_date:response.data.data.company[0].join_date,
-                   resign_date:response.data.data.company[0].resign_date,
-                   bank_name:response.data.data.company[0].bank_name,
-                   bank_branch_name:response.data.data.company[0].bank_branch_name,
-                   salary_per_month:response.data.data.company[0].salary_per_month,
-                   bank_acc_number:response.data.data.company[0].bank_acc_number,
+                   //Company Details
+                   mst_companies_id:response.data.data.company.mst_companies_id,
+                   reporting_authority_id: response.data.data.company.reporting_authority_id,
+                   mst_departments_id:response.data.data.company.mst_departments_id,
+                   mst_positions_id:response.data.data.company.mst_positions_id,
+                   join_date:response.data.data.company.join_date,
+                   resign_date:response.data.data.company.resign_date,
+                   bank_name:response.data.data.company.bank_name,
+                   bank_branch_name:response.data.data.company.bank_branch_name,
+                   salary_per_month:response.data.data.company.salary_per_month,
+                   username:response.data.data.company.username,
+                   password:response.data.data.company.password,
+                   in_time:response.data.data.company.in_time,
+                   out_time:response.data.data.company.out_time,
+                   email_username:response.data.data.company.email_username,
+                   email_password:response.data.data.company.email_password,
+                   incoming_mail_type:response.data.data.company.incoming_mail_type,
+                   incoming_mail_server:response.data.data.company.incoming_mail_server,
+                   incoming_mail_server_port:response.data.data.company.incoming_mail_server_port,
+                   outgoing_mail_server:response.data.data.company.outgoing_mail_server,
+                   outgoing_mail_server_port:response.data.data.company.outgoing_mail_server_port,
+                   //Documents Details
                    aadhar_card_photo: response.data.data.document[0].aadhar_card_photo,
                    aadhar_number: response.data.data.document[0].aadhar_number,
                    election_card_photo: response.data.data.document[0].election_card_photo,
@@ -139,12 +157,34 @@ function EditEmployee (props) {
                    passport_photo:response.data.data.document[0].passport_photo,
                    passport_number:response.data.data.document[0].passport_number,
                    driving_license_photo: response.data.data.document[0].driving_license_photo,
-                   driving_license_number:response.data.data.document[0].driving_license_number
+                   driving_license_number:response.data.data.document[0].driving_license_number,
+                   //address details Permanent Address
+                   homestreet: response.data.data.address[0].street1,
+                   homestreet2: response.data.data.address[0].street2,
+                   area: response.data.data.address[0].area,
+                   city: response.data.data.address[0].city,
+                   pincode: response.data.data.address[0].pincode,
+                   state_id: response.data.data.address[0].mst_states_id,
+                   country_id: response.data.data.address[0].mst_countries_id,
+                   email: response.data.data.address[0].email,
+                   emergency_contact_name: response.data.data.address[0].emergency_contact_name,
+                   //address details Correspondence Address
+                   street: response.data.data.address[1].street1,
+                   street2: response.data.data.address[1].street2,
+                   area1: response.data.data.address[1].area,
+                   city1: response.data.data.address[1].city,
+                   pincode1: response.data.data.address[1].pincode,
+                   corr_state_id: response.data.data.address[1].mst_states_id,
+                   corr_country_id: response.data.data.address[1].mst_countries_id,
+                   website: response.data.data.address[1].website,
+                   emergency_contact_number: response.data.data.address[1].emergency_contact_number,
                  }))
+                 setPassword(response.data.data.company.password);
                   {setLoading1(false)}
 
               })
               .catch((error) => {
+                console.log(error)
                   {setLoading1(false)}
                   toastr.error(error.response.data.message);
                   this.setState({loading: false});
@@ -253,6 +293,22 @@ const editEmployee = (e)=>{
              })*/
         {setLoading(true)};
         const data = new FormData();
+        var emp_username_auto = ''
+        var emp_password_auto = ''
+
+        if(employee.username == '' || employee.username == null){
+          var last_date_year = moment(employee.birth_date).format('MM-DD-YYYY').toString().substr(-2)
+          emp_username_auto = employee.first_name.toLowerCase()+last_date_year
+        } else {
+          emp_username_auto = employee.username
+        }
+
+        if(employee.password == '' || employee.password == null){
+          var last_date_year = moment(employee.birth_date).format('MM-DD-YYYY').toString().substr(-2)
+          emp_password_auto = employee.first_name.toLowerCase()+last_date_year
+        } else {
+          emp_password_auto = employee.password
+        }
 
         // Personal Info
 
@@ -260,9 +316,8 @@ const editEmployee = (e)=>{
         data.append('first_name', employee.first_name);
         data.append('middle_name', employee.middle_name);
         data.append('last_name', employee.last_name);
-        data.append('email', employee.username_email);
-        data.append('password', employee.password);
         data.append('blood_group', employee.blood_group);
+        data.append('gender', employee.gender);
         data.append('birth_date', employee.birth_date);
         data.append('marital_status', employee.marital_status);
         if(employee.photo != false)
@@ -280,12 +335,16 @@ const editEmployee = (e)=>{
         {
           data.append('signature', employee.signature);
         } else {
-          data.append('signature', '');
+          data.append('signature', employee.signature);
         }
         data.append('booking_action', employee.booking_action);
         data.append('booking_sms', employee.booking_sms);
         data.append('booking_email', employee.booking_email);
-        data.append('is_resigned', employee.is_resigned);
+        if(employee.resign_date !== ''){
+          data.append('is_resigned', "1");
+        } else {
+          data.append('is_resigned', "0");
+        }
         data.append('booking_copy', employee.booking_copy);
         data.append('nationality', employee.nationality);
         data.append('religion', employee.religion);
@@ -342,51 +401,71 @@ const editEmployee = (e)=>{
 
         data.append('company[mst_companies_id]', employee.mst_companies_id);
         data.append('company[reporting_authority_id]', employee.reporting_authority_id);
-        data.append('company[mst_departments_id]', employee.mst_departments_id);
-        data.append('company[mst_positions_id]', employee.mst_positions_id);
         data.append('company[join_date]', employee.join_date);
         data.append('company[resign_date]', employee.resign_date);
         data.append('company[bank_name]', employee.bank_name);
         data.append('company[bank_branch_name]', employee.bank_branch_name);
         data.append('company[salary_per_month]', employee.salary_per_month);
         data.append('company[bank_acc_number]', employee.bank_acc_number);
+        data.append('company[mst_departments_id]', employee.mst_departments_id);
+        data.append('company[mst_positions_id]', employee.mst_positions_id);
+        data.append('company[username]', emp_username_auto);
+        if(MD5(emp_password_auto) !== pass){
+            data.append('password', emp_password_auto);
+        } else {
+            data.append('password', pass);
+        }
+        data.append('company[password]', emp_password_auto);
+        data.append('company[in_time]', employee.in_time);
+        data.append('company[out_time]', employee.out_time);
+        data.append('company[email_username]', employee.email_username);
+        data.append('company[email_password]', employee.email_password);
+        data.append('company[incoming_mail_type]', employee.incoming_mail_type);
+        data.append('company[incoming_mail_server]', employee.incoming_mail_server);
+        data.append('company[incoming_mail_server_port]', employee.incoming_mail_server_port);
+        data.append('company[outgoing_mail_server]', employee.outgoing_mail_server);
+        data.append('company[outgoing_mail_server_port]', employee.outgoing_mail_server_port);
 
         // Document Data
         if(employee.aadhar_card_photo != false)
         {
           data.append('document[aadhar_card_photo]', employee.aadhar_card_photo);
         } else {
-          data.append('document[aadhar_card_photo]', '');
+          data.append('document[aadhar_card_photo]', employee.aadhar_card_photo);
         }
         data.append('document[aadhar_number]', employee.aadhar_number);
         if(employee.election_card_photo != false)
         {
           data.append('document[election_card_photo]', employee.election_card_photo);
         } else {
-          data.append('document[election_card_photo]', '');
+          data.append('document[election_card_photo]', employee.election_card_photo);
         }
         data.append('document[election_card_number]', employee.election_card_number);
         if(employee.pan_card_photo != false)
         {
           data.append('document[pan_card_photo]', employee.pan_card_photo);
         }else{
-          data.append('document[pan_card_photo]', '');
+          data.append('document[pan_card_photo]', employee.pan_card_photo);
         }
         data.append('document[pan_card_number]', employee.pan_card_number);
         if(employee.passport_photo != false)
         {
           data.append('document[passport_photo]', employee.passport_photo);
         } else {
-          data.append('document[passport_photo]', '');
+          data.append('document[passport_photo]', employee.passport_photo);
         }
         data.append('document[passport_number]', employee.passport_number);
         if(employee.driving_license_photo != false)
         {
           data.append('document[driving_license_photo]', employee.driving_license_photo);
         } else {
-          data.append('document[driving_license_photo]', '');
+          data.append('document[driving_license_photo]', employee.driving_license_photo);
         }
         data.append('document[driving_license_number]', employee.driving_license_number);
+
+        for (var pair of data.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]);
+        }
 
         axios.post( `${process.env.REACT_APP_BASE_APIURL}addEmployee`, data, {headers} )
 
@@ -480,8 +559,8 @@ const handleAddClick1 = () => {
                        <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
                     </li>}
                     &nbsp;&nbsp;<li>
-                      <select className="form-select btn-sm" style={{width:'180px',background: '#5b73e8', color: 'azure'}}>
-                        <option value="" disabled>Select Employee Status</option>
+                      <select className="form-select btn-sm" style={{width:'180px',background: '#5b73e8', color: 'azure',borderRadius:'3px'}}>
+                        <option value="">Select Employee Status</option>
                         <option value="Approved" className="btn btn-success">Approve</option>
                         <option value="Rejected" className="btn btn-danger">Reject</option>
                       </select>
@@ -515,17 +594,17 @@ const handleAddClick1 = () => {
                                                     </div>
 
                                                     <div className="col-md-2">
-                                                        <label>First Name</label>
+                                                        <label className="required-field">First Name</label>
                                                         <input className="form-control" type="text" value={employee.first_name} placeholder="Enter First Name" id="example-text-input" name="first_name" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-2">
-                                                        <label>Middle Name</label>
+                                                        <label className="required-field">Middle Name</label>
                                                         <input className="form-control" type="text" value={employee.middle_name} placeholder="Enter Middle Name" id="example-text-input" name="middle_name" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-2">
-                                                        <label>Last Name</label>
+                                                        <label className="required-field">Last Name</label>
                                                         <input className="form-control" type="text" value={employee.last_name} name="last_name" placeholder="Enter Last Name" onChange={ onChange }/>
                                                     </div>
                                                     <div className="col-md-1">
@@ -551,7 +630,7 @@ const handleAddClick1 = () => {
                                                         </select>
                                                     </div>
                                                     <div className="col-md-3">
-                                                        <label>Birth Date</label>
+                                                        <label className="required-field">Birth Date</label>
                                                         <input className="form-control" type="date"  value={employee.birth_date} id="example-date-input" name="birth_date" onChange={ onChange }/>
                                                     </div>
                                                 </div>
@@ -590,7 +669,7 @@ const handleAddClick1 = () => {
                                                     </div>
 
                                                     <div className="col-md-3">
-                                                        <label>Mobile</label>
+                                                        <label className="required-field">Mobile</label>
                                                         <input className="form-control" type="text" value={employee.mobile} name="mobile" placeholder="Enter Mobile" onChange={ onChange }/>
                                                     </div>
 
@@ -601,18 +680,7 @@ const handleAddClick1 = () => {
                                         <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
-
-                                                    <div className="col-md-3">
-                                                        <label>Email(Username)</label>
-                                                        <input className="form-control" type="email" value={employee.username} name="username_email" placeholder="example@gmail.com" onChange={ onChange }/>
-                                                    </div>
-
-                                                    <div className="col-md-3">
-                                                        <label>Password</label>
-                                                        <input className="form-control" type="password" value={employee.password} name="password" placeholder="Enter Password" onChange={ onChange } autoComplete="off"/>
-                                                    </div>
-
-                                                    <div className="col-md-6">
+                                                    <div className="col-md-12">
                                                         <label>Notes</label>
                                                         <textarea name="notes" className="form-control" value={employee.notes} placeholder="Enter Notes" onChange={ onChange }></textarea>
                                                     </div>
@@ -625,7 +693,7 @@ const handleAddClick1 = () => {
                                             <div className="form-group">
                                                 <div className="row">
 
-                                                    <div className="col-md-2">
+                                                    <div className="col-md-3">
                                                         <label>Attendance</label>
                                                         <select className="form-select" value={employee.attendance} name="attendance" onChange={ onChange }>
                                                             <option value="1">Yes</option>
@@ -665,15 +733,6 @@ const handleAddClick1 = () => {
                                                             <option value="1">Yes</option>
                                                         </select>
                                                     </div>
-
-                                                    <div className="col-md-1">
-                                                        <label>Resigned</label>
-                                                        <select className="form-select" value={employee.is_resigned} name="is_resigned" onChange={ onChange }>
-                                                            <option value="0">No</option>
-                                                            <option value="1">Yes</option>
-                                                        </select>
-                                                    </div>
-
                                                 </div>
                                             </div>
                                         </div>
@@ -745,26 +804,26 @@ const handleAddClick1 = () => {
                                                          <div className="form-group">
                                                              <div className="row">
                                                                 <div className="col-md-6">
-                                                                    <label>Home Street</label>
-                                                                    <input className="form-control" type="text" value={employee.street1} name="homestreet" placeholder="Enter Homestreet" onChange={ onChange }/><br/>
+                                                                    <label className="required-field">Home Street</label>
+                                                                    <input className="form-control" type="text" value={employee.homestreet} name="homestreet" placeholder="Enter Homestreet" onChange={ onChange }/><br/>
                                                                     <label>Area</label>
                                                                     <input className="form-control" type="text" value={employee.area} name="area" placeholder="Enter Area" onChange={ onChange }/><br/>
                                                                     <label>Pincode</label>
                                                                     <input className="form-control" type="text" value={employee.pincode} name="pincode" placeholder="Enter Pincode" onChange={ onChange }/><br/>
-                                                                    <label>Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.mst_countries_id} id="country_id" name="country_id" onChange={ onChange } >
+                                                                    <label className="required-field">Country</label>
+                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.country_id} id="country_id" name="country_id" onChange={ onChange } >
                                                                     <option value="">Select Country</option>
                                                                     { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
-                                                                    <label>Emergency Contact Name</label>
+                                                                    <label className="required-field">Emergency Contact Name</label>
                                                                     <input className="form-control" type="text" value={employee.emergency_contact_name} name="emergency_contact_name" placeholder="Enter Emergency Contact Name" onChange={ onChange }/>
                                                                 </div>
                                                                 <div className="col-md-6">
-                                                                    <label>Home Street2</label>
-                                                                    <input className="form-control" type="text" value={employee.street2} name="homestreet2" placeholder="Enter Home Street2" onChange={ onChange }/><br/>
+                                                                    <label className="required-field">Home Street2</label>
+                                                                    <input className="form-control" type="text" value={employee.homestreet2} name="homestreet2" placeholder="Enter Home Street2" onChange={ onChange }/><br/>
                                                                     <label>City</label>
                                                                     <input className="form-control" type="text" value={employee.city} name="city" placeholder="Enter City" onChange={ onChange }/><br/>
-                                                                    <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.mst_states_id} id="state_id" name="state_id" onChange={ onChange } >
+                                                                    <label className="required-field">State</label>
+                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.state_id} id="state_id" name="state_id" onChange={ onChange } >
                                                                     <option value="">Select State</option>
                                                                     { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
                                                                     <label>Email</label>
@@ -780,25 +839,25 @@ const handleAddClick1 = () => {
                                                              <div className="row">
                                                                 <div className="col-md-6">
                                                                     <label>Street</label>
-                                                                    <input className="form-control" type="text" value={employee.street1} name="street" placeholder="Enter Street" onChange={ onChange }/><br/>
+                                                                    <input className="form-control" type="text" value={employee.street} name="street" placeholder="Enter Street" onChange={ onChange }/><br/>
                                                                     <label>Area</label>
-                                                                    <input className="form-control" type="text" value={employee.area} name="area1" placeholder="Enter Area" onChange={ onChange }/><br/>
+                                                                    <input className="form-control" type="text" value={employee.area1} name="area1" placeholder="Enter Area" onChange={ onChange }/><br/>
                                                                     <label>Pincode</label>
-                                                                    <input className="form-control" type="text" value={employee.pincode} name="pincode1" placeholder="Enter Pincode" onChange={ onChange }/><br/>
+                                                                    <input className="form-control" type="text" value={employee.pincode1} name="pincode1" placeholder="Enter Pincode" onChange={ onChange }/><br/>
                                                                     <label>Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.mst_countries_id} id="corr_country_id" name="corr_country_id" onChange={ onChange } >
+                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.corr_country_id} id="corr_country_id" name="corr_country_id" onChange={ onChange } >
                                                                     <option value="">Select Country</option>
                                                                     { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
-                                                                    <label>Emergency Contact Number</label>
+                                                                    <label className="required-field">Emergency Contact Number</label>
                                                                     <input className="form-control" type="text" value={employee.emergency_contact_number} name="emergency_contact_number" placeholder="Enter Emergency Contact Number" onChange={ onChange }/>
                                                                 </div>
                                                                 <div className="col-md-6">
                                                                     <label>Street2</label>
                                                                     <input className="form-control" type="text" value={employee.street2} name="street2" placeholder="Enter Street2" onChange={ onChange }/><br/>
                                                                     <label>City</label>
-                                                                    <input className="form-control" type="text" value={employee.city} name="city1" placeholder="Enter City" onChange={ onChange }/><br/>
+                                                                    <input className="form-control" type="text" value={employee.city1} name="city1" placeholder="Enter City" onChange={ onChange }/><br/>
                                                                     <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.mst_states_id} id="corr_state_id" name="corr_state_id" onChange={ onChange } >
+                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.corr_state_id} id="corr_state_id" name="corr_state_id" onChange={ onChange } >
                                                                     <option value="">Select State</option>
                                                                     { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
                                                                     <label>Website</label>
@@ -814,131 +873,107 @@ const handleAddClick1 = () => {
                     <h5> <Alert color="success" role="alert">
                      <i className="fa fa-comment">&nbsp;Educational Details</i>
                     </Alert></h5>
-            {inputList.map((x, i) => (
-                <React.Fragment key={x}>
-                            <div className="mb-3 row">
-                                            <div className="form-group">
-                                                <div className="row">
-                                                    <div className="col-md-2">
-                                                        <label>Degree</label>
-                                                        <input className="form-control" type="text" name="degree" value={x.degree} onChange={e => handleInputChange(e, i)}/>
-
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>University/ Institute</label>
-                                                        <input className="form-control" type="text" name="university" value={x.university} onChange={e => handleInputChange(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>From</label>
-                                                        <input className="form-control" type="text" name="from_year" value={x.from_year} onChange={e => handleInputChange(e, i)}/>
-                                                    </div>
-                                                    <div className="col-md-1">
-                                                        <label>To</label>
-                                                        <input className="form-control" type="text"  name="to_year" value={x.to_year} onChange={e => handleInputChange(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>Percentage/Grade</label>
-                                                        <input className="form-control" type="text"  name="percentage_grade" value={x.percentage_grade} onChange={e => handleInputChange(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>Specialization</label>
-                                                        <input className="form-control" type="text"  name="specialization" value={x.specialization} onChange={e => handleInputChange(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-1">
-                                                        <label style={{ visibility:'hidden' }} >Delete</label>
-                                                         {/*<p><i className="fa fa-trash"></i></p>*/}
-                                                         {inputList.length !== 1 && <button
-                                                          className="mr10"
-                                                          onClick={() => handleRemoveClick(i)} className="btn btn-primary">Delete</button>}
-
-
-                            </div>
+                    <div className="mb-3 row">
+                      <div className="form-group">
+                        <div className="row">
+                          <div className="table-responsive">
+                            <Table className="table mb-0 border">
+                                <thead className="table-light">
+                                    <tr>
+                                        <th>Degree</th>
+                                        <th>University/ Institute</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Percentage/Grade</th>
+                                        <th>Specialization</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {inputList.map((x, i) => (
+                                  <React.Fragment key={x}>
+                                  <tr>
+                                    <td><input className="form-control" placeholder="Enter The Degree" type="text" name="degree" value={x.degree} onChange={e => handleInputChange(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter University Name" type="text" name="university" value={x.university} onChange={e => handleInputChange(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter Education From Year" type="text" name="from_year" value={x.from_year} onChange={e => handleInputChange(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter Education To Year" type="text"  name="to_year" value={x.to_year} onChange={e => handleInputChange(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter Percentage Grade" type="text"  name="percentage_grade" value={x.percentage_grade} onChange={e => handleInputChange(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter Specialization" type="text"  name="specialization" value={x.specialization} onChange={e => handleInputChange(e, i)}/></td>
+                                    <td>{inputList.length > 1 ? <button
+                                                      className="mr10"
+                                                      onClick={e => handleRemoveClick(e,i)} className="btn btn-danger"><i class="fa fa-trash"></i></button> : ''}</td>
+                                  </tr>
+                                  </React.Fragment>
+                                                  ))}
+                                </tbody>
+                              </Table>
+                          </div>
                         </div>
+                      </div>
                     </div>
-
-                </div>
-
-                <div className="mb-3 row">
-                                            <div className="form-group">
-                                                <div className="row">
-                                                   <center>
-                                                        <div className="col-md-2">
-
-                                                        {inputList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
-
-                                                        </div>
-                                                    </center>
-                                                 </div>
-                                            </div>
-                                        </div>
-
-
-    </React.Fragment>
-                    ))}
-
+                    <div className="mb-3 row">
+                      <div className="form-group">
+                          <div className="row">
+                              <center>
+                                  {inputList.map((x, i) => ( <div className="col-md-2">
+                                  {inputList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
+                                  </div>))}
+                              </center>
+                            </div>
+                      </div>
+                  </div>
 
 
                      <h5> <Alert color="success" role="alert">
                      <i className="fa fa-comment">&nbsp;Employment Details</i>
                     </Alert></h5>
-              {employmentList.map((x, i) => (
-                <React.Fragment key={x}>
-                            <div className="mb-3 row">
-                                            <div className="form-group">
-                                                <div className="row">
-                                                <div className="col-md-3">
-                                                        <label>Organisation</label>
-                                                        <input className="form-control" type="text" name="organisation" value={x.organisation} onChange={e => handleInputChange1(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>Designation</label>
-                                                        <input className="form-control" type="text" name="designation" value={x.designation} onChange={e => handleInputChange1(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>From</label>
-                                                        <input className="form-control" type="text" name="emp_from_year" value={x.emp_from_year} onChange={e => handleInputChange1(e, i)}/>
-                                                    </div>
-                                                    <div className="col-md-2">
-                                                        <label>To</label>
-                                                        <input className="form-control" type="text"  name="emp_to_year" value={x.emp_to_year} onChange={e => handleInputChange1(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-2">
-                                                        <label>Annual CTC</label>
-                                                        <input className="form-control" type="text"  name="annual_ctc" value={x.annual_ctc} onChange={e => handleInputChange1(e, i)}/>
-                                                    </div>
-
-                                                    <div className="col-md-1">
-                                                        <label style={{ visibility:'hidden' }} >Delete</label>
-                                                       {employmentList.length !== 1 && <button
-                                                          className="mr10"
-                                                          onClick={() => handleRemoveClick1(i)} className="btn btn-primary">Delete</button>}
-
-                                                    </div>
-
+                    <div className="mb-3 row">
+                      <div className="form-group">
+                        <div className="row">
+                          <div className="table-responsive">
+                            <Table className="table mb-0 border text-center">
+                                <thead className="table-light">
+                                    <tr>
+                                        <th>Organisation</th>
+                                        <th>Designation</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Annual CTC</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {employmentList.map((x, i) => (
+                                  <React.Fragment key={x}>
+                                  <tr>
+                                    <td><input className="form-control" placeholder= "Enter Name of Organisation" type="text" name="organisation" value={x.organisation} onChange={e => handleInputChange1(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter Designation" type="text" name="designation" value={x.designation} onChange={e => handleInputChange1(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter Employment From Year" type="text" name="emp_from_year" value={x.emp_from_year} onChange={e => handleInputChange1(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter Employment To Year" type="text"  name="emp_to_year" value={x.emp_to_year} onChange={e => handleInputChange1(e, i)}/></td>
+                                    <td><input className="form-control" placeholder="Enter Annual CTC" type="text"  name="annual_ctc" value={x.annual_ctc} onChange={e => handleInputChange1(e, i)}/></td>
+                                    <td>{employmentList.length > 1 ? <button
+                                                      className="mr10"
+                                                      onClick={e => handleRemoveClick1(e,i)} className="btn btn-danger"><i class="fa fa-trash"></i></button> : ''}</td>
+                                  </tr>
+                                  </React.Fragment>
+                                                  ))}
+                                </tbody>
+                              </Table>
+                          </div>
                         </div>
+                      </div>
                     </div>
-        </div>
-                                          <div className="mb-3 row">
-                                            <div className="form-group">
-                                                <div className="row">
-                                                   <center>
-                                                        <div className="col-md-2">
-                                                        {employmentList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick1}>Add More</button>}
-                                                        </div>
-                                                    </center>
-                                                 </div>
-                                            </div>
-                                        </div>
-    </React.Fragment>
-                    ))}
+                    <div className="mb-3 row">
+                      <div className="form-group">
+                          <div className="row">
+                              <center>
+                                  {employmentList.map((x, i) => ( <div className="col-md-2">
+                                  {employmentList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick1}>Add More</button>}
+                                  </div>))}
+                              </center>
+                            </div>
+                      </div>
+                  </div>
 
 
                                         <h5> <Alert color="danger" role="alert">
@@ -948,7 +983,7 @@ const handleAddClick1 = () => {
                                             <div className="form-group">
                                                 <div className="row">
                                                     <div className="col-md-2">
-                                                        <label>Comapny</label>
+                                                        <label className="required-field">Comapny</label>
                                                         {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.mst_companies_id} id="mst_companies_id" name="mst_companies_id" onChange={ onChange } >
                                                              <option value="">Select Company</option>
                                                             { data2.map((option, key) => <option value={option.id} key={key} >{option.company_name}</option>) }
@@ -990,18 +1025,18 @@ const handleAddClick1 = () => {
                                             <div className="form-group">
                                                 <div className="row">
 
-                                                    <div className="col-md-3">
+                                                    <div className="col-md-2">
                                                         <label>Salary Per Month</label>
                                                         <input className="form-control" value={employee.salary_per_month} type="text" name="salary_per_month" placeholder="Salary Per Month" onChange={ onChange }/>
                                                     </div>
 
-                                                    <div className="col-md-3">
+                                                    <div className="col-md-2">
                                                         <label>Bank A/C No</label>
                                                         <input className="form-control" value={employee.bank_acc_number} type="text" name="bank_acc_number" placeholder="Bank Account No" onChange={ onChange }/>
                                                     </div>
 
-                                                    <div className="col-md-3">
-                                                        <label>Department Name</label>
+                                                    <div className="col-md-2">
+                                                        <label className="required-field">Department Name</label>
                                                         {loading1 ? <LoadingSpinner /> :
                                                           <select className="form-select" value={employee.mst_departments_id} id="mst_departments_id" name="mst_departments_id" onChange={ onChange }>
                                                              <option value="">Select Department</option>
@@ -1009,45 +1044,88 @@ const handleAddClick1 = () => {
                                                         </select> }
                                                     </div>
 
-                                                    <div className="col-md-3">
-                                                        <label>Position</label>
+                                                    <div className="col-md-2">
+                                                        <label className="required-field">Position</label>
                                                        {loading1 ? <LoadingSpinner /> :
                                                         <select className="form-select" value={employee.mst_positions_id} id="mst_positions_id" name="mst_positions_id" onChange={ onChange }>
                                                              <option value="">Select Position</option>
                                                             { data3.map((option, key) => <option value={option.id} key={key} >{option.position_title}</option>) }
                                                          </select> }
                                                     </div>
+                                                    <div className="col-md-2">
+                                                        <label className="required-field">Username</label>
+                                                        <input className="form-control" value={employee.username} placeholder="Enter Username" type="text" name="username" id="username" onChange={ onChange }/>
+                                                    </div>
+
+                                                    <div className="col-md-2">
+                                                        <label className="required-field">Password</label>
+                                                        <input className="form-control" value={employee.password} placeholder="Enter Password" type="password" name="password" id="password" onChange={ onChange }/>
+                                                        <input className="form-control" value={pass} type="hidden"/>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        {/*<div className="mb-3 row">
+                                        <div className="mb-3 row">
                                             <div className="form-group">
                                                 <div className="row">
 
                                                     <div className="col-md-2">
                                                         <label>In Time</label>
-                                                        <input className="form-control" type="time" name="in_time" id="example-time-input"/>
+                                                        <input className="form-control" value={employee.in_time} type="time" name="in_time" id="example-time-input" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-2">
                                                         <label>Out Time</label>
-                                                        <input className="form-control" type="time" name="out_time" id="example-time-input"/>
+                                                        <input className="form-control" type="time" value={employee.out_time} name="out_time" id="example-time-input" onChange={ onChange }/>
                                                     </div>
 
 
                                                     <div className="col-md-4">
                                                         <label>Email Username</label>
-                                                        <input className="form-control" type="text" name="email_username"/>
+                                                        <input className="form-control" value={employee.email_username} placeholder="Enter Email Username" type="text" name="email_username" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-4">
                                                         <label>Email Password</label>
-                                                        <input className="form-control" type="password" name="email_password"/>
+                                                        <input className="form-control" value={employee.email_password} placeholder="Enter Email Password" type="password" name="email_password" onChange={ onChange }/>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>*/}
+                                        </div>
+
+                                        <div className="mb-3 row">
+                                            <div className="form-group">
+                                                <div className="row">
+                                                    <div className="col-md-2">
+                                                        <label>Incoming Mail Type</label>
+                                                        <select name="incoming_mail_type" className="form-select" onChange={ onChange } value={employee.incoming_mail_type}>
+                                                            <option value="IMAP">IMAP</option>
+                                                            <option value="POP">POP</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div className="col-md-3">
+                                                        <label>Incoming Mail Server</label>
+                                                        <input className="form-control" placeholder="Enter Incoming Mail Server" type="text" value={employee.incoming_mail_server} name="incoming_mail_server" onChange={ onChange }/>
+                                                    </div>
+
+                                                    <div className="col-md-2">
+                                                        <label>Incoming Mail Server Port</label>
+                                                        <input className="form-control" value={employee.incoming_mail_server_port} placeholder="Enter Incoming Mail Server Port" type="text" name="incoming_mail_server_port" onChange={ onChange }/>
+                                                    </div>
+
+                                                    <div className="col-md-3">
+                                                        <label>Outgoing Mail Server</label>
+                                                        <input className="form-control" value={employee.outgoing_mail_server} placeholder="Enter Outgoing Mail Server" type="text" name="outgoing_mail_server" onChange={ onChange }/>
+                                                    </div>
+
+                                                    <div className="col-md-2">
+                                                        <label>Outgoing Mail Server Port</label>
+                                                        <input className="form-control" value={employee.outgoing_mail_server_port} placeholder="Enter Outgoing Mail Server Port" type="text" name="outgoing_mail_server_port" onChange={ onChange }/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <h5> <Alert color="danger" role="alert">
                                          <i className="fa fa-comment">&nbsp;Employee Document's No And Upload</i>

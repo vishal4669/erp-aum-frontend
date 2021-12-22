@@ -26,6 +26,7 @@ import { ToastContainer} from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css';
 import $ from 'jquery';
+import moment from 'moment'
 
 function AddEmployee (props) {
   const [customchk, setcustomchk] = useState(true)
@@ -53,7 +54,9 @@ function AddEmployee (props) {
         pincode:'',country_id:'',emergency_contact_name:'',homestreet2: '',city: '',state_id:'',email: '',street:'',
         area1:'',pincode1:'',corr_country_id:'',emergency_contact_number:'',street2:'',city1:'',corr_state_id:'',website:'',
         mst_companies_id:'',reporting_authority_id: '',mst_departments_id:'',mst_positions_id:'',join_date:'',resign_date:'',
-        bank_name:'',bank_branch_name:'',salary_per_month:'',bank_acc_number:'',aadhar_card_photo:'',aadhar_number:'',
+        bank_name:'',bank_branch_name:'',salary_per_month:'',bank_acc_number:'',username:'',password:'',in_time:'',
+        out_time:'',email_username:'',email_password:'',incoming_mail_type:'IMAP',incoming_mail_server:'',
+        incoming_mail_server_port:'',outgoing_mail_server:'',outgoing_mail_server_port:'',aadhar_card_photo:'',aadhar_number:'',
         election_card_photo:'',election_card_number:'',pan_card_photo:'',pan_card_number:'',passport_photo:'',passport_number:'',
         driving_license_photo:'',driving_license_number:''
         });
@@ -298,6 +301,23 @@ const InsertEmployee = (e)=>{
 
         const data = new FormData();
 
+        var emp_username_auto = ''
+        var emp_password_auto = ''
+
+        if(employee.username == '' || employee.username == null){
+          var last_date_year = moment(employee.birth_date).format('MM-DD-YYYY').toString().substr(-2)
+          emp_username_auto = employee.first_name.toLowerCase()+last_date_year
+        } else {
+          emp_username_auto = employee.username
+        }
+
+        if(employee.password == '' || employee.password == null){
+          var last_date_year = moment(employee.birth_date).format('MM-DD-YYYY').toString().substr(-2)
+          emp_password_auto = employee.first_name.toLowerCase()+last_date_year
+        } else {
+          emp_password_auto = employee.password
+        }
+
         // Personal Info
 
         data.append('title', employee.title);
@@ -305,6 +325,7 @@ const InsertEmployee = (e)=>{
         data.append('middle_name', employee.middle_name);
         data.append('last_name', employee.last_name);
         data.append('blood_group', employee.blood_group);
+        data.append('gender', employee.gender);
         data.append('birth_date', employee.birth_date);
         data.append('marital_status', employee.marital_status);
         if(employee.photo != false)
@@ -327,7 +348,7 @@ const InsertEmployee = (e)=>{
         data.append('booking_action', employee.booking_action);
         data.append('booking_sms', employee.booking_sms);
         data.append('booking_email', employee.booking_email);
-        if(employee.resign_date !== null || employee.resign_date !== ''){
+        if(employee.resign_date !== ''){
           data.append('is_resigned', "1");
         } else {
           data.append('is_resigned', "0");
@@ -388,14 +409,25 @@ const InsertEmployee = (e)=>{
 
         data.append('company[mst_companies_id]', employee.mst_companies_id);
         data.append('company[reporting_authority_id]', employee.reporting_authority_id);
-        data.append('company[mst_departments_id]', employee.mst_departments_id);
-        data.append('company[mst_positions_id]', employee.mst_positions_id);
         data.append('company[join_date]', employee.join_date);
         data.append('company[resign_date]', employee.resign_date);
         data.append('company[bank_name]', employee.bank_name);
         data.append('company[bank_branch_name]', employee.bank_branch_name);
         data.append('company[salary_per_month]', employee.salary_per_month);
         data.append('company[bank_acc_number]', employee.bank_acc_number);
+        data.append('company[mst_departments_id]', employee.mst_departments_id);
+        data.append('company[mst_positions_id]', employee.mst_positions_id);
+        data.append('company[username]', emp_username_auto);
+        data.append('company[password]', emp_password_auto);
+        data.append('company[in_time]', employee.in_time);
+        data.append('company[out_time]', employee.out_time);
+        data.append('company[email_username]', employee.email_username);
+        data.append('company[email_password]', employee.email_password);
+        data.append('company[incoming_mail_type]', employee.incoming_mail_type);
+        data.append('company[incoming_mail_server]', employee.incoming_mail_server);
+        data.append('company[incoming_mail_server_port]', employee.incoming_mail_server_port);
+        data.append('company[outgoing_mail_server]', employee.outgoing_mail_server);
+        data.append('company[outgoing_mail_server_port]', employee.outgoing_mail_server_port);
 
         // Document Data
         if(employee.aadhar_card_photo != false)
@@ -434,6 +466,10 @@ const InsertEmployee = (e)=>{
         }
         data.append('document[driving_license_number]', employee.driving_license_number);
 
+        /*for (var pair of data.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]);
+        }*/
+
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addEmployee`, data, {headers} )
 
                 .then(response => {
@@ -462,7 +498,6 @@ const onChange = (e) => {
     e.persist();
     setemployee({...employee, [e.target.name]: e.target.value});
   }
-
   // handle input change for Degree Details
 const handleInputChange = (e, index) => {
   const { name, value } = e.target;
@@ -518,7 +553,7 @@ const handleAddClick1 = () => {
       <HorizontalLayout/>
       <div className="page-content">
         <Container fluid={true}>
-        <Form onSubmit={InsertEmployee} method="POST" id="AddEmployee">
+        <Form onSubmit={InsertEmployee} method="POST" id="AddEmployee" name="AddEmployee">
         <div className="page-title-box d-flex align-items-center justify-content-between">
 
             <div className="page-title">
@@ -546,8 +581,10 @@ const handleAddClick1 = () => {
 
           <Row>
             <Col>
+            <span className="btn btn-danger" style={{borderRadius:'0px',height:'34px',width:'100%',fontSize:'14px',fontWeight:'bold',color: '#000',backgroundColor: 'rgb(223 223 223)',borderColor: 'rgb(255 255 255)'}}>Note : If Username & Password is not filled by user than both fields will be generated by system at time of submit</span>
               <Card>
                 <CardBody>
+
                      <h5> <Alert color="success" role="alert">
                      <i className="fa fa-comment">&nbsp;Personal Info</i>
                     </Alert></h5>
@@ -900,17 +937,17 @@ const handleAddClick1 = () => {
                         </div>
                       </div>
                     </div>
-                                  <div className="mb-3 row">
-                                    <div className="form-group">
-                                        <div className="row">
-                                           <center>
-                                                {inputList.map((x, i) => ( <div className="col-md-2">
-                                                {inputList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
-                                                </div>))}
-                                            </center>
-                                         </div>
-                                    </div>
-                                </div>
+                    <div className="mb-3 row">
+                      <div className="form-group">
+                          <div className="row">
+                              <center>
+                                  {inputList.map((x, i) => ( <div className="col-md-2">
+                                  {inputList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
+                                  </div>))}
+                              </center>
+                            </div>
+                      </div>
+                  </div>
 
 
 
@@ -953,17 +990,17 @@ const handleAddClick1 = () => {
                                 </div>
                               </div>
                             </div>
-                                          <div className="mb-3 row">
-                                            <div className="form-group">
-                                                <div className="row">
-                                                   <center>
-                                                        {employmentList.map((x, i) => ( <div className="col-md-2">
-                                                        {employmentList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick1}>Add More</button>}
-                                                        </div>))}
-                                                    </center>
-                                                 </div>
-                                            </div>
-                                        </div>
+                            <div className="mb-3 row">
+                              <div className="form-group">
+                                  <div className="row">
+                                      <center>
+                                          {employmentList.map((x, i) => ( <div className="col-md-2">
+                                          {employmentList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick1}>Add More</button>}
+                                          </div>))}
+                                      </center>
+                                    </div>
+                              </div>
+                          </div>
 
 
                                         <h5> <Alert color="danger" role="alert">
@@ -1043,13 +1080,13 @@ const handleAddClick1 = () => {
                                                          </select> }
                                                     </div>
                                                     <div className="col-md-2">
-                                                        <label>Username</label>
-                                                        <input className="form-control" placeholder="Enter Username" type="text" name="username" onChange={ onChange }/>
+                                                        <label className="required-field">Username</label>
+                                                        <input className="form-control" placeholder="Enter Username" type="text" name="username" id="username" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-2">
-                                                        <label>Password</label>
-                                                        <input className="form-control" placeholder="Enter Password" type="password" name="password" onChange={ onChange }/>
+                                                        <label className="required-field">Password</label>
+                                                        <input className="form-control" placeholder="Enter Password" type="password" name="password" id="password" onChange={ onChange }/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1072,12 +1109,12 @@ const handleAddClick1 = () => {
 
                                                     <div className="col-md-4">
                                                         <label>Email Username</label>
-                                                        <input className="form-control" type="text" name="email_username" onChange={ onChange }/>
+                                                        <input className="form-control" placeholder="Enter Email Username" type="text" name="email_username" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-4">
                                                         <label>Email Password</label>
-                                                        <input className="form-control" type="password" name="email_password" onChange={ onChange }/>
+                                                        <input className="form-control" placeholder="Enter Email Password" type="password" name="email_password" onChange={ onChange }/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1096,22 +1133,22 @@ const handleAddClick1 = () => {
 
                                                     <div className="col-md-3">
                                                         <label>Incoming Mail Server</label>
-                                                        <input className="form-control" type="text" name="email_username" onChange={ onChange }/>
+                                                        <input className="form-control" placeholder="Enter Incoming Mail Server" type="text" name="incoming_mail_server" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-2">
                                                         <label>Incoming Mail Server Port</label>
-                                                        <input className="form-control" type="password" name="email_password" onChange={ onChange }/>
+                                                        <input className="form-control" placeholder="Enter Incoming Mail Server Port" type="text" name="incoming_mail_server_port" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-3">
                                                         <label>Outgoing Mail Server</label>
-                                                        <input className="form-control" type="text" name="email_username" onChange={ onChange }/>
+                                                        <input className="form-control" placeholder="Enter Outgoing Mail Server" type="text" name="outgoing_mail_server" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-2">
                                                         <label>Outgoing Mail Server Port</label>
-                                                        <input className="form-control" type="password" name="email_password" onChange={ onChange }/>
+                                                        <input className="form-control" placeholder="Enter Outgoing Mail Server Port" type="text" name="outgoing_mail_server_port" onChange={ onChange }/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1132,7 +1169,7 @@ const handleAddClick1 = () => {
                                                     </div>
                                                     <div className="col-md-3">
                                                         <label>Aadhar Card No</label>
-                                                        <input className="form-control" type="text"  name="aadhar_number" onChange={ onChange }/>
+                                                        <input className="form-control" placeholder="Enter Aadhar Card No" type="text"  name="aadhar_number" onChange={ onChange }/>
                                                     </div>
 
                                                     <div className="col-md-3">
@@ -1144,7 +1181,7 @@ const handleAddClick1 = () => {
 
                                                     <div className="col-md-3">
                                                         <label>Election Card No</label>
-                                                        <input className="form-control" type="text"  name="election_card_number" onChange={ onChange }/>
+                                                        <input className="form-control" placeholder="Enter Election Card No" type="text"  name="election_card_number" onChange={ onChange }/>
                                                     </div>
 
                                                 </div>
@@ -1164,7 +1201,7 @@ const handleAddClick1 = () => {
 
                                                      <div className="col-md-3">
                                                         <label>Pan Card No</label>
-                                                        <input className="form-control" type="text"  name="pan_card_number" onChange={ onChange }/>
+                                                        <input className="form-control" placeholder="Enter Pan Card No" type="text"  name="pan_card_number" onChange={ onChange }/>
                                                     </div>
 
                                                       <div className="col-md-3">
@@ -1176,7 +1213,7 @@ const handleAddClick1 = () => {
 
                                                     <div className="col-md-3">
                                                         <label>Passport No</label>
-                                                        <input className="form-control" type="text"  name="passport_number" onChange={ onChange }/>
+                                                        <input className="form-control" placeholder="Enter Passport No" type="text"  name="passport_number" onChange={ onChange }/>
                                                     </div>
 
                                                 </div>
@@ -1197,7 +1234,7 @@ const handleAddClick1 = () => {
 
                                                     <div className="col-md-6">
                                                         <label>Driving Licence No</label>
-                                                        <input className="form-control" type="text"  name="driving_license_number" onChange={ onChange }/>
+                                                        <input className="form-control" placeholder="Enter Driving Licence No" type="text"  name="driving_license_number" onChange={ onChange }/>
                                                     </div>
 
                                                 </div>

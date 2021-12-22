@@ -40,13 +40,13 @@ props = "";
     //PostData(values);
   //Need to call the Laravel Login API here using axios
     this.setState({ loading: true }, () => {
-      axios.post(`${process.env.REACT_APP_BASE_APIURL}login`, { email: values.email, password: values.password,selected_year: values.selected_year, company_id: values.company_id })
+      axios.post(`${process.env.REACT_APP_BASE_APIURL}login`, { username: values.username, password: values.password,selected_year: values.selected_year, company_id: values.company_id })
         .then(
         (response) => {
           if(response.data.success == true){
             //success login and save in session and redirect to url
             localStorage.setItem('token', response.data.data.token);
-            localStorage.setItem('email', response.data.data.user.email);
+            localStorage.setItem('username', response.data.data.user.email);
             localStorage.setItem('first_name', response.data.data.user.first_name);
             localStorage.setItem('last_name', response.data.data.user.last_name);
             localStorage.setItem('loggedin', 'true');
@@ -178,11 +178,11 @@ render() {
                       ) : null}
                       <div className="mb-3">
                         <AvField
-                          name="email"
-                          label="Email"
+                          name="username"
+                          label="Username"
                           className="form-control"
-                          placeholder="Enter email"
-                          type="email"
+                          placeholder="Enter Username"
+                          type="text"
                           required
                         />
                       </div>
