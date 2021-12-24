@@ -63,8 +63,11 @@ function EditEmployee (props) {
         out_time:'',email_username:'',email_password:'',incoming_mail_type:'IMAP',incoming_mail_server:'',
         incoming_mail_server_port:'',outgoing_mail_server:'',outgoing_mail_server_port:'',aadhar_card_photo:'',aadhar_number:'',
         election_card_photo:'',election_card_number:'',pan_card_photo:'',pan_card_number:'',passport_photo:'',passport_number:'',
-        driving_license_photo:'',driving_license_number:''
+        driving_license_photo:'',driving_license_number:'',is_approved:''
         });
+
+        const [attachments,setAttachments] = useState({attach_photo : '',attach_signature : '',attach_aadhar_card_photo : '',
+        attach_election_card_photo : '',attach_pan_card_photo : '',attach_passport_photo : '',attach_driving_license_photo : '',approve_status:'Pending'});
 
         const [inputList, setInputList]  = useState([{ degree: "", university: "", from_year: "", to_year:"",
           percentage_grade: "",specialization:"" }]);
@@ -122,10 +125,40 @@ function EditEmployee (props) {
         {setLoading1(true)}
           axios.get(`${process.env.REACT_APP_BASE_APIURL}getEmployee/`+employee_id,{headers})
               .then(response => {
+                setAttachments({
+                 attach_photo:response.data.data.photo !== null ? response.data.data.photo : '',
+                 attach_signature : response.data.data.signature !== null ? response.data.data.signature : '',
+                 attach_aadhar_card_photo : response.data.data.document[0].aadhar_card_photo !== null ?
+                 response.data.data.document[0].aadhar_card_photo : '',
+                 attach_election_card_photo : response.data.data.document[0].election_card_photo !== null ?
+                 response.data.data.document[0].election_card_photo : '',
+                 attach_pan_card_photo : response.data.data.document[0].pan_card_photo !== null ?
+                 response.data.data.document[0].pan_card_photo : '',
+                 attach_passport_photo : response.data.data.document[0].passport_photo !== null ?
+                 response.data.data.document[0].passport_photo : '',
+                 attach_driving_license_photo : response.data.data.document[0].driving_license_photo !== null ?
+                 response.data.data.document[0].driving_license_photo : '',
+                 approve_status : response.data.data.is_approved
+               })
                   setemployee(response.data.data);
-                  setInputList(response.data.data.education);
-                  setEmploymentList(response.data.data.employment);
+                  if(Array.isArray(response.data.data.employment) && response.data.data.employment.length){
+                    setEmploymentList(response.data.data.employment);
+                  } else {
+                    setEmploymentList([{ organisation: "", designation: "", emp_from_year: "", emp_to_year:"",
+                      annual_ctc: ""}]);
+                  }
+
+                  if(Array.isArray(response.data.data.education) && response.data.data.education.length){
+                    setInputList(response.data.data.education);
+                  } else {
+                    setInputList([{ degree: "", university: "", from_year: "", to_year:"",
+                      percentage_grade: "",specialization:"" }])
+                  }
+
                   setemployee(prevState => ({ ...prevState,
+                    //attachments
+                    photo:'',
+                    signature :'',
                    //Company Details
                    mst_companies_id:response.data.data.company.mst_companies_id,
                    reporting_authority_id: response.data.data.company.reporting_authority_id,
@@ -136,6 +169,7 @@ function EditEmployee (props) {
                    bank_name:response.data.data.company.bank_name,
                    bank_branch_name:response.data.data.company.bank_branch_name,
                    salary_per_month:response.data.data.company.salary_per_month,
+                   bank_acc_number : response.data.data.company.bank_acc_number,
                    username:response.data.data.company.username,
                    password:response.data.data.company.password,
                    in_time:response.data.data.company.in_time,
@@ -148,15 +182,15 @@ function EditEmployee (props) {
                    outgoing_mail_server:response.data.data.company.outgoing_mail_server,
                    outgoing_mail_server_port:response.data.data.company.outgoing_mail_server_port,
                    //Documents Details
-                   aadhar_card_photo: response.data.data.document[0].aadhar_card_photo,
+                   aadhar_card_photo: '',
                    aadhar_number: response.data.data.document[0].aadhar_number,
-                   election_card_photo: response.data.data.document[0].election_card_photo,
+                   election_card_photo: '',
                    election_card_number: response.data.data.document[0].election_card_number,
-                   pan_card_photo: response.data.data.document[0].pan_card_photo,
+                   pan_card_photo: '',
                    pan_card_number:response.data.data.document[0].pan_card_number,
-                   passport_photo:response.data.data.document[0].passport_photo,
+                   passport_photo:'',
                    passport_number:response.data.data.document[0].passport_number,
-                   driving_license_photo: response.data.data.document[0].driving_license_photo,
+                   driving_license_photo: '',
                    driving_license_number:response.data.data.document[0].driving_license_number,
                    //address details Permanent Address
                    homestreet: response.data.data.address[0].street1,
@@ -281,6 +315,8 @@ const editEmployee = (e)=>{
          const final_edu_detail = inputList;
          const final_emp_detail = employmentList;
 
+         console.log(final_edu_detail)
+
              /*final_edu_detail.forEach(function(edu,index){
 
                  var edu_degree = final_edu_detail[index].degree;
@@ -296,19 +332,26 @@ const editEmployee = (e)=>{
         var emp_username_auto = ''
         var emp_password_auto = ''
 
-        if(employee.username == '' || employee.username == null){
+        console.log(employee.password)
+
+        if(employee.username == null){
           var last_date_year = moment(employee.birth_date).format('MM-DD-YYYY').toString().substr(-2)
           emp_username_auto = employee.first_name.toLowerCase()+last_date_year
         } else {
+          console.log("username no change")
           emp_username_auto = employee.username
         }
 
-        if(employee.password == '' || employee.password == null){
-          var last_date_year = moment(employee.birth_date).format('MM-DD-YYYY').toString().substr(-2)
-          emp_password_auto = employee.first_name.toLowerCase()+last_date_year
+        if(employee.password == null){
+          emp_password_auto = Math.random().toString(36).slice(2)
         } else {
           emp_password_auto = employee.password
         }
+
+        console.log(emp_password_auto)
+        console.log(emp_username_auto)
+
+        //return
 
         // Personal Info
 
@@ -324,10 +367,10 @@ const editEmployee = (e)=>{
         {
           data.append('photo', employee.photo);
         } else {
-          data.append('photo', '');
+          data.append('photo', attachments.attach_photo);
         }
         data.append('machine_code', employee.machine_code);
-        data.append('phone', employee.phone);
+        data.append('phone', employee.phone !== null ? employee.phone : '');
         data.append('mobile', employee.mobile);
         data.append('notes', employee.notes);
         data.append('attendance', employee.attendance);
@@ -335,12 +378,12 @@ const editEmployee = (e)=>{
         {
           data.append('signature', employee.signature);
         } else {
-          data.append('signature', employee.signature);
+          data.append('signature', attachments.attach_signature);
         }
         data.append('booking_action', employee.booking_action);
         data.append('booking_sms', employee.booking_sms);
         data.append('booking_email', employee.booking_email);
-        if(employee.resign_date !== ''){
+        if(employee.resign_date !== null){
           data.append('is_resigned', "1");
         } else {
           data.append('is_resigned', "0");
@@ -349,9 +392,10 @@ const editEmployee = (e)=>{
         data.append('nationality', employee.nationality);
         data.append('religion', employee.religion);
         data.append('caste', employee.caste);
-        data.append('is_reporting_authority', employee.is_reporting_authority);
+        data.append('is_reporting_authority', employee.is_reporting_authority !== null ? employee.is_reporting_authority : '');
         data.append('deposit', employee.deposit);
         data.append('booking_rate', employee.booking_rate);
+        data.append('is_approved', employee.is_approved);
 
         // Address Info - Permenant Address
 
@@ -400,14 +444,22 @@ const editEmployee = (e)=>{
         // Company Data
 
         data.append('company[mst_companies_id]', employee.mst_companies_id);
-        data.append('company[reporting_authority_id]', employee.reporting_authority_id);
-        data.append('company[join_date]', employee.join_date);
-        data.append('company[resign_date]', employee.resign_date);
+        data.append('company[reporting_authority_id]', employee.reporting_authority_id !== null ? employee.reporting_authority_id : '');
+        if(employee.join_date !== null){
+           data.append('company[join_date]', employee.join_date);
+        } else {
+          data.append('company[join_date]', '');
+        }
+        if(employee.resign_date !== null){
+           data.append('company[resign_date]', employee.resign_date);
+        } else {
+          data.append('company[resign_date]', '');
+        }
         data.append('company[bank_name]', employee.bank_name);
         data.append('company[bank_branch_name]', employee.bank_branch_name);
         data.append('company[salary_per_month]', employee.salary_per_month);
         data.append('company[bank_acc_number]', employee.bank_acc_number);
-        data.append('company[mst_departments_id]', employee.mst_departments_id);
+        data.append('company[mst_departments_id]', employee.mst_departments_id !== null ? employee.mst_departments_id :  '');
         data.append('company[mst_positions_id]', employee.mst_positions_id);
         data.append('company[username]', emp_username_auto);
         if(MD5(emp_password_auto) !== pass){
@@ -431,35 +483,35 @@ const editEmployee = (e)=>{
         {
           data.append('document[aadhar_card_photo]', employee.aadhar_card_photo);
         } else {
-          data.append('document[aadhar_card_photo]', employee.aadhar_card_photo);
+          data.append('document[aadhar_card_photo]', attachments.attach_aadhar_card_photo);
         }
         data.append('document[aadhar_number]', employee.aadhar_number);
         if(employee.election_card_photo != false)
         {
           data.append('document[election_card_photo]', employee.election_card_photo);
         } else {
-          data.append('document[election_card_photo]', employee.election_card_photo);
+          data.append('document[election_card_photo]', attachments.attach_election_card_photo);
         }
         data.append('document[election_card_number]', employee.election_card_number);
         if(employee.pan_card_photo != false)
         {
           data.append('document[pan_card_photo]', employee.pan_card_photo);
         }else{
-          data.append('document[pan_card_photo]', employee.pan_card_photo);
+          data.append('document[pan_card_photo]', attachments.attach_pan_card_photo);
         }
         data.append('document[pan_card_number]', employee.pan_card_number);
         if(employee.passport_photo != false)
         {
           data.append('document[passport_photo]', employee.passport_photo);
         } else {
-          data.append('document[passport_photo]', employee.passport_photo);
+          data.append('document[passport_photo]', attachments.attach_passport_photo);
         }
         data.append('document[passport_number]', employee.passport_number);
         if(employee.driving_license_photo != false)
         {
           data.append('document[driving_license_photo]', employee.driving_license_photo);
         } else {
-          data.append('document[driving_license_photo]', employee.driving_license_photo);
+          data.append('document[driving_license_photo]', attachments.attach_driving_license_photo);
         }
         data.append('document[driving_license_number]', employee.driving_license_number);
 
@@ -467,7 +519,7 @@ const editEmployee = (e)=>{
             console.log(pair[0]+ ', ' + pair[1]);
         }
 
-        axios.post( `${process.env.REACT_APP_BASE_APIURL}addEmployee`, data, {headers} )
+        axios.post( `${process.env.REACT_APP_BASE_APIURL}editEmployee/`+employee_id, data, {headers} )
 
                 .then(response => {
                     if(response.data && response.data.success == true){
@@ -475,7 +527,7 @@ const editEmployee = (e)=>{
                         toastr.success(response.data.message);
                         {setLoading(false)};
                     }else{
-                        props.history.push('/edit-employee'+edit_employee_id);
+                        props.history.push('/edit-employee/'+edit_employee_id);
                         toastr.error(response.data.message);
                         {setLoading(false)};
                     }
@@ -502,14 +554,16 @@ const handleInputChange = (e, index) => {
 };
 
 // handle click event of the Remove button
-const handleRemoveClick = index => {
+const handleRemoveClick = (e,index) => {
+  e.preventDefault()
   const list = [...inputList];
   list.splice(index, 1);
   setInputList(list);
 };
 
 // handle click event of the Add button
-const handleAddClick = () => {
+const handleAddClick = (e) => {
+  e.preventDefault()
   setInputList([...inputList, { degree: "", university: "", from_year: "", to_year:"",
           percentage_grade: "",specialization:"" }]);
 };
@@ -523,14 +577,16 @@ const handleInputChange1 = (e, index) => {
 };
 
 // handle click event of the Remove button
-const handleRemoveClick1 = index => {
+const handleRemoveClick1 = (e,index) => {
+  e.preventDefault()
   const list = [...employmentList];
   list.splice(index, 1);
   setEmploymentList(list);
 };
 
 // handle click event of the Add button
-const handleAddClick1 = () => {
+const handleAddClick1 = (e) => {
+  e.preventDefault()
   setEmploymentList([...employmentList, { organisation: "", designation: "", emp_from_year: "", emp_to_year:"",
           annual_ctc: "" }]);
 };
@@ -558,13 +614,13 @@ const handleAddClick1 = () => {
                     { loading ? <center><LoadingSpinner /></center> :<li>
                        <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
                     </li>}
-                    &nbsp;&nbsp;<li>
-                      <select className="form-select btn-sm" style={{width:'180px',background: '#5b73e8', color: 'azure',borderRadius:'3px'}}>
-                        <option value="">Select Employee Status</option>
+                    &nbsp;&nbsp;{attachments.approve_status == "Pending" ? <li>
+                      <select name="is_approved" className="form-select btn-sm" onChange={ onChange } style={{width:'180px',background: '#5b73e8', color: 'azure',borderRadius:'3px'}}>
+                        <option value="Pending" className="btn btn-warning">Pending</option>
                         <option value="Approved" className="btn btn-success">Approve</option>
                         <option value="Rejected" className="btn btn-danger">Reject</option>
                       </select>
-                    </li>
+                    </li> : ''}
                 </ol>
             </div>
 
@@ -654,8 +710,9 @@ const handleAddClick1 = () => {
                                                     </div>
                                                     <div className="col-md-3">
                                                         <label>Photo</label>
-                                                        <input className="form-control" type="file"  name="photo" onChange={ onChange }/>
-                                                        {employee.photo !== null ? <img src={employee_photo_sign+employee.photo} width="70px" height="50px"/> : ''}
+                                                        <input className="form-control" type="file"  name="photo" onChange={ changePhotoHandler }/>
+                                                        <input className="form-control" type="hidden" value={attachments.attach_photo}/>
+                                                        {attachments.attach_photo !== '' ? <img src={employee_photo_sign+attachments.attach_photo} width="70px" height="50px"/> : ''}
                                                     </div>
 
                                                    <div className="col-md-2">
@@ -703,9 +760,10 @@ const handleAddClick1 = () => {
 
                                                     <div className="col-md-3">
                                                         <label>Signature</label>
-                                                        <input className="form-control" type="file"  name="signature" onChange={ onChange }/>
-                                                        {employee.signature !== null ?
-                                                            <a href={employee_photo_sign+employee.signature} style={{fontSize:'14px'}} className="btn btn-dark form-control btn-sm" target="_blank">Click To Open Signature</a>
+                                                        <input className="form-control" type="file"  name="signature" onChange={ changeSignatureHandler }/>
+                                                        <input className="form-control" type="hidden" value={attachments.attach_signature}/>
+                                                        {attachments.attach_signature !== '' ?
+                                                            <a href={employee_photo_sign+attachments.attach_signature} style={{fontSize:'14px'}} className="btn btn-dark form-control btn-sm" target="_blank">Click To Open Signature</a>
                                                         : ''}
 
                                                     </div>
@@ -901,7 +959,7 @@ const handleAddClick1 = () => {
                                     <td><input className="form-control" placeholder="Enter Specialization" type="text"  name="specialization" value={x.specialization} onChange={e => handleInputChange(e, i)}/></td>
                                     <td>{inputList.length > 1 ? <button
                                                       className="mr10"
-                                                      onClick={e => handleRemoveClick(e,i)} className="btn btn-danger"><i class="fa fa-trash"></i></button> : ''}</td>
+                                                      onClick={(e) => handleRemoveClick(e,i)} className="btn btn-danger"><i class="fa fa-trash"></i></button> : ''}</td>
                                   </tr>
                                   </React.Fragment>
                                                   ))}
@@ -915,9 +973,9 @@ const handleAddClick1 = () => {
                       <div className="form-group">
                           <div className="row">
                               <center>
-                                  {inputList.map((x, i) => ( <div className="col-md-2">
-                                  {inputList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
-                                  </div>))}
+                                <div className="col-md-2">
+                                  <button className="btn btn-success mt-3 mt-lg-0" onClick={(e) => handleAddClick(e)}>Add More</button>
+                                </div>
                               </center>
                             </div>
                       </div>
@@ -953,7 +1011,7 @@ const handleAddClick1 = () => {
                                     <td><input className="form-control" placeholder="Enter Annual CTC" type="text"  name="annual_ctc" value={x.annual_ctc} onChange={e => handleInputChange1(e, i)}/></td>
                                     <td>{employmentList.length > 1 ? <button
                                                       className="mr10"
-                                                      onClick={e => handleRemoveClick1(e,i)} className="btn btn-danger"><i class="fa fa-trash"></i></button> : ''}</td>
+                                                      onClick={(e) => handleRemoveClick1(e,i)} className="btn btn-danger"><i class="fa fa-trash"></i></button> : ''}</td>
                                   </tr>
                                   </React.Fragment>
                                                   ))}
@@ -967,9 +1025,9 @@ const handleAddClick1 = () => {
                       <div className="form-group">
                           <div className="row">
                               <center>
-                                  {employmentList.map((x, i) => ( <div className="col-md-2">
-                                  {employmentList.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick1}>Add More</button>}
-                                  </div>))}
+                                  <div className="col-md-2">
+                                    <button className="btn btn-success mt-3 mt-lg-0" onClick={(e) => handleAddClick1(e)}>Add More</button>
+                                  </div>
                               </center>
                             </div>
                       </div>
@@ -1137,9 +1195,10 @@ const handleAddClick1 = () => {
                                                     <div className="col-md-3">
                                                         <label>Aadhar Card</label>
 
-                                                        <input name="aadhar_card_photo" type="file" className="form-control" onChange={ onChange }/>
-                                                        {employee.aadhar_card_photo !== null ?
-                                                            <a href={employee_document_path+employee.aadhar_card_photo} style={{fontSize:'14px'}} className="btn btn-info form-control btn-sm" target="_blank">Click To Open Aadhar Card</a>
+                                                        <input name="aadhar_card_photo" type="file" className="form-control" onChange={ changeAadharHandler }/>
+                                                        <input className="form-control" type="hidden" value={attachments.attach_aadhar_card_photo}/>
+                                                        {attachments.attach_aadhar_card_photo !== '' ?
+                                                            <a href={employee_document_path+attachments.attach_aadhar_card_photo} style={{fontSize:'14px'}} className="btn btn-info form-control btn-sm" target="_blank">Click To Open Aadhar Card</a>
                                                         : ''}
                                                     </div>
                                                     <div className="col-md-3">
@@ -1150,9 +1209,10 @@ const handleAddClick1 = () => {
                                                     <div className="col-md-3">
                                                         <label>Election Card</label>
 
-                                                        <input name="election_card_photo" type="file" className="form-control" onChange={ onChange }/>
-                                                        {employee.election_card_photo !== null ?
-                                                            <a href={employee_document_path+employee.election_card_photo} style={{fontSize:'14px'}} className="btn btn-danger form-control btn-sm" target="_blank">Click To Open Election Card</a>
+                                                        <input name="election_card_photo" type="file" className="form-control" onChange={ changeElectionCardHandler }/>
+                                                        <input className="form-control" type="hidden" value={attachments.attach_election_card_photo}/>
+                                                        {attachments.attach_election_card_photo !== '' ?
+                                                            <a href={employee_document_path+attachments.attach_election_card_photo} style={{fontSize:'14px'}} className="btn btn-danger form-control btn-sm" target="_blank">Click To Open Election Card</a>
                                                         : ''}
                                                     </div>
 
@@ -1172,9 +1232,10 @@ const handleAddClick1 = () => {
                                                     <div className="col-md-3">
                                                         <label>Pan Card Scan Copy</label>
 
-                                                        <input name="pan_card_photo" type="file" className="form-control" onChange={ onChange }/>
-                                                        {employee.pan_card_photo !== null ?
-                                                            <a href={employee_document_path+employee.pan_card_photo} style={{fontSize:'14px'}} className="btn btn-primary form-control btn-sm" target="_blank">Click To Open PanCard</a>
+                                                        <input name="pan_card_photo" type="file" className="form-control" onChange={ changePanCardHandler }/>
+                                                        <input className="form-control" type="hidden" value={attachments.attach_pan_card_photo}/>
+                                                        {attachments.attach_pan_card_photo !== '' ?
+                                                            <a href={employee_document_path+attachments.attach_pan_card_photo} style={{fontSize:'14px'}} className="btn btn-primary form-control btn-sm" target="_blank">Click To Open PanCard</a>
                                                         : ''}
                                                     </div>
 
@@ -1186,9 +1247,10 @@ const handleAddClick1 = () => {
                                                       <div className="col-md-3">
                                                         <label>Passport Scan Copy</label>
 
-                                                        <input name="passport_photo" type="file" className="form-control" onChange={ onChange }/>
-                                                        {employee.passport_photo !== null ?
-                                                            <a href={employee_document_path+employee.passport_photo} style={{fontSize:'14px'}} className="btn btn-success form-control btn-sm" target="_blank">Click To Open Passport Copy</a>
+                                                        <input name="passport_photo" type="file" className="form-control" onChange={ changePassportHandler }/>
+                                                        <input className="form-control" type="hidden" value={attachments.attach_passport_photo}/>
+                                                        {attachments.attach_passport_photo !== '' ?
+                                                            <a href={employee_document_path+attachments.attach_passport_photo} style={{fontSize:'14px'}} className="btn btn-success form-control btn-sm" target="_blank">Click To Open Passport Copy</a>
                                                         : ''}
                                                     </div>
 
@@ -1209,9 +1271,10 @@ const handleAddClick1 = () => {
                                                     <div className="col-md-6">
                                                         <label>Driving Liecense Copy</label>
 
-                                                        <input name="driving_license_photo" type="file" className="form-control" onChange={ onChange }/>
-                                                        {employee.driving_license_photo !== null ?
-                                                            <a href={employee_document_path+employee.driving_license_photo} style={{fontSize:'14px'}} className="btn btn-warning form-control btn-sm" target="_blank">Click To Open Driving Licence</a>
+                                                        <input name="driving_license_photo" type="file" className="form-control" onChange={ changeDrivingLicHandler }/>
+                                                        <input className="form-control" type="hidden" value={attachments.attach_driving_license_photo}/>
+                                                        {attachments.attach_driving_license_photo !== '' ?
+                                                            <a href={employee_document_path+attachments.attach_driving_license_photo} style={{fontSize:'14px'}} className="btn btn-warning form-control btn-sm" target="_blank">Click To Open Driving Licence</a>
                                                         : ''}
                                                     </div>
 

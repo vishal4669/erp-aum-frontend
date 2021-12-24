@@ -303,7 +303,7 @@ const InsertEmployee = (e)=>{
 
         var emp_username_auto = ''
         var emp_password_auto = ''
-
+        console.log(Math.random().toString(36).slice(2))
         if(employee.username == '' || employee.username == null){
           var last_date_year = moment(employee.birth_date).format('MM-DD-YYYY').toString().substr(-2)
           emp_username_auto = employee.first_name.toLowerCase()+last_date_year
@@ -312,8 +312,7 @@ const InsertEmployee = (e)=>{
         }
 
         if(employee.password == '' || employee.password == null){
-          var last_date_year = moment(employee.birth_date).format('MM-DD-YYYY').toString().substr(-2)
-          emp_password_auto = employee.first_name.toLowerCase()+last_date_year
+          emp_password_auto = Math.random().toString(36).slice(2)
         } else {
           emp_password_auto = employee.password
         }
@@ -466,9 +465,9 @@ const InsertEmployee = (e)=>{
         }
         data.append('document[driving_license_number]', employee.driving_license_number);
 
-        /*for (var pair of data.entries()) {
+        for (var pair of data.entries()) {
             console.log(pair[0]+ ', ' + pair[1]);
-        }*/
+        }
 
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addEmployee`, data, {headers} )
 
