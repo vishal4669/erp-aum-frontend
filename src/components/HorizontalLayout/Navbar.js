@@ -237,9 +237,9 @@ const Navbar = props => {
                       {props.t("Department")}
                     </Link><br/>
 
-                   {/*<Link to="" className="dropdown-item">
+                   <Link to="" className="dropdown-item">
                       {props.t("Financial Year")}
-                    </Link><br/>*/}
+                    </Link><br/>
 
                     <Link to="/position" className="dropdown-item">
                       {props.t("Position Master")}
@@ -263,6 +263,10 @@ const Navbar = props => {
 
                     <Link to="/unit" className="dropdown-item">
                       {props.t("Unit Master")}
+                    </Link><br/>
+
+                    <Link to="/" className="dropdown-item">
+                      {props.t("HSN Master")}
                     </Link><br/>
 
                     <Link to="/category" className="dropdown-item">
@@ -378,6 +382,10 @@ const Navbar = props => {
 
                     <Link to="" className="dropdown-item">
                       {props.t("Test")}
+                    </Link><br/>
+
+                    <Link to="" className="dropdown-item">
+                      {props.t("Formula")}
                     </Link><br/>
 
                     <Link to="/instruments" className="dropdown-item">
@@ -569,6 +577,47 @@ const Navbar = props => {
                         <Link to="" className="dropdown-item">
                           {props.t("Pending GRN Report")}
                         </Link>
+                      </div>
+                    </div>
+
+                    <div className="dropdown">
+                      <Link
+                        to="/#"
+                        className="dropdown-item arrow-none"
+                        onClick={e => {
+                          e.preventDefault()
+                          setauth(!auth)
+                        }}
+                      >
+                        {props.t("HR")}{" "}
+                        <div className="arrow-down"></div>
+                      </Link>
+                      <div
+                        className={classname("dropdown-menu", { show: auth })}
+                      >
+                        <Link to="" className="dropdown-item">
+                          {props.t("Salary Register")}
+                        </Link><br/>
+
+                        <Link to="" className="dropdown-item">
+                          {props.t("Attendence Register")}
+                        </Link><br/>
+
+                        <Link to="" className="dropdown-item">
+                          {props.t("PF PT Statement")}
+                        </Link><br/>
+
+                        <Link to="" className="dropdown-item">
+                          {props.t("Salary Ledger")}
+                        </Link><br/>
+
+                        <Link to="" className="dropdown-item">
+                          {props.t("Leave Balance")}
+                        </Link><br/>
+
+                        <Link to="" className="dropdown-item">
+                          {props.t("User Activity")}
+                        </Link><br/>
                       </div>
                     </div>
 

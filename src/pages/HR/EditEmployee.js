@@ -29,7 +29,6 @@ import $ from 'jquery';
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 import {commonpath} from '../../commonPath'
 import moment from 'moment'
-import MD5 from "crypto-js/md5"
 
 function EditEmployee (props) {
     var employee_document_path = commonpath.employee_document_path;
@@ -171,7 +170,7 @@ function EditEmployee (props) {
                    salary_per_month:response.data.data.company.salary_per_month,
                    bank_acc_number : response.data.data.company.bank_acc_number,
                    username:response.data.data.company.username,
-                   password:response.data.data.company.password,
+                   password:base64_decode(response.data.data.company.password),
                    in_time:response.data.data.company.in_time,
                    out_time:response.data.data.company.out_time,
                    email_username:response.data.data.company.email_username,
@@ -332,8 +331,6 @@ const editEmployee = (e)=>{
         var emp_username_auto = ''
         var emp_password_auto = ''
 
-        console.log(employee.password)
-
         if(employee.username == null){
           var last_date_year = moment(employee.birth_date).format('MM-DD-YYYY').toString().substr(-2)
           emp_username_auto = employee.first_name.toLowerCase()+last_date_year
@@ -347,12 +344,6 @@ const editEmployee = (e)=>{
         } else {
           emp_password_auto = employee.password
         }
-
-        console.log(emp_password_auto)
-        console.log(emp_username_auto)
-
-        //return
-
         // Personal Info
 
         data.append('title', employee.title);
@@ -383,10 +374,14 @@ const editEmployee = (e)=>{
         data.append('booking_action', employee.booking_action);
         data.append('booking_sms', employee.booking_sms);
         data.append('booking_email', employee.booking_email);
-        if(employee.resign_date !== null){
-          data.append('is_resigned', "1");
-        } else {
+        if(typeof employee.resign_date == object){
           data.append('is_resigned', "0");
+        } else {
+          if(employee.resign_date == null || employee.resign_date == ''){
+             data.append('is_resigned', "0");
+          } else {
+            data.append('is_resigned', "1");
+          }
         }
         data.append('booking_copy', employee.booking_copy);
         data.append('nationality', employee.nationality);
@@ -450,10 +445,14 @@ const editEmployee = (e)=>{
         } else {
           data.append('company[join_date]', '');
         }
-        if(employee.resign_date !== null){
-           data.append('company[resign_date]', employee.resign_date);
+        if(typeof employee.resign_date == object){
+           data.append('company[resign_date]', '');
         } else {
-          data.append('company[resign_date]', '');
+          if(employee.resign_date == null){
+             data.append('company[resign_date]', '');
+          } else {
+            data.append('company[resign_date]', employee.resign_date);
+          }
         }
         data.append('company[bank_name]', employee.bank_name);
         data.append('company[bank_branch_name]', employee.bank_branch_name);
@@ -462,7 +461,7 @@ const editEmployee = (e)=>{
         data.append('company[mst_departments_id]', employee.mst_departments_id !== null ? employee.mst_departments_id :  '');
         data.append('company[mst_positions_id]', employee.mst_positions_id);
         data.append('company[username]', emp_username_auto);
-        if(MD5(emp_password_auto) !== pass){
+        if(emp_password_auto !== pass){
             data.append('password', emp_password_auto);
         } else {
             data.append('password', pass);
@@ -518,6 +517,7 @@ const editEmployee = (e)=>{
         for (var pair of data.entries()) {
             console.log(pair[0]+ ', ' + pair[1]);
         }
+      //  return
 
         axios.post( `${process.env.REACT_APP_BASE_APIURL}editEmployee/`+employee_id, data, {headers} )
 
@@ -1117,7 +1117,7 @@ const handleAddClick1 = (e) => {
 
                                                     <div className="col-md-2">
                                                         <label className="required-field">Password</label>
-                                                        <input className="form-control" value={employee.password} placeholder="Enter Password" type="password" name="password" id="password" onChange={ onChange }/>
+                                                        <input className="form-control" value={employee.password} placeholder="Enter Password" type="text" name="password" id="password" onChange={ onChange }/>
                                                         <input className="form-control" value={pass} type="hidden"/>
                                                     </div>
                                                 </div>

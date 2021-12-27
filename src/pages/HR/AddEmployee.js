@@ -347,10 +347,14 @@ const InsertEmployee = (e)=>{
         data.append('booking_action', employee.booking_action);
         data.append('booking_sms', employee.booking_sms);
         data.append('booking_email', employee.booking_email);
-        if(employee.resign_date !== ''){
-          data.append('is_resigned', "1");
-        } else {
+        if(typeof employee.resign_date == object){
           data.append('is_resigned', "0");
+        } else {
+          if(employee.resign_date == null || employee.resign_date == ''){
+             data.append('is_resigned', "0");
+          } else {
+            data.append('is_resigned', "1");
+          }
         }
         data.append('booking_copy', employee.booking_copy);
         data.append('nationality', employee.nationality);
@@ -409,7 +413,15 @@ const InsertEmployee = (e)=>{
         data.append('company[mst_companies_id]', employee.mst_companies_id);
         data.append('company[reporting_authority_id]', employee.reporting_authority_id);
         data.append('company[join_date]', employee.join_date);
-        data.append('company[resign_date]', employee.resign_date);
+        if(typeof employee.resign_date == object){
+           data.append('company[resign_date]', '');
+        } else {
+          if(employee.resign_date == null){
+             data.append('company[resign_date]', '');
+          } else {
+            data.append('company[resign_date]', employee.resign_date);
+          }
+        }
         data.append('company[bank_name]', employee.bank_name);
         data.append('company[bank_branch_name]', employee.bank_branch_name);
         data.append('company[salary_per_month]', employee.salary_per_month);

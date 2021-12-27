@@ -97,9 +97,9 @@ class ListPosition extends Component {
               positiontitle: post.position_title,
               departmentname: post.department_name,
               action : <div><Link className="btn btn-primary btn-sm" to={"/edit-position/"+base64_encode(post.id)}>
-              <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;
-              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Position?')){ this.deletePosition(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-              */}</div>
+              <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
+              <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Position?')){ this.deletePosition(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+              </div>
             }
           )
         });

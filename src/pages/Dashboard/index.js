@@ -25,6 +25,7 @@ import axios from 'axios';
 import moment from 'moment'
 import LoadingSpinner from '../../components/LoadingSpinner';
 import PropTypes from 'prop-types';
+import {decode as base64_decode, encode as base64_encode} from 'base-64';
 
 const series1 = [{
   data: [25, 66, 41, 89, 63, 25, 44, 20, 36, 40, 54]
@@ -192,12 +193,14 @@ const analytics_style = {
 }*/
 
 const [dashboardCount,setdashboardCount] = useState([{PendingTests_Count:'',Analitics_count:'',ForApproval_count:'',
-Approved_count:'',Rejected_count:''}])
+Approved_count:'',Rejected_count:'',hr_count:''}])
+const [hrData,setHRData] = useState([{first_name:'',middle_name:'',last_name:'',id:''}])
 const [loading, setLoading] = useState(false);
 const [loading1, setLoading1] = useState(false);
 
 useEffect(() => {
     counter_data();
+    hr_employee_data();
         }, []);
 
 const counter_data = () => {
@@ -205,6 +208,20 @@ const counter_data = () => {
   axios.get(`${process.env.REACT_APP_BASE_APIURL}listCounts`, { headers })
     .then(response => {
         setdashboardCount(response.data.data)
+      {setLoading1(false)}
+      })
+      .catch((error) => {
+        toastr.error(error.response.data.message);
+        {setLoading1(false)}
+      })
+}
+
+const hr_employee_data = () => {
+ {setLoading1(true)};
+  axios.get(`${process.env.REACT_APP_BASE_APIURL}listEmployee?is_dashboard_hr=1`, { headers })
+    .then(response => {
+        setHRData(response.data.data)
+        setdashboardCount(prevState => ({ ...prevState, hr_count:response.data.data.length }))
       {setLoading1(false)}
       })
       .catch((error) => {
@@ -446,7 +463,7 @@ function toggleCustomJustified(tab) {
                           toggleCustomJustified("8")
                         }}
                       >
-                        <i className="fa fa-users"></i>
+                        <i className="fa fa-users">&nbsp;<span className="badge bg-soft-dark">{dashboardCount.hr_count}</span></i>
                         <span className="d-none d-sm-block">HR</span>
                       </NavLink>
                     </NavItem>
@@ -518,14 +535,25 @@ function toggleCustomJustified(tab) {
                     </TabPane>
                     <TabPane tabId="8" className="p-3">
                       <p className="mb-0">
-                        Trust fund seitan letterpress, keytar raw denim keffiyeh etsy
-                        art party before they sold out master cleanse gluten-free squid
-                        scenester freegan cosby sweater. Fanny pack portland seitan DIY,
-                        art party locavore wolf cliche high life echo park Austin. Cred
-                        vinyl keffiyeh DIY salvia PBR, banh mi before they sold out
-                        farm-to-table VHS viral locavore cosby sweater. Lomo wolf viral,
-                        mustache readymade keffiyeh craft.
-                                            </p>
+                        {hrData.length ?
+                          hrData.map((x, i) => (
+                            <div className="mb-3 row">
+                                <div className="form-group">
+                                    <div className="row">
+                                        <div className="col-md-6">
+                                            <i class="fa fa-users"></i>&nbsp;&nbsp;{x.first_name+" "+x.middle_name+" "+x.last_name} Employee Approval
+                                        </div>
+
+                                       <div className="col-md-6">
+                                          <Link className="btn btn-primary btn-sm" to={"/edit-employee/"+base64_encode(x.id)}>
+                                          <i className="fa fa-share"></i>&nbsp;Approval</Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                          )) : <p style={{fontSize:'15px',width:'100%'}} className="btn btn-light">No Employee Approval Data Available</p>}
+                        </p>
                     </TabPane>
                     <TabPane tabId="9" className="p-3">
                       <p className="mb-0">

@@ -113,10 +113,10 @@ class ListLocation extends React.Component {
               location_name: post.location_name,
 
               action : <div><Link className="btn btn-primary btn-sm" to={"/edit-location/"+base64_encode(post.id)}>
-              <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;{loading ? <a className="btn btn-primary w-100 waves-effect waves-light"
+              <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;{loading ? <a className="btn btn-primary w-100 waves-effect waves-light"
                            > <LoadingSpinner /> </a>  :
-              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Location?')){ this.deleteLocation(post.id)}}}><i class="fas fa-trash-alt"></i></button>}
-              */}</div>
+              <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Location?')){ this.deleteLocation(post.id)}}}><i class="fas fa-trash-alt"></i></button>}
+              </div>
               ,
 
             }
