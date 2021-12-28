@@ -193,7 +193,7 @@ const analytics_style = {
 }*/
 
 const [dashboardCount,setdashboardCount] = useState([{PendingTests_Count:'',Analitics_count:'',ForApproval_count:'',
-Approved_count:'',Rejected_count:'',hr_count:''}])
+Approved_count:'',Rejected_count:'',Hr_count:''}])
 const [hrData,setHRData] = useState([{first_name:'',middle_name:'',last_name:'',id:''}])
 const [loading, setLoading] = useState(false);
 const [loading1, setLoading1] = useState(false);
@@ -207,7 +207,7 @@ const counter_data = () => {
  {setLoading1(true)};
   axios.get(`${process.env.REACT_APP_BASE_APIURL}listCounts`, { headers })
     .then(response => {
-        setdashboardCount(response.data.data)
+      setdashboardCount(response.data.data)
       {setLoading1(false)}
       })
       .catch((error) => {
@@ -221,7 +221,6 @@ const hr_employee_data = () => {
   axios.get(`${process.env.REACT_APP_BASE_APIURL}listEmployee?is_dashboard_hr=1`, { headers })
     .then(response => {
         setHRData(response.data.data)
-        setdashboardCount(prevState => ({ ...prevState, hr_count:response.data.data.length }))
       {setLoading1(false)}
       })
       .catch((error) => {
@@ -463,7 +462,7 @@ function toggleCustomJustified(tab) {
                           toggleCustomJustified("8")
                         }}
                       >
-                        <i className="fa fa-users">&nbsp;<span className="badge bg-soft-dark">{dashboardCount.hr_count}</span></i>
+                        <i className="fa fa-users">&nbsp;<span className="badge bg-soft-dark">{dashboardCount.Hr_count}</span></i>
                         <span className="d-none d-sm-block">HR</span>
                       </NavLink>
                     </NavItem>

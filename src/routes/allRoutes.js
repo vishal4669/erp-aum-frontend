@@ -119,6 +119,10 @@ import AnalyticsData from "../pages/Analytics/AnalyticsData"
 import ListInstruments from "../pages/Analytics/ListInstruments"
 import AddInstrument from "../pages/Analytics/AddInstrument"
 import EditInstrument from "../pages/Analytics/EditInstrument"
+//Formula
+import ListFormula from "../pages/Analytics/ListFormula"
+import AddFormula from "../pages/Analytics/AddFormula"
+import EditFormula from "../pages/Analytics/EditFormula"
 
 const userRoutes = [
 
@@ -252,6 +256,11 @@ const authRoutes = [
     { path: "/instruments" ,component: ListInstruments},
     { path: "/add-instrument" ,component: AddInstrument},
     { path: "/edit-instrument" ,component: EditInstrument},
+    //Formula
+    { path: "/formula" ,component: ListFormula},
+    { path: "/all-formula" ,component: ListFormula},
+    { path: "/add-formula" ,component: AddFormula},
+    { path: "/edit-formula" ,component: EditFormula},
 ]
 
 export { userRoutes, authRoutes }

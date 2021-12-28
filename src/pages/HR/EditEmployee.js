@@ -5,27 +5,19 @@ import {
   CardBody,
   Col,
   Row,
-  CardTitle,
   Form,
   Container,
-  Label,
-  Input,
-  FormGroup,
-  Button,
   Alert,Table
 } from 'reactstrap';
 
 //Import Breadcrumb
-import Breadcrumbs from '../../components/Common/Breadcrumb';
 import HorizontalLayout from '../../components/HorizontalLayout';
 import { Link } from "react-router-dom"
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import { ToastContainer} from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css';
-import $ from 'jquery';
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 import {commonpath} from '../../commonPath'
 import moment from 'moment'
@@ -360,7 +352,7 @@ const editEmployee = (e)=>{
         } else {
           data.append('photo', attachments.attach_photo);
         }
-        data.append('machine_code', employee.machine_code);
+        data.append('machine_code', employee.machine_code !== null ?  employee.machine_code : '');
         data.append('phone', employee.phone !== null ? employee.phone : '');
         data.append('mobile', employee.mobile);
         data.append('notes', employee.notes);
@@ -384,9 +376,9 @@ const editEmployee = (e)=>{
           }
         }
         data.append('booking_copy', employee.booking_copy);
-        data.append('nationality', employee.nationality);
-        data.append('religion', employee.religion);
-        data.append('caste', employee.caste);
+        data.append('nationality',employee.nationality !== null ?  employee.nationality : '');
+        data.append('religion', employee.religion !== null ? employee.religion : '');
+        data.append('caste', employee.caste !== null ? employee.caste : '');
         data.append('is_reporting_authority', employee.is_reporting_authority !== null ? employee.is_reporting_authority : '');
         data.append('deposit', employee.deposit);
         data.append('booking_rate', employee.booking_rate);

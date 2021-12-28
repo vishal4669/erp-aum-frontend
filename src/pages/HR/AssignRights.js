@@ -90,9 +90,9 @@ function AssignRights(props) {
                        <i className="fa fa-comment">&nbsp;Assign Rights Info</i>
                       </Alert></h5>
 
-                      <MDBTable bordered style={{textAlign:'center'}}>
+                      <MDBTable bordered small style={{textAlign:'center'}}>
                         <MDBTableHead>
-                          <tr>
+                          <tr style={{fontSize:'16px',textTransform:'uppercase'}}>
                             <th>Sections</th>
                             <th>Modules</th>
                             <th>Add</th>
@@ -109,7 +109,7 @@ function AssignRights(props) {
                         {rightsData.length ?
                           rightsData.map((x, i) => (
                             <tr>
-                              <td>{x.section}</td>
+                              <th>{x.section}</th>
                               <td>{x.modules}</td>
                               <td>{x.can_add == '1' ? <input type="checkbox" name="can_add" value=""/>: ''}</td>
                               <td>{x.can_edit == '1' ? <input type="checkbox" name="can_edit" value=""/>: ''}</td>
