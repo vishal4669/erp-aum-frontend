@@ -11,6 +11,9 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import * as XLSX from 'xlsx';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 class ListFormula extends React.Component {
 
@@ -21,8 +24,6 @@ class ListFormula extends React.Component {
         this.state= {
 
           posts: [],
-
-          //isLoading:false,
 
           loading : false,
           loading1 : false,
@@ -55,16 +56,82 @@ class ListFormula extends React.Component {
         this.setState({loading: false});
     }
     else{
-                props.history.push('/formula');
-                toastr.error(response.data.message);
-                this.setState({loading: false});
-            }
+        props.history.push('/formula');
+        toastr.error(response.data.message);
+        this.setState({loading: false});
+      }
     })
       .catch((error) => {
-                this.setState({loading: false});
-                toastr.error(error.response.data.message);
+        this.setState({loading: false});
+        toastr.error(error.response.data.message);
       })
     })
+    }
+
+    this.printFormula =  () => {
+      window.print()
+    }
+    this.ExportToExcel = () => {
+      this.setState({loading1: true}, () => {
+        axios.get(`${process.env.REACT_APP_BASE_APIURL}exportFormula`,{headers:headers})
+        .then(response => {
+          if(response.data.success == true){
+            var formula_data = response.data.data.map((post,index)=>({
+              "SR No" : index+1,
+              "Formula Name" : post.formula_name,
+              "Formula Type" : post.formula_type,
+            }))
+            const sheet = XLSX.utils.json_to_sheet(formula_data)
+            const workbook = XLSX.utils.book_new()
+            XLSX.utils.book_append_sheet(workbook,sheet,'Formula Data')
+            XLSX.writeFile(workbook,'FormulaData.csv')
+            this.setState({loading1:false})
+            toastr.success("Formula Data is Exported successfully in CSV Format")
+          } else {
+            toastr.error(response.data.message);
+            this.setState({loading1 : false});
+          }
+        })
+        .catch(error => {
+          toastr.error(error.response.data.message);
+          this.setState({loading1 : false});
+        })
+      })
+    }
+
+    this.ExportToPDF = () => {
+      this.setState({loading1: true}, () => {
+        const doc = new jsPDF();
+        const tableColumn = ["SR NO", "Formula Name", "Formula Type"];
+        const tableRows = [];
+
+        axios.get(`${process.env.REACT_APP_BASE_APIURL}exportFormula`,{headers:headers})
+          .then(response => {
+            if(response.data.success == true){
+              var formula_data = response.data.data.map((post,index)=>({
+                "SR No" : index+1,
+                "Formula_Name" : post.formula_name,
+                "Formula_Type" : post.formula_type,
+              }))
+              formula_data.forEach((formula,index) => {
+                const formulaData = [
+                  index+1,
+                  formula.Formula_Name,
+                  formula.Formula_Type,
+                ];
+                tableRows.push(formulaData);
+              });
+                doc.autoTable(tableColumn, tableRows, { startY: 20 });
+                console.log(doc)
+                doc.save(`FormulaData.pdf`);
+                this.setState({loading1 : false});
+                toastr.success("Formula Data is Exported successfully in PDF Format")
+            } else {
+              toastr.error(response.data.message);
+              this.setState({loading1 : false});
+            }
+          })
+        })
     }
 
       this.componentWillMount=async() => {
@@ -196,14 +263,13 @@ class ListFormula extends React.Component {
                           &nbsp;
                          {loading1 ?  <center><LoadingSpinner /></center> :
                             <li>
-                                <div className="btn-group">
+                              <div className="btn-group">
                                 <DropdownButton  title="Actions" drop="left">
-                                    <DropdownItem><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
-                                    <DropdownItem><i class="fas fa-file-export"></i> &nbsp;Export to Excel</DropdownItem>
-                                    <DropdownItem><Link to="" style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export To PDF</Link></DropdownItem>
+                                    <DropdownItem onClick={this.printFormula}><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
+                                    <DropdownItem onClick={this.ExportToExcel}><i class="fas fa-file-export"></i> &nbsp;Export to Excel</DropdownItem>
+                                    <DropdownItem onClick={this.ExportToPDF}><i class="fas fa-file-export"></i> &nbsp;Export To PDF</DropdownItem>
                                 </DropdownButton>
-
-                                </div>
+                              </div>
                             </li>}
                       </ol>
                   </div>
