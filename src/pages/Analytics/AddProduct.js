@@ -148,10 +148,6 @@ const copyFormGeneric = () => {
 
                       }))
 
-                      console.log(samples_data)
-
-                     // console.log(response.data.data.samples)
-
                      setInputList(samples_data);
                      {setLoading2(false)}
                })

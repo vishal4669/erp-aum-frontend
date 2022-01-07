@@ -15,6 +15,7 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import $ from 'jquery';
 
 //const ListEmployee = () => {
   class ListEmployee extends Component {
@@ -59,10 +60,22 @@ import LoadingSpinner from '../../components/LoadingSpinner';
         })
         }
 
+        this.showGrid = (e) => {
+          if(e.target.value == 'resigned_employee_grid'){
+            this.resigned_employee_list();
+            $("#bydefault_employee_list").css("display","none");
+            $("#resigned_employee_list").css("display","block");
+          } else {
+            this.employeeList();
+            $("#bydefault_employee_list").css("display","block");
+            $("#resigned_employee_list").css("display","none");
+          }
+        }
+
     //Mount the department List records...
       this.componentWillMount = async() => {
         this.employeeList();
-        this.resigned_employee_list();
+        //this.resigned_employee_list();
       }
 
     this.employeeList = () => {
@@ -74,7 +87,6 @@ import LoadingSpinner from '../../components/LoadingSpinner';
         .then(response => {
             if(response.data.success == true){
               this.setState({ posts: response.data.data });
-              console.log(response.data.data)
            }else{
              toastr.error(response.data.message);
            }
@@ -85,7 +97,6 @@ import LoadingSpinner from '../../components/LoadingSpinner';
            this.setState({ tableRows:this.assemblePosts()});
            this.setState({ loading: false });
         }).catch(error => {
-                         console.log(error)
             toastr.error(error.response.data.message);
             this.setState({ loading: false });
           })
@@ -99,7 +110,6 @@ import LoadingSpinner from '../../components/LoadingSpinner';
        .then(response => {
            if(response.data.success == true){
              this.setState({ resignedUser: response.data.data });
-             console.log(response.data.data)
           }else{
             toastr.error(response.data.message);
           }
@@ -110,7 +120,6 @@ import LoadingSpinner from '../../components/LoadingSpinner';
           this.setState({ tableRows1:this.assemblePosts1()});
           this.setState({ loading: false });
        }).catch(error => {
-                        console.log(error)
            toastr.error(error.response.data.message);
            this.setState({ loading: false });
          })
@@ -365,14 +374,21 @@ import LoadingSpinner from '../../components/LoadingSpinner';
                   </div>
                   <div className="page-title-right">
                       <ol className="breadcrumb m-0">
-                          <li><a href="/assign-right" className="btn btn-primary"><i className="fa fa-check">&nbsp;Assign Rights</i></a></li>&nbsp;
-                          <li><a href="/add-employee" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>
+                          <li><label style={{verticalAlign:'sub'}}>Please Select List</label></li> &nbsp;&nbsp;
+                          <li>
+                            <select className='form-control btn-sm' onChange={e => this.showGrid(e)}>
+                              <option value="employee_grid">Employee List Table</option>
+                              <option value="resigned_employee_grid">Resigned Employee List Table</option>
+                            </select>
+                          </li> &nbsp;&nbsp;
+                          <li><a href="/assign-right" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Assign Rights</i></a></li>&nbsp;
+                          <li><a href="/add-employee" color="primary" className="btn btn-primary btn-sm"><i className="fa fa-plus"></i>
                          &nbsp;New Employee</a></li>
                       </ol>
                   </div>
               </div>
 
-                <Row>
+                <Row id="bydefault_employee_list">
                   <Col className="col-12">
                     <Card>
                       <CardBody>
@@ -385,7 +401,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
                     </Card>
                   </Col>
                 </Row>
-                <Row>
+                <Row id="resigned_employee_list" style={{display:'none'}}>
                   <Col className="col-12">
                     <Card>
                       <CardBody>

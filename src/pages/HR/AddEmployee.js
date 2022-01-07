@@ -31,12 +31,14 @@ function AddEmployee (props) {
 
         const [loading, setLoading] = useState(false);
         const [loading1, setLoading1] = useState(false);
+        const [loading2, setLoading2] = useState(false);
         const [data, setData] = useState([]);
         const [data1, setData1] = useState([]);
         const [data2, setData2] = useState([]);
         const [data3, setData3] = useState([]);
         const [data4, setData4] = useState([]);
         const [data5, setData5] = useState([]);
+        const [data6, setData6] = useState([]);
 
         const [employee, setemployee] = useState({ title: 'Mr.',first_name: '',middle_name: '',last_name: '',
         blood_group: 'None',gender: 'M',birth_date: '',marital_status:'Single',photo: '',machine_code: '',phone: '',mobile: '',
@@ -94,7 +96,7 @@ function AddEmployee (props) {
 
         useEffect(() => {
          fetchCountry();
-         fetchStates();
+        // fetchStates();
          fetchCompany();
          fetchPosition();
          fetchDepartment();
@@ -116,16 +118,42 @@ function AddEmployee (props) {
         }
 
         const fetchStates = () => {
+            var country_id_fetch = document.getElementById('country_id').value;
+            setemployee(prevState => ({ ...prevState, country_id: country_id_fetch}))
              {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}listStates`,{headers})
+            axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
             .then(response => {
-                     setData1(response.data.data);
-                     {setLoading1(false)}
+                const state_data = response.data.data[0].country_wise_states.map(d => ({
+                    "state_id" : d.id,
+                    "state_name" : d.state_name,
+                  }))
+                  setData1(state_data);       
+                  {setLoading1(false)}
                })
               .catch((error) => {
+                  console.log(error)
                   toastr.error(error.response.data.message);
 
                    {setLoading1(false)}
+              })
+        }
+
+        const fetchCorStates = () => {
+            var country_id_fetch2 = document.getElementById('corr_country_id').value;
+            setemployee(prevState => ({ ...prevState, corr_country_id: country_id_fetch2}))
+             {setLoading2(true)};
+            axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch2,{headers})
+            .then(response => {
+                const state_data = response.data.data[0].country_wise_states.map(d => ({
+                    "state_id" : d.id,
+                    "state_name" : d.state_name,
+                  }))
+                  setData6(state_data);       
+                  {setLoading2(false)}
+               })
+              .catch((error) => {
+                  toastr.error(error.response.data.message);
+                   {setLoading2(false)}
               })
         }
 
@@ -289,7 +317,6 @@ const InsertEmployee = (e)=>{
                 driving_license_number:employee.driving_license_number,
              },
         };*/
-
         const data = new FormData();
 
         var emp_username_auto = ''
@@ -468,9 +495,9 @@ const InsertEmployee = (e)=>{
         }
         data.append('document[driving_license_number]', employee.driving_license_number);
 
-        for (var pair of data.entries()) {
+        /*for (var pair of data.entries()) {
             console.log(pair[0]+ ', ' + pair[1]);
-        }
+        }*/
 
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addEmployee`, data, {headers} )
 
@@ -838,10 +865,10 @@ const handleAddClick1 = () => {
                                                                     <input className="form-control" type="text" name="area" placeholder="Enter Area" onChange={ onChange }/><br/>
                                                                     <label>Pincode</label>
                                                                     <input className="form-control" type="text" name="pincode" placeholder="Enter Pincode" onChange={ onChange }/><br/>
-                                                                    <label className="required-field">Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="country_id" name="country_id" onChange={ onChange }>
-                                                                    <option value="">Select Country</option>
-                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
+                                                                    <label className="required-field">State</label>
+                                                                    <select className="form-select" id="state_id" name="state_id" onChange={ onChange }>
+                                                                    <option value="">Select State</option>
+                                                                    { data1.map((option, key) => <option value={option.state_id} key={key} >{option.state_name}</option>) }</select><br/>
                                                                     <label className="required-field">Emergency Contact Name</label>
                                                                     <input className="form-control" type="text" name="emergency_contact_name" placeholder="Enter Emergency Contact Name" onChange={ onChange }/>
                                                                 </div>
@@ -850,10 +877,10 @@ const handleAddClick1 = () => {
                                                                     <input className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChange }/><br/>
                                                                     <label>City</label>
                                                                     <input className="form-control" type="text" name="city" placeholder="Enter City" onChange={ onChange }/><br/>
-                                                                    <label className="required-field">State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="state_id" name="state_id" onChange={ onChange }>
-                                                                    <option value="">Select State</option>
-                                                                    { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
+                                                                    <label className="required-field">Country</label>
+                                                                    <select className="form-select" id="country_id" name="country_id" onChange={ onChange } onChange={fetchStates}>
+                                                                    <option value="">Select Country</option>
+                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select><br/>
                                                                     <label>Email</label>
                                                                     <input className="form-control" type="email" name="email" placeholder="Enter Email" onChange={ onChange }/>
                                                                 </div>
@@ -872,10 +899,10 @@ const handleAddClick1 = () => {
                                                                     <input className="form-control" type="text" name="area1" placeholder="Enter Area" onChange={ onChange }/><br/>
                                                                     <label>Pincode</label>
                                                                     <input className="form-control" type="text" name="pincode1" placeholder="Enter Pincode" onChange={ onChange }/><br/>
-                                                                    <label>Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChange } >
-                                                                    <option value="">Select Country</option>
-                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
+                                                                    <label>State</label>
+                                                                    <select className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChange }>
+                                                                    <option value="">Select State</option>
+                                                                    { data6.map((option, key) => <option value={option.state_id} key={key} >{option.state_name}</option>) }</select><br/>
                                                                     <label className="required-field">Emergency Contact Number</label>
                                                                     <input className="form-control" type="text" name="emergency_contact_number" placeholder="Enter Emergency Contact Number" onChange={ onChange }/>
                                                                 </div>
@@ -884,10 +911,10 @@ const handleAddClick1 = () => {
                                                                     <input className="form-control" type="text" name="street2" placeholder="Enter Street2" onChange={ onChange }/><br/>
                                                                     <label>City</label>
                                                                     <input className="form-control" type="text" name="city1" placeholder="Enter City" onChange={ onChange }/><br/>
-                                                                    <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChange } >
-                                                                    <option value="">Select State</option>
-                                                                    { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
+                                                                    <label>Country</label>
+                                                                    <select className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChange } onChange={fetchCorStates}>
+                                                                    <option value="">Select Country</option>
+                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select><br/>
                                                                     <label>Website</label>
                                                                     <input className="form-control" type="text" name="website" placeholder="Enter Website" onChange={ onChange }/>
                                                                 </div>
@@ -1083,7 +1110,7 @@ const handleAddClick1 = () => {
                                                     </div>
                                                     <div className="col-md-2">
                                                         <label className="required-field">Username</label>
-                                                        <input className="form-control" placeholder="Enter Username" type="text" name="username" id="username" onChange={ onChange }/>
+                                                        <input className="form-control" placeholder="Enter Username" type="text" name="username" id="username" onChange={ onChange } autocomplete="off"/>
                                                     </div>
 
                                                     <div className="col-md-2">

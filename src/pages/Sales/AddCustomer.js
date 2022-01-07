@@ -25,6 +25,7 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import { ToastContainer} from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
+import $ from 'jquery'
 
 function AddCustomer(props) {
 
@@ -34,17 +35,19 @@ function AddCustomer(props) {
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
   const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
   const [data3, setData3] = useState([]);
   const [data4, setData4] = useState([]);
+  const [data6, setData6] = useState([]);
   const [selectedFiles, setselectedFiles] = useState(null)
   const [customer, setCustomer] = useState({ company_name: '', gst_no: '',contact_person_name:'',tally_alias_name:'',
   username:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',active_inactive:'1',logo:'',
   homestreet:'',homestreet2:'',area:'',city:'',pincode:'',state_id:'',country_id:'',landline:'',admin_contact:'',
   qc_contact:'',admin_email:'',pancard_no:'',street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
   corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:'',education_details:'',prev_details:'',
-  tin_no:'',service_tax_no:'',customer_discount:''});
+  tin_no:'',service_tax_no:'',customer_discount:'',company_vat_no:'',company_cst_no:''});
   const [inputList, setInputList]  = useState([{ contact_person_name: "", contact_person_mobile: "",
     contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
   const [selectedFile, setSelectedFile] = useState(false);
@@ -64,7 +67,7 @@ function AddCustomer(props) {
 
 useEffect(() => {
          fetchCountry();
-         fetchStates();
+         //fetchStates();
          fetchPosition();
          fetchDepartment();
         }, []);
@@ -84,16 +87,42 @@ useEffect(() => {
         }
 
         const fetchStates = () => {
+            var country_id_fetch = document.getElementById('country_id').value;
+            setCustomer(prevState => ({ ...prevState, country_id: country_id_fetch}))
              {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}listStates`,{headers})
+            axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
             .then(response => {
-                     setData1(response.data.data);
-                     {setLoading1(false)}
+                const state_data = response.data.data[0].country_wise_states.map(d => ({
+                    "state_id" : d.id,
+                    "state_name" : d.state_name,
+                  }))
+                  setData1(state_data);       
+                  {setLoading1(false)}
                })
               .catch((error) => {
+                  console.log(error)
                   toastr.error(error.response.data.message);
 
                    {setLoading1(false)}
+              })
+        }
+
+        const fetchCorStates = () => {
+            var country_id_fetch2 = document.getElementById('corr_country_id').value;
+            setCustomer(prevState => ({ ...prevState, corr_country_id: country_id_fetch2}))
+             {setLoading2(true)};
+            axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch2,{headers})
+            .then(response => {
+                const state_data = response.data.data[0].country_wise_states.map(d => ({
+                    "state_id" : d.id,
+                    "state_name" : d.state_name,
+                  }))
+                  setData6(state_data);       
+                  {setLoading2(false)}
+               })
+              .catch((error) => {
+                  toastr.error(error.response.data.message);
+                   {setLoading2(false)}
               })
         }
 
@@ -125,9 +154,17 @@ useEffect(() => {
               })
         }
 
+        axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+customer.country_id,{headers})
+        .then(response => {
+            const state_data = response.data.data[0].country_wise_states.map(d => ({
+                "state_id" : d.id,
+                "state_name" : d.state_name,
+              }))
+              setData6(state_data);
+        })
 
-       const copy_data = () => {
-
+        const copy_data = () => {
+        
         const copy_street1 = customer.homestreet;
         const copy_street2 = customer.homestreet2;
         const copy_area = customer.area;
@@ -137,15 +174,13 @@ useEffect(() => {
         const copy_country_id = customer.country_id;
 
         //show data in textboxes / field
-
         document.CustomerData.street.value = copy_street1;
         document.CustomerData.street2.value = copy_street2;
         document.CustomerData.area1.value = copy_area;
         document.CustomerData.city1.value = copy_city;
         document.CustomerData.pincode1.value = copy_pincode;
-        document.CustomerData.corr_state_id.value = copy_state_id;
         document.CustomerData.corr_country_id.value = copy_country_id;
-
+        document.CustomerData.corr_state_id.value = copy_state_id;
         // set value
 
         customer.street = document.CustomerData.street.value;
@@ -153,8 +188,11 @@ useEffect(() => {
         customer.area1 = document.CustomerData.area1.value;
         customer.city1 = document.CustomerData.city1.value;
         customer.pincode1 = document.CustomerData.pincode1.value;
-        customer.corr_state_id = document.CustomerData.corr_state_id.value;
         customer.corr_country_id = document.CustomerData.corr_country_id.value;
+        customer.corr_state_id =  document.CustomerData.corr_state_id.value;
+
+        
+        return
        }
 
 
@@ -250,6 +288,8 @@ const InsertCustomer = (e)=>{
         data1.append('company_tin_no', customer.tin_no);
         data1.append('company_service_tax_no', customer.service_tax_no);
         data1.append('company_cust_discount', customer.customer_discount);
+        data1.append('company_cst_no', customer.company_cst_no);
+        data1.append('company_vat_no', customer.company_vat_no);
 
         //Home Address Details
         data1.append('customer_contact_info[home_contact_info][0][street_1]', customer.homestreet);
@@ -441,7 +481,7 @@ return(
                                                     </div>
 
                                                     <div className="col-md-3">
-                                                        <label>GST No</label>
+                                                        <label className="required-field">GST No</label>
                                                         <input className="form-control" type="text" placeholder="Enter GST No" id="example-text-input" name="gst_no" onChange={ onChange }/>
                                                     </div>
 
@@ -464,11 +504,11 @@ return(
 
                                                     <div className="col-md-4">
                                                         <label className="required-field">Username</label>
-                                                        <input className="form-control" type="text" name="username" placeholder="Enter Valid Email" onChange={ onChange }/>
+                                                        <input className="form-control" type="text" name="username" placeholder="Enter Username" onChange={ onChange } autoComplete='off'/>
                                                     </div>
                                                     <div className="col-md-4">
                                                         <label className="required-field">Password</label>
-                                                        <input className="form-control" type="password"  name="password" placeholder="Enter Password" onChange={ onChange }/>
+                                                        <input className="form-control" type="text"  name="password" placeholder="Enter Password" onChange={ onChange } autoComplete='off'/>
                                                     </div>
 
                                                     <div className="col-md-4">
@@ -551,10 +591,10 @@ return(
                                                                     <input className="form-control" type="text" name="area" placeholder="Enter Area" onChange={ onChange }/><br/>
                                                                     <label>Pincode</label>
                                                                     <input className="form-control" type="text" name="pincode" placeholder="Enter Pincode" onChange={ onChange }/><br/>
-                                                                    <label>Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="country_id" name="country_id" onChange={ onChange } >
-                                                                    <option value="">Select Country</option>
-                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
+                                                                    <label>State</label>
+                                                                    <select className="form-select" id="state_id" name="state_id" onChange={ onChange } >
+                                                                    <option value="">Select State</option>
+                                                                    { data1.map((option, key) => <option value={option.state_id} key={key} >{option.state_name}</option>) }</select><br/>
                                                                     <label>Account/Admin Contact No</label>
                                                                     <input className="form-control" type="text" name="admin_contact" placeholder="Enter Account/Admin Contact No" onChange={ onChange }/><br/>
                                                                     <label>Account/Admin E-mail</label>
@@ -565,10 +605,10 @@ return(
                                                                     <input className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChange }/><br/>
                                                                     <label>City</label>
                                                                     <input className="form-control" type="text" name="city" placeholder="Enter City" onChange={ onChange }/><br/>
-                                                                    <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="state_id" name="state_id" onChange={ onChange } >
-                                                                    <option value="">Select State</option>
-                                                                    { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
+                                                                    <label>Select Country</label>
+                                                                    <select className="form-select" id="country_id" name="country_id" onChange={ onChange } onChange={fetchStates}>
+                                                                    <option value="">Select Country</option>
+                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select><br/>
                                                                     <label>LandLine</label>
                                                                     <input className="form-control" type="text" name="landline" placeholder="Enter Landline" onChange={ onChange }/><br/>
                                                                     <label>QC Contact No</label>
@@ -591,10 +631,10 @@ return(
                                                                     <input className="form-control" type="text" name="area1" placeholder="Enter Area" onChange={ onChange }/><br/>
                                                                     <label>Pincode</label>
                                                                     <input className="form-control" type="text" name="pincode1" placeholder="Enter Pincode" onChange={ onChange }/><br/>
-                                                                    <label>Country</label>
-                                                                   {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChange } >
-                                                                    <option value="">Select Country</option>
-                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
+                                                                    <label>State</label>
+                                                                    <select className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChange } >
+                                                                    <option value="">Select State</option>
+                                                                    { data6.map((option, key) => <option value={option.state_id} key={key} >{option.state_name}</option>) }</select><br/>
                                                                     <label>QA Contact No</label>
                                                                     <input className="form-control" type="text" name="qa_contact" placeholder="Enter QA Contact No" onChange={ onChange }/><br/>
                                                                     <label>QA E-mail</label>
@@ -605,10 +645,10 @@ return(
                                                                     <input className="form-control" id="street2" type="text" name="street2" placeholder="Enter Street2" onChange={ onChange }/><br/>
                                                                     <label>City</label>
                                                                     <input className="form-control" type="text" name="city1" placeholder="Enter City" onChange={ onChange }/><br/>
-                                                                    <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChange } >
-                                                                    <option value="">Select State</option>
-                                                                    { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
+                                                                    <label>Country</label>
+                                                                    <select className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChange } onChange={fetchCorStates}>
+                                                                    <option value="">Select Country</option>
+                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select><br/>
                                                                     <label>Website</label>
                                                                     <input className="form-control" type="text" name="website" placeholder="Enter Website" onChange={ onChange }/><br/>
                                                                     <label>QC E-mail</label>
@@ -658,26 +698,26 @@ return(
                                               <div className="mb-3 row">
                                                 <div className="form-group">
                                                     <div className="row">
-                                                        {/*<div className="col-md-3">
+                                                        <div className="col-md-3">
                                                             <label>VAT No</label>
-                                                            <input className="form-control" type="text" placeholder="Enter VAT No" name="vat_no" onChange={ onChange }/>
-                                                        </div>  */}
+                                                            <input className="form-control" type="text" placeholder="Enter VAT No" name="company_vat_no" onChange={ onChange }/>
+                                                        </div> 
 
-                                                        <div className="col-md-4">
+                                                        <div className="col-md-3">
                                                             <label>TIN No</label>
                                                             <input className="form-control" type="text" placeholder="Enter TIN No" name="tin_no" onChange={ onChange }/>
                                                         </div>
 
-                                                        <div className="col-md-4">
+                                                        <div className="col-md-2">
                                                             <label>Service Tax No</label>
                                                             <input className="form-control" type="text" name="service_tax_no" placeholder="Enter Service Tax No" onChange={ onChange }/>
                                                         </div>
-                                                        {/*<div className="col-md-2">
+                                                        <div className="col-md-2">
                                                             <label>CST No</label>
-                                                            <input className="form-control" type="text"  name="cst_no" placeholder="Enter CST No" onChange={ onChange }/>
-                                                        </div> */}
+                                                            <input className="form-control" type="text"  name="company_cst_no" placeholder="Enter CST No" onChange={ onChange }/>
+                                                        </div>
 
-                                                        <div className="col-md-4">
+                                                        <div className="col-md-2">
                                                             <label>Customer Discount</label>
                                                             <input className="form-control" type="text"  name="customer_discount" placeholder="Enter Customer Discount" onChange={ onChange }/>
                                                         </div>

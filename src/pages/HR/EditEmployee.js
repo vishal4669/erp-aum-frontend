@@ -36,12 +36,23 @@ function EditEmployee (props) {
 
         const [loading, setLoading] = useState(false);
         const [loading1, setLoading1] = useState(false);
+        const [loading2, setLoading2] = useState(false);
         const [data, setData] = useState([]);
         const [data1, setData1] = useState([]);
         const [data2, setData2] = useState([]);
         const [data3, setData3] = useState([]);
         const [data4, setData4] = useState([]);
         const [data5, setData5] = useState([]);
+        const [data6, setData6] = useState([]);
+
+        const delete_btn_style = {
+          height:'31px'
+        }
+
+        const attachment_style = {
+          fontSize:'14px',
+          width:'100%'
+        }
 
         const [employee, setemployee] = useState({ title: 'Mr.',first_name: '',middle_name: '',last_name: '',
         blood_group: 'None',gender: 'M',birth_date: '',marital_status:'Single',photo: '',machine_code: '',phone: '',mobile: '',
@@ -105,7 +116,8 @@ function EditEmployee (props) {
         useEffect(() => {
          EmployeeData();
          fetchCountry();
-         fetchStates();
+         //fetchStates();
+         //fetchCorStates();
          fetchCompany();
          fetchPosition();
          fetchDepartment();
@@ -205,6 +217,29 @@ function EditEmployee (props) {
                    emergency_contact_number: response.data.data.address[1].emergency_contact_number,
                  }))
                  setPassword(response.data.data.company.password);
+                 var fetch_country_id = response.data.data.address[0].mst_countries_id ? 
+                 response.data.data.address[0].mst_countries_id : '';
+                 var fetch_country_id2 = response.data.data.address[1].mst_countries_id ? 
+                 response.data.data.address[1].mst_countries_id : '';
+
+                 axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+fetch_country_id,{headers})
+                 .then(response => {
+                  const state_data = response.data.data[0].country_wise_states.map(d => ({
+                      "state_id" : d.id,
+                      "state_name" : d.state_name,
+                    }))
+                    setData1(state_data);
+                  })
+
+                  axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+fetch_country_id2,{headers})
+                  .then(response => {
+                  const state_data1 = response.data.data[0].country_wise_states.map(d => ({
+                      "state_id" : d.id,
+                      "state_name" : d.state_name,
+                    }))
+                  setData6(state_data1);      
+               })
+
                   {setLoading1(false)}
 
               })
@@ -230,7 +265,7 @@ function EditEmployee (props) {
               })
         }
 
-        const fetchStates = () => {
+        /*const fetchStates = () => {
              {setLoading1(true)};
           axios.get(`${process.env.REACT_APP_BASE_APIURL}listStates`,{headers})
             .then(response => {
@@ -242,7 +277,47 @@ function EditEmployee (props) {
 
                    {setLoading1(false)}
               })
-        }
+        }*/
+
+        const fetchStates = () => {
+          var country_id_fetch = document.getElementById('country_id').value;
+          setemployee(prevState => ({ ...prevState, country_id: country_id_fetch}))
+           {setLoading1(true)};
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
+          .then(response => {
+              const state_data = response.data.data[0].country_wise_states.map(d => ({
+                  "state_id" : d.id,
+                  "state_name" : d.state_name,
+                }))
+                setData1(state_data);       
+                {setLoading1(false)}
+             })
+            .catch((error) => {
+                console.log(error)
+                toastr.error(error.response.data.message);
+
+                 {setLoading1(false)}
+            })
+      }
+
+      const fetchCorStates = () => {
+          var country_id_fetch2 = document.getElementById('corr_country_id').value;
+          setemployee(prevState => ({ ...prevState, corr_country_id: country_id_fetch2}))
+           {setLoading2(true)};
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch2,{headers})
+          .then(response => {
+              const state_data = response.data.data[0].country_wise_states.map(d => ({
+                  "state_id" : d.id,
+                  "state_name" : d.state_name,
+                }))
+                setData6(state_data);       
+                {setLoading2(false)}
+             })
+            .catch((error) => {
+                toastr.error(error.response.data.message);
+                 {setLoading2(false)}
+            })
+      }
 
         const fetchCompany = () => {
              {setLoading1(true)};
@@ -300,6 +375,47 @@ function EditEmployee (props) {
               })
         }
 
+        const DeletePhoto = (e) => {
+          e.preventDefault();
+           setemployee(prevState => ({ ...prevState, photo: ''}))
+           setAttachments(prevState => ({ ...prevState, attach_photo: ''}))
+         }
+
+         const DeleteSignature = (e) => {
+          e.preventDefault();
+           setemployee(prevState => ({ ...prevState, signature: ''}))
+           setAttachments(prevState => ({ ...prevState, attach_signature: ''}))
+         }
+
+         const DeleteAadhar = (e) => {
+          e.preventDefault();
+           setemployee(prevState => ({ ...prevState, aadhar_card_photo: ''}))
+           setAttachments(prevState => ({ ...prevState, attach_aadhar_card_photo: ''}))
+         }
+
+         const DeleteEelection = (e) => {
+          e.preventDefault();
+           setemployee(prevState => ({ ...prevState, election_card_photo: ''}))
+           setAttachments(prevState => ({ ...prevState, attach_election_card_photo: ''}))
+         }
+
+         const DeletePan = (e) => {
+          e.preventDefault();
+           setemployee(prevState => ({ ...prevState, pan_card_photo: ''}))
+           setAttachments(prevState => ({ ...prevState, attach_pan_card_photo: ''}))
+         }
+
+         const DeletePassport = (e) => {
+          e.preventDefault();
+           setemployee(prevState => ({ ...prevState, passport_photo: ''}))
+           setAttachments(prevState => ({ ...prevState, attach_passport_photo: ''}))
+         }
+         const DeleteDrivingLicence = (e) => {
+          e.preventDefault();
+           setemployee(prevState => ({ ...prevState, driving_license_photo: ''}))
+           setAttachments(prevState => ({ ...prevState, attach_driving_license_photo: ''}))
+         }
+
 const editEmployee = (e)=>{
          e.preventDefault();
 
@@ -318,16 +434,17 @@ const editEmployee = (e)=>{
                  var edu_specialization = final_edu_detail[index].degreespecialization;
 
              })*/
+             console.log(employee.photo);
+             console.log(attachments.attach_photo);
         {setLoading(true)};
         const data = new FormData();
         var emp_username_auto = ''
         var emp_password_auto = ''
 
-        if(employee.username == null){
+        if(employee.username == null || employee.username == ''){
           var last_date_year = moment(employee.birth_date).format('MM-DD-YYYY').toString().substr(-2)
           emp_username_auto = employee.first_name.toLowerCase()+last_date_year
         } else {
-          console.log("username no change")
           emp_username_auto = employee.username
         }
 
@@ -336,6 +453,9 @@ const editEmployee = (e)=>{
         } else {
           emp_password_auto = employee.password
         }
+
+        //console.log(emp_username_auto);
+        //return;
         // Personal Info
 
         data.append('title', employee.title);
@@ -350,12 +470,16 @@ const editEmployee = (e)=>{
         {
           data.append('photo', employee.photo);
         } else {
-          data.append('photo', attachments.attach_photo);
+          if(employee.photo == null){
+            data.append('photo', employee.photo);
+          } else {
+            data.append('photo', attachments.attach_photo);
+          }
         }
         data.append('machine_code', employee.machine_code !== null ?  employee.machine_code : '');
         data.append('phone', employee.phone !== null ? employee.phone : '');
         data.append('mobile', employee.mobile);
-        data.append('notes', employee.notes);
+        data.append('notes', employee.notes !== null ? employee.notes : '');
         data.append('attendance', employee.attendance);
         if(employee.signature != false)
         {
@@ -455,10 +579,11 @@ const editEmployee = (e)=>{
         data.append('company[username]', emp_username_auto);
         if(emp_password_auto !== pass){
             data.append('password', emp_password_auto);
+            data.append('company[password]', emp_password_auto);
         } else {
             data.append('password', pass);
-        }
-        data.append('company[password]', emp_password_auto);
+            data.append('company[password]', pass);
+        }       
         data.append('company[in_time]', employee.in_time);
         data.append('company[out_time]', employee.out_time);
         data.append('company[email_username]', employee.email_username);
@@ -470,39 +595,60 @@ const editEmployee = (e)=>{
         data.append('company[outgoing_mail_server_port]', employee.outgoing_mail_server_port);
 
         // Document Data
+
         if(employee.aadhar_card_photo != false)
         {
           data.append('document[aadhar_card_photo]', employee.aadhar_card_photo);
         } else {
-          data.append('document[aadhar_card_photo]', attachments.attach_aadhar_card_photo);
+          if(employee.aadhar_card_photo == null){
+            data.append('document[aadhar_card_photo]', employee.aadhar_card_photo);
+          } else {
+            data.append('document[aadhar_card_photo]', attachments.attach_aadhar_card_photo);
+          }
         }
         data.append('document[aadhar_number]', employee.aadhar_number);
         if(employee.election_card_photo != false)
         {
           data.append('document[election_card_photo]', employee.election_card_photo);
         } else {
-          data.append('document[election_card_photo]', attachments.attach_election_card_photo);
+          if(employee.election_card_photo == null){
+            data.append('document[election_card_photo]', employee.election_card_photo);
+          } else {
+            data.append('document[election_card_photo]', attachments.attach_election_card_photo);
+          }
         }
         data.append('document[election_card_number]', employee.election_card_number);
         if(employee.pan_card_photo != false)
         {
           data.append('document[pan_card_photo]', employee.pan_card_photo);
         }else{
-          data.append('document[pan_card_photo]', attachments.attach_pan_card_photo);
+          if(employee.pan_card_photo == null){
+            data.append('document[pan_card_photo]', employee.pan_card_photo);
+          } else {
+            data.append('document[pan_card_photo]', attachments.attach_pan_card_photo);
+          }
         }
         data.append('document[pan_card_number]', employee.pan_card_number);
         if(employee.passport_photo != false)
         {
           data.append('document[passport_photo]', employee.passport_photo);
         } else {
-          data.append('document[passport_photo]', attachments.attach_passport_photo);
+          if(employee.passport_photo == null){
+            data.append('document[passport_photo]', employee.passport_photo);
+          } else {
+            data.append('document[passport_photo]', attachments.attach_passport_photo);
+          }
         }
         data.append('document[passport_number]', employee.passport_number);
         if(employee.driving_license_photo != false)
         {
           data.append('document[driving_license_photo]', employee.driving_license_photo);
         } else {
-          data.append('document[driving_license_photo]', attachments.attach_driving_license_photo);
+          if(employee.driving_license_number == null){
+            data.append('document[driving_license_photo]', employee.driving_license_photo);
+          } else {
+            data.append('document[driving_license_photo]', attachments.attach_driving_license_photo);
+          }
         }
         data.append('document[driving_license_number]', employee.driving_license_number);
 
@@ -703,8 +849,21 @@ const handleAddClick1 = (e) => {
                                                     <div className="col-md-3">
                                                         <label>Photo</label>
                                                         <input className="form-control" type="file"  name="photo" onChange={ changePhotoHandler }/>
-                                                        <input className="form-control" type="hidden" value={attachments.attach_photo}/>
-                                                        {attachments.attach_photo !== '' ? <img src={employee_photo_sign+attachments.attach_photo} width="70px" height="50px"/> : ''}
+                                                        <input className="form-control" type="hidden" value={attachments.attach_photo}/>                                                        
+                                                        {attachments.attach_photo !== '' ?
+                                                                <div className="mb-3 row">
+                                                                  <div className="form-group">
+                                                                    <div className="row">
+                                                                      <div className="col-md-10">
+                                                                      <a href={employee_photo_sign+attachments.attach_photo} style={attachment_style} className="btn btn-primary form-control btn-sm" target="_blank">Click To Open Photo</a>
+                                                                      </div>
+                                                                      <div className="col-md-2">
+                                                                      <button className="form-control btn btn-danger btn-sm" onClick={e => DeletePhoto(e)} style={delete_btn_style}><i className='fa fa-trash'></i></button>
+                                                                      </div>
+                                                                     </div>
+                                                                  </div>
+                                                                </div> 
+                                                        : ''}
                                                     </div>
 
                                                    <div className="col-md-2">
@@ -755,7 +914,18 @@ const handleAddClick1 = (e) => {
                                                         <input className="form-control" type="file"  name="signature" onChange={ changeSignatureHandler }/>
                                                         <input className="form-control" type="hidden" value={attachments.attach_signature}/>
                                                         {attachments.attach_signature !== '' ?
-                                                            <a href={employee_photo_sign+attachments.attach_signature} style={{fontSize:'14px'}} className="btn btn-dark form-control btn-sm" target="_blank">Click To Open Signature</a>
+                                                            <div className="mb-3 row">
+                                                              <div className="form-group">
+                                                                <div className="row">
+                                                                  <div className="col-md-10">
+                                                                  <a href={employee_photo_sign+attachments.attach_signature} style={attachment_style} className="btn btn-dark form-control btn-sm" target="_blank">Click To Open Signature</a>
+                                                                  </div>
+                                                                  <div className="col-md-2">
+                                                                  <button className="form-control btn btn-danger btn-sm" onClick={e => DeleteSignature(e)} style={delete_btn_style}><i className='fa fa-trash'></i></button>
+                                                                  </div> 
+                                                                </div> 
+                                                              </div>
+                                                            </div>   
                                                         : ''}
 
                                                     </div>
@@ -860,10 +1030,10 @@ const handleAddClick1 = (e) => {
                                                                     <input className="form-control" type="text" value={employee.area} name="area" placeholder="Enter Area" onChange={ onChange }/><br/>
                                                                     <label>Pincode</label>
                                                                     <input className="form-control" type="text" value={employee.pincode} name="pincode" placeholder="Enter Pincode" onChange={ onChange }/><br/>
-                                                                    <label className="required-field">Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.country_id} id="country_id" name="country_id" onChange={ onChange } >
-                                                                    <option value="">Select Country</option>
-                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
+                                                                    <label className="required-field">State</label>
+                                                                    <select className="form-select" value={employee.state_id} id="state_id" name="state_id" onChange={ onChange } >
+                                                                    <option value="">Select State</option>
+                                                                    { data1.map((option, key) => <option value={option.state_id} key={key} >{option.state_name}</option>) }</select><br/>
                                                                     <label className="required-field">Emergency Contact Name</label>
                                                                     <input className="form-control" type="text" value={employee.emergency_contact_name} name="emergency_contact_name" placeholder="Enter Emergency Contact Name" onChange={ onChange }/>
                                                                 </div>
@@ -872,10 +1042,10 @@ const handleAddClick1 = (e) => {
                                                                     <input className="form-control" type="text" value={employee.homestreet2} name="homestreet2" placeholder="Enter Home Street2" onChange={ onChange }/><br/>
                                                                     <label>City</label>
                                                                     <input className="form-control" type="text" value={employee.city} name="city" placeholder="Enter City" onChange={ onChange }/><br/>
-                                                                    <label className="required-field">State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.state_id} id="state_id" name="state_id" onChange={ onChange } >
-                                                                    <option value="">Select State</option>
-                                                                    { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
+                                                                    <label className="required-field">Country</label>
+                                                                    <select className="form-select" value={employee.country_id} id="country_id" name="country_id" onChange={ onChange } onChange={fetchStates}>
+                                                                    <option value="">Select Country</option>
+                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select><br/>
                                                                     <label>Email</label>
                                                                     <input className="form-control" type="email" value={employee.email} name="email" placeholder="Enter Email" onChange={ onChange }/>
                                                                 </div>
@@ -894,10 +1064,10 @@ const handleAddClick1 = (e) => {
                                                                     <input className="form-control" type="text" value={employee.area1} name="area1" placeholder="Enter Area" onChange={ onChange }/><br/>
                                                                     <label>Pincode</label>
                                                                     <input className="form-control" type="text" value={employee.pincode1} name="pincode1" placeholder="Enter Pincode" onChange={ onChange }/><br/>
-                                                                    <label>Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.corr_country_id} id="corr_country_id" name="corr_country_id" onChange={ onChange } >
-                                                                    <option value="">Select Country</option>
-                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
+                                                                    <label>State</label>
+                                                                    <select className="form-select" value={employee.corr_state_id} id="corr_state_id" name="corr_state_id" onChange={ onChange } >
+                                                                    <option value="">Select State</option>
+                                                                    { data6.map((option, key) => <option value={option.state_id} key={key} >{option.state_name}</option>) }</select><br/>
                                                                     <label className="required-field">Emergency Contact Number</label>
                                                                     <input className="form-control" type="text" value={employee.emergency_contact_number} name="emergency_contact_number" placeholder="Enter Emergency Contact Number" onChange={ onChange }/>
                                                                 </div>
@@ -906,10 +1076,10 @@ const handleAddClick1 = (e) => {
                                                                     <input className="form-control" type="text" value={employee.street2} name="street2" placeholder="Enter Street2" onChange={ onChange }/><br/>
                                                                     <label>City</label>
                                                                     <input className="form-control" type="text" value={employee.city1} name="city1" placeholder="Enter City" onChange={ onChange }/><br/>
-                                                                    <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select className="form-select" value={employee.corr_state_id} id="corr_state_id" name="corr_state_id" onChange={ onChange } >
-                                                                    <option value="">Select State</option>
-                                                                    { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
+                                                                    <label>Country</label>
+                                                                    <select className="form-select" value={employee.corr_country_id} id="corr_country_id" name="corr_country_id" onChange={ onChange } onChange={fetchCorStates}>
+                                                                    <option value="">Select Country</option>
+                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select><br/>
                                                                     <label>Website</label>
                                                                     <input className="form-control" type="text" value={employee.website} name="website" placeholder="Enter Website" onChange={ onChange }/>
                                                                 </div>
@@ -1104,7 +1274,7 @@ const handleAddClick1 = (e) => {
                                                     </div>
                                                     <div className="col-md-2">
                                                         <label className="required-field">Username</label>
-                                                        <input className="form-control" value={employee.username} placeholder="Enter Username" type="text" name="username" id="username" onChange={ onChange }/>
+                                                        <input className="form-control" value={employee.username} placeholder="Enter Username" type="text" name="username" id="username" onChange={ onChange } autocomplete="off"/>
                                                     </div>
 
                                                     <div className="col-md-2">
@@ -1190,7 +1360,18 @@ const handleAddClick1 = (e) => {
                                                         <input name="aadhar_card_photo" type="file" className="form-control" onChange={ changeAadharHandler }/>
                                                         <input className="form-control" type="hidden" value={attachments.attach_aadhar_card_photo}/>
                                                         {attachments.attach_aadhar_card_photo !== '' ?
-                                                            <a href={employee_document_path+attachments.attach_aadhar_card_photo} style={{fontSize:'14px'}} className="btn btn-info form-control btn-sm" target="_blank">Click To Open Aadhar Card</a>
+                                                            <div className="mb-3 row">
+                                                            <div className="form-group">
+                                                              <div className="row">
+                                                                <div className="col-md-10">
+                                                                <a href={employee_document_path+attachments.attach_aadhar_card_photo} style={attachment_style} className="btn btn-info form-control btn-sm" target="_blank">Click To Open Aadhar Card Document</a>
+                                                                </div>
+                                                                <div className="col-md-2">
+                                                                <button className="form-control btn btn-danger btn-sm" onClick={e => DeleteAadhar(e)} style={delete_btn_style}><i className='fa fa-trash'></i></button>
+                                                                </div>
+                                                               </div>
+                                                            </div>
+                                                            </div> 
                                                         : ''}
                                                     </div>
                                                     <div className="col-md-3">
@@ -1204,7 +1385,19 @@ const handleAddClick1 = (e) => {
                                                         <input name="election_card_photo" type="file" className="form-control" onChange={ changeElectionCardHandler }/>
                                                         <input className="form-control" type="hidden" value={attachments.attach_election_card_photo}/>
                                                         {attachments.attach_election_card_photo !== '' ?
-                                                            <a href={employee_document_path+attachments.attach_election_card_photo} style={{fontSize:'14px'}} className="btn btn-danger form-control btn-sm" target="_blank">Click To Open Election Card</a>
+                                                          <div className="mb-3 row">
+                                                            <div className="form-group">
+                                                              <div className="row">
+                                                                <div className="col-md-10">
+                                                                <a href={employee_document_path+attachments.attach_election_card_photo} style={attachment_style} className="btn btn-dark form-control btn-sm" target="_blank">Click To Open Election Card Document</a>
+                                                                </div>
+                                                                <div className="col-md-2">
+                                                                  <button className="form-control btn btn-danger btn-sm" onClick={e => DeleteEelection(e)} style={delete_btn_style}><i className='fa fa-trash'></i></button>
+                                                                </div> 
+                                                              </div> 
+                                                            </div>
+                                                          </div> 
+                                                            
                                                         : ''}
                                                     </div>
 
@@ -1227,7 +1420,19 @@ const handleAddClick1 = (e) => {
                                                         <input name="pan_card_photo" type="file" className="form-control" onChange={ changePanCardHandler }/>
                                                         <input className="form-control" type="hidden" value={attachments.attach_pan_card_photo}/>
                                                         {attachments.attach_pan_card_photo !== '' ?
-                                                            <a href={employee_document_path+attachments.attach_pan_card_photo} style={{fontSize:'14px'}} className="btn btn-primary form-control btn-sm" target="_blank">Click To Open PanCard</a>
+                                                          <div className="mb-3 row">
+                                                            <div className="form-group">
+                                                              <div className="row">
+                                                                <div className="col-md-10">
+                                                                <a href={employee_document_path+attachments.attach_pan_card_photo} style={attachment_style} className="btn btn-primary form-control btn-sm" target="_blank">Click To Open PanCard Document</a>
+                                                                </div>
+                                                                <div className="col-md-2">
+                                                                  <button className="form-control btn btn-danger btn-sm" onClick={e => DeletePan(e)} style={delete_btn_style}><i className='fa fa-trash'></i></button>
+                                                                </div> 
+                                                              </div> 
+                                                            </div>
+                                                          </div>                                                        
+                                                            
                                                         : ''}
                                                     </div>
 
@@ -1242,7 +1447,18 @@ const handleAddClick1 = (e) => {
                                                         <input name="passport_photo" type="file" className="form-control" onChange={ changePassportHandler }/>
                                                         <input className="form-control" type="hidden" value={attachments.attach_passport_photo}/>
                                                         {attachments.attach_passport_photo !== '' ?
-                                                            <a href={employee_document_path+attachments.attach_passport_photo} style={{fontSize:'14px'}} className="btn btn-success form-control btn-sm" target="_blank">Click To Open Passport Copy</a>
+                                                          <div className="mb-3 row">
+                                                            <div className="form-group">
+                                                              <div className="row">
+                                                                <div className="col-md-10">
+                                                                  <a href={employee_document_path+attachments.attach_passport_photo} style={attachment_style} className="btn btn-success form-control btn-sm" target="_blank">Click To Open Passport Copy Document</a>
+                                                                </div>
+                                                                <div className="col-md-2">
+                                                                  <button className="form-control btn btn-danger btn-sm" onClick={e => DeletePassport(e)} style={delete_btn_style}><i className='fa fa-trash'></i></button>
+                                                                </div> 
+                                                              </div> 
+                                                            </div>
+                                                        </div>   
                                                         : ''}
                                                     </div>
 
@@ -1266,7 +1482,18 @@ const handleAddClick1 = (e) => {
                                                         <input name="driving_license_photo" type="file" className="form-control" onChange={ changeDrivingLicHandler }/>
                                                         <input className="form-control" type="hidden" value={attachments.attach_driving_license_photo}/>
                                                         {attachments.attach_driving_license_photo !== '' ?
-                                                            <a href={employee_document_path+attachments.attach_driving_license_photo} style={{fontSize:'14px'}} className="btn btn-warning form-control btn-sm" target="_blank">Click To Open Driving Licence</a>
+                                                          <div className="mb-3 row">
+                                                            <div className="form-group">
+                                                              <div className="row">
+                                                                <div className="col-md-11">
+                                                                  <a href={employee_document_path+attachments.attach_driving_license_photo} style={attachment_style} className="btn btn-warning form-control btn-sm" target="_blank">Click To Open Driving Licence Document</a>
+                                                                </div>
+                                                                <div className="col-md-1">
+                                                                  <button className="form-control btn btn-danger btn-sm" onClick={e => DeleteDrivingLicence(e)} style={delete_btn_style}><i className='fa fa-trash'></i></button>
+                                                                </div> 
+                                                              </div> 
+                                                            </div>
+                                                          </div>   
                                                         : ''}
                                                     </div>
 

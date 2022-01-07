@@ -351,9 +351,7 @@ const EditCustomer = (e)=>{
 
         data1.append('contact_person_data', contact_person_data);
 
-        console.log(customer.company_name)
-
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}editCustomer/`+customer_id, data1, {headers} )
+        axios.post( `${process.env.REACT_APP_BASE_APIURL}editCustomer/`+customer_id, data1, {headers} )
                 .then(response => {
                     if(response.data.success == true){
 
