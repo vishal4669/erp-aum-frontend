@@ -40,6 +40,7 @@ function AddCustomer(props) {
   const [data1, setData1] = useState([]);
   const [data3, setData3] = useState([]);
   const [data4, setData4] = useState([]);
+  const [data5, setData5] = useState([]);
   const [data6, setData6] = useState([]);
   const [selectedFiles, setselectedFiles] = useState(null)
   const [customer, setCustomer] = useState({ company_name: '', gst_no: '',contact_person_name:'',tally_alias_name:'',
@@ -67,6 +68,7 @@ function AddCustomer(props) {
 
 useEffect(() => {
          fetchCountry();
+         fetchCountry1();
          //fetchStates();
          fetchPosition();
          fetchDepartment();
@@ -86,44 +88,52 @@ useEffect(() => {
               })
         }
 
-        const fetchStates = () => {
-            var country_id_fetch = document.getElementById('country_id').value;
-            setCustomer(prevState => ({ ...prevState, country_id: country_id_fetch}))
+        const fetchCountry1 = () => {
              {setLoading1(true)};
-            axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
             .then(response => {
-                const state_data = response.data.data[0].country_wise_states.map(d => ({
-                    "state_id" : d.id,
-                    "state_name" : d.state_name,
-                  }))
-                  setData1(state_data);       
-                  {setLoading1(false)}
+                     setData5(response.data.data);
+                     {setLoading1(false)}
                })
               .catch((error) => {
-                  console.log(error)
                   toastr.error(error.response.data.message);
 
                    {setLoading1(false)}
               })
         }
 
+        const fetchStates = () => {
+            var country_id_fetch = document.getElementById('country_id').value;
+            if(country_id_fetch !== null){
+              setCustomer(prevState => ({ ...prevState, country_id: country_id_fetch}))
+               {setLoading1(true)};
+              axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
+              .then(response => {
+                  const state_data = response.data.data[0].country_wise_states.map(d => ({
+                      "state_id" : d.id,
+                      "state_name" : d.state_name,
+                    }))
+                    setData1(state_data);
+                    {setLoading1(false)}
+                 })
+            }
+        }
+
         const fetchCorStates = () => {
             var country_id_fetch2 = document.getElementById('corr_country_id').value;
-            setCustomer(prevState => ({ ...prevState, corr_country_id: country_id_fetch2}))
-             {setLoading2(true)};
-            axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch2,{headers})
-            .then(response => {
-                const state_data = response.data.data[0].country_wise_states.map(d => ({
-                    "state_id" : d.id,
-                    "state_name" : d.state_name,
-                  }))
-                  setData6(state_data);       
-                  {setLoading2(false)}
-               })
-              .catch((error) => {
-                  toastr.error(error.response.data.message);
-                   {setLoading2(false)}
-              })
+            if(country_id_fetch2 !== null){
+              setCustomer(prevState => ({ ...prevState, corr_country_id: country_id_fetch2}))
+               {setLoading2(true)};
+              axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch2,{headers})
+              .then(response => {
+                  const state_data = response.data.data[0].country_wise_states.map(d => ({
+                      "state_id1" : d.id,
+                      "state_name1" : d.state_name,
+                    }))
+                    setData6(state_data);
+                    {setLoading2(false)}
+                 })
+            }
         }
 
         const fetchPosition = () => {
@@ -154,17 +164,19 @@ useEffect(() => {
               })
         }
 
-        axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+customer.country_id,{headers})
-        .then(response => {
-            const state_data = response.data.data[0].country_wise_states.map(d => ({
-                "state_id" : d.id,
-                "state_name" : d.state_name,
-              }))
-              setData6(state_data);
-        })
-
         const copy_data = () => {
-        
+
+          var country_id_fetch = document.getElementById("country_id").value;
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
+          .then(response => {
+          const state_data1 = response.data.data[0].country_wise_states.map(d => ({
+              "state1_id" : d.id,
+              "state_name1" : d.state_name,
+            }))
+              setData6(state_data1);
+              setCustomer(prevState =>({...prevState,corr_state_id:document.getElementById("state_id").value}))
+          })
+
         const copy_street1 = customer.homestreet;
         const copy_street2 = customer.homestreet2;
         const copy_area = customer.area;
@@ -191,7 +203,7 @@ useEffect(() => {
         customer.corr_country_id = document.CustomerData.corr_country_id.value;
         customer.corr_state_id =  document.CustomerData.corr_state_id.value;
 
-        
+
         return
        }
 
@@ -257,6 +269,18 @@ const InsertCustomer = (e)=>{
                 ]
             }, "customer_contact_person": contact_person_data,
         }; */
+
+        if(customer.state_id !== '' && customer.country_id == ''){
+          toastr.error("Home Details Country Field is Required.");
+          {setLoading(false)};
+          return;
+        }
+
+        if(customer.corr_state_id !== '' && customer.corr_country_id == ''){
+          toastr.error("Other Contact Details Country Field is Required.");
+          {setLoading(false)};
+          return;
+        }
         const data1 = new FormData();
         //Customer Details
         data1.append('company_name', customer.company_name);
@@ -634,7 +658,7 @@ return(
                                                                     <label>State</label>
                                                                     <select className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChange } >
                                                                     <option value="">Select State</option>
-                                                                    { data6.map((option, key) => <option value={option.state_id} key={key} >{option.state_name}</option>) }</select><br/>
+                                                                    { data6.map((option, key) => <option value={option.state_id1} key={key} >{option.state_name1}</option>) }</select><br/>
                                                                     <label>QA Contact No</label>
                                                                     <input className="form-control" type="text" name="qa_contact" placeholder="Enter QA Contact No" onChange={ onChange }/><br/>
                                                                     <label>QA E-mail</label>
@@ -648,7 +672,7 @@ return(
                                                                     <label>Country</label>
                                                                     <select className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChange } onChange={fetchCorStates}>
                                                                     <option value="">Select Country</option>
-                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select><br/>
+                                                                    { data5.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select><br/>
                                                                     <label>Website</label>
                                                                     <input className="form-control" type="text" name="website" placeholder="Enter Website" onChange={ onChange }/><br/>
                                                                     <label>QC E-mail</label>
@@ -701,7 +725,7 @@ return(
                                                         <div className="col-md-3">
                                                             <label>VAT No</label>
                                                             <input className="form-control" type="text" placeholder="Enter VAT No" name="company_vat_no" onChange={ onChange }/>
-                                                        </div> 
+                                                        </div>
 
                                                         <div className="col-md-3">
                                                             <label>TIN No</label>

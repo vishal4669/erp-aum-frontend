@@ -217,9 +217,9 @@ function EditEmployee (props) {
                    emergency_contact_number: response.data.data.address[1].emergency_contact_number,
                  }))
                  setPassword(response.data.data.company.password);
-                 var fetch_country_id = response.data.data.address[0].mst_countries_id ? 
+                 var fetch_country_id = response.data.data.address[0].mst_countries_id ?
                  response.data.data.address[0].mst_countries_id : '';
-                 var fetch_country_id2 = response.data.data.address[1].mst_countries_id ? 
+                 var fetch_country_id2 = response.data.data.address[1].mst_countries_id ?
                  response.data.data.address[1].mst_countries_id : '';
 
                  axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+fetch_country_id,{headers})
@@ -237,14 +237,13 @@ function EditEmployee (props) {
                       "state_id" : d.id,
                       "state_name" : d.state_name,
                     }))
-                  setData6(state_data1);      
+                  setData6(state_data1);
                })
 
                   {setLoading1(false)}
 
               })
               .catch((error) => {
-                console.log(error)
                   {setLoading1(false)}
                   toastr.error(error.response.data.message);
                   this.setState({loading: false});
@@ -289,15 +288,9 @@ function EditEmployee (props) {
                   "state_id" : d.id,
                   "state_name" : d.state_name,
                 }))
-                setData1(state_data);       
+                setData1(state_data);
                 {setLoading1(false)}
              })
-            .catch((error) => {
-                console.log(error)
-                toastr.error(error.response.data.message);
-
-                 {setLoading1(false)}
-            })
       }
 
       const fetchCorStates = () => {
@@ -310,13 +303,9 @@ function EditEmployee (props) {
                   "state_id" : d.id,
                   "state_name" : d.state_name,
                 }))
-                setData6(state_data);       
+                setData6(state_data);
                 {setLoading2(false)}
              })
-            .catch((error) => {
-                toastr.error(error.response.data.message);
-                 {setLoading2(false)}
-            })
       }
 
         const fetchCompany = () => {
@@ -583,7 +572,7 @@ const editEmployee = (e)=>{
         } else {
             data.append('password', pass);
             data.append('company[password]', pass);
-        }       
+        }
         data.append('company[in_time]', employee.in_time);
         data.append('company[out_time]', employee.out_time);
         data.append('company[email_username]', employee.email_username);
@@ -652,9 +641,9 @@ const editEmployee = (e)=>{
         }
         data.append('document[driving_license_number]', employee.driving_license_number);
 
-        for (var pair of data.entries()) {
+        /*for (var pair of data.entries()) {
             console.log(pair[0]+ ', ' + pair[1]);
-        }
+        }*/
       //  return
 
         axios.post( `${process.env.REACT_APP_BASE_APIURL}editEmployee/`+employee_id, data, {headers} )
@@ -849,7 +838,7 @@ const handleAddClick1 = (e) => {
                                                     <div className="col-md-3">
                                                         <label>Photo</label>
                                                         <input className="form-control" type="file"  name="photo" onChange={ changePhotoHandler }/>
-                                                        <input className="form-control" type="hidden" value={attachments.attach_photo}/>                                                        
+                                                        <input className="form-control" type="hidden" value={attachments.attach_photo}/>
                                                         {attachments.attach_photo !== '' ?
                                                                 <div className="mb-3 row">
                                                                   <div className="form-group">
@@ -862,7 +851,7 @@ const handleAddClick1 = (e) => {
                                                                       </div>
                                                                      </div>
                                                                   </div>
-                                                                </div> 
+                                                                </div>
                                                         : ''}
                                                     </div>
 
@@ -922,10 +911,10 @@ const handleAddClick1 = (e) => {
                                                                   </div>
                                                                   <div className="col-md-2">
                                                                   <button className="form-control btn btn-danger btn-sm" onClick={e => DeleteSignature(e)} style={delete_btn_style}><i className='fa fa-trash'></i></button>
-                                                                  </div> 
-                                                                </div> 
+                                                                  </div>
+                                                                </div>
                                                               </div>
-                                                            </div>   
+                                                            </div>
                                                         : ''}
 
                                                     </div>
@@ -1371,7 +1360,7 @@ const handleAddClick1 = (e) => {
                                                                 </div>
                                                                </div>
                                                             </div>
-                                                            </div> 
+                                                            </div>
                                                         : ''}
                                                     </div>
                                                     <div className="col-md-3">
@@ -1393,11 +1382,11 @@ const handleAddClick1 = (e) => {
                                                                 </div>
                                                                 <div className="col-md-2">
                                                                   <button className="form-control btn btn-danger btn-sm" onClick={e => DeleteEelection(e)} style={delete_btn_style}><i className='fa fa-trash'></i></button>
-                                                                </div> 
-                                                              </div> 
+                                                                </div>
+                                                              </div>
                                                             </div>
-                                                          </div> 
-                                                            
+                                                          </div>
+
                                                         : ''}
                                                     </div>
 
@@ -1428,11 +1417,11 @@ const handleAddClick1 = (e) => {
                                                                 </div>
                                                                 <div className="col-md-2">
                                                                   <button className="form-control btn btn-danger btn-sm" onClick={e => DeletePan(e)} style={delete_btn_style}><i className='fa fa-trash'></i></button>
-                                                                </div> 
-                                                              </div> 
+                                                                </div>
+                                                              </div>
                                                             </div>
-                                                          </div>                                                        
-                                                            
+                                                          </div>
+
                                                         : ''}
                                                     </div>
 
@@ -1455,10 +1444,10 @@ const handleAddClick1 = (e) => {
                                                                 </div>
                                                                 <div className="col-md-2">
                                                                   <button className="form-control btn btn-danger btn-sm" onClick={e => DeletePassport(e)} style={delete_btn_style}><i className='fa fa-trash'></i></button>
-                                                                </div> 
-                                                              </div> 
+                                                                </div>
+                                                              </div>
                                                             </div>
-                                                        </div>   
+                                                        </div>
                                                         : ''}
                                                     </div>
 
@@ -1490,10 +1479,10 @@ const handleAddClick1 = (e) => {
                                                                 </div>
                                                                 <div className="col-md-1">
                                                                   <button className="form-control btn btn-danger btn-sm" onClick={e => DeleteDrivingLicence(e)} style={delete_btn_style}><i className='fa fa-trash'></i></button>
-                                                                </div> 
-                                                              </div> 
+                                                                </div>
+                                                              </div>
                                                             </div>
-                                                          </div>   
+                                                          </div>
                                                         : ''}
                                                     </div>
 

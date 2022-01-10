@@ -52,7 +52,7 @@ function AddEmployee (props) {
         incoming_mail_server_port:'',outgoing_mail_server:'',outgoing_mail_server_port:'',aadhar_card_photo:'',aadhar_number:'',
         election_card_photo:'',election_card_number:'',pan_card_photo:'',pan_card_number:'',passport_photo:'',passport_number:'',
         driving_license_photo:'',driving_license_number:''
-        });        
+        });
 
         const [inputList, setInputList]  = useState([{ degree: "", university: "", from_year: "", to_year:"",
           percentage_grade: "",specialization:"" }]);
@@ -127,15 +127,9 @@ function AddEmployee (props) {
                     "state_id" : d.id,
                     "state_name" : d.state_name,
                   }))
-                  setData1(state_data);       
+                  setData1(state_data);
                   {setLoading1(false)}
                })
-              .catch((error) => {
-                  console.log(error)
-                  toastr.error(error.response.data.message);
-
-                   {setLoading1(false)}
-              })
         }
 
         const fetchCorStates = () => {
@@ -148,13 +142,9 @@ function AddEmployee (props) {
                     "state_id" : d.id,
                     "state_name" : d.state_name,
                   }))
-                  setData6(state_data);       
+                  setData6(state_data);
                   {setLoading2(false)}
                })
-              .catch((error) => {
-                  toastr.error(error.response.data.message);
-                   {setLoading2(false)}
-              })
         }
 
         const fetchCompany = () => {

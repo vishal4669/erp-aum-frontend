@@ -43,14 +43,18 @@ function EditCustomer(props) {
 
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
   const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
   const [data3, setData3] = useState([]);
   const [data4, setData4] = useState([]);
+    const [data5, setData5] = useState([]);
+  const [data6, setData6] = useState([]);
   const [selectedFiles, setselectedFiles] = useState(null)
   const [customer, setCustomer] = useState({ company_name: '', gst_number: '',contact_person_name:'',tally_alias_name:'',
   user_name:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',is_active:'1',logo:'',
-  education_details:'',prev_details:'',company_tin_no:'',company_service_tax_no:'',company_cust_discount:''});
+  education_details:'',prev_details:'',company_tin_no:'',company_service_tax_no:'',company_cust_discount:'',
+  company_vat_no:'',company_cst_no:''});
 
   const [pass, setPassword] = useState();
 
@@ -80,10 +84,12 @@ function EditCustomer(props) {
 
 useEffect(() => {
          fetchCountry();
-         fetchStates();
+         fetchCountry1();
+         //fetchStates();
          fetchPosition();
          fetchDepartment();
          GetCustomerData();
+         fetchCountry1();
         }, []);
 
 const GetCustomerData=()=>{
@@ -95,7 +101,35 @@ const GetCustomerData=()=>{
                   setCustomerAddress2(response.data.data.contact_info[1]);
                   setInputList(response.data.data.contact_person);
                   setPassword(response.data.data.password);
-                    console.log(customer.logo)
+
+                  setCustomer(prevState => ({...prevState,password:base64_decode(response.data.data.password)}))
+
+                  var fetch_country_id = response.data.data.contact_info[0].country_id ?
+                  response.data.data.contact_info[0].country_id : '';
+                  var fetch_country_id2 = response.data.data.contact_info[1].corr_country_id ?
+                  response.data.data.contact_info[1].corr_country_id : '';
+
+                  if(fetch_country_id !== null){
+                    axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+fetch_country_id,{headers})
+                    .then(response => {
+                     const state_data = response.data.data[0].country_wise_states.map(d => ({
+                         "state_id" : d.id,
+                         "state_name" : d.state_name,
+                       }))
+                       setData1(state_data);
+                     })
+                  }
+
+                  if(fetch_country_id2 !== null){
+                      axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+fetch_country_id2,{headers})
+                      .then(response => {
+                      const state_data1 = response.data.data[0].country_wise_states.map(d => ({
+                          "state1_id" : d.id,
+                          "state_name1" : d.state_name,
+                        }))
+                      setData6(state_data1);
+                   })
+                  }
                   {setLoading1(false)};
 
               })
@@ -118,20 +152,52 @@ const GetCustomerData=()=>{
                    {setLoading1(false)}
               })
         }
-
-        const fetchStates = () => {
+        const fetchCountry1 = () => {
              {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}listStates`,{headers})
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
             .then(response => {
-                     setData1(response.data.data);
+                     setData5(response.data.data);
                      {setLoading1(false)}
                })
               .catch((error) => {
                   toastr.error(error.response.data.message);
-
                    {setLoading1(false)}
               })
         }
+
+        const fetchStates = (e) => {
+          var country_id_fetch = document.getElementById('country_id').value;
+          if(country_id_fetch !== null){
+            setCustomerAddress1(prevState => ({ ...prevState, country_id: country_id_fetch}))
+             //{setLoading1(true)};
+            axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
+            .then(response => {
+                const state_data = response.data.data[0].country_wise_states.map(d => ({
+                    "state_id" : d.id,
+                    "state_name" : d.state_name,
+                  }))
+                  setData1(state_data);
+                  //{setLoading1(false)}
+               })
+          }
+      }
+
+      const fetchCorStates = (e) => {
+          var country_id_fetch2 = document.getElementById('corr_country_id').value;
+          if(country_id_fetch2 !== null){
+            setCustomerAddress2(prevState => ({ ...prevState, corr_country_id: country_id_fetch2}))
+              {setLoading2(true)};
+             axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch2,{headers})
+             .then(response => {
+                 const state_data = response.data.data[0].country_wise_states.map(d => ({
+                     "state1_id" : d.id,
+                     "state_name1" : d.state_name,
+                   }))
+                   setData6(state_data);
+                   {setLoading2(false)}
+                })
+          }
+      }
 
         const fetchPosition = () => {
              {setLoading1(true)};
@@ -161,8 +227,26 @@ const GetCustomerData=()=>{
               })
         }
 
+        const DeleteLogo = (e) => {
+          e.preventDefault();
+           setCustomer(prevState => ({ ...prevState, logo: null}))
+         }
+         const DeletePancard = (e) => {
+           e.preventDefault();
+           setCustomerAddress2(prevState => ({ ...prevState, pancard_copy: null,other_pan_card_copy:null}))
+          }
 
        const copy_data = () => {
+        var country_id_fetch = document.getElementById("country_id").value;
+        axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
+        .then(response => {
+        const state_data1 = response.data.data[0].country_wise_states.map(d => ({
+            "state1_id" : d.id,
+            "state_name1" : d.state_name,
+          }))
+            setData6(state_data1);
+            setCustomerAddress2(prevState =>({...prevState,corr_state_id:document.getElementById("state_id").value}))
+        })
 
         const copy_street1 = address1.homestreet;
         const copy_street2 = address1.homestreet2;
@@ -198,6 +282,18 @@ const EditCustomer = (e)=>{
          e.preventDefault();
        //const contact_person_data = inputList;
         {setLoading(true)};
+
+        if(address1.state_id !== '' && address1.country_id == null){
+          toastr.error("Home Details Country Field is Required.");
+          {setLoading(false)};
+          return;
+        }
+
+        if(address2.corr_state_id !== '' && address2.corr_country_id == null){
+          toastr.error("Other Contact Details Country Field is Required.");
+          {setLoading(false)};
+          return;
+        }
         const data1 = new FormData();
         //Customer Details
         data1.append('company_name', customer.company_name);
@@ -230,10 +326,9 @@ const EditCustomer = (e)=>{
         } else {
             data1.append('notes', '');
         }
-
         if(selectedFile != false)
         {
-            data1.append('logo', selectedFile);
+          data1.append('logo', selectedFile);
         } else {
             if(customer.logo !== '' || customer.logo !== null && customer.logo !== undefined){
 
@@ -279,6 +374,18 @@ const EditCustomer = (e)=>{
             data1.append('company_cust_discount', '');
         }
 
+        if(customer.company_cst_no !== null){
+         data1.append('company_cst_no', customer.company_cst_no);
+        } else {
+            data1.append('company_cst_no', '');
+        }
+
+        if(customer.company_vat_no !== null){
+         data1.append('company_vat_no', customer.company_vat_no);
+        } else {
+            data1.append('company_vat_no', '');
+        }
+
         //Home Address Details
         data1.append('customer_contact_info[home_contact_info][0][street_1]', address1.homestreet);
         data1.append('customer_contact_info[home_contact_info][0][street_2]', address1.homestreet2);
@@ -310,37 +417,15 @@ const EditCustomer = (e)=>{
         {
             data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', selectedPanFile);
         } else {
-            if(address2.pancard_copy !== '' || address2.pancard_copy !== null && customer.pancard_copy !== undefined){
-              data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', address2.pancard_copy);
-            } else if(address2.pancard_copy == undefined){
+            if(address2.other_pan_card_copy !== '' || address2.other_pan_card_copy !== null && address2.other_pan_card_copy !== undefined){
+              data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', address2.other_pan_card_copy);
+            } else if(address2.other_pan_card_copy == undefined){
                  data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', '');
             }
          else{
                  data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', '');
             }
         }
-        //console.log("=====",address2.street);
-        // if(selectedFile != false)
-        // {
-        //     data1.append('logo', selectedFile);
-        // } else {
-        //     if(customer.logo !== '' || customer.logo !== null && customer.logo !== undefined){
-
-        //         data1.append('logo', customer.logo);
-
-        //         console.log("null===",customer.logo)
-
-        //     }
-        //     else if(customer.logo == undefined)
-        //         {
-        //         data1.append('logo', '');
-        //         console.log("undef===",customer.logo)
-        //         }
-        //     else{
-        //         data1.append('logo', '');
-        //         console.log("else===",customer.logo)
-        //     }
-        // }
         data1.append('customer_contact_info[other_contact_info][0][contact_info_type]', 2);
 
          var object = {};
@@ -462,7 +547,7 @@ return(
                                                     </div>
 
                                                     <div className="col-md-3">
-                                                        <label>GST No</label>
+                                                        <label className="required-field">GST No</label>
                                                         <input className="form-control" value={customer.gst_number} type="text" placeholder="Enter GST No" id="example-text-input" name="gst_number" onChange={ onChange }/>
                                                     </div>
 
@@ -489,7 +574,7 @@ return(
                                                     </div>
                                                     <div className="col-md-4">
                                                         <label className="required-field">Password</label>
-                                                        <input className="form-control" value={customer.password} type="password"  name="password" placeholder="Enter Password" onChange={ onChange }/>
+                                                        <input className="form-control" value={customer.password} type="text"  name="password" placeholder="Enter Password" onChange={ onChange }/>
                                                         <input className="form-control" value={pass} type="hidden"/>
                                                     </div>
 
@@ -550,7 +635,8 @@ return(
                                                         <label>Logo</label>
                                                         <input className="form-control" type="file" name="logo" onChange={ changeHandler }/>
                                                         <input className="form-control" type="hidden" value={customer.logo}/>
-                                                        {customer.logo !== null ? <img src={logo_path+customer.logo} width="70px" height="50px"/> : ''}
+                                                        {customer.logo !== null ? <div><img src={logo_path+customer.logo} width="70px" height="50px"/> &nbsp;&nbsp;
+                                                        <button className="form-control btn btn-danger btn-sm" style={{width:'20%'}} onClick={e => DeleteLogo(e)}><i className='fa fa-trash'></i>&nbsp;&nbsp;Delete</button></div> : ''}
 
                                                     </div>
 
@@ -575,10 +661,10 @@ return(
                                                                     <input value={address1.area} className="form-control" type="text" name="area" placeholder="Enter Area" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Pincode</label>
                                                                     <input value={address1.pincode} className="form-control" type="text" name="pincode" placeholder="Enter Pincode" onChange={ onChangeAddress1 }/><br/>
-                                                                    <label>Country</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select value={address1.country_id} className="form-select" id="country_id" name="country_id" onChange={ onChangeAddress1 } >
-                                                                    <option value="">Select Country</option>
-                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
+                                                                    <label>State</label>
+                                                                    <select value={address1.state_id} className="form-select" id="state_id" name="state_id" onChange={ onChangeAddress1 } >
+                                                                    <option value="">Select State</option>
+                                                                    { data1.map((option, key) => <option value={option.state_id} key={key} >{option.state_name}</option>) }</select><br/>
                                                                     <label>Account/Admin Contact No</label>
                                                                     <input value={address1.admin_contact} className="form-control" type="text" name="admin_contact" placeholder="Enter Account/Admin Contact No" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>Account/Admin E-mail</label>
@@ -589,10 +675,10 @@ return(
                                                                     <input value={address1.homestreet2} className="form-control" type="text" name="homestreet2" placeholder="Enter Home Street2" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>City</label>
                                                                     <input value={address1.city} className="form-control" type="text" name="city" placeholder="Enter City" onChange={ onChangeAddress1 }/><br/>
-                                                                    <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select value={address1.state_id} className="form-select" id="state_id" name="state_id" onChange={ onChangeAddress1 } >
-                                                                    <option value="">Select State</option>
-                                                                    { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
+                                                                    <label>Country</label>
+                                                                    <select value={address1.country_id} className="form-select" id="country_id" name="country_id" onChange={ onChangeAddress1 } onChange={fetchStates}>
+                                                                    <option value="">Select Country</option>
+                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select><br/>
                                                                     <label>LandLine</label>
                                                                     <input value={address1.landline} className="form-control" type="text" name="landline" placeholder="Enter Landline" onChange={ onChangeAddress1 }/><br/>
                                                                     <label>QC Contact No</label>
@@ -615,10 +701,10 @@ return(
                                                                     <input value={address2.area1} className="form-control" type="text" name="area1" placeholder="Enter Area" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>Pincode</label>
                                                                     <input value={address2.pincode1} className="form-control" type="text" name="pincode1" placeholder="Enter Pincode" onChange={ onChangeAddress2 }/><br/>
-                                                                    <label>Country</label>
-                                                                   {loading1 ? <LoadingSpinner /> :  <select value={address2.corr_country_id} className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChangeAddress2 } >
-                                                                    <option value="">Select Country</option>
-                                                                    { data.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select> } <br/>
+                                                                    <label>State</label>
+                                                                    <select value={address2.corr_state_id} className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChangeAddress2 }>
+                                                                    <option value="">Select State</option>
+                                                                    { data6.map((option, key) => <option value={option.state1_id} key={key} >{option.state_name1}</option>) }</select><br/>
                                                                     <label>QA Contact No</label>
                                                                     <input value={address2.qa_contact} className="form-control" type="text" name="qa_contact" placeholder="Enter QA Contact No" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>QA E-mail</label>
@@ -629,10 +715,10 @@ return(
                                                                     <input value={address2.street2} className="form-control" id="street2" type="text" name="street2" placeholder="Enter Street2" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>City</label>
                                                                     <input value={address2.city1} className="form-control" type="text" name="city1" placeholder="Enter City" onChange={ onChangeAddress2 }/><br/>
-                                                                    <label>State</label>
-                                                                    {loading1 ? <LoadingSpinner /> :  <select value={address2.corr_state_id} className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChangeAddress2 } >
-                                                                    <option value="">Select State</option>
-                                                                    { data1.map((option, key) => <option value={option.id} key={key} >{option.state_name}</option>) }</select> } <br/>
+                                                                    <label>Country</label>
+                                                                    <select value={address2.corr_country_id} className="form-select" id="corr_country_id" name="corr_country_id" onChange={ onChangeAddress2 } onChange={fetchCorStates}>
+                                                                    <option value="">Select Country</option>
+                                                                    { data5.map((option, key) => <option value={option.id} key={key} >{option.country_name}</option>) }</select><br/>
                                                                     <label>Website</label>
                                                                     <input value={address2.website} className="form-control" type="text" name="website" placeholder="Enter Website" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>QC E-mail</label>
@@ -655,10 +741,15 @@ return(
                                                     <div className="col-md-6">
                                                         <button name="copy_details" type="button" onClick={copy_data} className="btn btn-primary form-control">Copy Details</button>
                                                     </div>
-                                                    <div className="col-md-6 align-items-center">
+                                                    <div className="col-md-5 align-items-center">
                                                     {address2.other_pan_card_copy !== null ?
                                                         <a href={pancard_copy_path+address2.other_pan_card_copy} className="btn btn-primary form-control" target="_blank">Click To Open PanCard Copy</a>
                                                     : <span className="btn btn-primary form-control">No Pancard Copy Uploaded</span>}
+                                                    </div>
+                                                    <div className="col-md-1">
+                                                    {address2.other_pan_card_copy !== null ?
+                                                        <button className="form-control btn btn-danger btn-sm" style={{lineHeight:'29.5px'}} onClick={e => DeletePancard(e)}><i className='fa fa-trash'></i>&nbsp;&nbsp;Delete</button>
+                                                    : <span className="btn btn-primary form-control">No Pancard</span>}
                                                     </div>
                                                 </div>
                                             </div>
@@ -689,26 +780,26 @@ return(
                                               <div className="mb-3 row">
                                                 <div className="form-group">
                                                     <div className="row">
-                                                        {/*<div className="col-md-3">
+                                                        <div className="col-md-3">
                                                             <label>VAT No</label>
-                                                            <input className="form-control" type="text" placeholder="Enter VAT No" name="vat_no" onChange={ onChange }/>
-                                                        </div>  */}
+                                                            <input value={customer.company_vat_no} className="form-control" type="text" placeholder="Enter VAT No" name="company_vat_no" onChange={ onChange }/>
+                                                        </div>
 
-                                                        <div className="col-md-4">
+                                                        <div className="col-md-3">
                                                             <label>TIN No</label>
                                                             <input value={customer.company_tin_no} className="form-control" type="text" placeholder="Enter TIN No" name="company_tin_no" onChange={ onChange }/>
                                                         </div>
 
-                                                        <div className="col-md-4">
+                                                        <div className="col-md-2">
                                                             <label>Service Tax No</label>
                                                             <input value={customer.company_service_tax_no} className="form-control" type="text" name="company_service_tax_no" placeholder="Enter Service Tax No" onChange={ onChange }/>
                                                         </div>
-                                                        {/*<div className="col-md-2">
+                                                        <div className="col-md-2">
                                                             <label>CST No</label>
-                                                            <input className="form-control" type="text"  name="cst_no" placeholder="Enter CST No" onChange={ onChange }/>
-                                                        </div> */}
+                                                            <input value={customer.company_cst_no} className="form-control" type="text"  name="company_cst_no" placeholder="Enter CST No" onChange={ onChange }/>
+                                                        </div>
 
-                                                        <div className="col-md-4">
+                                                        <div className="col-md-2">
                                                             <label>Customer Discount</label>
                                                             <input value={customer.company_cust_discount} className="form-control" type="text"  name="company_cust_discount" placeholder="Enter Customer Discount" onChange={ onChange }/>
                                                         </div>
