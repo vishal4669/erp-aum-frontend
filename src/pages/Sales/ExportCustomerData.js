@@ -57,7 +57,7 @@ class ExportCustomerData extends Component {
               } else {
                 this.setState({ loading1: false });
                 // initialize jsPDF
-                const doc = new jsPDF();
+                const doc = new jsPDF('l', '', '','');
                 // define the columns we want and their titles
                 /*const tableColumn = ["SR No", "Name", "Contact Person", "Tally Alias Name", "Account/Admin Contact No.",
                 "QA Contact No.", "QC Contact No.", "Landline", "Account/Admin E-mail", "QC Email","QA E-mail",
@@ -87,7 +87,56 @@ class ExportCustomerData extends Component {
               doc.autoTable(tableColumn, tableRows, {
                  startY: 20
               });*/
-              doc.autoTable({ html: '#my-table' })
+              doc.autoTable({
+   html: '#my-table',
+   startY: 15,
+   styles: {
+fontSize: 16,
+overflow: 'linebreak',
+},
+margin: {left: 5, right: 5},
+showHead: 'everyPage',
+columnWidth: 'wrap',
+columnStyles:{
+  0: {
+    columnWidth: 14,
+  },
+  1: {
+    columnWidth: 52
+  },
+  2: {
+    columnWidth: 52
+  },
+  3: {
+    columnWidth: 40
+  },
+  4: {
+    columnWidth: 45
+  },
+  5: {
+    columnWidth: 43
+  },
+  6: {
+    columnWidth: 43
+  },
+},
+theme: 'grid',
+didParseCell: function (table) {
+
+          if (table.section === 'head') {
+            table.cell.styles.fillColor = '#5b73e8';
+            table.cell.styles.textColor = '#ffffff';
+            table.cell.styles.fontSize = '12';
+          }
+          if (table.section === 'body') {
+            table.cell.styles.textColor = '#000000';
+            table.cell.styles.fontSize = '12';
+          }
+       }
+ });
+              /*doc.autoTable({ html: '#my-table',tableWidth: 'wrap' },columnStyles: {
+      1: {columnWidth: 'auto'}
+    })*/
             //  autoTable(doc, { html: '#my-table',tableWidth:'auto',cellWidth:'auto' })
               doc.save(`CustomerData.pdf`);
                 // define an empty array of rows
@@ -114,7 +163,7 @@ render(){
                   <h3><center>Customer List</center></h3><br/>
 
                   <div className="table-responsive">
-        <Table border="1" stickyHeader aria-label="sticky table" style={{textAlign:'center',color:'black'}} id="my-table">
+        <Table border="1" stickyHeader aria-label="sticky table" style={{textAlign:'center',color:'black',width:'100%'}} id="my-table">
           <thead>
             <tr>
               <th>SR No</th>
@@ -124,13 +173,6 @@ render(){
               <th>Account/Admin Contact No.</th>
               <th>QA Contact No.</th>
               <th>QC Contact No.</th>
-              <th>Landline</th>
-              <th>Account/Admin E-mail</th>
-              <th>QC Email</th>
-              <th>QA E-mail</th>
-              <th>Corporate Address</th>
-              <th>Correspondence Address</th>
-              <th>GST No</th>
             </tr>
           </thead>
             <tbody>
@@ -144,13 +186,6 @@ render(){
                     <td>{post.home_contact_no.account_admin_contact_no}</td>
                     <td>{post.other_contact_no.qa_contact_no}</td>
                     <td>{post.home_contact_no.home_qc_contact_no}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
                   </tr>
                 })
               }

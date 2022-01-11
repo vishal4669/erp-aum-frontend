@@ -665,7 +665,7 @@ const Navbar = props => {
                     <Link to="" className="dropdown-item">
                       {props.t("Notification")}
                     </Link><br/>
-                    <Link to="" className="dropdown-item">
+                    <Link to="/method" className="dropdown-item">
                       {props.t("Method")}
                     </Link><br/>
 

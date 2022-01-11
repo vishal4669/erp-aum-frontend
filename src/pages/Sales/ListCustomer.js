@@ -129,13 +129,6 @@ this.deleteCustomer = async(customer_id) =>{
              "Account/Admin Contact No." : post.home_contact_no.account_admin_contact_no,
              "QA Contact No." : post.other_contact_no.qa_contact_no,
              "QC Contact No." : post.home_contact_no.home_qc_contact_no,
-             "Landline" : '',
-             "Account/Admin E-mail" : '',
-             "QC Email" : '',
-             "QA E-mail" : '',
-             "Corporate Address" : '',
-             "Correspondence Address" : '',
-             "GST No" : '',
             }))
          const sheet = XLSX.utils.json_to_sheet(customer_data);
          const workbook = XLSX.utils.book_new();
@@ -275,12 +268,12 @@ this.deleteCustomer = async(customer_id) =>{
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                     <li>
-                      <Link to="/add-customer" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Customer</Link>
+                      <Link to="/add-customer" color="primary" className="btn btn-primary btn-sm"><i className="fa fa-plus"></i>&nbsp;New Customer</Link>
                     </li>&nbsp;
                     <li>
 
                       { loading1 ? <LoadingSpinner /> :<div className="btn-group">
-                      <DropdownButton  title="Actions" drop="left">
+                      <DropdownButton title="Actions" drop="left" variant="primary btn-sm">
                         <DropdownItem onClick={this.print_customer_list}><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
                         <DropdownItem  onClick={this.ExportToExcel}><i class="fas fa-file-export"></i> &nbsp;Export To Excel </DropdownItem>
                         <DropdownItem><Link to="/export-customer-data/pdf" style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export To PDF</Link></DropdownItem>

@@ -142,7 +142,7 @@ const GetCustomerData=()=>{
 
         const fetchCountry = () => {
              {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
+           axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
             .then(response => {
                      setData(response.data.data);
                      {setLoading1(false)}

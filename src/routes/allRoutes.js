@@ -124,6 +124,11 @@ import ListFormula from "../pages/Analytics/ListFormula"
 import AddFormula from "../pages/Analytics/AddFormula"
 import EditFormula from "../pages/Analytics/EditFormula"
 
+//QA
+//Method
+import ListMethod from "../pages/QA/ListMethod"
+
+
 const userRoutes = [
 
 
@@ -261,6 +266,10 @@ const authRoutes = [
     { path: "/all-formula" ,component: ListFormula},
     { path: "/add-formula" ,component: AddFormula},
     { path: "/edit-formula" ,component: EditFormula},
+
+    //Method
+    { path: "/method" ,component: ListMethod},
+    { path: "/all-method" ,component: ListMethod},
 ]
 
 export { userRoutes, authRoutes }
