@@ -182,12 +182,6 @@ this.deleteCustomer = async(customer_id) =>{
               {
 
                 srno: this.state.count,
-                company_name: post.company_name,
-                contact_person_name: post.contact_person_name,
-                contact_type: post.contact_type,
-                tally_alias_name: post.tally_alias_name,
-                contact_no: post.contact_no,
-                is_active: is_active,
                 action : <div><Link className="btn btn-primary btn-sm" to={"/edit-customer/"+base64_encode(post.id)}>
                   <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
                   <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Customer Data?')){ this.deleteCustomer(post.id)}}}><i class="fas fa-trash-alt"></i></button>
@@ -195,7 +189,31 @@ this.deleteCustomer = async(customer_id) =>{
                   <i className="fa fa-eye"></i></Link></div>
 
                 ,
-
+                company_name: post.company_name,
+                contact_person_name: post.contact_person_name,
+                contact_type: post.contact_type,
+                tally_alias_name: post.tally_alias_name,
+                home_contact_no:post.home_contact_no,
+                other_contact_no:post.other_contact_no,
+                home_qc_contact_no:post.home_qc_contact_no,
+                home_landline:post.home_landline,
+                home_email:post.home_email,
+                other_qc_email:post.other_qc_email,
+                other_email:post.other_email,
+                corporate_address:
+                      post.home_street_1 +","+
+                      post.home_street_2 +","+
+                      post.home_city+","+
+                      post.home_state +","+
+                      post.home_country,
+                correspondence_address:
+                      post.other_street_1+","+
+                      post.other_street_2+","+
+                      post.other_city+","+
+                      post.other_state+","+
+                      post.other_country,
+                gst_number:post.gst_number,
+                is_active: is_active,
               }
 
             )
@@ -219,6 +237,10 @@ this.deleteCustomer = async(customer_id) =>{
                     field:'srno',
                   },
                   {
+                    label:'Action',
+                    field: 'action',
+                  },
+                  {
                     label:'Comapny Name',
                     field:'company_name',
                   },
@@ -235,16 +257,48 @@ this.deleteCustomer = async(customer_id) =>{
                     field:'tally_alias_name',
                   },
                   {
-                    label:'Contact No',
-                    field:'contact_no',
+                    label:'Account/Admin Contact No',
+                    field:'home_contact_no',
+                  },
+                  {
+                    label:'QA Contact No.',
+                    field:'other_contact_no',
+                  },
+                  {
+                    label:'QC Contact No.',
+                    field:'home_qc_contact_no',
+                  },
+                  {
+                    label:'Landline',
+                    field:'home_landline',
+                  },
+                  {
+                    label:'Account/Admin Email',
+                    field:'home_email',
+                  },
+                  {
+                    label:'QC Email',
+                    field:'other_qc_email',
+                  },
+                  {
+                    label:'QA Email',
+                    field:'other_email',
+                  },
+                  {
+                    label:'Corporate Address',
+                    field:'corporate_address',
+                  },
+                  {
+                    label:'Correspondence Address',
+                    field:'correspondence_address',
+                  },
+                  {
+                    label:'GST No',
+                    field:'gst_number',
                   },
                   {
                     label:'Status',
                     field:'is_active',
-                  },
-                  {
-                    label:'Action',
-                    field: 'action',
                   },
 
                 ],
@@ -287,7 +341,7 @@ this.deleteCustomer = async(customer_id) =>{
           <Row id="pdfdiv">
             <Col className="col-12">
               <Card>
-                <CardBody>
+                <CardBody className="btn-sm">
                   <div>
                   {/*<table className="table table-bordered table-striped dataTable">
                      <thead>
@@ -342,7 +396,7 @@ this.deleteCustomer = async(customer_id) =>{
                   </table>*/}
                   {loading ?  <center><LoadingSpinner /></center> :
 
-                      <MDBDataTable striped bordered data={data1} />
+                      <MDBDataTable striped responsive bordered data={data1} style={{whiteSpace:'nowrap',border:'1px solid #e4e5e5'}}/>
                      }
                     {/*<div>
                       <Pagination

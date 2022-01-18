@@ -391,7 +391,7 @@ import $ from 'jquery';
                 <Row id="bydefault_employee_list">
                   <Col className="col-12">
                     <Card>
-                      <CardBody>
+                      <CardBody className="btn-sm">
                         {loading ?  <center><LoadingSpinner /></center> :
                           <div><h4 style={{textAlign:'center'}}>Employee List</h4>
                           <MDBDataTable striped responsive bordered data={data1}
@@ -404,7 +404,7 @@ import $ from 'jquery';
                 <Row id="resigned_employee_list" style={{display:'none'}}>
                   <Col className="col-12">
                     <Card>
-                      <CardBody>
+                      <CardBody className="btn-sm">
                         {loading ?  <center><LoadingSpinner /></center> :
                           <div><h4 style={{textAlign:'center'}}>Resigned Users List</h4>
                           <MDBDataTable striped responsive bordered data={data2}

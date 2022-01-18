@@ -411,8 +411,6 @@ const editEmployee = (e)=>{
          const final_edu_detail = inputList;
          const final_emp_detail = employmentList;
 
-         console.log(final_edu_detail)
-
              /*final_edu_detail.forEach(function(edu,index){
 
                  var edu_degree = final_edu_detail[index].degree;
@@ -423,8 +421,6 @@ const editEmployee = (e)=>{
                  var edu_specialization = final_edu_detail[index].degreespecialization;
 
              })*/
-             console.log(employee.photo);
-             console.log(attachments.attach_photo);
         {setLoading(true)};
         const data = new FormData();
         var emp_username_auto = ''

@@ -74,9 +74,9 @@ useEffect(() => {
          fetchDepartment();
         }, []);
 
-        const fetchCountry = () => {
+        const fetchCountry =  async() => {
              {setLoading1(true)};
-           axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
+           await axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
             .then(response => {
                      setData(response.data.data);
                      {setLoading1(false)}
@@ -88,9 +88,9 @@ useEffect(() => {
               })
         }
 
-        const fetchCountry1 = () => {
+        const fetchCountry1 =  async () => {
              {setLoading1(true)};
-           axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
+           await axios.get(`${process.env.REACT_APP_BASE_APIURL}listCountries`,{headers})
             .then(response => {
                      setData5(response.data.data);
                      {setLoading1(false)}
@@ -102,12 +102,12 @@ useEffect(() => {
               })
         }
 
-        const fetchStates =  () => {
+        const fetchStates =  async() => {
             var country_id_fetch = document.getElementById('country_id').value;
             if(country_id_fetch !== null){
               setCustomer(prevState => ({ ...prevState, country_id: country_id_fetch}))
                {setLoading1(true)};
-               axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
+               await axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
               .then(response => {
                   const state_data = response.data.data[0].country_wise_states.map(d => ({
                       "state_id" : d.id,
@@ -119,12 +119,12 @@ useEffect(() => {
             }
         }
 
-        const fetchCorStates = () => {
+        const fetchCorStates =  async() => {
             var country_id_fetch2 = document.getElementById('corr_country_id').value;
             if(country_id_fetch2 !== null){
               setCustomer(prevState => ({ ...prevState, corr_country_id: country_id_fetch2}))
                {setLoading2(true)};
-               axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch2,{headers})
+               await axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch2,{headers})
               .then(response => {
                   const state_data = response.data.data[0].country_wise_states.map(d => ({
                       "state_id1" : d.id,
@@ -136,9 +136,9 @@ useEffect(() => {
             }
         }
 
-        const fetchPosition = () => {
+        const fetchPosition =  async() => {
              {setLoading1(true)};
-           axios.get(`${process.env.REACT_APP_BASE_APIURL}listPosition?is_dropdown=1`,{headers})
+           await axios.get(`${process.env.REACT_APP_BASE_APIURL}listPosition?is_dropdown=1`,{headers})
             .then(response => {
                      setData3(response.data.data);
                      {setLoading1(false)}
@@ -150,9 +150,9 @@ useEffect(() => {
               })
         }
 
-        const fetchDepartment = () => {
+        const fetchDepartment = async() => {
              {setLoading1(true)};
-           axios.get(`${process.env.REACT_APP_BASE_APIURL}listDepartment?is_dropdown=1`,{headers})
+           await axios.get(`${process.env.REACT_APP_BASE_APIURL}listDepartment?is_dropdown=1`,{headers})
             .then(response => {
                      setData4(response.data.data);
                      {setLoading1(false)}

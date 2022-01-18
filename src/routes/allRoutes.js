@@ -123,11 +123,17 @@ import EditInstrument from "../pages/Analytics/EditInstrument"
 import ListFormula from "../pages/Analytics/ListFormula"
 import AddFormula from "../pages/Analytics/AddFormula"
 import EditFormula from "../pages/Analytics/EditFormula"
-
+//Test
+//import ListTest from "../pages/QA/ListTest"
+//import AddTest from "../pages/QA/AddTest"
+//import EditTest from "../pages/QA/EditTest"
+//import ViewTest from "../pages/QA/ViewTest"
 //QA
 //Method
 import ListMethod from "../pages/QA/ListMethod"
-
+import AddMethod from "../pages/QA/AddMethod"
+import EditMethod from "../pages/QA/EditMethod"
+import ViewMethod from "../pages/QA/ViewMethod"
 
 const userRoutes = [
 
@@ -270,6 +276,9 @@ const authRoutes = [
     //Method
     { path: "/method" ,component: ListMethod},
     { path: "/all-method" ,component: ListMethod},
+    { path: "/add-method" ,component: AddMethod},
+    { path: "/edit-method" ,component: EditMethod},
+    { path: "/view-method" ,component: ViewMethod},
 ]
 
 export { userRoutes, authRoutes }

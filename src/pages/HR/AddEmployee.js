@@ -307,11 +307,11 @@ const InsertEmployee = (e)=>{
                 driving_license_number:employee.driving_license_number,
              },
         };*/
+
         const data = new FormData();
 
         var emp_username_auto = ''
         var emp_password_auto = ''
-        console.log(Math.random().toString(36).slice(2))
         if(employee.username == '' || employee.username == null){
           var last_date_year = moment(employee.birth_date).format('MM-DD-YYYY').toString().substr(-2)
           emp_username_auto = employee.first_name.toLowerCase()+last_date_year
