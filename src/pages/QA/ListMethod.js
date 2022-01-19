@@ -71,7 +71,7 @@ class ListMethod extends Component{
 
 this.deleteMethod = async(method_id) =>{
             this.setState({ loading: true }, () => {
-               axios.get(`${process.env.REACT_APP_BASE_APIURL}deleteMethod/`+method_id,{ headers: del_headers})
+              axios.get(`${process.env.REACT_APP_BASE_APIURL}deleteMethod/`+method_id,{ headers: del_headers})
               .then(response => {
                       if(response.data.success == true){
                         //need to refresh page after delete
@@ -88,9 +88,9 @@ this.deleteMethod = async(method_id) =>{
             })
  }
 
- this.ExportToExcel = () => {
+ this.ExportToExcel = async() => {
    this.setState({ loading1: true }, () => {
-   axios.get(`${process.env.REACT_APP_BASE_APIURL}listMethod`, { headers: headers})
+    axios.get(`${process.env.REACT_APP_BASE_APIURL}listMethod`, { headers: headers})
 
    .then(response => {
        if(response.data.success == true){
@@ -105,6 +105,7 @@ this.deleteMethod = async(method_id) =>{
          XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet 1');
          XLSX.writeFile(workbook, `MethodData.csv`);
          this.setState({loading1: false});
+         toastr.success("Method List Export To Excel Done Successfully.")
       }else{
         toastr.error(response.data.message);
         this.setState({loading1: false});

@@ -135,6 +135,7 @@ this.deleteCustomer = async(customer_id) =>{
          XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet 1');
          XLSX.writeFile(workbook, `CustomerData.csv`);
          this.setState({loading1: false});
+         toastr.success("Customer List Export To Excel Done Successfully.")
       }else{
         toastr.error(response.data.message);
         this.setState({loading1: false});

@@ -124,10 +124,10 @@ import ListFormula from "../pages/Analytics/ListFormula"
 import AddFormula from "../pages/Analytics/AddFormula"
 import EditFormula from "../pages/Analytics/EditFormula"
 //Test
-//import ListTest from "../pages/QA/ListTest"
-//import AddTest from "../pages/QA/AddTest"
-//import EditTest from "../pages/QA/EditTest"
-//import ViewTest from "../pages/QA/ViewTest"
+import ListTest from "../pages/Analytics/ListTest"
+import AddTest from "../pages/Analytics/AddTest"
+import EditTest from "../pages/Analytics/EditTest"
+import ViewTest from "../pages/Analytics/ViewTest"
 //QA
 //Method
 import ListMethod from "../pages/QA/ListMethod"
@@ -272,7 +272,12 @@ const authRoutes = [
     { path: "/all-formula" ,component: ListFormula},
     { path: "/add-formula" ,component: AddFormula},
     { path: "/edit-formula" ,component: EditFormula},
-
+    //Test
+    { path: "/test" ,component: ListTest},
+    { path: "/all-test" ,component: ListTest},
+    { path: "/add-test" ,component: AddTest},
+    { path: "/edit-test" ,component: EditTest},
+    { path: "/view-test" ,component: ViewTest},
     //Method
     { path: "/method" ,component: ListMethod},
     { path: "/all-method" ,component: ListMethod},

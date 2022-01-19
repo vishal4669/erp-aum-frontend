@@ -492,7 +492,8 @@ const handleInputChange = (e, index) => {
 };
 
 // handle click event of the Remove button
-const handleRemoveClick = index => {
+const handleRemoveClick = (e,index) => {
+  e.preventDefault();
   const list = [...inputList];
   list.splice(index, 1);
   setInputList(list);
@@ -853,7 +854,7 @@ return(
                                                             <label style={{ visibility:'hidden' }}>Delete</label><br/>
                                                             {inputList.length >= 1 && <button
                                                           className="mr10"
-                                                          onClick={() => handleRemoveClick(i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}
+                                                          onClick={(e) => handleRemoveClick(e,i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}
                                                         </div>
                                                     </div>
                                                 </div>

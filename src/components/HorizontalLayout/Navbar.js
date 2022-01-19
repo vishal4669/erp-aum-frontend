@@ -380,7 +380,7 @@ const Navbar = props => {
                       {props.t("Bookings")}
                     </Link><br/>
 
-                    <Link to="" className="dropdown-item">
+                    <Link to="/test" className="dropdown-item">
                       {props.t("Test")}
                     </Link><br/>
 

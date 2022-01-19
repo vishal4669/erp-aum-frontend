@@ -35,10 +35,10 @@ class ExportCustomerData extends Component {
         const url = window.location.href
         const split_url = url.split( '/' )
         const type = split_url[4]
-        this.componentDidMount= () => {
+        this.componentDidMount= async() => {
           //Html File Genration for Customer
           this.setState({ loading1: true }, () => {
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}exportCustomerData`, { headers: headers}).then(response => {
+           axios.get(`${process.env.REACT_APP_BASE_APIURL}exportCustomerData`, { headers: headers}).then(response => {
               this.setState({
 
                 CustomerData: response.data.data

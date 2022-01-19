@@ -99,9 +99,6 @@ const InsertMethod = (e)=>{
         data.append("file_4",method.file4 !== false ? method.file4: '');
         data.append("description",convertedText);
 
-        console.log(data)
-
-
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addMethod`, data, {headers} )
                 .then(response => {
                     if(response.data.success == true){
