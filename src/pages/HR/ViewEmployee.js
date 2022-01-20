@@ -101,15 +101,13 @@ function ViewEmployee (props) {
                   if(Array.isArray(response.data.data.employment) && response.data.data.employment.length){
                     setEmploymentList(response.data.data.employment);
                   } else {
-                    setEmploymentList([{ organisation: "", designation: "", emp_from_year: "", emp_to_year:"",
-                      annual_ctc: ""}]);
+                    setEmploymentList();
                   }
 
                   if(Array.isArray(response.data.data.education) && response.data.data.education.length){
                     setInputList(response.data.data.education);
                   } else {
-                    setInputList([{ degree: "", university: "", from_year: "", to_year:"",
-                      percentage_grade: "",specialization:"" }])
+                    setInputList();
                   }
 
                   setemployee(prevState => ({ ...prevState,
@@ -497,7 +495,8 @@ function ViewEmployee (props) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {inputList.map((x, i) => (
+                                {inputList && inputList.length ?
+                                  inputList.map((x, i) => (
                                   <React.Fragment key={x}>
                                   <tr>
                                     <td><input className="form-control" placeholder="Enter The Degree" type="text" name="degree" value={x.degree} readOnly/></td>
@@ -508,7 +507,8 @@ function ViewEmployee (props) {
                                     <td><input className="form-control" placeholder="Enter Specialization" type="text"  name="specialization" value={x.specialization} readOnly/></td>
                                   </tr>
                                   </React.Fragment>
-                                                  ))}
+                                                  ))
+                                  : <tr><td colspan="6" className="text-center"><b>No Educational Detail Available</b></td></tr> }
                                 </tbody>
                               </Table>
                           </div>
@@ -534,7 +534,9 @@ function ViewEmployee (props) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                {employmentList.map((x, i) => (
+                                {
+                                  employmentList && employmentList.length ?
+                                  employmentList.map((x, i) => (
                                   <React.Fragment key={x}>
                                   <tr>
                                     <td><input className="form-control" placeholder= "Enter Name of Organisation" type="text" name="organisation" value={x.organisation} readOnly/></td>
@@ -544,7 +546,8 @@ function ViewEmployee (props) {
                                     <td><input className="form-control" placeholder="Enter Annual CTC" type="text"  name="annual_ctc" value={x.annual_ctc} readOnly/></td>
                                   </tr>
                                   </React.Fragment>
-                                                  ))}
+                                                  ))
+                                                  : <tr><td colspan="5" className="text-center"><b>No Employment Detail Available</b></td></tr> }
                                 </tbody>
                               </Table>
                           </div>

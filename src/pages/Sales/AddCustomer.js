@@ -36,6 +36,7 @@ function AddCustomer(props) {
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
+  const [loading3, setLoading3] = useState(false);
   const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
   const [data3, setData3] = useState([]);
@@ -164,10 +165,10 @@ useEffect(() => {
               })
         }
 
-        const copy_data = () => {
-
+        const copy_data = async() => {
+          {setLoading3(true)};
           var country_id_fetch = document.getElementById("country_id").value;
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
+          await axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
           .then(response => {
           const state_data1 = response.data.data[0].country_wise_states.map(d => ({
               "state1_id" : d.id,
@@ -191,8 +192,8 @@ useEffect(() => {
         document.CustomerData.area1.value = copy_area;
         document.CustomerData.city1.value = copy_city;
         document.CustomerData.pincode1.value = copy_pincode;
-        document.CustomerData.corr_country_id.value = copy_country_id;
         document.CustomerData.corr_state_id.value = copy_state_id;
+        document.CustomerData.corr_country_id.value = copy_country_id;
         // set value
 
         customer.street = document.CustomerData.street.value;
@@ -200,11 +201,9 @@ useEffect(() => {
         customer.area1 = document.CustomerData.area1.value;
         customer.city1 = document.CustomerData.city1.value;
         customer.pincode1 = document.CustomerData.pincode1.value;
-        customer.corr_country_id = document.CustomerData.corr_country_id.value;
         customer.corr_state_id =  document.CustomerData.corr_state_id.value;
-
-
-        return
+        customer.corr_country_id = document.CustomerData.corr_country_id.value;
+        {setLoading3(false)};
        }
 
 
@@ -382,31 +381,6 @@ const InsertCustomer = (e)=>{
                        props.history.push('/customer');
                       toastr.success(response.data.message);
                       {setLoading(false)};
-
-                       /*const contact_details = {
-                         "customer_contact_person": contact_person_data,
-                         "customer_id" : response.data.data.id
-                       }
-
-
-   // if contact person not empty then otherwise not
-                       //console.log(contact_details)
-                       axios.post( `${process.env.REACT_APP_BASE_APIURL}addCustomerContactPerson`,
-                     contact_details, {headers} )
-                       .then(response => {
-                            if(response.data.success == true){
-                                props.history.push('/customer');
-                                toastr.success(response.data.message);
-                                {setLoading(false)};
-                              }
-                            else{
-                                props.history.push('/add-customer');
-                                toastr.error(response.data.message);
-                                {setLoading(false)};
-                            }
-                        })
-                       {setLoading(false)};
-                       //console.log(response.data.data.id);*/
                     }
                     else{
                         props.history.push('/add-customer');
@@ -657,9 +631,9 @@ return(
                                                                     <label>Pincode</label>
                                                                     <input className="form-control" type="text" name="pincode1" placeholder="Enter Pincode" onChange={ onChange }/><br/>
                                                                     <label>State</label>
-                                                                    <select className="form-select" id="corr_state_id" name="corr_state_id" onChange={ onChange } >
+                                                                    <select className="form-select" id="corr_state_id" name="corr_state_id" value={customer.corr_state_id} onChange={ onChange } >
                                                                     <option value="">Select State</option>
-                                                                    { data6.map((option, key) => <option value={option.state_id1} key={key} >{option.state_name1}</option>) }</select><br/>
+                                                                    { data6.map((option, key) => <option value={option.state1_id} key={key} >{option.state_name1}</option>) }</select><br/>
                                                                     <label>QA Contact No</label>
                                                                     <input className="form-control" type="text" name="qa_contact" placeholder="Enter QA Contact No" onChange={ onChange }/><br/>
                                                                     <label>QA E-mail</label>
@@ -692,7 +666,7 @@ return(
                                             <div className="form-group">
                                                 <div className="row">
                                                     <div className="col-md-6">
-                                                        <button name="copy_details" type="button" onClick={copy_data} className="btn btn-primary form-control">Copy Details</button>
+                                                        { loading3 ? <center><LoadingSpinner /></center> : <button name="copy_details" type="button" onClick={copy_data} className="btn btn-primary form-control">Copy Details</button>}
                                                     </div>
                                                 </div>
                                             </div>

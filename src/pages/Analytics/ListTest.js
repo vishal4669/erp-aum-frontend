@@ -138,9 +138,9 @@ class ListTest extends Component {
               rate : post.price,
               action : <div><Link className="btn btn-primary btn-sm" to={"/edit-test/"+base64_encode(post.id)}>
               <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
-              <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Test?')){ this.deleteTest(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-              &nbsp;&nbsp;
               <Link className="btn btn-info btn-sm" to={"/view-test/"+base64_encode(post.id)}> <i className="fa fa-eye"></i></Link>
+              &nbsp;&nbsp;
+                <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Test?')){ this.deleteTest(post.id)}}}><i class="fas fa-trash-alt"></i></button>
               </div>
               ,
 

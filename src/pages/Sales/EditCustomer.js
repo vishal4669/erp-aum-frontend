@@ -44,6 +44,7 @@ function EditCustomer(props) {
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
+  const [loading3, setLoading3] = useState(false);
   const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
   const [data3, setData3] = useState([]);
@@ -109,10 +110,12 @@ const GetCustomerData=async()=>{
                   var fetch_country_id2 = response.data.data.contact_info[1].corr_country_id ?
                   response.data.data.contact_info[1].corr_country_id : '';
 
+
                   if(fetch_country_id !== null || fetch_country_id !== 0){
+
                     axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+fetch_country_id,{headers})
                     .then(response => {
-                      if(response.success_status == "true"){
+                      if(response.data.success == true){
                         const state_data = response.data.data[0].country_wise_states.map(d => ({
                             "state_id" : d.id,
                             "state_name" : d.state_name,
@@ -123,9 +126,10 @@ const GetCustomerData=async()=>{
                   }
 
                   if(fetch_country_id2 !== null || fetch_country_id2 !== 0){
+
                       axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+fetch_country_id2,{headers})
                       .then(response => {
-                      if(response.success_status == "true"){
+                      if(response.data.success == true){
                           const state_data1 = response.data.data[0].country_wise_states.map(d => ({
                               "state1_id" : d.id,
                               "state_name1" : d.state_name,
@@ -240,16 +244,18 @@ const GetCustomerData=async()=>{
            setCustomerAddress2(prevState => ({ ...prevState, pancard_copy: null,other_pan_card_copy:null}))
           }
 
-       const copy_data = () => {
+       const copy_data = async() => {
+         {setLoading3(true)};
         var country_id_fetch = document.getElementById("country_id").value;
-        axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
+        await axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+country_id_fetch,{headers})
         .then(response => {
         const state_data1 = response.data.data[0].country_wise_states.map(d => ({
             "state1_id" : d.id,
             "state_name1" : d.state_name,
           }))
             setData6(state_data1);
-            setCustomerAddress2(prevState =>({...prevState,corr_state_id:document.getElementById("state_id").value}))
+            setCustomerAddress2(prevState =>({...prevState,corr_country_id:document.getElementById("country_id").value,
+            corr_state_id:document.getElementById("state_id").value,area1:customer.area}))
         })
 
         const copy_street1 = address1.homestreet;
@@ -279,6 +285,7 @@ const GetCustomerData=async()=>{
         address2.pincode1 = document.CustomerData.pincode1.value;
         address2.corr_state_id = document.CustomerData.corr_state_id.value;
         address2.corr_country_id = document.CustomerData.corr_country_id.value;
+        {setLoading3(false)};
        }
 
 
@@ -286,7 +293,8 @@ const EditCustomer = (e)=>{
          e.preventDefault();
        //const contact_person_data = inputList;
         {setLoading(true)};
-
+      //  console.log(address2.street)
+      //  return
         if(address1.state_id !== '' && address1.country_id == null){
           toastr.error("Home Details Country Field is Required.");
           {setLoading(false)};
@@ -439,6 +447,10 @@ const EditCustomer = (e)=>{
         var contact_person_data = JSON.stringify(object);
 
         data1.append('contact_person_data', contact_person_data);
+
+      /*  for (var pair of data.entries()) {
+            console.log(pair[0]+ ', ' + pair[1]);
+        }*/
 
         axios.post( `${process.env.REACT_APP_BASE_APIURL}editCustomer/`+customer_id, data1, {headers} )
                 .then(response => {
@@ -744,7 +756,7 @@ return(
                                             <div className="form-group">
                                                 <div className="row">
                                                     <div className="col-md-6">
-                                                        <button name="copy_details" type="button" onClick={copy_data} className="btn btn-primary form-control">Copy Details</button>
+                                                          { loading3 ? <center><LoadingSpinner /></center> : <button name="copy_details" type="button" onClick={copy_data} className="btn btn-primary form-control">Copy Details</button>}
                                                     </div>
                                                     <div className="col-md-5 align-items-center">
                                                     {address2.other_pan_card_copy !== null ?

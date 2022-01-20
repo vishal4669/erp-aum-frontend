@@ -25,7 +25,6 @@ import LoadingSpinner from '../../components/LoadingSpinner';
 import { ToastContainer} from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
-import moment from 'moment'
 import ReactQuill from "react-quill"
 import 'react-quill/dist/quill.snow.css'
 import EditorToolbar, { modules, formats } from "../../components/Common/EditorToolbar";
@@ -57,7 +56,7 @@ useEffect(() => {
 
         const fetchParent = async() => {
           {setLoading(true)};
-           await axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest`,{headers})
+           await axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest?is_test_parent=1`,{headers})
             .then(response => {
                      setData(response.data.data);
                      {setLoading(false)};
@@ -118,8 +117,6 @@ const InsertTest = (e)=>{
           test_procedure:convertedText,
           "test_parameter": parameter_list_data,
         }
-        console.log(data);
-        //return;
          axios.post( `${process.env.REACT_APP_BASE_APIURL}addTest`, data, {headers} )
                 .then(response => {
                     if(response.data.success == true){

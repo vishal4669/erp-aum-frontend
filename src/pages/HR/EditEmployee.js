@@ -124,9 +124,9 @@ function EditEmployee (props) {
          fetchReportingAuthority();
         }, []);
 
-        const EmployeeData=()=>{
+        const EmployeeData=async ()=>{
         {setLoading1(true)}
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}getEmployee/`+employee_id,{headers})
+          await axios.get(`${process.env.REACT_APP_BASE_APIURL}getEmployee/`+employee_id,{headers})
               .then(response => {
                 setAttachments({
                  attach_photo:response.data.data.photo !== null ? response.data.data.photo : '',
