@@ -43,7 +43,9 @@ function EditTest(props) {
   const [data, setData] = useState([]);
 
   const [data3, setData3] = useState([]);
+  const [fordata3, setForData3] = useState([]);
   const [data4, setData4] = useState([]);
+  const [fordata4, setForData4] = useState([]);
 
   const [test, setTest] = useState({ procedure_name:'',price:'',test_code:'',test_category:'',parent_id:''});
   const [inputList, setInputList]  = useState([{ test_by_pass: "2", test_parameter_name: "",
@@ -56,6 +58,27 @@ useEffect(() => {
          fetchUnit();
          testData();
         }, []);
+
+
+      const fetchFormula = async() => {
+                  {setLoading(true)};
+                   await axios.get(`${process.env.REACT_APP_BASE_APIURL}listFormula?is_dropdown=1`,{headers})
+                    .then(response => {
+
+                        setForData3(response.data.data)
+                             {setLoading(false)};
+
+                       })
+                }
+
+                const fetchUnit = async() => {
+                  {setLoading(true)};
+                   await axios.get(`${process.env.REACT_APP_BASE_APIURL}listUnit?is_dropdown=1`,{headers})
+                    .then(response => {
+                        setForData4(response.data.data)
+                        {setLoading(false)};
+                       })
+                }
 
         const testData = async() => {
           {setLoading(true)};
@@ -71,34 +94,26 @@ useEffect(() => {
                    setConvertedText(response.data.data[0].test_procedure)
                    if(Array.isArray(response.data.data[0].parameters) && response.data.data[0].parameters.length){
                      setInputList(response.data.data[0].parameters);
-                   }
-                   {setLoading(false)};
+                     var formula_data = response.data.data[0].parameters.map(d =>
+                       d.formula_dropdown.map(formula =>formula)
+                     )
+                       setData3(formula_data)
+
+                       var unit_data = response.data.data[0].parameters.map(d =>
+                         d.unit_dropdown.map(unit =>unit)
+                       )
+                         setData4(unit_data)
+
+                       {setLoading(false)};
+                  }
              })
         }
 
         const fetchParent = async() => {
           {setLoading(true)};
-           await axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest?is_test_parent=1`,{headers})
+           await axios.get(`${process.env.REACT_APP_BASE_APIURL}getTest/`+test_id,{headers})
             .then(response => {
-                     setData(response.data.data);
-                     {setLoading(false)};
-               })
-        }
-
-        const fetchFormula = async() => {
-          {setLoading(true)};
-           await axios.get(`${process.env.REACT_APP_BASE_APIURL}listFormula?is_dropdown=1`,{headers})
-            .then(response => {
-                     setData3(response.data.data);
-                     {setLoading(false)};
-               })
-        }
-
-        const fetchUnit = async() => {
-          {setLoading(true)};
-           await axios.get(`${process.env.REACT_APP_BASE_APIURL}listUnit?is_dropdown=1`,{headers})
-            .then(response => {
-                     setData4(response.data.data);
+                     setData(response.data.data[0].parent_dropdown);
                      {setLoading(false)};
                })
         }
@@ -125,7 +140,7 @@ useEffect(() => {
         };
 
 
-const InsertTest = (e)=>{
+const UpdateTest = async(e)=>{
          e.preventDefault();
         {setLoading1(true)};
         const parameter_list_data = inputList;
@@ -139,7 +154,7 @@ const InsertTest = (e)=>{
           test_procedure:convertedText,
           "test_parameter": parameter_list_data,
         }
-         axios.post( `${process.env.REACT_APP_BASE_APIURL}addTest`, data, {headers} )
+         await axios.post( `${process.env.REACT_APP_BASE_APIURL}editTest/`+test_id, data, {headers} )
                 .then(response => {
                     if(response.data.success == true){
 
@@ -148,7 +163,7 @@ const InsertTest = (e)=>{
                       {setLoading1(false)};
                     }
                     else{
-                        props.history.push('/add-test');
+                        props.history.push('/edit-test/'+edit_test_id);
                         toastr.error(response.data.message);
                         {setLoading1(false)};
                     }
@@ -172,7 +187,7 @@ return(
 
                 <div className="page-content">
                     <div className="container-fluid">
-                     <Form onSubmit={InsertTest} method="POST" id="AddTest">
+                     <Form onSubmit={UpdateTest} method="POST" id="AddTest">
                         <div className="row">
                             <div className="col-12">
                                 <div className="page-title-box d-flex align-items-center justify-content-between">
@@ -284,7 +299,7 @@ return(
                                                        </tr>
                                                    </thead>
                                                    <tbody>
-                                                   {inputList.map((x, i) => (
+                                                   {loading ? <LoadingSpinner /> : inputList.map((x, i) => (
                                                      <React.Fragment key={x}>
                                                      <tr>
                                                        <td>
@@ -296,21 +311,39 @@ return(
                                                        <td><input className="form-control" type="text" placeholder="Enter Parameter Name" value={x.test_parameter_name} name="test_parameter_name" onChange={e => handleInputChange(e, i)}/></td>
                                                        <td><input className="form-control" type="text" placeholder="Enter Alfa" value={x.test_alpha} name="test_alpha" onChange={e => handleInputChange(e, i)}/></td>
                                                        <td>
-                                                         { loading ? <LoadingSpinner /> :
-                                                           <select name="formula" className="form-select" onChange={e => handleInputChange(e, i)} value={x.formula}>
-                                                              <option value="">Select Formula</option>
-                                                              { data3.map((option, key) => <option value={option.id} key={key} >{option.formula_name}</option>) }
-                                                           </select>
-                                                         }
+
+                                                      {loading ? <LoadingSpinner /> :
+                                                                <select name="formula" className="form-select" onChange={e => handleInputChange(e, i)} value={x.formula}>
+                                                                   <option value="">Select Formula</option>
+                                                                   { data3[i] ?
+                                                                   (data3[i].map((option,key) =>
+                                                                     <option value={option.id} key={key} >{option.formula_name}</option>
+                                                                   )) :  (fordata3.map((option,key) =>
+                                                                      <option value={option.id} key={key} >{option.formula_name}</option>
+                                                                    ))}
+                                                                </select>
+                                                              }
                                                        </td>
                                                        <td><input className="form-control" type="text" placeholder="Enter Type" value={x.type} name="type" onChange={e => handleInputChange(e, i)}/></td>
                                                        <td>
-                                                         { loading ? <LoadingSpinner /> :
+                                                       {loading ? <LoadingSpinner /> :
+                                                         <select name="unit" className="form-select" onChange={e => handleInputChange(e, i)} value={x.unit}>
+                                                            <option value="">Select Unit</option>
+                                                                    { data4[i] ?
+                                                                    (data4[i].map((option,key) =>
+                                                                      <option value={option.id} key={key} >{option.unit_name}</option>
+                                                                    )) :  (fordata4.map((option,key) =>
+                                                                       <option value={option.id} key={key} >{option.unit_name}</option>
+                                                                     ))}
+                                                                 </select>
+                                                               }
+
+                                                        {/* { loading ? <LoadingSpinner /> :
                                                            <select name="unit" className="form-select" onChange={e => handleInputChange(e, i)} value={x.unit}>
                                                               <option value="">Select Unit</option>
-                                                              { data4.map((option, key) => <option value={option.id} key={key} >{option.unit_name}</option>) }
+                                                              {x.unit_dropdown.map((option, key) => <option value={option.id} key={key} >{option.unit_name}</option>) }
                                                            </select>
-                                                         }
+                                                         }*/}
                                                        </td>
                                                        <td>
                                                          <select className="form-select" name="value" value={x.value} onChange={e => handleInputChange(e, i)}>
@@ -324,7 +357,7 @@ return(
                                                                          onClick={e => handleRemoveClick(e,i)} className="btn btn-danger"><i class="fa fa-trash"></i></button> : ''}</td>
                                                      </tr>
                                                      </React.Fragment>
-                                                                     ))}
+                                                   ))}
                                                    </tbody>
                                                  </Table>
                                              </div>

@@ -88,14 +88,15 @@ useEffect(() => {
         }, []);
 
         const fetchPharmacopeia =  async() => {
-           await axios.get(`${process.env.REACT_APP_BASE_APIURL}listPharmacopeia?is_dropdown=1`,{headers})
+           await axios.get(`${process.env.REACT_APP_BASE_APIURL}getMethod/`+method_id,{headers})
             .then(response => {
-                     setData(response.data.data);
+                     setData(response.data.data[0].pharmacopeia_dropdown);
+                                    console.log(response.data.data[0].pharmacopeia_dropdown)
                })
         }
 
         const getMethod =  async() => {
-           {setLoading1(true)}; 
+           {setLoading1(true)};
            await axios.get(`${process.env.REACT_APP_BASE_APIURL}getMethod/`+method_id,{headers})
             .then(response => {
                         setMethod({
@@ -329,7 +330,7 @@ return(
                                                                      </div>
                                                                   </div>
                                                                 </div>
-                                                        : ''}  
+                                                        : ''}
                                                    </div>
 
 
@@ -349,7 +350,7 @@ return(
                                                                      </div>
                                                                   </div>
                                                                 </div>
-                                                        : ''} 
+                                                        : ''}
                                                    </div>
 
                                                    <div className="col-md-3">
@@ -368,7 +369,7 @@ return(
                                                                      </div>
                                                                   </div>
                                                                 </div>
-                                                        : ''} 
+                                                        : ''}
                                                    </div>
                                                </div>
                                            </div>
