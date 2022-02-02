@@ -16,7 +16,7 @@ import 'toastr/build/toastr.min.css'
 import {decode as base64_decode, encode as base64_encode} from 'base-64';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import axios from 'axios'
-import Moment from 'moment';
+import moment from 'moment';
 import Pagination from "react-js-pagination";
 import * as XLSX from 'xlsx';
 
@@ -75,7 +75,6 @@ class ListProduct extends Component{
        .then(data => {
 
           // if (err) throw err;
-
           this.setState({ posts: data })
           this.setState({loading: false});
 
@@ -84,6 +83,15 @@ class ListProduct extends Component{
        .then(async() => {
 
           this.setState({ tableRows:this.assemblePosts()})
+        /*  const tableCard = document.getElementById('productData');
+         const rows = tableCard.querySelectorAll('tr');
+
+         rows.forEach((row) => {
+           const val = parseInt(row.children[6].textContent);
+             row.children[6].style.autoWidth = 'false';
+             row.children[6].style.width = '600px';
+             row.children[6].style.whiteSpace = 'wrap';
+           })*/
           this.setState({loading: false});
 
        }).catch(error => {
@@ -182,28 +190,29 @@ this.ExportToExcel = () => {
               this.setState({
         count: this.state.count + 1
       });
-
-      let generic_product = post.generic ? post.generic.product_name : '';
-      let is_generic_data = post.is_generic ? ("Generic") : ("Non Generic");
             return (
 
               {
 
                 srno: this.state.count,
-                pharmacopeia_name: post.pharmacopeia.pharmacopeia_name,
-                product_name: post.product_name,
-                product_generic: post.product_generic,
-                marker_specification: post.marker_specification,
-                generic_product_name: generic_product,
-                is_generic: is_generic_data,
                 action : <div><Link className="btn btn-primary btn-sm" to={"/edit-product/"+base64_encode(post.id)}>
-                  <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
+                  <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-product/"+base64_encode(post.id)}>
+                  <i className="fa fa-eye"></i></Link>&nbsp;&nbsp;
                   <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Product Data?')){ this.deleteProduct(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-                  &nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-product/"+base64_encode(post.id)}>
-                  <i className="fa fa-eye"></i></Link></div>
+                  </div>
 
                 ,
-
+                pharmacopeia_name: post.pharmacopeia_name,
+                product_name: post.product_name,
+                product_generic: post.product_generic,
+                generic_product_name: post.generic_product_name,
+                packing_detail : post.packing_detail ? post.packing_detail.length >50 ? (post.packing_detail.substring(0,50)+'...') :post.packing_detail : '',
+                sample_description : post.sample_description ? post.sample_description.length >50 ? (post.sample_description.substring(0,50)+'...') :post.sample_description : '',
+                marker_specification: post.marker_specification,
+                entered_by: post.entered_by,
+                created_at: post.created_at ? moment(post.created_at).format('DD-MM-YYYY hh:mm:ss') : '',
+                modified_by: post.modified_by,
+                updated_at: post.updated_at ? moment(post.updated_at).format('DD-MM-YYYY hh:mm:ss') : '',
               }
 
             )
@@ -227,6 +236,10 @@ this.ExportToExcel = () => {
                     field:'srno',
                   },
                   {
+                    label:'Action',
+                    field: 'action',
+                  },
+                  {
                     label:'Pharmacopiea',
                     field:'pharmacopeia_name',
                   },
@@ -239,22 +252,40 @@ this.ExportToExcel = () => {
                     field:'product_generic',
                   },
                   {
-                    label:'Marker Specifiction',
-                    field:'marker_specification',
-                  },
-                  {
                     label:'Generic Name',
                     field:'generic_product_name',
                   },
                   {
-                    label:'Is Generic',
-                    field:'is_generic',
+                    label:'Sample Description',
+                    field:'sample_description',
                   },
                   {
-                    label:'Action',
-                    field: 'action',
+                    label:'Packaging Detail',
+                    field:'packing_detail',
+                  },
+                  {
+                    label:'Marker Specifiction',
+                    field:'marker_specification',
+                  },
+                  {
+                    label:'Enter By',
+                    field:'entered_by',
                   },
 
+                  {
+                    label:'Enter Datetime',
+                    field:'created_at',
+                  },
+
+                  {
+                    label:'Modified By',
+                    field:'modified_by',
+                  },
+
+                  {
+                    label:'Modified Datetime',
+                    field:'updated_at',
+                  },
                 ],
                 rows:this.state.tableRows,
 
@@ -278,12 +309,12 @@ this.ExportToExcel = () => {
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                     <li>
-                      <Link to="/add-product" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Product</Link>
+                      <Link to="/add-product" color="primary" className="btn btn-primary btn-sm"><i className="fa fa-plus"></i>&nbsp;New Product</Link>
                     </li>&nbsp;
                    {loading1 ?  <center><LoadingSpinner /></center> :
                     <li>
                         <div className="btn-group">
-                          <DropdownButton  title="Actions" drop="left">
+                          <DropdownButton  title="Actions" drop="left" variant="primary btn-sm">
                             <DropdownItem onClick={this.printProduct}><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
                             <DropdownItem onClick={this.ExportToExcel}><i class="fas fa-file-export"></i> &nbsp;Export to Excel</DropdownItem>
                             <DropdownItem><Link to="/export-product-data" style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export To PDF</Link></DropdownItem>
@@ -354,7 +385,8 @@ this.ExportToExcel = () => {
                      </tfoot>
                   </table>*/}
                   {loading ?  <center><LoadingSpinner /></center> :
-                    <MDBDataTable striped bordered data={data1} />
+                    <MDBDataTable striped responsive bordered data={data1}
+                    style={{whiteSpace:'nowrap',border:'1px solid #e4e5e5'}} id="productData"/>
                      }
                     {/*<div>
                       <Pagination

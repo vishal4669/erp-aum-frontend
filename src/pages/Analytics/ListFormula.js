@@ -101,10 +101,10 @@ class ListFormula extends React.Component {
 
     this.ExportToPDF = () => {
       this.setState({loading1: true}, () => {
-        const doc = new jsPDF();
+      var doc = new jsPDF();
         const tableColumn = ["SR NO", "Formula Name", "Formula Type"];
         const tableRows = [];
-
+      var blob = doc.output('blob');
         axios.get(`${process.env.REACT_APP_BASE_APIURL}exportFormula`,{headers:headers})
           .then(response => {
             if(response.data.success == true){
@@ -122,7 +122,6 @@ class ListFormula extends React.Component {
                 tableRows.push(formulaData);
               });
                 doc.autoTable(tableColumn, tableRows, { startY: 20 });
-                console.log(doc)
                 doc.save(`FormulaData.pdf`);
                 this.setState({loading1 : false});
                 toastr.success("Formula Data is Exported successfully in PDF Format")
@@ -222,9 +221,9 @@ class ListFormula extends React.Component {
             {
 
                 label:'Type',
-  
+
                 field:'type',
-  
+
               },
 
             {

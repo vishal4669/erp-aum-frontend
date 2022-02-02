@@ -66,9 +66,9 @@ function EditProduct(props)  {
         {setLoading1(true)}
           axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/`+product_id,{headers})
               .then(response => {
-                  const samples_data = response.data.data.samples.map(d => ({
+                  const samples_data = response.data.data.samples[0].map(d => ({
                         "by_pass" : d.by_pass,
-                        "parent" : d.parent.id,
+                        "parent" : d.id,
                         "parameter_name" : d.mst_sample_parameter_id,
                         "label_claim" :d.label_claim,
                         "min_limit" : d.min_limit,
@@ -81,8 +81,8 @@ function EditProduct(props)  {
                         "formula" : d.formula
 
                       }))
-                 setProduct(response.data.data);
-                 const options = response.data.data.generic_dropdown.map(d => ({
+                 setProduct(response.data.data[0]);
+                 const options = response.data.data[0].generic_dropdown.map(d => ({
                     "value" : d.id,
                     "label" : d.product_name
                   }))

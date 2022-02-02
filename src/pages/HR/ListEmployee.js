@@ -129,15 +129,6 @@ import $ from 'jquery';
       this.assemblePosts= () => {
 
         let posts = this.state.posts.map((post) => {
-
-         /* if(post.company[0].position_title !== null || post.company[0].position_title !== ''){
-
-              console.log(post.company[0].position_title)
-          }
-          else{
-
-            console.log("No Position")
-          }*/
           this.setState({
             count: this.state.count + 1
           });

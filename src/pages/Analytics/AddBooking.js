@@ -453,6 +453,7 @@ function AddBooking(props) {
         }))*/
         setData3(response.data.data);
         { setLoading1(false) }
+                console.log(data3)
       })
       .catch((error) => {
         toastr.error(error.response.data.message);

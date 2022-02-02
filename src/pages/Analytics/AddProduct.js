@@ -37,16 +37,19 @@ function AddProduct(props)  {
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
+  const [loading3, setLoading3] = useState(false);
   const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
   const [data2, setData2] = useState([]);
   const [data3, setData3] = useState([]);
+  const [data4, setData4] = useState([]);
+  const [data5, setData5] = useState([]);
   const [product, setProduct] = useState({product_name:'',product_generic:'Finished Product',marker_specification:'',
-    pharmocopiea: '',is_generic:'0',packing_detail:'',sample_description:'',hsn_code:'' });
+    pharmocopiea: '',packing_detail:'',sample_description:'',hsn_code:'',generic_name:'' });
   const [inputList, setInputList]  = useState([{ by_pass: "2", parent:"",
-    parameter_name: "", label_claim:"", min_limit: "", max_limit: "",amount: "", method: "", description: "",
+    mst_sample_parameter_id: "", label_claim:"", min_limit: "", max_limit: "",amount: "", method: "", description: "",
     division: "", nabl: "", formula: ""}]);
-  const[genericProduct,setGenericProduct] = useState({generic_name:''})
+  //const[genericProduct,setGenericProduct] = useState({generic_name:''})
 
 
   useEffect(() => {
@@ -54,30 +57,32 @@ function AddProduct(props)  {
          fetchGenericProduct();
          fetchparentList();
          fetchparamsList();
+         fetchMethodList();
+         fetchFormulaList();
         }, []);
 
- const fetchPharamcopiea = () => {
-             {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}listPharmacopeia?is_dropdown=1`,{headers})
+ const fetchPharamcopiea = async() => {
+             {setLoading3(true)};
+          await axios.get(`${process.env.REACT_APP_BASE_APIURL}listPharmacopeia?is_dropdown=1`,{headers})
             .then(response => {
                      setData(response.data.data);
-                     {setLoading1(false)}
+                     {setLoading3(false)}
                })
               .catch((error) => {
                   toastr.error(error.response.data.message);
 
-                   {setLoading1(false)}
+                   {setLoading3(false)}
               })
         }
-const fetchGenericProduct = () => {
+const fetchGenericProduct = async() => {
              {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_generic=1`,{headers})
+          await axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_generic=1`,{headers})
             .then(response => {
-                     const options = response.data.data.map(d => ({
-                        "value" : d.id,
-                        "label" : d.product_name
-                     }))
-                     setData1(options);
+                     /*const options = response.data.data.map(d => ({
+                        "value" : d.generic_product_name,
+                        "label" : d.generic_product_name
+                     }))*/
+                     setData1(response.data.data);
                      {setLoading1(false)}
                })
               .catch((error) => {
@@ -86,9 +91,9 @@ const fetchGenericProduct = () => {
               })
         }
 
-const fetchparentList = () => {
+const fetchparentList = async() => {
              {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}parentList`,{headers})
+          await axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest?is_parent=1`,{headers})
             .then(response => {
                      setData2(response.data.data);
                      {setLoading1(false)}
@@ -99,11 +104,15 @@ const fetchparentList = () => {
               })
         }
 
-const fetchparamsList = () => {
+const fetchparamsList = async() => {
              {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest?is_dropdown=1`,{headers})
+          await axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest?is_parameter=1`,{headers})
             .then(response => {
-                     setData3(response.data.data);
+              const options1 = response.data.data.map(d => ({
+                 "value" : d.id,
+                 "label" : d.procedure_name,
+              }))
+                     setData3(options1);
                      {setLoading1(false)}
                })
               .catch((error) => {
@@ -112,42 +121,83 @@ const fetchparamsList = () => {
               })
         }
 
+const fetchMethodList = async() => {
+        {setLoading1(true)};
+    await axios.get(`${process.env.REACT_APP_BASE_APIURL}listMethod?is_dropdown=1`,{headers})
+      .then(response => {
+                setData4(response.data.data);
+                {setLoading1(false)}
+          })
+        .catch((error) => {
+            toastr.error(error.response.data.message);
+              {setLoading1(false)}
+        })
+}
+
+const fetchMethodListonChange = async(e) => {
+  if(document.getElementById("pharmocopiea").value !== null){
+    var pharmacopeia_id = document.getElementById("pharmocopiea").value;
+  } else {
+    var pharmacopeia_id = '';
+  }
+  setProduct(prevState => ({...prevState,pharmocopiea: pharmacopeia_id}))
+  await axios.get(`${process.env.REACT_APP_BASE_APIURL}methodDropdown?pharmacopiea_id=`+pharmacopeia_id,{headers})
+    .then(response => {
+              setData4(response.data.data);
+              {setLoading1(false)}
+        })
+      .catch((error) => {
+          toastr.error(error.response.data.message);
+            {setLoading1(false)}
+      })
+}
+
+const fetchFormulaList = () => {
+        {setLoading1(true)};
+    axios.get(`${process.env.REACT_APP_BASE_APIURL}listFormula?is_dropdown=1`,{headers})
+      .then(response => {
+                setData5(response.data.data);
+                {setLoading1(false)}
+          })
+        .catch((error) => {
+            toastr.error(error.response.data.message);
+              {setLoading1(false)}
+        })
+}
+
 const copyFormGeneric = () => {
 
-          var final_generic_product_id = genericProduct;
-          console.log(genericProduct)
+        /* var final_generic_product = product.generic_name;
          if(typeof genericProduct == "number"){
-           final_generic_product_id = genericProduct.generic_name
+           final_generic_product = product.generic_name
          } else if(typeof genericProduct == "object"){
-           if(genericProduct.generic_name !== null){
-             final_generic_product_id = genericProduct.generic_name.value;
+           if(product.generic_name !== null){
+             final_generic_product = product.generic_name.value;
            } else{
-             final_generic_product_id = '';
+             final_generic_product = '';
            }
 
          } else {
-           final_generic_product_id = '';
-         }
+           final_generic_product = '';
+         }*/
      {setLoading2(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/`+final_generic_product_id,{headers})
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}copyfromGeneric?generic_product_name=`+product.generic_name,{headers})
             .then(response => {
-
                 const samples_data = response.data.data.samples.map(d => ({
                         "by_pass" : d.by_pass,
-                        "parent" : d.parent.id,
-                        "parameter_name" : d.mst_sample_parameter_id,
+                        "parent" : d.parent,
+                        "mst_sample_parameter_id" : d.mst_sample_parameter_id ? d.mst_sample_parameter_id : '',
                         "label_claim" :d.label_claim,
                         "min_limit" : d.min_limit,
                         "max_limit" : d.max_limit,
                         "amount": d.amount,
                         "method" : d.method,
-                        "description" : d.description,
+                        "description" :  d.parameter_name == 'Description' || d.parameter_name == 'description' ? response.data.data.sample_description : d.description,
                         "division" : d.division,
                         "nabl": d.nabl,
                         "formula" : d.formula
 
                       }))
-
                      setInputList(samples_data);
                      {setLoading2(false)}
                })
@@ -164,24 +214,40 @@ const copyFormGeneric = () => {
     setProduct({...product, [e.target.name]: e.target.value});
   }
 
-  const changeGenericName = (e) =>{
+  /*const changeGenericName = (e) =>{
       setGenericProduct({generic_name: e });
-    }
+    }*/
 
     // handle click event of the Add button
 const handleAddClick = () => {
   setInputList([...inputList, { by_pass: "2", parent: "",
-    parameter_name: "", label_claim:"", min_limit: "", max_limit: "",amount: "", method: "", description: "",
+    mst_sample_parameter_id: "", label_claim:"", min_limit: "", max_limit: "",amount: "", method: "", description: "",
     division: "", nabl: "", formula: ""}]);
 };
 
   // handle input change for Degree Details
 const handleInputChange = (e, index) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
   const list = [...inputList];
   list[index][name] = value;
   setInputList(list);
 };
+
+const handleInputChange1 = (e,index) => {
+  if(e !== null){
+    if (e.value) {
+      let item = {...inputList};
+      item[index]['mst_sample_parameter_id'] = e.value
+    } else {
+      let item = {...inputList};
+      item[index]['mst_sample_parameter_id'] = e
+    }
+  } else {
+    let item = {...inputList};
+    item[index]['mst_sample_parameter_id'] = e
+  }
+};
+
 
 // handle click event of the Remove button
 const handleRemoveClick = index => {
@@ -196,46 +262,35 @@ const ResetProduct = () => {
 
 const InsertProduct = (e)=>{
          e.preventDefault();
-         //console.log(inputList)
-         //console.log(genericProduct.generic_name.value)
-         //console.log(product)
-
-         /*genericProduct.forEach(function(generic){
-
-                  console.log(generic)
-
-             })*/
-
         {setLoading(true)};
 
-          var final_generic_product_id = genericProduct;
+        /*  var final_generic_product = genericProduct;
          if(typeof genericProduct == "number"){
-           final_generic_product_id = genericProduct.generic_name
+           final_generic_product = genericProduct.generic_name
          } else if(typeof genericProduct == "object"){
            if(genericProduct.generic_name !== null){
-             final_generic_product_id = genericProduct.generic_name.value;
+             final_generic_product = genericProduct.generic_name.value;
            } else{
-             final_generic_product_id = '';
+             final_generic_product = '';
            }
 
          } else {
-           final_generic_product_id = '';
-         }
+           final_generic_product = '';
+         }*/
+
         const sample_details = inputList;
         const data = {
             product_name:product.product_name,
             product_generic:product.product_generic,
             marker_specification:product.marker_specification,
             pharmacopeia_id:product.pharmocopiea,
-            generic_product_id:final_generic_product_id,
+            generic_product_name:product.generic_name,
             packing_detail:product.packing_detail,
             sample_description:product.sample_description,
             hsn_code:product.hsn_code,
-            is_generic:product.is_generic,
             "sample_details": sample_details,
 
         }
-
         axios.post( `${process.env.REACT_APP_BASE_APIURL}addProduct`, data, {headers} )
 
                 .then(response => {
@@ -317,8 +372,8 @@ const InsertProduct = (e)=>{
                             <div class="col-md-3">
                                 <label className="required-field">Pharmacopeia</label>
 
-                                {loading1 ? <LoadingSpinner /> :
-                                    <select className="form-select" id="pharmocopiea" name="pharmocopiea" onChange={ onChange }>
+                                {loading3 ? <LoadingSpinner /> :
+                                    <select className="form-select" id="pharmocopiea" name="pharmocopiea" onChange={ onChange } onChange= {fetchMethodListonChange}>
                                         <option value="">Select Pharmocopiea</option>
                                             { data.map((option, key) => <option value={option.id} key={key} >
                                             {option.pharmacopeia_name}</option>) }
@@ -337,22 +392,20 @@ const InsertProduct = (e)=>{
 
                             <div class="col-md-4">
                                 <label>Generic Name</label>
-                                 <Select onChange={ changeGenericName } options={data1} name="generic_name" placeholder="Select Generic Product" isClearable/>
+                                 {/*<Select onChange={ changeGenericName } options={data1} name="generic_name" placeholder="Select Generic Product" isClearable/>*/}
+                                 <input onChange={onChange} name="generic_name" className="form-control"
+                                  list="generic_name" id="exampleDataList" placeholder="Type to search For Generic Product..." autoComplete="off"/>
+                                  <datalist id="generic_name">
+                                      { data1.map((option, key) => <option data-value={option.id}>{option.generic_product_name}
+                                        </option>) }
+                                   </datalist>
                             </div>
                             <div class="col-md-2">
                                 <label style={{visibility: 'hidden'}}>Copy From Generic</label>
                                 <button type="button" name="copy_generic" className="form-control btn btn-primary" onClick={copyFormGeneric}>Copy From Generic</button>
                             </div>
 
-                            <div class="col-md-1">
-                                <label>Is Generic?</label>
-                                <select className="form-select" name="is_generic" onChange={ onChange }>
-                                    <option value="0">No</option>
-                                    <option value="1">Yes</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-5">
+                            <div class="col-md-6">
                                 <label>Packing Detail</label>
                                 <input className="form-control" type="text"  name="packing_detail" placeholder="Enter Packng Detail" onChange={ onChange }/>
                             </div>
@@ -388,8 +441,8 @@ const InsertProduct = (e)=>{
                     <div className="mb-3 row">
                     <div class="form-group">
                         <div class="row">
-                        <div className="table-responsive">
-                            <Table className="table mb-0 border">
+                        <div>
+                            <Table className="table mb-0 border" responsive="xl">
                                 <thead className="table-light">
                                     <tr>
                                         <th>By Pass</th>
@@ -408,32 +461,41 @@ const InsertProduct = (e)=>{
                                     </tr>
                                 </thead>
                                 <tbody>
-{loading2 ? <LoadingSpinner /> :
+                                {loading2 ? <LoadingSpinner /> :
                                     <tr>
                                                     <td class="col-1"><select value={x.by_pass} onChange={e => handleInputChange(e, i)} className="form-select" name="by_pass" style={{width:'70px !important'}}><option value="2">No</option><option value="1">Yes</option></select></td>
                                                     <td class="col-2">
                                                        <select value={x.parent} onChange={e => handleInputChange(e, i)} name="parent" className="form-select" style={{width:'100px !important'}}>
                                                            <option value="">Select Parent</option>
                                                             { data2.map((option, key) => <option value={option.id} key={key} >
-                                                            {option.parent_name}</option>) }
+                                                            {option.procedure_name}</option>) }
                                                        </select>
                                                     </td>
 
                                                     <td class="col-2">
-                                                    {loading1 ? <LoadingSpinner /> :  <select value={x.parameter_name} className="form-select"  name="parameter_name" onChange={ e => handleInputChange(e, i) } >
-                                                         <option value="">Select Parameter Name</option>
-                                                        { data3.map((option, key) => <option value={option.id} key={key} >{option.procedure_name}</option>) }
-                                                    </select> }
+                                                    {/*<input value={x.param_name} onChange={e => fetch_param_id(e,i)} name="param_name" className="form-control"
+                                                     list="parameter_name" id="exampleDataList" placeholder="Type to search For Parameter..." autoComplete="off"/>
+                                                     <datalist id="parameter_name">
+                                                         { data3.map((option, key) => <option data-value={option.id}>{option.procedure_name}
+                                                           </option>) }
+                                                      </datalist>*/}
+                                                      <Select onChange={e => handleInputChange1(e,i)} options={data3} name="mst_sample_parameter_id" placeholder="Search Parameter" isClearable/>
                                                   </td>
                                                     <td class="col-1"><Input value={x.label_claim} onChange={e => handleInputChange(e, i)} type="text" name="label_claim" className="form-control"/></td>
                                                         <td class="col-1"><Input value={x.min_limit} onChange={e => handleInputChange(e, i)} type="text" name="min_limit"  className="form-control"/></td>
                                                     <td class="col-1"><Input value={x.max_limit} onChange={e => handleInputChange(e, i)} type="text" name="max_limit" className="form-control"/></td>
                                                         <td class="col-1"><Input value={x.amount} onChange={e => handleInputChange(e, i)} type="text" name="amount"  className="form-control"/></td>
-                                                        <td class="col-1"><Input value={x.method} onChange={e => handleInputChange(e, i)} type="text" name="method" className="form-control"/></td>
+                                                        <td class="col-1">{loading1 ? <LoadingSpinner /> :  <select value={x.method} className="form-select"  name="method" onChange={ e => handleInputChange(e, i) } >
+                                                             <option value="">Select Method</option>
+                                                            { data4.map((option, key) => <option value={option.id} key={key} >{option.name}</option>) }
+                                                        </select> }</td>
                                                         <td class="col-1"><Input value={x.description} onChange={e => handleInputChange(e, i)} type="text" name="description" className="form-control"/></td>
                                                         <td class="col-1"><Input value={x.division} onChange={e => handleInputChange(e, i)} type="text" name="division" className="form-control"/></td>
                                                         <td class="col-1"><Input value={x.nabl} onChange={e => handleInputChange(e, i)} type="text" name="nabl" className="form-control"/></td>
-                                                    <td class="col-1"><Input value={x.formula} onChange={e => handleInputChange(e, i)} type="text" name="formula" className="form-control"/></td>
+                                                        <td class="col-1">{loading1 ? <LoadingSpinner /> :  <select value={x.formula} className="form-select"  name="formula" onChange={ e => handleInputChange(e, i) } >
+                                                             <option value="">Select Formula</option>
+                                                            { data5.map((option, key) => <option value={option.id} key={key} >{option.formula_name}</option>) }
+                                                        </select> }</td>
 
                                         <td>{inputList.length >= 1 && <button
                                                           className="mr10"

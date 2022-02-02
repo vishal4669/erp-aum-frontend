@@ -46,27 +46,24 @@ function ViewProduct(props)  {
   const [data2, setData2] = useState([]);
   const [data3, setData3] = useState([]);
   const [product, setProduct] = useState({product_name:'',product_generic:'Finished Product',marker_specification:'',
-    pharmacopiea_id: '',is_generic:'0',packing_detail:'',sample_description:'',hsn_Code:'',generic_product_id:'' });  
+    pharmacopiea_id: '',is_generic:'0',packing_detail:'',sample_description:'',hsn_Code:'',generic_name:'' });
   const [inputList, setInputList]  = useState([{ by_pass: "2", parent:"",
     parameter_name: "", label_claim:"", min_limit: "", max_limit: "",amount: "", method: "", description: "",
     division: "", nabl: "", formula: ""}]);
-  const[genericProduct,setGenericProduct] = useState({generic_name:''})
 
 
-  useEffect(() => {  
-         fetchPharamcopiea();
-         fetchGenericProduct();
+  useEffect(() => {
          GetProductData();
-        }, []); 
+        }, []);
 
-  const GetProductData=()=>{ 
-        {setLoading1(true)} 
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/`+product_id,{headers})  
-              .then(response => {  
-                 const samples_data = response.data.data.samples.map(d => ({
+  const GetProductData=()=>{
+        {setLoading1(true)}
+          axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/`+product_id,{headers})
+              .then(response => {
+                 const samples_data = response.data.data[0].samples.map(d => ({
                         "by_pass" : d.by_pass,
-                        "parent" : d.parent.parent_name,
-                        "parameter_name" : d.parameter.parameter_name,
+                        "parent" : d.parent_name,
+                        "parameter_name" : d.parameter_name,
                         "label_claim" :d.label_claim,
                         "min_limit" : d.min_limit,
                         "max_limit" : d.max_limit,
@@ -78,51 +75,22 @@ function ViewProduct(props)  {
                         "formula" : d.formula
 
                       }))
-                 setProduct(response.data.data);
+                 setProduct(response.data.data[0]);
                  setInputList(samples_data);
-                // console.log(response.data.data.generic_product_id)
-                  {setLoading1(false)}; 
-      
-              })  
-              .catch((error) => {  
-                  {setLoading1(false)} 
-                  toastr.error(error.response.data.message);
-                  this.setState({loading: false}); 
-              })  
-        }  
+                  {setLoading1(false)};
 
- const fetchPharamcopiea = () => {
-             {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}listPharmacopeia?is_dropdown=1`,{headers})
-            .then(response => {
-                     setData(response.data.data);
-                     {setLoading1(false)} 
-               })
+              })
               .catch((error) => {
+                console.log(error)
+                  {setLoading1(false)}
                   toastr.error(error.response.data.message);
+                  this.setState({loading: false});
+              })
+        }
 
-                   {setLoading1(false)}   
-              })
-        } 
-const fetchGenericProduct = () => {
-             {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_generic=1`,{headers})
-            .then(response => {
-                     const options = response.data.data.map(d => ({
-                        "value" : d.id,
-                        "label" : d.product_name
-                     }))
-                     setData1(options);
-                     {setLoading1(false)} 
-               })
-              .catch((error) => {
-                  toastr.error(error.response.data.message);
-                   {setLoading1(false)}   
-              })
-        } 
   return (
     <React.Fragment>
-      <HorizontalLayout/>  
+      <HorizontalLayout/>
       <div className="page-content">
         <Container fluid={true}>
         <Form>
@@ -144,7 +112,7 @@ const fetchGenericProduct = () => {
             </div>
 
         </div>
-{loading1 ? <center><LoadingSpinner /></center> :
+        {loading1 ? <center><LoadingSpinner /></center> :
           <Row>
             <Col>
               <Card>
@@ -157,26 +125,22 @@ const fetchGenericProduct = () => {
                             <div class="col-md-3">
                                 <label>Product Name</label>
                                 <input className="form-control" type="text" placeholder="Enter Product Name" name="product_name" value={product.product_name} readOnly/>
-                            </div>  
+                            </div>
 
                             <div class="col-md-3">
                                 <label>Product/Genric</label>
                                 <input className="form-control" type="text" value={product.product_generic} readOnly/>
-                            </div>  
+                            </div>
 
                             <div class="col-md-3">
                                 <label>Marker/Specifiction</label>
                                 <input className="form-control" value={product.marker_specification} type="text" name="marker_specification" placeholder="Enter Marker/Specifiction" readOnly/>
-                            </div>  
-                            <div class="col-md-3">  
+                            </div>
+                            <div class="col-md-3">
                                 <label>Pharmocopiea</label>
-                                    <select value={product.pharmacopiea_id} className="form-control" disabled>
-                                        <option value="">Select Pharmocopiea</option>
-                                            { data.map((option, key) => <option value={option.id} key={key} >
-                                            {option.pharmacopeia_name}</option>) }
-                                    </select> 
-                            </div>      
-                        </div>  
+                                <input className="form-control" value={product.pharmacopeia_name} type="text" readOnly/>
+                            </div>
+                        </div>
                     </div>
                     </div>
 
@@ -184,54 +148,45 @@ const fetchGenericProduct = () => {
                     <div class="mb-3 row">
                     <div class="form-group">
                         <div class="row">
+
+                            <div class="col-md-7">
+                                <label>Generic Name</label>
+                                 <input className="form-control" value={product.generic_product_name} type="text" readOnly/>
+                            </div>
 
                             <div class="col-md-5">
-                                <label>Generic Name</label>
-                                 <Select name="generic_name" value = {
-       data1.find(obj => obj.value === product.generic_product_id)
-      } isDisabled={true}  components={{ DropdownIndicator:() => null, IndicatorSeparator:() => null }} placeholder="No Generic Product Selected"/>
-                            </div>  
-                            
-                            <div class="col-md-2">  
-                                <label>Is Generic?</label>
-                                {product.is_generic == 1 ?
-                                <input className="form-control" type="text" value="Generic" readOnly/>
-                                 : <input className="form-control" type="text" value="Non Generic" readOnly/>}
-                            </div>      
-
-                            <div class="col-md-5">  
                                 <label>Packing Detail</label>
-                                <input className="form-control" value={product.packing_detail} type="text"  name="packing_detail" placeholder="Enter Packng Detail" />
-                            </div>    
+                                <input className="form-control" value={product.packing_detail} type="text"  name="packing_detail" readOnly/>
+                            </div>
 
-                        </div>  
-                    </div>  
-                    </div>    
+                        </div>
+                    </div>
+                    </div>
 
 
                     <div class="mb-3 row">
                     <div class="form-group">
                         <div class="row">
-                            
-                            <div class="col-md-8">  
-                                <label>Sample Description</label>
-                                <textarea name="sample_description" value={product.sample_description} className="form-control" placeholder="Enter Sample Description" ></textarea>
-                            </div>   
 
-                            
-                                <div class="col-md-4">  
+                            <div class="col-md-8">
+                                <label>Sample Description</label>
+                                <textarea name="sample_description" value={product.sample_description} className="form-control" readOnly></textarea>
+                            </div>
+
+
+                                <div class="col-md-4">
                                 <label>HSN Code</label>
                                 <input type="text" value={product.hsn_Code} name="hsn_code" className="form-control" placeholder="Enter HSN Code" readOnly/>
-                            </div>    
+                            </div>
 
-                        </div>  
+                        </div>
                     </div>
                     </div>
-                    
-                    <h5 class="alert alert-danger"><i class="fa fa-comment">&nbsp;Sample Details</i></h5>       
 
-                        
-                    <div className="mb-3 row"> 
+                    <h5 class="alert alert-danger"><i class="fa fa-comment">&nbsp;Sample Details</i></h5>
+
+
+                    <div className="mb-3 row">
                     <div class="form-group">
                         <div class="row">
                         <div className="table-responsive">
@@ -253,12 +208,12 @@ const fetchGenericProduct = () => {
                                     </tr>
                                 </thead>
                                 {inputList && inputList.length ?
-                                <tbody>    
+                                <tbody>
                                 {inputList.map((x, i) => (
                                     <React.Fragment key={x}>
-                                        {loading2 ? <LoadingSpinner /> :  
+                                        {loading2 ? <LoadingSpinner /> :
                                             <tr>
-            
+
                                                     <td class="col-1">
                                                     {x.by_pass==2 ?
                                                         <label>Yes</label>
@@ -278,24 +233,24 @@ const fetchGenericProduct = () => {
                                                         <td class="col-1"><label>{x.division}</label></td>
                                                         <td class="col-1"><label>{x.nabl}</label></td>
                                                     <td class="col-1"><label>{x.formula}</label></td>
-                                        
-                                       
+
+
                                     </tr>
-                                                       } 
+                                                       }
 
     </React.Fragment>
-                    ))} 
-                    
- 
-                                </tbody>  
-                                 : <tr><td colspan="12"><h6><center>No Sample Details Found</center></h6></td></tr>}  
-                            </Table> 
+                    ))}
+
+
+                                </tbody>
+                                 : <tr><td colspan="12"><h6><center>No Sample Details Found</center></h6></td></tr>}
+                            </Table>
                     </div>
                 </div>
 
                         </div>
                     </div>
-                
+
                 </CardBody>
               </Card>
             </Col>

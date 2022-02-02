@@ -132,9 +132,9 @@ class ListPharmacopiea extends Component {
               year : post.pharmacopeia_year,
               edition : post.pharmacopeia_edition,
               action : <div><Link className="btn btn-primary btn-sm" to={"/edit-pharmacopiea/"+base64_encode(post.id)}>
-              <i className="fa fa-edit"></i></Link>{/*&nbsp;&nbsp;
-              <button class=" btn btn-danger" onClick={() => {if(window.confirm('Are you sure to Delete this Pharmacopiea?')){ this.deletePharmacopiea(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-              */}</div>
+              <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
+              <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Pharmacopiea?')){ this.deletePharmacopiea(post.id)}}}><i class="fas fa-trash-alt"></i></button>
+              </div>
               ,
 
             }
@@ -199,11 +199,11 @@ const { data2, loading1 } = this.state;
             <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                     <li>
-                      <Link to="/add-pharmacopiea" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;Add Pharmacopiea</Link>
+                      <Link to="/add-pharmacopiea" color="primary" className="btn btn-primary btn-sm"><i className="fa fa-plus"></i>&nbsp;Add Pharmacopiea</Link>
                     </li>&nbsp;
                    {loading1 ?  <center><LoadingSpinner /></center> :   <li>
                         <div className="btn-group">
-                          <DropdownButton  title="Actions" drop="left">
+                          <DropdownButton  title="Actions" drop="left" variant="primary btn-sm">
                             <DropdownItem onClick={this.printPharmacopiea}><i class="fa fa-print"></i> &nbsp;Print</DropdownItem>
                             <DropdownItem onClick={this.ExportToExcel}><i class="fas fa-file-export"></i> &nbsp;Export To Excel </DropdownItem>
                             <DropdownItem><Link to="/export-pdf-pharmacopiea" style={{color:"black"}}><i class="fas fa-file-export"></i> &nbsp;Export To PDF</Link></DropdownItem>

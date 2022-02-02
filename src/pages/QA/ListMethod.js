@@ -19,7 +19,7 @@ import axios from 'axios'
 import moment from 'moment'
 import * as XLSX from 'xlsx';
 //import parse from "html-react-parser";
-import ReactTooltip from "react-tooltip";
+//import ReactTooltip from "react-tooltip";
 class ListMethod extends Component{
 
   constructor(props){
@@ -39,7 +39,7 @@ class ListMethod extends Component{
     const del_headers = {
       'Authorization' : "Bearer "+localStorage.getItem('token')
     };
-    //const renderHTML = (rawHTML: string) => React.createElement("div", { dangerouslySetInnerHTML: { __html: rawHTML} });
+    const renderHTML = (rawHTML: string) => React.createElement("div", { dangerouslySetInnerHTML: { __html: rawHTML} });
 
  this.componentWillMount=async() => {
     this.setState({ loading: true }, () => {
@@ -125,7 +125,9 @@ this.deleteMethod = async(method_id) =>{
               this.setState({
         count: this.state.count + 1
       });
-
+      {/*<div><button className="form-control btn btn-info btn-sm" data-tip={post.description} data-for={`registerTip${this.state.count}`}>
+                    View Description</button><ReactTooltip id={`registerTip${this.state.count}`} className={"tooltip"} place="bottom" effect="float" type="dark" html={true}>
+                    </ReactTooltip></div>*/}
             return (
 
               {
@@ -135,9 +137,7 @@ this.deleteMethod = async(method_id) =>{
                 type: post.pharmacopeia.pharmacopeia_name ? post.pharmacopeia.pharmacopeia_name : '' ,
                 //description: renderHTML(post.description), 1st html parse
                 //description : parse(post.description), 2nd html parse
-                description : <div><button className="form-control btn btn-info btn-sm" data-tip={post.description} data-for={`registerTip${this.state.count}`}>
-                              View Description</button><ReactTooltip id={`registerTip${this.state.count}`} className={"tooltip"} place="bottom" effect="float" type="dark" html={true}>
-                              </ReactTooltip></div>,
+                //description : <div><span style={{flex: 1, flexWrap: 'wrap'}}>{renderHTML(post.description)}</span></div>,
                 date: post.date ? moment(post.date).format('DD-MM-YYYY') : '',
                 action : <div><Link className="btn btn-primary btn-sm" to={"/edit-method/"+base64_encode(post.id)}>
                   <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
@@ -176,10 +176,11 @@ this.deleteMethod = async(method_id) =>{
                     label:'Type',
                     field:'type',
                   },
-                  {
+                  /*{
                     label:'Description',
                     field:'description',
-                  },
+                    width:'100px',
+                  },*/
                   {
                     label:'date',
                     field:'date',
@@ -223,7 +224,7 @@ this.deleteMethod = async(method_id) =>{
                   <div>
                   {loading ?  <center><LoadingSpinner /></center> :
 
-                      <MDBDataTable striped bordered data={data1} />
+                      <MDBDataTable striped bordered data={data1}/>
                      }
                   </div>
                 </CardBody>
