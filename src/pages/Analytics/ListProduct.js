@@ -126,27 +126,27 @@ this.deleteProduct = async(product_id) =>{
 }
 this.ExportToExcel = () => {
   this.setState({ loading1: true }, () => {
-  axios.get(`${process.env.REACT_APP_BASE_APIURL}exportproductlist`, { headers: headers})
+  axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct`, { headers: headers})
 
   .then(response => {
       if(response.data.success == true){
          var product_data = response.data.data.map((post,index)=>({
             "SR No" : index+1,
-            "Pharmacopiea" : post.pharmacopeia.pharmacopeia_name || [],
+            "Pharmacopiea" : post.pharmacopeia_name || '',
             "Product Name" : post.product_name || '',
             "FP/RM/G" : post.product_generic || '',
-            "Generic Name" : post.generic.generic_product_name || '',
+            "Generic Name" : post.generic_product_name || '',
             "Sample Description" : post.sample_description || '',
             "Packing Detail" : post.packing_detail || '',
             "Marker/Specification" : post.marker_specification || '',
-            "Enter By" : post.created_by.first_name+" "+ post.created_by.middle_name + " " + post.created_by.last_name || [],
+            "Enter By" : post.entered_by || '',
             "Enter Datetime" : post.created_at || '',
-            "Modified By" : post.updated_by.first_name+" "+ post.updated_by.middle_name + " " + post.updated_by.last_name || [],
+            "Modified By" : post.modified_by || '',
             "Modified Datetime" : post.updated_at || ''
            }))
         const sheet = XLSX.utils.json_to_sheet(product_data);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet 1');
+        XLSX.utils.book_append_sheet(workbook, sheet, 'Products List');
         XLSX.writeFile(workbook, `ProductData.csv`);
         this.setState({loading1: false});
      }else{
@@ -329,7 +329,7 @@ this.ExportToExcel = () => {
           <Row id="pdfdiv">
             <Col className="col-12">
               <Card>
-                <CardBody>
+                <CardBody className="btn-sm">
                   <div>
                   {/*<table className="table table-bordered table-striped dataTable">
                      <thead>

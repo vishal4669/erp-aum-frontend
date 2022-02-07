@@ -46,157 +46,187 @@ function EditProduct(props)  {
   const [data1, setData1] = useState([]);
   const [data2, setData2] = useState([]);
   const [data3, setData3] = useState([]);
+  const [data4, setData4] = useState([]);
+  const [data5, setData5] = useState([]);
+
+  const [fordata2, forsetData2] = useState([]);
+  const [fordata3, forsetData3] = useState([]);
+  const [fordata4, forsetData4] = useState([]);
+  const [fordata5, forsetData5] = useState([]);
+
   const [product, setProduct] = useState({product_name:'',product_generic:'Finished Product',marker_specification:'',
-    pharmacopeia_id: '',is_generic:'0',packing_detail:'',sample_description:'',hsn_Code:''});
+    pharmocopiea: '',generic_product_name:'',packing_detail:'',sample_description:'',hsn_Code:''});
   const [inputList, setInputList]  = useState([{ by_pass: "2", parent:"",
-    parameter_name: "", label_claim:"", min_limit: "", max_limit: "",amount: "", method: "", description: "",
-    division: "", nabl: "", formula: ""}]);
-  const[genericProduct,setGenericProduct] = useState({generic_product_id:''})
+    mst_sample_parameter_id: "", label_claim:"", min_limit: "", max_limit: "",amount: "", method: "", description: "",
+    division: "", nabl: "", formula: "",pharmacopeia_id:'',pharmacopeia_deleted_at:''}]);
 
 
   useEffect(() => {
-         fetchPharamcopiea();
-        //  fetchGenericProduct();
-         fetchparentList();
-      //   fetchparamsList();
+         fetchGenericProduct();
          GetProductData();
+         if(inputList[0].pharmacopeia_id === '' || inputList[0].pharmacopeia_deleted_at === null){
+           fetchMethodListonChange();
+         }
         }, []);
 
   const GetProductData=()=>{
         {setLoading1(true)}
           axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/`+product_id,{headers})
               .then(response => {
-                  const samples_data = response.data.data.samples[0].map(d => ({
-                        "by_pass" : d.by_pass,
-                        "parent" : d.id,
-                        "parameter_name" : d.mst_sample_parameter_id,
-                        "label_claim" :d.label_claim,
-                        "min_limit" : d.min_limit,
-                        "max_limit" : d.max_limit,
-                        "amount": d.amount,
-                        "method" : d.method,
-                        "description" : d.description,
-                        "division" : d.division,
-                        "nabl": d.nabl,
-                        "formula" : d.formula
 
-                      }))
-                 setProduct(response.data.data[0]);
-                 const options = response.data.data[0].generic_dropdown.map(d => ({
-                    "value" : d.id,
-                    "label" : d.product_name
-                  }))
-                  setData1(options);
-                  setGenericProduct(response.data.data.generic_product_id.id);
-                  setData3(response.data.data.parameter_dropdown);
-                 setInputList(samples_data);
+                if(Array.isArray(response.data.data[0].samples) && response.data.data[0].samples.length){
+                    const samples_data = response.data.data[0].samples.map(d => ({
+                            "by_pass" : d.by_pass,
+                            "parent" : d.parent,
+                            "mst_sample_parameter_id" : d.mst_sample_parameter_id ? d.mst_sample_parameter_id : '',
+                            "label_claim" :d.label_claim,
+                            "min_limit" : d.min_limit,
+                            "max_limit" : d.max_limit,
+                            "amount": d.amount,
+                            "method" : d.method,
+                            "description" :  d.description ? d.description : d.parameter_name == 'Description' || d.parameter_name == 'description' ? response.data.data[0].sample_description : d.description,
+                            "division" : d.division,
+                            "nabl": d.nabl,
+                            "formula" : d.formula,
+                            "pharmacopeia_id":response.data.data[0].pharmacopeia_id,
+                            "pharmacopeia_deleted_at" : response.data.data[0].pharmacopeia_deleted_at,
+
+                          }))
+                          setInputList(samples_data);
+                          //parent data
+                          var parent_data = response.data.data[0].samples.map(d =>
+                            d.parent_dropdown.map(parent =>parent)
+                          )
+                            setData2(parent_data)
+
+                            // parameter data
+                            var parameter_data = response.data.data[0].samples.map(d =>
+                              d.parameter_dropdown.map(parameter =>
+                                ({
+                                   "value" : parameter.id,
+                                   "label" : parameter.procedure_name,
+                                }))
+                            )
+                              setData3(parameter_data)
+
+                              //Method data
+                              var method_data = response.data.data[0].samples.map(d =>
+                                d.method_dropdown.map(method =>method)
+                              )
+                                setData4(method_data)
+
+                                //Formula data
+                                var formula_data = response.data.data[0].samples.map(d =>
+                                  d.formula_dropdown.map(formula =>formula)
+                                )
+                                  setData5(formula_data)
+                }
+                  setProduct({product_name:response.data.data[0].product_name,
+                              product_generic:response.data.data[0].product_generic,
+                              marker_specification:response.data.data[0].marker_specification,
+                              pharmocopiea:response.data.data[0].pharmacopeia_id,
+                              generic_product_name:response.data.data[0].generic_product_name,
+                              packing_detail:response.data.data[0].packing_detail,
+                              sample_description:response.data.data[0].sample_description,
+                              hsn_Code:response.data.data[0].hsn_Code});
+                  setData(response.data.data[0].pharmacopeia_dropdown);
                   {setLoading1(false)};
 
               })
               .catch((error) => {
-                console.log(error)
                   {setLoading1(false)}
                   toastr.error(error.response.data.message);
               })
         }
 
- const fetchPharamcopiea = () => {
-             {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}listPharmacopeia?is_dropdown=1`,{headers})
-            .then(response => {
-                     setData(response.data.data);
-                     {setLoading1(false)}
-               })
-              .catch((error) => {
-                  toastr.error(error.response.data.message);
+        const fetchparentList = async() => {
+                  await axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest?is_parent=1`,{headers})
+                    .then(response => {
+                             forsetData2(response.data.data);
+                       })
+                      .catch((error) => {
+                          toastr.error(error.response.data.message);
+                      })
+                }
 
-                   {setLoading1(false)}
-              })
-        }
-// const fetchGenericProduct = () => {
-//              {setLoading1(true)};
-//           axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_generic=1`,{headers})
-//             .then(response => {
-//                      const options = response.data.data.map(d => ({
-//                         "value" : d.id,
-//                         "label" : d.product_name
-//                      }))
-//                      setData1(options);
-//                      {setLoading1(false)}
-//                })
-//               .catch((error) => {
-//                   toastr.error(error.response.data.message);
-//                    {setLoading1(false)}
-//               })
-//         }
+        const fetchparamsList = async() => {
+                  await axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest?is_parameter=1`,{headers})
+                    .then(response => {
+                      const options1 = response.data.data.map(d => ({
+                         "value" : d.id,
+                         "label" : d.procedure_name,
+                      }))
+                             forsetData3(options1);
+                       })
+                      .catch((error) => {
+                          toastr.error(error.response.data.message);
+                      })
+                }
 
-const fetchparentList = () => {
-             {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}parentList`,{headers})
-            .then(response => {
-                     setData2(response.data.data);
-                     {setLoading1(false)}
-               })
-              .catch((error) => {
-                  toastr.error(error.response.data.message);
-                   {setLoading1(false)}
-              })
-        }
+        const fetchGenericProduct = async() => {
+                     {setLoading1(true)};
+                  await axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_generic=1`,{headers})
+                    .then(response => {
+                             setData1(response.data.data);
+                             {setLoading1(false)}
+                       })
+                      .catch((error) => {
+                          toastr.error(error.response.data.message);
+                           {setLoading1(false)}
+                      })
+                }
 
-/*const fetchparamsList = () => {
-             {setLoading1(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}paramsList`,{headers})
-            .then(response => {
-                     setData3(response.data.data);
-                     {setLoading1(false)}
-               })
-              .catch((error) => {
-                  toastr.error(error.response.data.message);
-                   {setLoading1(false)}
-              })
-        }*/
+                const fetchMethodListonChange = async(e) => {
+                  if(document.getElementById("pharmocopiea").value !== null){
+                    var pharmacopeia_id = document.getElementById("pharmocopiea").value;
+                  } else {
+                    var pharmacopeia_id = '';
+                  }
+                  setProduct(prevState => ({...prevState,pharmocopiea: pharmacopeia_id}))
+                  await axios.get(`${process.env.REACT_APP_BASE_APIURL}methodDropdown?pharmacopiea_id=`+pharmacopeia_id,{headers})
+                    .then(response => {
+                              forsetData4(response.data.data);
+                        })
+                      .catch((error) => {
+                          toastr.error(error.response.data.message);
+                      })
+                }
+
+                const fetchFormulaList = () => {
+                    axios.get(`${process.env.REACT_APP_BASE_APIURL}listFormula?is_dropdown=1`,{headers})
+                      .then(response => {
+                                forsetData5(response.data.data);
+                          })
+                        .catch((error) => {
+                            toastr.error(error.response.data.message);
+                        })
+                }
 
 const copyFormGeneric = () => {
 
-  var final_generic_product_id = genericProduct;
-         if(typeof genericProduct == "number"){
-           final_generic_product_id = genericProduct
-         } else if(typeof genericProduct == "object"){
-           if(genericProduct.generic_product_id !== null){
-             final_generic_product_id = genericProduct.generic_product_id.value;
-           } else{
-             final_generic_product_id = '';
-           }
-
-         } else {
-           final_generic_product_id = '';
-         }
-
      {setLoading2(true)};
-          axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/`+final_generic_product_id,{headers})
-            .then(response => {
+         axios.get(`${process.env.REACT_APP_BASE_APIURL}copyfromGeneric?generic_product_name=`+product.generic_product_name,{headers})
+           .then(response => {
+               const samples_data = response.data.data.samples.map(d => ({
+                       "by_pass" : d.by_pass,
+                       "parent" : d.parent,
+                       "mst_sample_parameter_id" : d.mst_sample_parameter_id ? d.mst_sample_parameter_id : '',
+                       "label_claim" :d.label_claim,
+                       "min_limit" : d.min_limit,
+                       "max_limit" : d.max_limit,
+                       "amount": d.amount,
+                       "method" : d.method,
+                       "description" :  d.parameter_name == 'Description' || d.parameter_name == 'description' ? response.data.data.sample_description : d.description,
+                       "division" : d.division,
+                       "nabl": d.nabl,
+                       "formula" : d.formula
 
-                const samples_data = response.data.data.samples.map(d => ({
-                        "by_pass" : d.by_pass,
-                        "parent" : d.parent.id,
-                        "parameter_name" : d.parameter.parameter_name,
-                        "label_claim" :d.label_claim,
-                        "min_limit" : d.min_limit,
-                        "max_limit" : d.max_limit,
-                        "amount": d.amount,
-                        "method" : d.method,
-                        "description" : d.description,
-                        "division" : d.division,
-                        "nabl": d.nabl,
-                        "formula" : d.formula
-
-                      }))
+                     }))
 
                      setInputList(samples_data);
                      {setLoading2(false)}
                })
               .catch((error) => {
-                //  toastr.error(error.response.data.message);
                 props.history.push('/edit-product/'+edit_product_id);
                    {setLoading2(false)}
               })
@@ -208,16 +238,30 @@ const copyFormGeneric = () => {
     setProduct({...product, [e.target.name]: e.target.value});
   }
 
-  const changeGenericName = (e) =>{
-    setGenericProduct({generic_product_id: '' });
-      setGenericProduct({generic_product_id: e });
+  const handleInputChange1 = (e,index) => {
+    if(e !== null){
+      if (e.value) {
+        let item = {...inputList};
+        item[index]['mst_sample_parameter_id'] = e.value
+      } else {
+        let item = {...inputList};
+        item[index]['mst_sample_parameter_id'] = e
+      }
+    } else {
+      let item = {...inputList};
+      item[index]['mst_sample_parameter_id'] = e
     }
+  };
 
     // handle click event of the Add button
 const handleAddClick = () => {
   setInputList([...inputList, { by_pass: "2", parent: "",
     parameter_name: "", label_claim:"", min_limit: "", max_limit: "",amount: "", method: "", description: "",
     division: "", nabl: "", formula: ""}]);
+    fetchMethodListonChange();
+    fetchparentList();
+    fetchparamsList();
+    fetchFormulaList();
 };
 
   // handle input change for Degree Details
@@ -229,7 +273,8 @@ const handleInputChange = (e, index) => {
 };
 
 // handle click event of the Remove button
-const handleRemoveClick = index => {
+const handleRemoveClick = (e,index) => {
+  e.preventDefault();
   const list = [...inputList];
   list.splice(index, 1);
   setInputList(list);
@@ -237,34 +282,20 @@ const handleRemoveClick = index => {
 
 const UpdateProduct = (e)=>{
          e.preventDefault();
-         var final_generic_product_id = genericProduct;
-         if(typeof genericProduct == "number"){
-           final_generic_product_id = genericProduct
-         } else if(typeof genericProduct == "object"){
-           if(genericProduct.generic_product_id !== null){
-             final_generic_product_id = genericProduct.generic_product_id.value;
-           } else{
-             final_generic_product_id = '';
-           }
-
-         } else {
-           final_generic_product_id = '';
-         }
 
         const sample_details = inputList;
         const data = {
             product_name:product.product_name,
             product_generic:product.product_generic,
             marker_specification:product.marker_specification,
-            pharmacopeia_id:product.pharmacopeia_id,
-            generic_product_id:final_generic_product_id,
+            pharmacopeia_id:product.pharmocopiea,
+            generic_product_name:product.generic_product_name,
             packing_detail:product.packing_detail,
             sample_description:product.sample_description,
-            hsn_code:product.hsn_code,
+            hsn_code:product.hsn_Code,
             is_generic:product.is_generic,
             "sample_details": sample_details,
           }
-          console.log(data)
                   {setLoading(true)};
             axios.post(`${process.env.REACT_APP_BASE_APIURL}editProduct/`+product_id,data,{headers})
                 .then(response => {
@@ -345,9 +376,9 @@ const UpdateProduct = (e)=>{
                             </div>
                             <div class="col-md-3">
                                 <label className="required-field">Pharmacopeia</label>
-
                                 {loading1 ? <LoadingSpinner /> :
-                                    <select className="form-select" value={product.pharmacopeia_id} id="pharmocopiea" name="pharmacopeia_id" onChange={ onChange }>
+
+                                    <select className="form-select" value={product.pharmocopiea} id="pharmocopiea" name="pharmocopiea" onChange={ onChange } onChange={fetchMethodListonChange}>
                                         <option value="">Select Pharmocopiea</option>
                                             { data.map((option, key) => <option value={option.id} key={key} >
                                             {option.pharmacopeia_name}</option>) }
@@ -364,23 +395,21 @@ const UpdateProduct = (e)=>{
                     <div class="form-group">
                         <div class="row">
 
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 <label>Generic Name</label>
-                                 <Select onChange={ changeGenericName } options={data1} value = {
+                                 {/*<Select onChange={ changeGenericName } options={data1} value = {
                                    data1.find(obj => obj.value === genericProduct)}
-                                   name="generic_product_id" placeholder="Select Generic Product" isClearable/>
+                                   name="generic_product_id" placeholder="Select Generic Product" isClearable/>*/}
+                                   <input onChange={onChange} name="generic_product_name" className="form-control" value={product.generic_product_name}
+                                    list="generic_product_name" id="exampleDataList" placeholder="Type to search For Generic Product..." autoComplete="off"/>
+                                    <datalist id="generic_product_name">
+                                        { data1.map((option, key) => <option data-value={option.id}>{option.generic_product_name}
+                                          </option>) }
+                                     </datalist>
                             </div>
                             <div class="col-md-2">
                                 <label style={{visibility: 'hidden'}}>Copy From Generic</label>
                                 <button type="button" name="copy_generic" className="form-control btn btn-primary" onClick={copyFormGeneric}>Copy From Generic</button>
-                            </div>
-
-                            <div class="col-md-1">
-                                <label>Is Generic?</label>
-                                <select value={product.is_generic} className="form-select" name="is_generic" onChange={ onChange }>
-                                    <option value="0">No</option>
-                                    <option value="1">Yes</option>
-                                </select>
                             </div>
 
                             <div class="col-md-5">
@@ -419,8 +448,8 @@ const UpdateProduct = (e)=>{
                     <div className="mb-3 row">
                     <div class="form-group">
                         <div class="row">
-                        <div className="table-responsive">
-                            <Table className="table mb-0 border">
+                        <div>
+                            <Table className="table mb-0 border" responsive="xl">
                                 <thead className="table-light">
                                     <tr>
                                         <th>By Pass</th>
@@ -446,16 +475,23 @@ const UpdateProduct = (e)=>{
                                                     <td class="col-2">
                                                        <select value={x.parent} onChange={e => handleInputChange(e, i)} name="parent" className="form-select" style={{width:'100px !important'}}>
                                                            <option value="">Select Parent</option>
-                                                            { data2.map((option, key) => <option value={option.id} key={key} >
-                                                            {option.parent_name}</option>) }
+                                                           { data2[i] ?
+                                                             data2[i].map((option, key) => <option value={option.id} key={key} >
+                                                             {option.procedure_name}</option>)
+                                                             :
+                                                             fordata2.map((option, key) => <option value={option.id} key={key} >
+                                                             {option.procedure_name}</option>)
+                                                           }
+
                                                        </select>
                                                     </td>
 
                                                     <td class="col-2">
-                                                    <select value={x.parameter_name} className="form-select"  name="parameter_name" onChange={ e => handleInputChange(e, i) }>
-                                                         <option value="">Select Parameter Name</option>
-                                                        { data3.map((option, key) => <option value={option.id} key={key} >{option.procedure_name}</option>) }
-                                                    </select>
+                                                    { data3[i] ? <Select value={data3[i].find(obj => obj.value == x.mst_sample_parameter_id)} onChange={e => handleInputChange1(e,i)} options={data3[i]} name="mst_sample_parameter_id" placeholder="Search Parameter" isClearable/>
+                                                    :
+                                                    <Select value={fordata3.find(obj => obj.value == x.mst_sample_parameter_id)} onChange={e => handleInputChange1(e,i)} options={fordata3} name="mst_sample_parameter_id" placeholder="Search Parameter" isClearable/>
+                                                    }
+
 
                                                     {/*<input value={x.parameter_name} onChange={e => handleInputChange(e, i)} name="parameter_name" className="form-control" list="parameter_name" id="exampleDataList" placeholder="Type to search..." style={{width:'120px !important'}}/>
                                                     <datalist id="parameter_name">
@@ -467,15 +503,36 @@ const UpdateProduct = (e)=>{
                                                         <td class="col-1"><Input value={x.min_limit} onChange={e => handleInputChange(e, i)} type="text" name="min_limit"  className="form-control"/></td>
                                                     <td class="col-1"><Input value={x.max_limit} onChange={e => handleInputChange(e, i)} type="text" name="max_limit" className="form-control"/></td>
                                                         <td class="col-1"><Input value={x.amount} onChange={e => handleInputChange(e, i)} type="text" name="amount"  className="form-control"/></td>
-                                                        <td class="col-1"><Input value={x.method} onChange={e => handleInputChange(e, i)} type="text" name="method" className="form-control"/></td>
+                                                        <td class="col-1">
+                                                        <select name="method" className="form-select" onChange={e => handleInputChange(e, i)} value={x.method}>
+                                                           <option value="">Select Method</option>
+                                                           {x.pharmacopeia_id == product.pharmocopiea && x.pharmacopeia_id !== '' ? (data4[i].map((option,key) =>
+                                                             <option value={option.id} key={key} >{option.method_name}</option>
+                                                           )) : (fordata4.map((option,key) =>
+                                                              <option value={option.id} key={key} >{option.name}</option>
+                                                            ))}
+
+                                                        </select>
+                                                        </td>
                                                         <td class="col-1"><Input value={x.description} onChange={e => handleInputChange(e, i)} type="text" name="description" className="form-control"/></td>
                                                         <td class="col-1"><Input value={x.division} onChange={e => handleInputChange(e, i)} type="text" name="division" className="form-control"/></td>
                                                         <td class="col-1"><Input value={x.nabl} onChange={e => handleInputChange(e, i)} type="text" name="nabl" className="form-control"/></td>
-                                                    <td class="col-1"><Input value={x.formula} onChange={e => handleInputChange(e, i)} type="text" name="formula" className="form-control"/></td>
+                                                    <td class="col-1">
+                                                    <select name="formula" className="form-select" onChange={e => handleInputChange(e, i)} value={x.formula}>
+                                                       <option value="">Select Formula</option>
+                                                       { data5[i] ?
+                                                       (data5[i].map((option,key) =>
+                                                         <option value={option.id} key={key} >{option.formula_name}</option>
+                                                       )) :  (fordata5.map((option,key) =>
+                                                          <option value={option.id} key={key} >{option.formula_name}</option>
+                                                        ))}
+                                                    </select>
+
+                                                    </td>
 
                                         <td>{inputList.length >= 1 && <button
                                                           className="mr10"
-                                                          onClick={() => handleRemoveClick(i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}</td>
+                                                          onClick={(e) => handleRemoveClick(e,i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}</td>
                                     </tr>
                                   }
 

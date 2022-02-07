@@ -68,11 +68,11 @@ function ViewProduct(props)  {
                         "min_limit" : d.min_limit,
                         "max_limit" : d.max_limit,
                         "amount": d.amount,
-                        "method" : d.method,
+                        "method" : d.method_name,
                         "description" : d.description,
                         "division" : d.division,
                         "nabl": d.nabl,
-                        "formula" : d.formula
+                        "formula" : d.formula_name
 
                       }))
                  setProduct(response.data.data[0]);

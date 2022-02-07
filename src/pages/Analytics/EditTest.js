@@ -104,8 +104,9 @@ useEffect(() => {
                        )
                          setData4(unit_data)
 
-                       {setLoading(false)};
                   }
+
+                   {setLoading(false)};
              })
         }
 
