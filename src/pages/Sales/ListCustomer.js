@@ -117,19 +117,26 @@ this.deleteCustomer = async(customer_id) =>{
  }
  this.ExportToExcel = () => {
    this.setState({ loading1: true }, () => {
-   axios.get(`${process.env.REACT_APP_BASE_APIURL}exportCustomerData`, { headers: headers})
+   axios.get(`${process.env.REACT_APP_BASE_APIURL}listCustomer`, { headers: headers})
 
    .then(response => {
        if(response.data.success == true){
-          var customer_data = response.data.data.map((post,index)=>({
+          var customer_data = response.data.data.map((post,index) =>({
              "SR No" : index+1,
-             "Name" : post.Company_name,
+             "Name" : post.company_name,
              "Contact Person" : post.contact_person_name,
              "Tally Alias Name" : post.tally_alias_name,
-             "Account/Admin Contact No." : post.home_contact_no.account_admin_contact_no,
-             "QA Contact No." : post.other_contact_no.qa_contact_no,
-             "QC Contact No." : post.home_contact_no.home_qc_contact_no,
-            }))
+             "Account/Admin Contact No." : post.home_contact_no,
+             "QA Contact No." : post.other_contact_no,
+             "QC Contact No." : post.home_qc_contact_no,
+             "Landline" : post.home_landline,
+             "Account/Admin E-mail" : post.home_email,
+             "QC Email" : post.other_qc_email,
+             "QA E-mail" : post.other_email,
+             "Corporate Address" : post.home_street_1+","+post.home_street_2+","+post.home_city+","+post.home_state+","+post.home_country,
+             "Correspondence Address" : post.other_street_1+","+post.other_street_2+","+post.other_city+","+post.other_state+","+post.other_country,
+             "GST No" : post.gst_number,
+           }))
          const sheet = XLSX.utils.json_to_sheet(customer_data);
          const workbook = XLSX.utils.book_new();
          XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet 1');
@@ -143,6 +150,7 @@ this.deleteCustomer = async(customer_id) =>{
 
    })
    .catch(error => {
+             console.log(error)
        toastr.error(error.response.data.message);
        this.setState({ loading1: false });
      })
@@ -177,7 +185,13 @@ this.deleteCustomer = async(customer_id) =>{
         count: this.state.count + 1
       });
 
-      let is_active = post.is_active ? ("Active") : ("Inactive");
+      let is_active = post.is_active == 1 ? ("Active") : ("Inactive");
+      let other_street1 = post.other_street_1 !== null || post.other_street_1 !== "null" || post.other_street_1 !== '' || post.other_street_1 !== undefined || post.other_street_1 !== "undefined"  ? post.other_street_1 : '';
+      let other_street_2 = post.other_street_2 !== null || post.other_street_2 !== "null" || post.other_street_2 !== '' || post.other_street_2 !== undefined || post.other_street_2 !== "undefined" ? post.other_street_2 : '';
+      let other_city = post.other_city !== null || post.other_city !== "null" || post.other_city !== '' || post.other_city !== undefined || post.other_city !== "undefined" ? post.other_city : '';
+      let other_state = post.other_state !== null || post.other_state !== "null" || post.other_state !== '' || post.other_state !== undefined || post.other_state !== "undefined" ? post.other_state : '';
+      let other_country = post.other_country !== null || post.other_country !== "null" || post.other_country !== '' || post.other_country !== undefined || post.other_country !== "undefined" ? post.other_country : '';
+      console.log(other_street1)
             return (
 
               {
@@ -185,9 +199,10 @@ this.deleteCustomer = async(customer_id) =>{
                 srno: this.state.count,
                 action : <div><Link className="btn btn-primary btn-sm" to={"/edit-customer/"+base64_encode(post.id)}>
                   <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;
+                  <Link className="btn btn-info btn-sm" to={"/view-customer/"+base64_encode(post.id)}>
+                  <i className="fa fa-eye"></i></Link>&nbsp;&nbsp;
                   <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Customer Data?')){ this.deleteCustomer(post.id)}}}><i class="fas fa-trash-alt"></i></button>
-                  &nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-customer/"+base64_encode(post.id)}>
-                  <i className="fa fa-eye"></i></Link></div>
+                  </div>
 
                 ,
                 company_name: post.company_name,
@@ -202,17 +217,17 @@ this.deleteCustomer = async(customer_id) =>{
                 other_qc_email:post.other_qc_email,
                 other_email:post.other_email,
                 corporate_address:
-                      post.home_street_1 +","+
+                      post.home_street_1+","+
                       post.home_street_2 +","+
                       post.home_city+","+
                       post.home_state +","+
                       post.home_country,
                 correspondence_address:
-                      post.other_street_1+","+
-                      post.other_street_2+","+
-                      post.other_city+","+
-                      post.other_state+","+
-                      post.other_country,
+                      other_street1 +
+                      other_street_2+","+
+                      other_city+","+
+                      other_state+","+
+                      other_country,
                 gst_number:post.gst_number,
                 is_active: is_active,
               }

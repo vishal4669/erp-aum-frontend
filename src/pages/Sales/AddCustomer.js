@@ -50,8 +50,8 @@ function AddCustomer(props) {
   qc_contact:'',admin_email:'',pancard_no:'',street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
   corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:'',education_details:'',prev_details:'',
   tin_no:'',service_tax_no:'',customer_discount:'',company_vat_no:'',company_cst_no:''});
-  const [inputList, setInputList]  = useState([{ contact_person_name: "", contact_person_mobile: "",
-    contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
+  const [inputList, setInputList]  = useState([{ name: "", mobile: "",
+    email: "", department:"", position: ""}]);
   const [selectedFile, setSelectedFile] = useState(false);
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [selectedPanFile, setSelectedPanFile] = useState(false);
@@ -315,32 +315,32 @@ const InsertCustomer = (e)=>{
         data1.append('company_vat_no', customer.company_vat_no);
 
         //Home Address Details
-        data1.append('customer_contact_info[home_contact_info][0][street_1]', customer.homestreet);
-        data1.append('customer_contact_info[home_contact_info][0][street_2]', customer.homestreet2);
-        data1.append('customer_contact_info[home_contact_info][0][area]', customer.area);
-        data1.append('customer_contact_info[home_contact_info][0][city]', customer.city);
-        data1.append('customer_contact_info[home_contact_info][0][pin]', customer.pincode);
-        data1.append('customer_contact_info[home_contact_info][0][state]', customer.state_id);
-        data1.append('customer_contact_info[home_contact_info][0][country]', customer.country_id);
-        data1.append('customer_contact_info[home_contact_info][0][home_landline]', customer.landline);
-        data1.append('customer_contact_info[home_contact_info][0][contact_no]', customer.admin_contact);
-        data1.append('customer_contact_info[home_contact_info][0][home_qc_contact_no]', customer.qc_contact);
-        data1.append('customer_contact_info[home_contact_info][0][email]', customer.admin_email);
-        data1.append('customer_contact_info[home_contact_info][0][home_pan_card]', customer.pancard_no);
+        data1.append('customer_contact_info[home_contact_info][0][street_1]', customer.homestreet && customer.homestreet !== null ? customer.homestreet : '');
+        data1.append('customer_contact_info[home_contact_info][0][street_2]', customer.homestreet2 && customer.homestreet2 !== null ? customer.homestreet2 : '');
+        data1.append('customer_contact_info[home_contact_info][0][area]', customer.area && customer.area !== null ? customer.area : '');
+        data1.append('customer_contact_info[home_contact_info][0][city]', customer.city && customer.city !== null ? customer.city : '');
+        data1.append('customer_contact_info[home_contact_info][0][pin]', customer.pincode && customer.pincode !== null ? customer.pincode : '');
+        data1.append('customer_contact_info[home_contact_info][0][state]', customer.state_id && customer.state_id !== null ? customer.state_id : '');
+        data1.append('customer_contact_info[home_contact_info][0][country]', customer.country_id && customer.country_id !== null ? customer.country_id : '');
+        data1.append('customer_contact_info[home_contact_info][0][home_landline]', customer.landline && customer.landline !== null ? customer.landline : '');
+        data1.append('customer_contact_info[home_contact_info][0][contact_no]', customer.admin_contact && customer.admin_contact !== null ? customer.admin_contact : '');
+        data1.append('customer_contact_info[home_contact_info][0][home_qc_contact_no]', customer.qc_contact && customer.qc_contact !== null ? customer.qc_contact : '');
+        data1.append('customer_contact_info[home_contact_info][0][email]', customer.admin_email && customer.admin_email !== null ? customer.admin_email : '');
+        data1.append('customer_contact_info[home_contact_info][0][home_pan_card]', customer.pancard_no && customer.pancard_no !== null ? customer.pancard_no : '');
         data1.append('customer_contact_info[home_contact_info][0][contact_info_type]', 1);
 
         //Correspondence Address Details
-        data1.append('customer_contact_info[other_contact_info][0][street_1]', customer.street);
-        data1.append('customer_contact_info[other_contact_info][0][street_2]', customer.street2);
-        data1.append('customer_contact_info[other_contact_info][0][area]', customer.area1);
-        data1.append('customer_contact_info[other_contact_info][0][city]', customer.city1);
-        data1.append('customer_contact_info[other_contact_info][0][pin]', customer.pincode1);
-        data1.append('customer_contact_info[other_contact_info][0][state]', customer.corr_state_id);
-        data1.append('customer_contact_info[other_contact_info][0][country]', customer.corr_country_id);
-        data1.append('customer_contact_info[other_contact_info][0][other_website]', customer.website);
-        data1.append('customer_contact_info[other_contact_info][0][contact_no]', customer.qa_contact);
-        data1.append('customer_contact_info[other_contact_info][0][other_qc_email]', customer.qc_email);
-        data1.append('customer_contact_info[other_contact_info][0][email]', customer.qa_email);
+        data1.append('customer_contact_info[other_contact_info][0][street_1]', customer.street && customer.street !== null ? customer.street : '');
+        data1.append('customer_contact_info[other_contact_info][0][street_2]', customer.street2 && customer.street2 !== null ? customer.street2 : '');
+        data1.append('customer_contact_info[other_contact_info][0][area]', customer.area1 && customer.area1 !== null ? customer.area1 : '');
+        data1.append('customer_contact_info[other_contact_info][0][city]', customer.city1 && customer.city1 !== null ? customer.city1 : '');
+        data1.append('customer_contact_info[other_contact_info][0][pin]', customer.pincode1 && customer.pincode1 !== null ? customer.pincode1 : '');
+        data1.append('customer_contact_info[other_contact_info][0][state]', customer.corr_state_id && customer.corr_state_id !== null ? customer.corr_state_id : '');
+        data1.append('customer_contact_info[other_contact_info][0][country]', customer.corr_country_id && customer.corr_country_id !== null ? customer.corr_country_id : '');
+        data1.append('customer_contact_info[other_contact_info][0][other_website]', customer.website && customer.website !== null ? customer.website : '');
+        data1.append('customer_contact_info[other_contact_info][0][contact_no]', customer.qa_contact && customer.qa_contact !== null ? customer.qa_contact : '');
+        data1.append('customer_contact_info[other_contact_info][0][other_qc_email]', customer.qc_email && customer.qc_email !== null ? customer.qc_email : '');
+        data1.append('customer_contact_info[other_contact_info][0][email]', customer.qa_email && customer.qa_email !== null ? customer.qa_email : '');
         if(selectedPanFile != false)
         {
             data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', selectedPanFile);
@@ -407,8 +407,8 @@ const ResetCustomer = () => {
 
   // handle click event of the Add button
 const handleAddClick = () => {
-  setInputList([...inputList, { contact_person_name: "", contact_person_mobile: "",
-    contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
+  setInputList([...inputList, { name: "", mobile: "",
+    email: "", department:"", position: "" }]);
 };
 
   // handle input change for Degree Details
@@ -732,22 +732,22 @@ return(
                                                     <div className="row">
                                                         <div className="col-md-2">
                                                             <label>Name</label>
-                                                            <input className="form-control" type="text" placeholder="Enter Name" value={x.contact_person_name} name="contact_person_name" onChange={e => handleInputChange(e, i)}/>
+                                                            <input className="form-control" type="text" placeholder="Enter Name" value={x.name} name="name" onChange={e => handleInputChange(e, i)}/>
                                                         </div>
 
                                                         <div className="col-md-2">
                                                             <label>Mobile</label>
-                                                            <input className="form-control" type="text" placeholder="Enter Mobile" value={x.contact_person_mobile} name="contact_person_mobile" onChange={e => handleInputChange(e, i)}/>
+                                                            <input className="form-control" type="text" placeholder="Enter Mobile" value={x.mobile} name="mobile" onChange={e => handleInputChange(e, i)}/>
                                                         </div>
 
                                                         <div className="col-md-3">
                                                             <label>E-mail</label>
-                                                            <input className="form-control" type="text" name="contact_person_email" value={x.contact_person_email} placeholder="Enter E-mail" onChange={e => handleInputChange(e, i)}/>
+                                                            <input className="form-control" type="text" name="email" value={x.email} placeholder="Enter E-mail" onChange={e => handleInputChange(e, i)}/>
                                                         </div>
                                                         <div className="col-md-2">
                                                             <label>Department</label>
                                                             {loading1 ? <LoadingSpinner /> :
-                                                          <select className="form-select" id="mst_departments_id" name="mst_departments_id" value={x.mst_departments_id} onChange={e => handleInputChange(e, i)}>
+                                                          <select className="form-select" id="mst_departments_id" name="department" value={x.department} onChange={e => handleInputChange(e, i)}>
                                                              <option value="">Select Department</option>
                                                             { data4.map((option, key) => <option value={option.id} key={key} >{option.department_name}</option>) }
                                                         </select> }
@@ -756,7 +756,7 @@ return(
                                                         <div className="col-md-2">
                                                             <label>Position</label>
                                                            {loading1 ? <LoadingSpinner /> :
-                                                        <select className="form-select" id="mst_positions_id" name="mst_positions_id" value={x.mst_positions_id} onChange={e => handleInputChange(e, i)}>
+                                                        <select className="form-select" id="mst_positions_id" name="position" value={x.position} onChange={e => handleInputChange(e, i)}>
                                                              <option value="">Select Position</option>
                                                             { data3.map((option, key) => <option value={option.id} key={key} >{option.position_title}</option>) }
                                                          </select> }

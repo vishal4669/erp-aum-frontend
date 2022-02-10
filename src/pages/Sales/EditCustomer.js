@@ -49,25 +49,30 @@ function EditCustomer(props) {
   const [data1, setData1] = useState([]);
   const [data3, setData3] = useState([]);
   const [data4, setData4] = useState([]);
-    const [data5, setData5] = useState([]);
+
+  const [fordata3, setForData3] = useState([]);
+  const [fordata4, setForData4] = useState([]);
+
+  const [data5, setData5] = useState([]);
   const [data6, setData6] = useState([]);
   const [selectedFiles, setselectedFiles] = useState(null)
   const [customer, setCustomer] = useState({ company_name: '', gst_number: '',contact_person_name:'',tally_alias_name:'',
-  user_name:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',is_active:'1',logo:'',
-  education_details:'',prev_details:'',company_tin_no:'',company_service_tax_no:'',company_cust_discount:'',
-  company_vat_no:'',company_cst_no:''});
+    user_name:'',password:'',birth_date:'',contact_type:'Customer',priority:'High',notes:'',is_active:'1',logo:'',
+    education_details:'',prev_details:'',company_tin_no:'',company_service_tax_no:'',company_cust_discount:'',
+    company_vat_no:'',company_cst_no:''});
 
-  const [pass, setPassword] = useState();
+    const [pass, setPassword] = useState();
 
-  const [address1, setCustomerAddress1] = useState({
-  homestreet:'',homestreet2:'',area:'',city:'',pincode:'',state_id:'',country_id:'',landline:'',admin_contact:'',
-  qc_contact:'',admin_email:'',pancard_no:''});
+    const [address1, setCustomerAddress1] = useState({
+    homestreet:'',homestreet2:'',area:'',city:'',pincode:'',state_id:'',country_id:'',landline:'',admin_contact:'',
+    qc_contact:'',admin_email:'',pancard_no:''});
 
-   const [address2, setCustomerAddress2] = useState({street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
-  corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:''});
+    const [address2, setCustomerAddress2] = useState({street:'',street2:'',area1:'',city1:'',pincode1:'',corr_state_id:'',
+    corr_country_id:'',website:'',qa_contact:'',qc_email:'',qa_email:'',pancard_copy:''});
 
-  const [inputList, setInputList]  = useState([{ contact_person_name: "", contact_person_mobile: "",
-    contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
+    const [inputList, setInputList]  = useState([{ name: "", mobile: "",
+    email: "", department:"", position: ""}]);
+
   const [selectedFile, setSelectedFile] = useState(false);
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [selectedPanFile, setSelectedPanFile] = useState(false);
@@ -97,22 +102,64 @@ const GetCustomerData=async()=>{
         {setLoading1(true)}
           await axios.get(`${process.env.REACT_APP_BASE_APIURL}getCustomer/`+customer_id,{headers})
               .then(response => {
-                  setCustomer(response.data.data);
-                  setCustomerAddress1(response.data.data.contact_info[0]);  // setting Permenant address
-                  setCustomerAddress2(response.data.data.contact_info[1]);
-                  setInputList(response.data.data.contact_person);
-                  setPassword(response.data.data.password);
+                    var cust_data = response.data.data[0];
+                    setCustomer(cust_data);
+                    // home address
+                    setCustomerAddress1({
+                      homestreet:cust_data.home_street_1,
+                      homestreet2:cust_data.home_street_2,
+                      area:cust_data.home_area,
+                      city:cust_data.home_city,
+                      pincode:cust_data.home_pin,
+                      state_id:cust_data.home_state_id,
+                      country_id:cust_data.home_country_id,
+                      landline:cust_data.home_landline,
+                      admin_contact:cust_data.home_contact_no,
+                      qc_contact:cust_data.home_qc_contact_no,
+                      admin_email:cust_data.home_email,
+                      pancard_no:cust_data.home_pan_card
+                    });  // setting Permenant address
+                    setCustomerAddress2({
+                      street:cust_data.other_street_1 && cust_data.other_street_1 !== "undefined" ? cust_data.other_street_1 : '',
+                      street2:cust_data.other_street_2,
+                      area1:cust_data.other_area,
+                      city1:cust_data.other_city,
+                      pincode1:cust_data.other_pin,
+                      corr_state_id:cust_data.other_state_id,
+                      corr_country_id:cust_data.other_country_id,
+                      website:cust_data.other_website,
+                      qa_contact:cust_data.other_contact_no,
+                      qc_email:cust_data.other_qc_email,
+                      qa_email:cust_data.other_email,
+                      pancard_copy:cust_data.other_pan_card_copy
+                    });
+                    if(Array.isArray(cust_data.contact_person) && cust_data.contact_person.length){
+                      setInputList(cust_data.contact_person);
 
-                  setCustomer(prevState => ({...prevState,password:base64_decode(response.data.data.password)}))
+                      var position_data = cust_data.contact_person.map(d =>
+                        d.position_dropdown.map(position =>position)
+                      )
+                        setData3(position_data)
 
-                  var fetch_country_id = response.data.data.contact_info[0].country_id ?
-                  response.data.data.contact_info[0].country_id : '';
-                  var fetch_country_id2 = response.data.data.contact_info[1].corr_country_id ?
-                  response.data.data.contact_info[1].corr_country_id : '';
+                      var department_data = cust_data.contact_person.map(d =>
+                          d.department_dropdown.map(department =>department)
+                        )
+                          setData4(department_data)
+                    } /*else {
+                      setInputList([...inputList, { name: "", mobile: "",
+                        email: "", department:"", position: ""}]);
+                    }*/
+                    setPassword(cust_data.password);
 
+                  setCustomer(prevState => ({...prevState,password:base64_decode(cust_data.password)}))
 
-                  if(fetch_country_id !== null || fetch_country_id !== 0){
+                  var fetch_country_id = cust_data.home_country_id ?
+                  cust_data.home_country_id : '';
+                  var fetch_country_id2 = cust_data.other_country_id ?
+                  cust_data.other_country_id : '';
 
+                  if(fetch_country_id > 0){
+                    console.log("here")
                     axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+fetch_country_id,{headers})
                     .then(response => {
                       if(response.data.success == true){
@@ -125,7 +172,7 @@ const GetCustomerData=async()=>{
                      })
                   }
 
-                  if(fetch_country_id2 !== null || fetch_country_id2 !== 0){
+                  if(fetch_country_id2 > 0){
 
                       axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+fetch_country_id2,{headers})
                       .then(response => {
@@ -143,6 +190,7 @@ const GetCustomerData=async()=>{
               })
               .catch((error) => {
                   {setLoading1(false)}
+                  console.log(error)
                   toastr.error(error.response.data.message);
                   this.setState({loading: false});
               })
@@ -211,7 +259,7 @@ const GetCustomerData=async()=>{
              {setLoading1(true)};
           await axios.get(`${process.env.REACT_APP_BASE_APIURL}listPosition?is_dropdown=1`,{headers})
             .then(response => {
-                     setData3(response.data.data);
+                     setForData3(response.data.data);
                      {setLoading1(false)}
                })
               .catch((error) => {
@@ -225,7 +273,7 @@ const GetCustomerData=async()=>{
              {setLoading1(true)};
           await axios.get(`${process.env.REACT_APP_BASE_APIURL}listDepartment?is_dropdown=1`,{headers})
             .then(response => {
-                     setData4(response.data.data);
+                     setForData4(response.data.data);
                      {setLoading1(false)}
                })
               .catch((error) => {
@@ -268,33 +316,35 @@ const GetCustomerData=async()=>{
 
         //show data in textboxes / field
 
-        document.CustomerData.street.value = copy_street1;
+        /*document.CustomerData.street.value = copy_street1;
         document.CustomerData.street2.value = copy_street2;
         document.CustomerData.area1.value = copy_area;
         document.CustomerData.city1.value = copy_city;
         document.CustomerData.pincode1.value = copy_pincode;
         document.CustomerData.corr_state_id.value = copy_state_id;
-        document.CustomerData.corr_country_id.value = copy_country_id;
+        document.CustomerData.corr_country_id.value = copy_country_id;*/
+
+        setCustomerAddress2(prevState => ({...prevState,street: copy_street1,street2:copy_street2,area1:copy_area,city1:copy_city,
+        pincode1:copy_pincode,corr_state_id:copy_state_id,corr_country_id:copy_country_id}))
 
         // set value
 
-        address2.street = document.CustomerData.street.value;
+        /*address2.street = document.CustomerData.street.value;
         address2.street2 = document.CustomerData.street2.value;
         address2.area1 = document.CustomerData.area1.value;
         address2.city1 = document.CustomerData.city1.value;
         address2.pincode1 = document.CustomerData.pincode1.value;
         address2.corr_state_id = document.CustomerData.corr_state_id.value;
-        address2.corr_country_id = document.CustomerData.corr_country_id.value;
+        address2.corr_country_id = document.CustomerData.corr_country_id.value;*/
+
         {setLoading3(false)};
        }
 
 
-const EditCustomer = (e)=>{
+const EditCustomer = async (e)=>{
          e.preventDefault();
        //const contact_person_data = inputList;
         {setLoading(true)};
-      //  console.log(address2.street)
-      //  return
         if(address1.state_id !== '' && address1.country_id == null){
           toastr.error("Home Details Country Field is Required.");
           {setLoading(false)};
@@ -324,7 +374,7 @@ const EditCustomer = (e)=>{
         } else {
             data1.append('tally_alias_name', '');
         }
-        data1.append('user_name', customer.user_name);
+        data1.append('user_name', customer.user_name ?  customer.user_name : '');
         if(customer.password !== pass){
             data1.append('password', customer.password);
         } else {
@@ -397,41 +447,45 @@ const EditCustomer = (e)=>{
         } else {
             data1.append('company_vat_no', '');
         }
-
         //Home Address Details
-        data1.append('customer_contact_info[home_contact_info][0][street_1]', address1.homestreet);
-        data1.append('customer_contact_info[home_contact_info][0][street_2]', address1.homestreet2);
-        data1.append('customer_contact_info[home_contact_info][0][area]', address1.area);
-        data1.append('customer_contact_info[home_contact_info][0][city]', address1.city);
-        data1.append('customer_contact_info[home_contact_info][0][pin]', address1.pincode);
-        data1.append('customer_contact_info[home_contact_info][0][state]', address1.state_id);
-        data1.append('customer_contact_info[home_contact_info][0][country]', address1.country_id);
-        data1.append('customer_contact_info[home_contact_info][0][home_landline]', address1.landline);
-        data1.append('customer_contact_info[home_contact_info][0][contact_no]', address1.admin_contact);
-        data1.append('customer_contact_info[home_contact_info][0][home_qc_contact_no]', address1.qc_contact);
-        data1.append('customer_contact_info[home_contact_info][0][email]', address1.admin_email);
-        data1.append('customer_contact_info[home_contact_info][0][home_pan_card]', address1.pancard_no);
+        data1.append('customer_contact_info[home_contact_info][0][street_1]', customer.homestreet && customer.homestreet !== null ? customer.homestreet : '');
+        data1.append('customer_contact_info[home_contact_info][0][street_2]', customer.homestreet2 && customer.homestreet2 !== null ? customer.homestreet2 : '');
+        data1.append('customer_contact_info[home_contact_info][0][area]', customer.area && customer.area !== null ? customer.area : '');
+        data1.append('customer_contact_info[home_contact_info][0][city]', customer.city && customer.city !== null ? customer.city : '');
+        data1.append('customer_contact_info[home_contact_info][0][pin]', customer.pincode && customer.pincode !== null ? customer.pincode : '');
+        data1.append('customer_contact_info[home_contact_info][0][state]', customer.state_id && customer.state_id !== null ? customer.state_id : '');
+        data1.append('customer_contact_info[home_contact_info][0][country]', customer.country_id && customer.country_id !== null ? customer.country_id : '');
+        data1.append('customer_contact_info[home_contact_info][0][home_landline]', customer.landline && customer.landline !== null ? customer.landline : '');
+        data1.append('customer_contact_info[home_contact_info][0][contact_no]', customer.admin_contact && customer.admin_contact !== null ? customer.admin_contact : '');
+        data1.append('customer_contact_info[home_contact_info][0][home_qc_contact_no]', customer.qc_contact && customer.qc_contact !== null ? customer.qc_contact : '');
+        data1.append('customer_contact_info[home_contact_info][0][email]', customer.admin_email && customer.admin_email !== null ? customer.admin_email : '');
+        data1.append('customer_contact_info[home_contact_info][0][home_pan_card]', customer.pancard_no && customer.pancard_no !== null ? customer.pancard_no : '');
         data1.append('customer_contact_info[home_contact_info][0][contact_info_type]', 1);
 
         //Correspondence Address Details
-        data1.append('customer_contact_info[other_contact_info][0][street_1]', address2.street);
-        data1.append('customer_contact_info[other_contact_info][0][street_2]', address2.street2);
-        data1.append('customer_contact_info[other_contact_info][0][area]', address2.area1);
-        data1.append('customer_contact_info[other_contact_info][0][city]', address2.city1);
-        data1.append('customer_contact_info[other_contact_info][0][pin]', address2.pincode1);
-        data1.append('customer_contact_info[other_contact_info][0][state]', address2.corr_state_id);
-        data1.append('customer_contact_info[other_contact_info][0][country]', address2.corr_country_id);
-        data1.append('customer_contact_info[other_contact_info][0][other_website]', address2.website);
-        data1.append('customer_contact_info[other_contact_info][0][contact_no]', address2.qa_contact);
-        data1.append('customer_contact_info[other_contact_info][0][other_qc_email]', address2.qc_email);
-        data1.append('customer_contact_info[other_contact_info][0][email]', address2.qa_email);
+        data1.append('customer_contact_info[other_contact_info][0][street_1]', customer.street && customer.street !== null ? customer.street : '');
+        data1.append('customer_contact_info[other_contact_info][0][street_2]', customer.street2 && customer.street2 !== null ? customer.street2 : '');
+        data1.append('customer_contact_info[other_contact_info][0][area]', customer.area1 && customer.area1 !== null ? customer.area1 : '');
+        data1.append('customer_contact_info[other_contact_info][0][city]', customer.city1 && customer.city1 !== null ? customer.city1 : '');
+        data1.append('customer_contact_info[other_contact_info][0][pin]', customer.pincode1 && customer.pincode1 !== null ? customer.pincode1 : '');
+        data1.append('customer_contact_info[other_contact_info][0][state]', customer.corr_state_id && customer.corr_state_id !== null ? customer.corr_state_id : '');
+        data1.append('customer_contact_info[other_contact_info][0][country]', customer.corr_country_id && customer.corr_country_id !== null ? customer.corr_country_id : '');
+        data1.append('customer_contact_info[other_contact_info][0][other_website]', customer.website && customer.website !== null ? customer.website : '');
+        data1.append('customer_contact_info[other_contact_info][0][contact_no]', customer.qa_contact && customer.qa_contact !== null ? customer.qa_contact : '');
+        data1.append('customer_contact_info[other_contact_info][0][other_qc_email]', customer.qc_email && customer.qc_email !== null ? customer.qc_email : '');
+        data1.append('customer_contact_info[other_contact_info][0][email]', customer.qa_email && customer.qa_email !== null ? customer.qa_email : '');
         if(selectedPanFile != false)
         {
+            //console.log(selectedPanFile)
             data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', selectedPanFile);
         } else {
-            if(address2.other_pan_card_copy !== '' || address2.other_pan_card_copy !== null && address2.other_pan_card_copy !== undefined){
-              data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', address2.other_pan_card_copy);
-            } else if(address2.other_pan_card_copy == undefined){
+            if(address2.pancard_copy !== '' || address2.pancard_copy !== null && address2.pancard_copy !== undefined){
+              if(address2.pancard_copy !== undefined){
+                data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', address2.pancard_copy);
+              } else {
+                data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', '');
+              }
+            } else if(address2.pancard_copy == undefined){
                  data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', '');
             }
          else{
@@ -452,7 +506,7 @@ const EditCustomer = (e)=>{
             console.log(pair[0]+ ', ' + pair[1]);
         }*/
 
-        axios.post( `${process.env.REACT_APP_BASE_APIURL}editCustomer/`+customer_id, data1, {headers} )
+        await axios.post( `${process.env.REACT_APP_BASE_APIURL}editCustomer/`+customer_id, data1, {headers} )
                 .then(response => {
                     if(response.data.success == true){
 
@@ -491,8 +545,8 @@ const EditCustomer = (e)=>{
 
   // handle click event of the Add button
 const handleAddClick = () => {
-  setInputList([...inputList, { contact_person_name: "", contact_person_mobile: "",
-    contact_person_email: "", mst_departments_id:"", mst_positions_id: ""}]);
+  setInputList([...inputList, { name: "", mobile: "",
+    email: "", department:"", position: ""}]);
 };
 
   // handle input change for Degree Details
@@ -652,8 +706,10 @@ return(
                                                         <label>Logo</label>
                                                         <input className="form-control" type="file" name="logo" onChange={ changeHandler }/>
                                                         <input className="form-control" type="hidden" value={customer.logo}/>
-                                                        {customer.logo !== null ? <div><img src={logo_path+customer.logo} width="70px" height="50px"/> &nbsp;&nbsp;
-                                                        <button className="form-control btn btn-danger btn-sm" style={{width:'20%'}} onClick={e => DeleteLogo(e)}><i className='fa fa-trash'></i>&nbsp;&nbsp;Delete</button></div> : ''}
+                                                        {customer.logo !== "null" ? <div><img src={logo_path+customer.logo} width="70px" height="50px"/> &nbsp;&nbsp;
+                                                        <button className="form-control btn btn-danger btn-sm" style={{width:'20%'}} onClick={e => DeleteLogo(e)}><i className='fa fa-trash'></i>&nbsp;&nbsp;Delete</button></div> :
+                                                        <span className="btn btn-primary btn-sm form-control">No Logo Available</span>
+                                                        }
 
                                                     </div>
 
@@ -741,8 +797,8 @@ return(
                                                                     <label>QC E-mail</label>
                                                                     <input value={address2.qc_email} className="form-control" type="text" name="qc_email" placeholder="Enter QC E-mail" onChange={ onChangeAddress2 }/><br/>
                                                                     <label>Pancard Copy</label>
-                                                                    <input className="form-control" type="file" name="other_pan_card_copy" onChange={ changePanHandler }/>
-                                                                    <input className="form-control" type="hidden" value={address2.other_pan_card_copy}/>
+                                                                    <input className="form-control" type="file" name="pancard_copy" onChange={ changePanHandler }/>
+                                                                    <input className="form-control" type="hidden" value={address2.pancard_copy}/>
 
                                                                 </div>
                                                               </div>
@@ -759,12 +815,12 @@ return(
                                                           { loading3 ? <center><LoadingSpinner /></center> : <button name="copy_details" type="button" onClick={copy_data} className="btn btn-primary form-control">Copy Details</button>}
                                                     </div>
                                                     <div className="col-md-5 align-items-center">
-                                                    {address2.other_pan_card_copy !== null ?
-                                                        <a href={pancard_copy_path+address2.other_pan_card_copy} className="btn btn-primary form-control" target="_blank">Click To Open PanCard Copy</a>
+                                                    {address2.pancard_copy !== null ?
+                                                        <a href={pancard_copy_path+address2.pancard_copy} className="btn btn-primary form-control" target="_blank">Click To Open PanCard Copy</a>
                                                     : <span className="btn btn-primary form-control">No Pancard Copy Uploaded</span>}
                                                     </div>
                                                     <div className="col-md-1">
-                                                    {address2.other_pan_card_copy !== null ?
+                                                    {address2.pancard_copy !== null ?
                                                         <button className="form-control btn btn-danger btn-sm" style={{lineHeight:'29.5px'}} onClick={e => DeletePancard(e)}><i className='fa fa-trash'></i>&nbsp;&nbsp;Delete</button>
                                                     : <span className="btn btn-primary form-control">No Pancard</span>}
                                                     </div>
@@ -832,33 +888,38 @@ return(
                                                     <div className="row">
                                                         <div className="col-md-2">
                                                             <label>Name</label>
-                                                            <input className="form-control" type="text" placeholder="Enter Name" value={x.contact_person_name} name="contact_person_name" onChange={e => handleInputChange(e, i)}/>
+                                                            <input className="form-control" type="text" placeholder="Enter Name" value={x.name} name="name" onChange={e => handleInputChange(e, i)}/>
                                                         </div>
 
                                                         <div className="col-md-2">
                                                             <label>Mobile</label>
-                                                            <input className="form-control" type="text" placeholder="Enter Mobile" value={x.contact_person_mobile} name="contact_person_mobile" onChange={e => handleInputChange(e, i)}/>
+                                                            <input className="form-control" type="text" placeholder="Enter Mobile" value={x.mobile} name="mobile" onChange={e => handleInputChange(e, i)}/>
                                                         </div>
 
                                                         <div className="col-md-3">
                                                             <label>E-mail</label>
-                                                            <input className="form-control" type="text" name="contact_person_email" value={x.contact_person_email} placeholder="Enter E-mail" onChange={e => handleInputChange(e, i)}/>
+                                                            <input className="form-control" type="text" name="email" value={x.email} placeholder="Enter E-mail" onChange={e => handleInputChange(e, i)}/>
                                                         </div>
                                                         <div className="col-md-2">
                                                             <label>Department</label>
                                                             {loading1 ? <LoadingSpinner /> :
-                                                          <select className="form-select" id="mst_departments_id" name="mst_departments_id" value={x.mst_departments_id} onChange={e => handleInputChange(e, i)}>
+                                                          <select className="form-select" id="mst_departments_id" name="department" value={x.department} onChange={e => handleInputChange(e, i)}>
                                                              <option value="">Select Department</option>
-                                                            { data4.map((option, key) => <option value={option.id} key={key} >{option.department_name}</option>) }
+                                                            { data4[i] ? (data4[i].map((option, key) => <option value={option.id} key={key} >{option.department_name}</option>))  :
+
+                                                              (fordata4.map((option, key) => <option value={option.id} key={key} >{option.department_name}</option>))
+                                                            }
                                                         </select> }
                                                         </div>
 
                                                         <div className="col-md-2">
                                                             <label>Position</label>
                                                            {loading1 ? <LoadingSpinner /> :
-                                                        <select className="form-select" id="mst_positions_id" name="mst_positions_id" value={x.mst_positions_id} onChange={e => handleInputChange(e, i)}>
+                                                        <select className="form-select" id="mst_positions_id" name="position" value={x.position} onChange={e => handleInputChange(e, i)}>
                                                              <option value="">Select Position</option>
-                                                            { data3.map((option, key) => <option value={option.id} key={key} >{option.position_title}</option>) }
+                                                            { data3[i] ? (data3[i].map((option, key) => <option value={option.id} key={key} >{option.position_title}</option>)) :
+                                                              (fordata3.map((option, key) => <option value={option.id} key={key} >{option.position_title}</option>))
+                                                            }
                                                          </select> }
                                                         </div>
 

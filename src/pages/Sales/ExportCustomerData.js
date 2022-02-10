@@ -38,7 +38,7 @@ class ExportCustomerData extends Component {
         this.componentDidMount= async() => {
           //Html File Genration for Customer
           this.setState({ loading1: true }, () => {
-           axios.get(`${process.env.REACT_APP_BASE_APIURL}exportCustomerData`, { headers: headers}).then(response => {
+           axios.get(`${process.env.REACT_APP_BASE_APIURL}listCustomer`, { headers: headers}).then(response => {
               this.setState({
 
                 CustomerData: response.data.data
@@ -88,7 +88,7 @@ class ExportCustomerData extends Component {
                  startY: 20
               });*/
               doc.autoTable({
-   html: '#my-table',
+   html: '#my-table1',
    startY: 15,
    styles: {
 fontSize: 16,
@@ -102,22 +102,28 @@ columnStyles:{
     columnWidth: 14,
   },
   1: {
-    columnWidth: 52
-  },
-  2: {
-    columnWidth: 52
-  },
-  3: {
     columnWidth: 40
   },
+  2: {
+    columnWidth: 26
+  },
+  3: {
+    columnWidth: 24
+  },
   4: {
-    columnWidth: 45
+    columnWidth: 35
   },
   5: {
-    columnWidth: 43
+    columnWidth: 30
   },
   6: {
-    columnWidth: 43
+    columnWidth: 30
+  },
+  7: {
+    columnWidth: 40,
+  },
+  8: {
+    columnWidth: 45
   },
 },
 theme: 'grid',
@@ -151,6 +157,10 @@ didParseCell: function (table) {
 }
 render(){
   const { data2, loading1 } = this.state;
+  const td_th_style = {
+    paddingLeft: '4px',
+    paddingRight: '4px'
+  }
   return (
     <React.Fragment>
       <div className="page-content">
@@ -163,34 +173,85 @@ render(){
                   <h3><center>Customer List</center></h3><br/>
 
                   <div className="table-responsive">
-        <Table border="1" stickyHeader aria-label="sticky table" style={{textAlign:'center',color:'black',width:'100%'}} id="my-table">
+        <Table border="1" stickyHeader aria-label="sticky table" style={{'border': '1px solid black',
+  'borderCollapse': 'collapse',marginLeft:'auto',marginRight:'auto',fontSize:'16px',color:'#000000',textAlign:'center'}} id="my-table">
           <thead>
             <tr>
-              <th>SR No</th>
-              <th>Name</th>
-              <th>Contact Person</th>
-              <th>Tally Alias Name</th>
-              <th>Account/Admin Contact No.</th>
-              <th>QA Contact No.</th>
-              <th>QC Contact No.</th>
+              <th style={td_th_style}>SR No</th>
+              <th style={td_th_style}>Name</th>
+              <th style={td_th_style}>Contact Person</th>
+              <th style={td_th_style}>Tally Alias Name</th>
+              <th style={td_th_style}>Account/Admin Contact No.</th>
+              <th style={td_th_style}>QA Contact No.</th>
+              <th style={td_th_style}>QC Contact No.</th>
+              <th style={td_th_style}>Landline</th>
+              <th style={td_th_style}>Account/Admin E-mail</th>
+              <th style={td_th_style}>QC Email</th>
+              <th style={td_th_style}>QA E-mail</th>
+              <th style={td_th_style}>Corporate Address</th>
+              <th style={td_th_style}>Correspondence Address</th>
+              <th style={td_th_style}>GST No</th>
             </tr>
           </thead>
             <tbody>
               {
                 this.state.CustomerData.map((post, index) => {
                   return <tr key={index}>
-                    <td>{index+1}</td>
-                    <td>{post.Company_name}</td>
-                    <td>{post.contact_person_name}</td>
-                    <td>{post.tally_alias_name}</td>
-                    <td>{post.home_contact_no.account_admin_contact_no}</td>
-                    <td>{post.other_contact_no.qa_contact_no}</td>
-                    <td>{post.home_contact_no.home_qc_contact_no}</td>
+                    <td style={td_th_style}>{index+1}</td>
+                    <td style={td_th_style}>{post.company_name}</td>
+                    <td style={td_th_style}>{post.contact_person_name}</td>
+                    <td style={td_th_style}>{post.tally_alias_name}</td>
+                    <td style={td_th_style}>{post.home_contact_no}</td>
+                    <td style={td_th_style}>{post.other_contact_no}</td>
+                    <td style={td_th_style}>{post.home_qc_contact_no}</td>
+                    <td style={td_th_style}>{post.home_landline}</td>
+                    <td style={td_th_style}>{post.home_email}</td>
+                    <td style={td_th_style}>{post.other_qc_email}</td>
+                    <td style={td_th_style}>{post.other_email}</td>
+                    <td style={td_th_style}>{post.home_street_1+","+post.home_street_2+","+post.home_city+","+post.home_state+","+post.home_country}</td>
+                    <td style={td_th_style}>{post.other_street_1+","+post.other_street_2+","+post.other_city+","+post.other_state+","+post.other_country}</td>
+                    <td style={td_th_style}>{post.gst_number}</td>
                   </tr>
                 })
               }
             </tbody>
-          </Table></div>
+          </Table>
+
+          <Table border="1" stickyHeader aria-label="sticky table" style={{'border': '1px solid black',
+    'borderCollapse': 'collapse',marginLeft:'auto',marginRight:'auto',fontSize:'16px',color:'#000000',textAlign:'center'}} id="my-table1">
+            <thead>
+              <tr>
+                <th style={td_th_style}>SR No</th>
+                <th style={td_th_style}>Name</th>
+                <th style={td_th_style}>Contact Person</th>
+                <th style={td_th_style}>Tally Alias Name</th>
+                <th style={td_th_style}>Account/Admin Contact No.</th>
+                <th style={td_th_style}>QA Contact No.</th>
+                <th style={td_th_style}>QC Contact No.</th>
+                <th style={td_th_style}>Account/Admin E-mail</th>
+                <th style={td_th_style}>GST No</th>
+              </tr>
+            </thead>
+              <tbody>
+                {
+                  this.state.CustomerData.map((post, index) => {
+                    return <tr key={index}>
+                      <td style={td_th_style}>{index+1}</td>
+                      <td style={td_th_style}>{post.company_name}</td>
+                      <td style={td_th_style}>{post.contact_person_name}</td>
+                      <td style={td_th_style}>{post.tally_alias_name}</td>
+                      <td style={td_th_style}>{post.home_contact_no}</td>
+                      <td style={td_th_style}>{post.other_contact_no}</td>
+                      <td style={td_th_style}>{post.home_qc_contact_no}</td>
+                      <td style={td_th_style}>{post.home_email}</td>
+                      <td style={td_th_style}>{post.gst_number}</td>
+                    </tr>
+                  })
+                }
+              </tbody>
+            </Table>
+
+          </div>
             </Col>
           </Row>
            }
