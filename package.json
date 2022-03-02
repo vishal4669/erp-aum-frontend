@@ -1,6 +1,9 @@
 {
   "name": "erp-aumresearchlaboratories",
   "version": "1.0.0",
+  "engines": {
+    "node": "14.17.0"
+  },
   "private": true,
   "dependencies": {
     "@autocomplete/material-ui": "0.0.17",
