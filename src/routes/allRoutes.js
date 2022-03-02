@@ -135,6 +135,13 @@ import AddMethod from "../pages/QA/AddMethod"
 import EditMethod from "../pages/QA/EditMethod"
 import ViewMethod from "../pages/QA/ViewMethod"
 
+//Quotation
+import ListQuotation from "../pages/Sales/ListQuotation"
+import AddQuotation from "../pages/Sales/AddQuotation"
+import ViewQuotation from "../pages/Sales/ViewQuotation"
+import EditQuotation from "../pages/Sales/EditQuotation"
+import ExportQuotationData from "../pages/Sales/ExportQuotationData"
+
 const userRoutes = [
 
 
@@ -284,6 +291,13 @@ const authRoutes = [
     { path: "/add-method" ,component: AddMethod},
     { path: "/edit-method" ,component: EditMethod},
     { path: "/view-method" ,component: ViewMethod},
+    //quotation
+    { path: "/quotation" ,component: ListQuotation},
+    { path: "/all-quotation" ,component: ListQuotation},
+    { path: "/add-quotation" ,component: AddQuotation},
+    { path: "/view-quotation" ,component: ViewQuotation},
+    { path: "/edit-quotation" ,component: EditQuotation},
+    { path: "/export-quotation-data" ,component: ExportQuotationData},
 ]
 
 export { userRoutes, authRoutes }

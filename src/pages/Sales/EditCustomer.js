@@ -285,7 +285,7 @@ const GetCustomerData=async()=>{
 
         const DeleteLogo = (e) => {
           e.preventDefault();
-           setCustomer(prevState => ({ ...prevState, logo: null}))
+           setCustomer(prevState => ({ ...prevState, logo: ''}))
          }
          const DeletePancard = (e) => {
            e.preventDefault();
@@ -448,32 +448,32 @@ const EditCustomer = async (e)=>{
             data1.append('company_vat_no', '');
         }
         //Home Address Details
-        data1.append('customer_contact_info[home_contact_info][0][street_1]', customer.homestreet && customer.homestreet !== null ? customer.homestreet : '');
-        data1.append('customer_contact_info[home_contact_info][0][street_2]', customer.homestreet2 && customer.homestreet2 !== null ? customer.homestreet2 : '');
-        data1.append('customer_contact_info[home_contact_info][0][area]', customer.area && customer.area !== null ? customer.area : '');
-        data1.append('customer_contact_info[home_contact_info][0][city]', customer.city && customer.city !== null ? customer.city : '');
-        data1.append('customer_contact_info[home_contact_info][0][pin]', customer.pincode && customer.pincode !== null ? customer.pincode : '');
-        data1.append('customer_contact_info[home_contact_info][0][state]', customer.state_id && customer.state_id !== null ? customer.state_id : '');
-        data1.append('customer_contact_info[home_contact_info][0][country]', customer.country_id && customer.country_id !== null ? customer.country_id : '');
-        data1.append('customer_contact_info[home_contact_info][0][home_landline]', customer.landline && customer.landline !== null ? customer.landline : '');
-        data1.append('customer_contact_info[home_contact_info][0][contact_no]', customer.admin_contact && customer.admin_contact !== null ? customer.admin_contact : '');
-        data1.append('customer_contact_info[home_contact_info][0][home_qc_contact_no]', customer.qc_contact && customer.qc_contact !== null ? customer.qc_contact : '');
-        data1.append('customer_contact_info[home_contact_info][0][email]', customer.admin_email && customer.admin_email !== null ? customer.admin_email : '');
-        data1.append('customer_contact_info[home_contact_info][0][home_pan_card]', customer.pancard_no && customer.pancard_no !== null ? customer.pancard_no : '');
+        data1.append('customer_contact_info[home_contact_info][0][street_1]', address1.homestreet);
+        data1.append('customer_contact_info[home_contact_info][0][street_2]', address1.homestreet2);
+        data1.append('customer_contact_info[home_contact_info][0][area]', address1.area);
+        data1.append('customer_contact_info[home_contact_info][0][city]', address1.city);
+        data1.append('customer_contact_info[home_contact_info][0][pin]', address1.pincode);
+        data1.append('customer_contact_info[home_contact_info][0][state]', address1.state_id);
+        data1.append('customer_contact_info[home_contact_info][0][country]', address1.country_id);
+        data1.append('customer_contact_info[home_contact_info][0][home_landline]', address1.landline);
+        data1.append('customer_contact_info[home_contact_info][0][contact_no]', address1.admin_contact);
+        data1.append('customer_contact_info[home_contact_info][0][home_qc_contact_no]', address1.qc_contact);
+        data1.append('customer_contact_info[home_contact_info][0][email]', address1.admin_email);
+        data1.append('customer_contact_info[home_contact_info][0][home_pan_card]', address1.pancard_no);
         data1.append('customer_contact_info[home_contact_info][0][contact_info_type]', 1);
 
         //Correspondence Address Details
-        data1.append('customer_contact_info[other_contact_info][0][street_1]', customer.street && customer.street !== null ? customer.street : '');
-        data1.append('customer_contact_info[other_contact_info][0][street_2]', customer.street2 && customer.street2 !== null ? customer.street2 : '');
-        data1.append('customer_contact_info[other_contact_info][0][area]', customer.area1 && customer.area1 !== null ? customer.area1 : '');
-        data1.append('customer_contact_info[other_contact_info][0][city]', customer.city1 && customer.city1 !== null ? customer.city1 : '');
-        data1.append('customer_contact_info[other_contact_info][0][pin]', customer.pincode1 && customer.pincode1 !== null ? customer.pincode1 : '');
-        data1.append('customer_contact_info[other_contact_info][0][state]', customer.corr_state_id && customer.corr_state_id !== null ? customer.corr_state_id : '');
-        data1.append('customer_contact_info[other_contact_info][0][country]', customer.corr_country_id && customer.corr_country_id !== null ? customer.corr_country_id : '');
-        data1.append('customer_contact_info[other_contact_info][0][other_website]', customer.website && customer.website !== null ? customer.website : '');
-        data1.append('customer_contact_info[other_contact_info][0][contact_no]', customer.qa_contact && customer.qa_contact !== null ? customer.qa_contact : '');
-        data1.append('customer_contact_info[other_contact_info][0][other_qc_email]', customer.qc_email && customer.qc_email !== null ? customer.qc_email : '');
-        data1.append('customer_contact_info[other_contact_info][0][email]', customer.qa_email && customer.qa_email !== null ? customer.qa_email : '');
+        data1.append('customer_contact_info[other_contact_info][0][street_1]', address2.street);
+        data1.append('customer_contact_info[other_contact_info][0][street_2]', address2.street2);
+        data1.append('customer_contact_info[other_contact_info][0][area]', address2.area1);
+        data1.append('customer_contact_info[other_contact_info][0][city]', address2.city1);
+        data1.append('customer_contact_info[other_contact_info][0][pin]', address2.pincode1);
+        data1.append('customer_contact_info[other_contact_info][0][state]', address2.corr_state_id);
+        data1.append('customer_contact_info[other_contact_info][0][country]', address2.corr_country_id);
+        data1.append('customer_contact_info[other_contact_info][0][other_website]', address2.website);
+        data1.append('customer_contact_info[other_contact_info][0][contact_no]', address2.qa_contact);
+        data1.append('customer_contact_info[other_contact_info][0][other_qc_email]', address2.qc_email);
+        data1.append('customer_contact_info[other_contact_info][0][email]', address2.qa_email);
         if(selectedPanFile != false)
         {
             //console.log(selectedPanFile)
@@ -706,7 +706,7 @@ return(
                                                         <label>Logo</label>
                                                         <input className="form-control" type="file" name="logo" onChange={ changeHandler }/>
                                                         <input className="form-control" type="hidden" value={customer.logo}/>
-                                                        {customer.logo !== "null" ? <div><img src={logo_path+customer.logo} width="70px" height="50px"/> &nbsp;&nbsp;
+                                                        {customer.logo && customer.logo != "null" ? <div><img src={logo_path+customer.logo} width="70px" height="50px"/> &nbsp;&nbsp;
                                                         <button className="form-control btn btn-danger btn-sm" style={{width:'20%'}} onClick={e => DeleteLogo(e)}><i className='fa fa-trash'></i>&nbsp;&nbsp;Delete</button></div> :
                                                         <span className="btn btn-primary btn-sm form-control">No Logo Available</span>
                                                         }

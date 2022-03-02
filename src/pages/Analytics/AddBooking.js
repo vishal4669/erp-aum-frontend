@@ -31,6 +31,8 @@ import $ from 'jquery'
 import { parse } from '@babel/core';
 import { PassThrough } from 'stream';
 
+import {booking_dropdown} from '../constant'
+
 function AddBooking(props) {
   const headers = {
     'Authorization': "Bearer " + localStorage.getItem('token')
@@ -39,54 +41,68 @@ function AddBooking(props) {
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
 
-  const [customer, setCustomer] = useState({ customer_id: '' })
-  const [manufacturer, setManufacturer] = useState({ manufacturer_name: '' })
-  const [supplier, setSupplier] = useState({ supplier_name: '' })
-  const [product, setProduct] = useState({ product_id: '' })
-
-  const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
   const [data2, setData2] = useState([]);
   const [data3, setData3] = useState([]);
   const [data4, setData4] = useState([]);
   const [data5, setData5] = useState([]);
-
-  const [booking, setBooking] = useState({ booking_no: '' });
-  const [reporttype, setreportType] = useState({ report_type: '', receipte_date: '' });
-  const [aumserialno, setaumserialno] = useState({ aum_serial_no: '' });
+  const [data6, setData6] = useState([]);
 
   const [booking1, setBooking1] = useState({
-    booking_type: 'Entry',booking_no: '', reference_no: '', remarks: '', mfg_date: '', mfg_options: 'N/S', exp_date: '', exp_options: 'N/S',
-    analysis_date: '', d_format: '', d_format_options: 'N/S', grade: '', grade_options: 'N/S', project_name: '',
-    project_options: 'N/S', mfg_lic_no: '', is_report_dispacthed: '0', signature: '0', verified_by: 'None', nabl_scope: '0',
-    cancel: 'None', cancel_remarks: '', priority: 'High', discipline: 'Chemical', booking_group: 'Drugs and Pharmaceuticals',
-    statement_ofconformity: 'PASS', dispatch_mode: '', dispatch_date_time: '', dispatch_details: '', invoice_date: '', invoice_number: '',
-    audit_reamrks: '', remark: '', comments: ''
-  });
-
-  const [bookingSamples, setBookingSamples] = useState({
-    batch_no: '',packsize: '', request_quantity: '', sample_code: '', sample_description: '', sample_quantity: '', sample_location: '',
-    sample_packaging: '', sample_type: '', sampling_date_from: '', sampling_date_from_options: 'N/S',
-    sampling_date_to: '', sampling_date_to_options: 'N/S', sample_received_through: 'By Courier', chemist: '1', sample_condition: '',
+    booking_type: '0',reference_no: '', remarks: '', mfg_date: '', mfg_options: '0', exp_date: '', exp_options: '0',
+    analysis_date: '', d_format: '', d_format_options: '0', grade: '', grade_options: '0', project_name: '',
+    project_options: '0', mfg_lic_no: '', is_report_dispacthed: '0', signature: '0', verified_by: '0', nabl_scope: '0',
+    cancel: '0', cancel_remarks: '', priority: '0', discipline: '0', booking_group: '0',
+    statement_ofconformity: '0', dispatch_mode: '', dispatch_date_time: '', dispatch_details: '',
+    aum_serial_no : '',report_type:'',receipte_date:'', booking_no:'',ulr_no:'',generic_name: '', product_generic: '', pharmacopeia_name: ''
+    ,customer_id: '',manufacturer_name:'',supplier_name:'',product_id:''
+    // Samples details,
+    ,batch_no: '',packsize: '', request_quantity: '', sample_code: '', sample_description: '', sample_quantity: '', sample_location: '',
+    sample_packaging: '', sample_type: '', sampling_date_from: '', sampling_date_from_options: '0',
+    sampling_date_to: '', sampling_date_to_options: '0', sample_received_through: '0', chemist: '0', sample_condition: '',
     is_sample_condition: '0', batch_size_qty_rec: '', notes: '', sample_drawn_by: ''
   });
 
-  const [bookingSamples1, setBookingSamples1] = useState({ generic_name: '', product_generic: '', pharmacopeia_name: '' });
-
   const [testData, setTestData] = useState([{
-    parent_child: 'Parent', p_sr_no: '1', by_pass: '2', parent_id: '', product_details: '',
-    test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending',assigned_date:''
+    parent_child: '0', p_sr_no: '1', by_pass: '0', parent_id: '', product_details: '',
+    test_id: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'0',assigned_date:''
   }])
 
   useEffect(() => {
-    fetchCustomerData();
-    fetchManufacturerData();
-    fetchSupplierData();
-    fetchAumSrNo();
-    fetchProduct();
-    fetchPharamcopiea();
-    fetchparentList();
-  }, []);
+    { setLoading1(true) };
+
+    const axiosrequest1 = axios.get(`${process.env.REACT_APP_BASE_APIURL}listCustomer?contact_type_customer=1&customer_type=Customer`,{headers});
+    const axiosrequest2 = axios.get(`${process.env.REACT_APP_BASE_APIURL}listCustomer?contact_type_customer=1&customer_type=Manufacturer`,{headers});
+    const axiosrequest3 = axios.get(`${process.env.REACT_APP_BASE_APIURL}listCustomer?contact_type_customer=1&customer_type=Supplier`,{headers});
+    const axiosrequest4 = axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_dropdown=1`,{headers});
+    const axiosrequest5 = axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest?is_parent=1`,{headers});
+    const axiosrequest6 = axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no`,{headers});
+    const axiosrequest7 = axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest?is_parameter=1`,{headers});
+
+    axios.all([axiosrequest1,axiosrequest2,axiosrequest3,axiosrequest4,axiosrequest5,axiosrequest6,axiosrequest7])
+      .then(axios.spread(function(res1, res2, res3, res4, res5, res6, res7) {
+    if(res1){
+      const options = res1.data.data.map(d => ({
+        "value": d.id,
+        "label": d.company_name
+      }))
+      setData1(options);
+    }
+    setData2(res2.data.data);
+    setData3(res3.data.data);
+    if(res4){
+      const product_option = res4.data.data.map(d => ({
+        "value": d.id,
+        "label": d.product_name
+      }))
+      setData4(product_option);
+    }
+    setData5(res5.data.data);
+    setBooking1(prevState => ({ ...prevState, aum_serial_no: res6.data.data.aum_serial_no}));
+    setData6(res7.data.data)
+    { setLoading1(false) };
+    }));
+        }, []);
 
 
   const my_style = {
@@ -101,46 +117,38 @@ function AddBooking(props) {
   const handleAddClick = (e,index) => {
 
     setTestData([...testData, {
-      parent_child: 'Parent', p_sr_no: '1', by_pass: '2', parent_id: '', product_details: '',
-      test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending',assigned_date:''
+      parent_child: '0', p_sr_no: '1', by_pass: '0', parent_id: '', product_details: '',
+      test_id: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'0',assigned_date:''
     }]);
-
-  /*  let setdata = () => {
-
-      setTestData([...testData, {
-        parent_child: 'Parent', p_sr_no: 1, by_pass: '2', parent_id: '', product_details: '',
-        test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: ''
-      }]);
-    }*/
 
     let arr_len = testData.length;
     for (let i = 0; i < arr_len; i++) {
       var parent;
       if (i == 0) {
-        if (testData[i]['parent_child'] == 'Parent') {
+        if (testData[i]['parent_child'] == '0') {
           parent = 2;
           //setdata();
           setTestData([...testData, {
-            parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending',assigned_date:''
+            parent_child: '0', p_sr_no: parent, by_pass: '0', parent_id: '', product_details: '',
+            test_id: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'0',assigned_date:''
           }]);
 
         }
         else {
           testData[i]['p_sr_no'] = '';
           setTestData([...testData, {
-            parent_child: 'Parent', p_sr_no: '', by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending',assigned_date:''
+            parent_child: '0', p_sr_no: '', by_pass: '0', parent_id: '', product_details: '',
+            test_id: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'0',assigned_date:''
           }]);
         }
       }
       if (i >= 1) {
-        if (testData[i]['parent_child'] == 'Parent') {
+        if (testData[i]['parent_child'] == '0') {
           parent = parent + 1;
           //setdata();
           setTestData([...testData, {
-            parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'Pending',assigned_date:''
+            parent_child: '0', p_sr_no: parent, by_pass: '0', parent_id: '', product_details: '',
+            test_id: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'0',assigned_date:''
           }]);
         }
       }
@@ -153,26 +161,28 @@ function AddBooking(props) {
 
   // handle input change for Degree Details
   const handleInputChange = (e, index) => {
-
-    console.log(e.target.name+""+index);
-
-    const { name, value } = e.target;
     const list = [...testData];
-    list[index][name] = value;
+    if(e.target.name == "test_name"){
+      list[index]["test_name"] = e.target.value;
+      list[index]["test_id"] = e.target.value.split(/[ -]+/)[0];
+    } else {
+      const { name, value } = e.target;
+      list[index][name] = value;
+    }
     setTestData(list);
     if ($.isEmptyObject(testData[index + 1])) {
       console.log("No Child Available");
     }
     else {
       let x = document.getElementById(`parent_child_${index}`);
-      if (x.value == "Parent") {
+      if (x.value == "0") {
         let is_disable = $(`#parent_child_${index}`).is(':disabled');
         // console.log("target",testData.index.p_sr_no);
         if(e.target.name == 'parent_child')
         {
           toastr.error("Please delete all the Childs before changing the Child");
-          $(`#parent_child_${index}`).val("Child");
-          testData[index]['parent_child'] = "Child";
+          $(`#parent_child_${index}`).val("1");
+          testData[index]['parent_child'] = "1";
           // $(`#parent_child_${index}`).prop("disabled", true);
         }
 
@@ -182,8 +192,8 @@ function AddBooking(props) {
         if(e.target.name == 'parent_child')
         {
           toastr.error("Please delete all the Childs before changing the parent");
-          $(`#parent_child_${index}`).val("Parent");
-          testData[index]['parent_child'] = "Parent";
+          $(`#parent_child_${index}`).val("0");
+          testData[index]['parent_child'] = "0";
           // $(`#parent_child_${index}`).prop("disabled", true);
         }
       }
@@ -193,7 +203,7 @@ function AddBooking(props) {
     for (let i = 0; i < arr_len; i++) {
       var parent;
       if (i == 0) {
-        if (testData[i]['parent_child'] == 'Parent') {
+        if (testData[i]['parent_child'] == '0') {
           parent = 1;
           testData[i]['p_sr_no'] = parent;
         }
@@ -213,16 +223,16 @@ function AddBooking(props) {
         }
         return -1;
       };
-      var last_index_parent = lastIndexOf(testData, "Parent");
-      var last_index_child = lastIndexOf(testData, "Child");
+      var last_index_parent = lastIndexOf(testData, "0");
+      var last_index_child = lastIndexOf(testData, "1");
       if (i >= 1) {
-        if (testData[i]['parent_child'] == 'Parent') {
+        if (testData[i]['parent_child'] == '0') {
           parent = parent + 1;
           testData[i]['p_sr_no'] = parent;
         }
         else {
-          if (testData[i]['parent_child'] == 'Child') {
-            if (testData[i - 1]['parent_child'] == 'Parent') {
+          if (testData[i]['parent_child'] == '1') {
+            if (testData[i - 1]['parent_child'] == '0') {
               testData[i]['p_sr_no'] = testData[i - 1]['p_sr_no'] + 0.1;
             }
             else {
@@ -249,10 +259,10 @@ function AddBooking(props) {
     if ($.isEmptyObject(testData[index + 1])) {
       const list = [...testData];
       let x = document.getElementById(`parent_child_${index}`);
-      if (x.value == "Parent") {
+      if (x.value == "0") {
         toastr.success("Parent Element Deleted Successfully.");
-        $(`#parent_child_${index}`).val("Child");
-        testData[index]['parent_child'] = "Child";
+        $(`#parent_child_${index}`).val("1");
+        testData[index]['parent_child'] = "1";
         // $(`#parent_child_${testData.length - 2}`).removeAttr('disabled');
       }
       else {
@@ -268,18 +278,30 @@ function AddBooking(props) {
     }
   };
 
+  const onChangeNABL = (e) => {
+
+    if(e.target.value == "1"){
+      axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no`, { headers })
+          .then(response => {
+            setBooking1(prevState => ({ ...prevState, ulr_no: response.data.data.ulr_no,
+              nabl_scope:e.target.value}))
+            $("#ulr_no").css("display","block")
+          })
+    } else {
+      setBooking1(prevState => ({ ...prevState, nabl_scope:e.target.value}))
+      $("#ulr_no").css("display","none")
+    }
+  }
+
   const onChange = (e) => {
-    setBooking1({ ...booking1, [e.target.name]: e.target.value });
+    setBooking1(prevState => ({ ...prevState, [e.target.name]: e.target.value }));
 
     booking1.is_report_dispacthed = document.BookingData.is_report_dispacthed.value;
     var report_dispatch_count = booking1.is_report_dispacthed
 
-    booking1.booking_type = document.BookingData.booking_type.value;
-    var chnage_booking_type = booking1.booking_type
-
     if (report_dispatch_count !== null) {
       {
-        if (report_dispatch_count == 1) {
+        if (report_dispatch_count == "1") {
           $(".report_dispatch_yes").css("display", "block");
         } else {
           $("#dispatch_date_time").val("");
@@ -290,32 +312,10 @@ function AddBooking(props) {
         }
       }
     }
-
-    if (chnage_booking_type !== null) {
-      if (chnage_booking_type == 'Invoice') {
-        $(".invoice_data").css("display", "block");
-      } else {
-        $("#invoice_date").val("");
-        $("#invoice_number").val("");
-        setBooking1(prevState => ({ ...prevState, invoice_date: "", invoice_number: "" }))
-        $(".invoice_data").css("display", "none");
-      }
-
-      if (chnage_booking_type == 'Report') {
-        $(".audit_details").css("display", "block");
-      } else {
-        $("#audit_reamrks").val("");
-        $("#reason").val("");
-        $("#comments").val("");
-        setBooking1(prevState => ({ ...prevState, audit_reamrks: "", reason: "", comments: "" }))
-        $(".audit_details").css("display", "none");
-      }
-    }
   }
 
   const reporttypeonChange = (e) => {
-    setBooking({ ...booking, [e.target.name]: e.target.value });
-    setreportType({ ...reporttype, [e.target.name]: e.target.value });
+    setBooking1(prevState => ({ ...prevState, [e.target.name]: e.target.value }));
 
     booking1.report_type = document.BookingData.report_type.value;
     var report_type_value = booking1.report_type
@@ -323,21 +323,20 @@ function AddBooking(props) {
     booking1.receipte_date = document.BookingData.receipte_date.value;
     var receipte_date_value = booking1.receipte_date
 
-    if (report_type_value !== '' && receipte_date_value !== '') {
-      getBookingNo(report_type_value, receipte_date_value);
+    booking1.booking_type = document.BookingData.booking_type.value;
+    var booking_type_value = booking1.booking_type
+
+    if (report_type_value !== '' && receipte_date_value !== '' && booking_type_value !== '') {
+      getBookingNo(booking_dropdown.report_type[booking1.report_type].label, receipte_date_value,booking_dropdown.booking_type[booking1.booking_type].label);
     }
 
   }
 
-  const AumSerialNoonChange = (e) => {
-    setaumserialno({ ...aumserialno, [e.target.name]: e.target.value });
-  }
+  const getBookingNo = (report_type_value, receipte_date_value, booking_type_value) => {
 
-  const getBookingNo = (report_type_value, receipte_date_value) => {
-
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no/` + report_type_value + "/" + receipte_date_value, { headers })
+    axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no/` + report_type_value + "/" + receipte_date_value + "/" + booking_type_value, { headers })
       .then(response => {
-        setBooking({ booking_no: response.data.data.booking_no });
+        setBooking1(prevState => ({ ...prevState, booking_no: response.data.data.booking_no }));
         { setLoading1(false) }
       })
       .catch((error) => {
@@ -347,186 +346,67 @@ function AddBooking(props) {
 
   }
 
-  const onChangeProductSamples = (e) => {
-    setBookingSamples({ ...bookingSamples, [e.target.name]: e.target.value });
-  }
-
-  const onChangeProductSamplesFromDB = (e) => {
-    setBookingSamples1({ ...bookingSamples1, [e.target.name]: e.target.value });
-  }
-
   const changeCustomer = (e) => {
-    setCustomer({ customer_id: e });
+    setBooking1(prevState => ({ ...prevState, customer_id: e}));
   }
 
   const changeManufacturer = (e) => {
-    setManufacturer({ ...manufacturer, [e.target.name]: e.target.value });
+    setBooking1(prevState => ({ ...prevState, manufacturer_name: e.target.value}));
   }
 
   const changeSupplier = (e) => {
     //setSupplier({ supplier_id: e });
-    setSupplier({ ...supplier, [e.target.name]: e.target.value });
+    setBooking1(prevState => ({ ...prevState, supplier_name: e.target.value}));
   }
 
   const changeProductID = (e) => {
-    setProduct({ product_id: e });
-
+    setBooking1(prevState => ({ ...prevState, product_id: e}));
     getProductData(e);
   }
 
   const getProductData = (e) => {
-    var final_product_id = e.value
-    var index = 0
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/` + final_product_id, { headers })
-      .then(response => {
-        const sample_description = response.data.data.sample_description
-        const tests_data = response.data.data.samples.map((d, index) => ({
-          "parent_child": "Parent",
-          "p_sr_no": index + 1,
-          "by_pass": d.by_pass,
-          "parent_id": d.parent.id,
-          "product_details": d.description == '' && d.parameter.procedure_name.toLowerCase() == "description" ?
-          sample_description : d.description,
-          "test_name": d.parameter.procedure_name,
-          "label_claim": d.label_claim,
-          "min_limit": d.min_limit,
-          "max_limit": d.max_limit,
-          "amount": d.amount,
-          "approved":'Pending',
-          "assigned_date":''
+    if(e !== null){
+          var final_product_id = e.value
+        var index = 0
+        axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/` + final_product_id, { headers })
+          .then(response => {
+            const sample_description = response.data.data[0].sample_description
+            const tests_data = response.data.data[0].samples.map((d, index) => ({
+              "parent_child": "0",
+              "p_sr_no": index + 1,
+              "by_pass": d.by_pass == 2 ? '0' : '1',
+              "parent_id": d.parent,
+              "product_details": d.description == '' &&  d.parameter_name && d.parameter_name.toLowerCase() == "description" ? sample_description : d.description,
+              "test_id": d.mst_sample_parameter_id,
+              "test_name": d.parameter_name && d.mst_sample_parameter_id ? d.mst_sample_parameter_id+" - "+ d.parameter_name : '',
+              "label_claim": d.label_claim,
+              "min_limit": d.min_limit,
+              "max_limit": d.max_limit,
+              "amount": d.amount,
+              "approved":'Pending',
+              "assigned_date":''
 
-        }))
-        setTestData(tests_data)
-        setBookingSamples1({
-          product_generic: response.data.data.product_generic,
-          pharmacopeia_name: response.data.data.pharmacopeia.pharmacopeia_name,
-          generic_name: response.data.data.generic_product_id.generic_product_name
-        })
-
+            }))
+            setTestData(tests_data)
+            setBooking1(prevState => ({ ...prevState, product_generic: response.data.data[0].product_generic,
+            pharmacopeia_name: response.data.data[0].pharmacopeia_name,
+            generic_name: response.data.data[0].generic_product_name }))
       })
       .catch((error) => {
+        console.log(error)
         toastr.error(error.response.data.message);
       })
-  }
-
-  const fetchCustomerData = () => {
-    { setLoading1(true) };
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Customer`, { headers })
-      .then(response => {
-        const options = response.data.data.map(d => ({
-          "value": d.id,
-          "label": d.company_name
-        }))
-        setData1(options);
-        { setLoading1(false) }
-      })
-      .catch((error) => {
-        toastr.error(error.response.data.message);
-        { setLoading1(false) }
-      })
-  }
-
-  const fetchManufacturerData = () => {
-    { setLoading1(true) };
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Manufacturer`, { headers })
-      .then(response => {
-      /*  const options1 = response.data.data.map(d => ({
-          "value": d.id,
-          "label": d.company_name
-        }))*/
-        setData2(response.data.data);
-        { setLoading1(false) }
-      })
-      .catch((error) => {
-        toastr.error(error.response.data.message);
-        { setLoading1(false) }
-      })
-  }
-
-  const fetchSupplierData = () => {
-    { setLoading1(true) };
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Supplier`, { headers })
-      .then(response => {
-      /*  const options2 = response.data.data.map(d => ({
-          "value": d.id,
-          "label": d.company_name
-        }))*/
-        setData3(response.data.data);
-        { setLoading1(false) }
-                console.log(data3)
-      })
-      .catch((error) => {
-        toastr.error(error.response.data.message);
-        { setLoading1(false) }
-      })
-  }
-
-
-  const fetchAumSrNo = () => {
-    { setLoading1(true) };
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no/` + null, { headers })
-      .then(response => {
-        setaumserialno({ aum_serial_no: response.data.data.aum_serial_no });
-        { setLoading1(false) }
-      })
-      .catch((error) => {
-        toastr.error(error.response.data.message);
-        { setLoading1(false) }
-      })
-  }
-
-  const fetchProduct = () => {
-    { setLoading1(true) };
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_dropdown=1`, { headers })
-      .then(response => {
-        const product_option = response.data.data.map(d => ({
-          "value": d.id,
-          "label": d.product_name
-        }))
-        setData4(product_option);
-        { setLoading1(false) }
-      })
-      .catch((error) => {
-        toastr.error(error.response.data.message);
-        { setLoading1(false) }
-      })
-  }
-
-  const fetchPharamcopiea = () => {
-    { setLoading1(true) };
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}listPharmacopeia?is_dropdown=1`, { headers })
-      .then(response => {
-        setData(response.data.data);
-        { setLoading1(false) }
-      })
-      .catch((error) => {
-        toastr.error(error.response.data.message);
-
-        { setLoading1(false) }
-      })
-  }
-
-  const fetchparentList = () => {
-    { setLoading1(true) };
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}parentList`, { headers })
-      .then(response => {
-        setData5(response.data.data);
-        { setLoading1(false) }
-      })
-      .catch((error) => {
-        toastr.error(error.response.data.message);
-        { setLoading1(false) }
-      })
+    }
   }
 
   const InsertBooking = (e) => {
     e.preventDefault();
-    { setLoading(true) };
+   { setLoading(true) };
 
-    var final_customer_id = customer;
+    var final_customer_id = booking1.customer_id;
     //var final_supplier_id = supplier;
     //var final_manufacturer_id = manufacturer;
-    var final_product_id = product;
+    var final_product_id = booking1.product_id;
 
     // Customer ID
 
@@ -542,11 +422,11 @@ function AddBooking(props) {
 
     //console.log(moment(booking1.dispatch_date_time).format("YYYY-MM-DDTHH:mm:ss"))
 
-    if (typeof customer == "number") {
-      final_customer_id = customer.customer_id
-    } else if (typeof customer == "object") {
-      if (customer.customer_id !== null) {
-        final_customer_id = customer.customer_id.value;
+    if (typeof booking1.customer_id == "number") {
+      final_customer_id = booking1.customer_id
+    } else if (typeof booking1.customer_id == "object") {
+      if (booking1.customer_id !== null) {
+        final_customer_id = booking1.customer_id.value;
       } else {
         final_customer_id = '';
       }
@@ -590,11 +470,11 @@ function AddBooking(props) {
 
     // Product ID
 
-    if (typeof product == "number") {
-      final_product_id = product.product_id
-    } else if (typeof product == "object") {
-      if (product.product_id !== null) {
-        final_product_id = product.product_id.value;
+    if (typeof booking1.product_id == "number") {
+      final_product_id = booking1.product_id
+    } else if (typeof booking1.product_id == "object") {
+      if (booking1.product_id !== null) {
+        final_product_id = booking1.product_id.value;
       } else {
         final_product_id = '';
       }
@@ -604,12 +484,12 @@ function AddBooking(props) {
     }
 
     var final_booking_no = ''
-    if (booking.booking_no == undefined) {
+    if (booking1.booking_no == undefined) {
       final_booking_no = ''
-    } else if (booking.booking_no == null) {
+    } else if (booking1.booking_no == null) {
       final_booking_no = ''
     } else {
-      final_booking_no = booking.booking_no
+      final_booking_no = booking1.booking_no
     }
 
     const test_details = testData;
@@ -617,24 +497,24 @@ function AddBooking(props) {
 
     const data = {
       booking_type: booking1.booking_type,
-      report_type: reporttype.report_type,
+      report_type: booking1.report_type,
       invoice_date: booking1.invoice_date,
       invoice_no: booking1.invoice_number,
-      receipte_date: reporttype.receipte_date,
+      receipte_date: booking1.receipte_date,
       booking_no: final_booking_no,
       customer_id: final_customer_id,
       reference_no: booking1.reference_no,
       remarks: booking1.remarks,
       //manufacturer_name: final_manufacturer_id,
-      manufacturer_name: manufacturer.manufacturer_name,
+      manufacturer_id: booking1.manufacturer_name,
       //supplier_id: final_supplier_id,
-      supplier_name: supplier.supplier_name,
+      supplier_id: booking1.supplier_name,
       mfg_date: booking1.mfg_date,
       mfg_options: booking1.mfg_options,
       exp_date: booking1.exp_date,
       exp_options: booking1.exp_options,
       analysis_date: booking1.analysis_date,
-      aum_serial_no: aumserialno.aum_serial_no,
+      aum_serial_no: booking1.aum_serial_no,
       d_format: booking1.d_format,
       d_format_options: booking1.d_format_options,
       grade: booking1.grade,
@@ -655,37 +535,31 @@ function AddBooking(props) {
       discipline: booking1.discipline,
       booking_group: booking1.booking_group,
       statement_ofconformity: booking1.statement_ofconformity,
-      "booking_sample_details": [{
+      ulr_no : booking1.ulr_no,
+      "booking_sample_details": {
         product_id: final_product_id,
-        // product_type: bookingSamples1.product_type,
-        //   pharmacopiea_id:bookingSamples1.pharmacopeia_id,
-        batch_no: bookingSamples.batch_no,
-        packsize: bookingSamples.packsize,
-        request_quantity: bookingSamples.request_quantity,
-        sample_code: bookingSamples.sample_code,
-        sample_description: bookingSamples.sample_description,
-        sample_quantity: bookingSamples.sample_quantity,
-        sample_location: bookingSamples.sample_location,
-        sample_packaging: bookingSamples.sample_packaging,
-        sample_type: bookingSamples.sample_type,
-        sampling_date_from: bookingSamples.sampling_date_from,
-        sampling_date_from_options: bookingSamples.sampling_date_from_options,
-        sampling_date_to: bookingSamples.sampling_date_to,
-        sampling_date_to_options: bookingSamples.sampling_date_to_options,
-        sample_received_through: bookingSamples.sample_received_through,
-        chemist: bookingSamples.chemist,
-        sample_condition: bookingSamples.sample_condition,
-        is_sample_condition: bookingSamples.is_sample_condition,
-        batch_size_qty_rec: bookingSamples.batch_size_qty_rec,
-        notes: bookingSamples.notes,
-        sample_drawn_by: bookingSamples.sample_drawn_by,
-      }],
+        batch_no: booking1.batch_no,
+        packsize: booking1.packsize,
+        request_quantity: booking1.request_quantity,
+        sample_code: booking1.sample_code,
+        sample_description: booking1.sample_description,
+        sample_quantity: booking1.sample_quantity,
+        sample_location: booking1.sample_location,
+        sample_packaging: booking1.sample_packaging,
+        sample_type: booking1.sample_type,
+        sampling_date_from: booking1.sampling_date_from,
+        sampling_date_from_options: booking1.sampling_date_from_options,
+        sampling_date_to: booking1.sampling_date_to,
+        sampling_date_to_options: booking1.sampling_date_to_options,
+        sample_received_through: booking1.sample_received_through,
+        chemist: booking1.chemist,
+        sample_condition: booking1.sample_condition,
+        is_sample_condition: booking1.is_sample_condition,
+        batch_size_qty_rec: booking1.batch_size_qty_rec,
+        notes: booking1.notes,
+        sample_drawn_by: booking1.sample_drawn_by,
+      },
       "booking_tests": test_details,
-      "booking_audit_details": {
-        audit_remarks: booking1.audit_reamrks,
-        reason: booking1.reason,
-        comments: booking1.comments
-      }
     }
     console.log(data)
     axios.post(`${process.env.REACT_APP_BASE_APIURL}addBooking`, data, { headers })
@@ -752,25 +626,17 @@ function AddBooking(props) {
                         <div className="row">
                           <div className="col-md-3">
                             <label>Booking Type</label>
-                            <select className="form-select" name="booking_type" onChange={onChange}>
-                              <option value="Entry">Entry</option>
-                              {/*<option value="Testing">Testing</option>
-                              <option value="Report">Report</option>
-                              <option value="Dispatched">Dispatched</option>
-                              <option value="Invoice">Invoice</option>
-                              <option value="Cancel">Cancel</option>*/}
+                            <select className="form-select" name="booking_type" onChange={reporttypeonChange}>
+                            {booking_dropdown.booking_type.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
                           <div className="col-md-3">
                             <label className="required-field">Report Type</label>
                             <select className="form-select" name="report_type" onChange={reporttypeonChange}>
                               <option value="">None</option>
-                              <option value="FP">FP</option>
-                              <option value="RM">RM</option>
-                              <option value="OT">OT</option>
-                              <option value="TP">TP</option>
-                              <option value="ADL">ADL</option>
-                              <option value="AYUSH">AYUSH</option>
+                              {booking_dropdown.report_type.map((option, key) => <option value={option.id} key={key} >
+                                {option.label}</option>)}
                             </select>
                           </div>
                           <div className="col-md-3">
@@ -779,30 +645,11 @@ function AddBooking(props) {
                           </div>
                           <div className="col-md-3">
                             <label>Booking No</label>
-                            <input className="form-control" type="text" value={booking.booking_no} onChange={onChange} name="booking_no" readOnly />
+                            <input className="form-control" type="text" value={booking1.booking_no} onChange={onChange} name="booking_no" readOnly />
                           </div>
                         </div>
                       </div>
                     </div>
-
-                    <div className="mb-3 row invoice_data" style={{ display: 'none' }}>
-                      <div className="form-group">
-                        <div className="row">
-
-                          <div className="col-md-6">
-                            <label>Invoice Date</label>
-                            <input id="invoice_date" onChange={onChange} className="form-control" type="date" name="invoice_date" placeholder="Enter Invoice Date" />
-                          </div>
-
-                          <div className="col-md-6">
-                            <label>Invoice Number</label>
-                            <input id="invoice_number" onChange={onChange} className="form-control" type="text" name="invoice_number" placeholder="Enter Invoice Number" />
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
-
 
                     <div className="mb-3 row">
                       <div className="form-group">
@@ -836,7 +683,7 @@ function AddBooking(props) {
 
                           {/*{loading1 ? <LoadingSpinner /> : <Select onChange={changeManufacturer} options={data2} name="manufacturer_id"
                               placeholder="Select Manufacturer" isClearable />}*/}
-                              <input value={manufacturer.manufacturer_name} onChange={changeManufacturer} name="manufacturer_name" className="form-control"
+                              <input value={booking1.manufacturer_name} onChange={changeManufacturer} name="manufacturer_name" className="form-control"
                                list="manufacturer_name" id="exampleDataList" placeholder="Type to search For Manufacturer..." autoComplete="off"/>
                                <datalist id="manufacturer_name">
                                    { data2.map((option, key) => <option data-value={option.id} value={option.company_name} key={key} >
@@ -849,7 +696,7 @@ function AddBooking(props) {
                             {/*{loading1 ? <LoadingSpinner /> : <Select onChange={changeSupplier} options={data3} name="supplier_id"
                               placeholder="Select Supplier" isClearable />}*/}
 
-                              <input value={supplier.supplier_name} onChange={changeSupplier} name="supplier_name" className="form-control"
+                              <input value={booking1.supplier_name} onChange={changeSupplier} name="supplier_name" className="form-control"
                                list="supplier_name" id="exampleDataList" placeholder="Type to search For Supplier..." autoComplete="off"/>
                                <datalist id="supplier_name">
                                    { data3.map((option, key) => <option data-value={option.id} value={option.company_name} key={key} >
@@ -865,9 +712,8 @@ function AddBooking(props) {
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>Mfg</label>
                             <select name="mfg_options" className="form-select" onChange={onChange}>
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            {booking_dropdown.common_options1.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
@@ -878,9 +724,8 @@ function AddBooking(props) {
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>Exp</label>
                             <select name="exp_options" className="form-select" onChange={onChange}>
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            {booking_dropdown.common_options1.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
                         </div>
@@ -896,7 +741,7 @@ function AddBooking(props) {
                           </div>
                           <div className="col-md-3">
                             <label>Aum Sr. No</label>
-                            {loading1 ? <LoadingSpinner /> : <input value={aumserialno.aum_serial_no} type="text" className="form-control" name="aum_serial_no" readOnly />
+                            {loading1 ? <LoadingSpinner /> : <input value={booking1.aum_serial_no} type="text" className="form-control" name="aum_serial_no" readOnly />
                             }
                           </div>
 
@@ -908,9 +753,8 @@ function AddBooking(props) {
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>Formate</label>
                             <select name="d_format_options" className="form-select" onChange={onChange}>
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            {booking_dropdown.common_options2.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
@@ -921,9 +765,8 @@ function AddBooking(props) {
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>Grade</label>
                             <select onChange={onChange} name="grade_options" className="form-select">
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            {booking_dropdown.common_options2.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
                         </div>
@@ -942,9 +785,8 @@ function AddBooking(props) {
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>ProName</label>
                             <select onChange={onChange} name="project_options" className="form-select">
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            {booking_dropdown.common_options2.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
@@ -956,8 +798,8 @@ function AddBooking(props) {
                           <div className="col-md-3">
                             <label>Is Report Dispacthed?</label>
                             <select onChange={onChange} name="is_report_dispacthed" className="form-select">
-                              <option value="0">No</option>
-                              <option value="1">Yes</option>
+                            {booking_dropdown.yes_no_options.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
 
                           </div>
@@ -965,8 +807,8 @@ function AddBooking(props) {
                           <div className="col-md-3">
                             <label>Signature?</label>
                             <select onChange={onChange} name="signature" className="form-select">
-                              <option value="0">No</option>
-                              <option value="1">Yes</option>
+                            {booking_dropdown.yes_no_options.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
@@ -988,9 +830,8 @@ function AddBooking(props) {
                             <label>Dispatch Mode</label>
                             <select onChange={onChange} name="dispatch_mode" className="form-select" id="dispatch_mode">
                               <option value="">Select Dispatch Mode</option>
-                              <option value="By Courier">By Courier</option>
-                              <option value="By Hand Delivery">By Hand Delivery</option>
-                              <option value="Collect by Party">Collect by Party</option>
+                              {booking_dropdown.dispatch_mode.map((option, key) => <option value={option} key={key} >
+                                {option}</option>)}
                             </select>
 
                           </div>
@@ -1011,27 +852,26 @@ function AddBooking(props) {
                           <div className="col-md-2">
                             <label>Verified By</label>
                             <select onChange={onChange} name="verified_by" className="form-select">
-                              <option value="None">None</option>
-                              <option value="QA">QA</option>
+                            {booking_dropdown.verified_by.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
 
                           </div>
 
                           <div className="col-md-2">
                             <label>NABL Scope?</label>
-                            <select onChange={onChange} name="nabl_scope" className="form-select">
-                              <option value="0">No</option>
-                              <option value="1">Yes</option>
+                            <select onChange={onChangeNABL} name="nabl_scope" className="form-select">
+                            {booking_dropdown.yes_no_options.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
-
+                            <div style={{display:'none'}} id="ulr_no"><label>ULR No : {booking1.ulr_no}</label></div>
                           </div>
 
                           <div className="col-md-2">
                             <label>Cancel</label>
                             <select onChange={onChange} name="cancel" className="form-select">
-                              <option value="None">None</option>
-                              <option value="No">No</option>
-                              <option value="Yes">Yes</option>
+                            {booking_dropdown.cancel.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
@@ -1051,9 +891,8 @@ function AddBooking(props) {
                           <div className="col-md-3">
                             <label>Priority</label>
                             <select onChange={onChange} name="priority" className="form-select">
-                              <option value="High">High</option>
-                              <option value="Medium">Medium</option>
-                              <option value="Low">Low</option>
+                            {booking_dropdown.priority.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
 
                           </div>
@@ -1061,8 +900,8 @@ function AddBooking(props) {
                           <div className="col-md-3">
                             <label>Discipline</label>
                             <select onChange={onChange} name="discipline" className="form-select">
-                              <option value="Chemical">Chemical</option>
-                              <option value="Biological">Biological</option>
+                            {booking_dropdown.discipline.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
 
                           </div>
@@ -1070,17 +909,16 @@ function AddBooking(props) {
                           <div className="col-md-3">
                             <label>Group</label>
                             <select onChange={onChange} name="booking_group" className="form-select">
-                              <option value="Drugs and Pharmaceuticals">Drugs and Pharmaceuticals</option>
-                              <option value="Food of Agriculture Product">Food of Agriculture Product</option>
+                            {booking_dropdown.group.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-3">
                             <label>Statement Of Conformity</label>
                             <select onChange={onChange} name="statement_ofconformity" className="form-select">
-                              <option value="PASS">PASS</option>
-                              <option value="INDETERMINATE">INDETERMINATE</option>
-                              <option value="FAIL">FAIL</option>
+                            {booking_dropdown.statement_confirmity.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
 
                           </div>
@@ -1104,12 +942,12 @@ function AddBooking(props) {
                           </div>
                           <div className="col-md-4">
                             <label>Generic Name</label>
-                            {loading1 ? <LoadingSpinner /> : <input className="form-control" value={bookingSamples1.generic_name} type="text" name="generic_name" readOnly />}
+                            {loading1 ? <LoadingSpinner /> : <input className="form-control" value={booking1.generic_name} type="text" name="generic_name" readOnly />}
                           </div>
 
                           <div className="col-md-4">
                             <label>Product Type</label>
-                            <input type="text" name="product_type" className="form-control" value={bookingSamples1.product_generic} readOnly />
+                            <input type="text" name="product_type" className="form-control" value={booking1.product_generic} readOnly />
                           </div>
 
                         </div>
@@ -1122,32 +960,32 @@ function AddBooking(props) {
 
                           <div className="col-md-2">
                             <label>Pharmacopiea</label>
-                            <input type="text" className="form-control" value={bookingSamples1.pharmacopeia_name} id="pharmocopiea" name="pharmacopeia_name" readOnly />
+                            <input type="text" className="form-control" value={booking1.pharmacopeia_name} id="pharmocopiea" name="pharmacopeia_name" readOnly />
                           </div>
 
                           <div className="col-md-2">
                             <label>Batch No</label>
-                            <input className="form-control" type="text" name="batch_no" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="batch_no" onChange={onChange} />
                           </div>
 
                           <div className="col-md-1">
                             <label>Pack Size</label>
-                            <input className="form-control" type="text" name="packsize" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="packsize" onChange={onChange} />
                           </div>
 
                           <div className="col-md-1">
                             <label>Req Qty</label>
-                            <input className="form-control" type="text" name="request_quantity" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="request_quantity" onChange={onChange} />
                           </div>
 
                           <div className="col-md-2">
                             <label>Sample Code</label>
-                            <input className="form-control" type="text" name="sample_code" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="sample_code" onChange={onChange} />
                           </div>
 
                           <div className="col-md-4">
                             <label>Sample Desc</label>
-                            <input className="form-control" type="text" name="sample_description" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="sample_description" onChange={onChange} />
                           </div>
 
                         </div>
@@ -1160,22 +998,22 @@ function AddBooking(props) {
 
                           <div className="col-md-3">
                             <label>Sample Qty</label>
-                            <input className="form-control" type="text" name="sample_quantity" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="sample_quantity" onChange={onChange} />
                           </div>
 
                           <div className="col-md-3">
                             <label>Sample Location</label>
-                            <input className="form-control" type="text" name="sample_location" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="sample_location" onChange={onChange} />
                           </div>
 
                           <div className="col-md-3">
                             <label>Sample Packaging</label>
-                            <input className="form-control" type="text" name="sample_packaging" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="sample_packaging" onChange={onChange} />
                           </div>
 
                           <div className="col-md-3">
                             <label>Sample Type</label>
-                            <input className="form-control" type="text" name="sample_type" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="sample_type" onChange={onChange} />
                           </div>
 
 
@@ -1189,57 +1027,55 @@ function AddBooking(props) {
 
                           <div className="col-md-2">
                             <label>Sampling Date From</label>
-                            <input className="form-control" type="date" id="example-date-input" name="sampling_date_from" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="date" id="example-date-input" name="sampling_date_from" onChange={onChange} />
                           </div>
 
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>SamplingFrom</label>
-                            <select name="sampling_date_from_options" className="form-select" onChange={onChangeProductSamples}>
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            <select name="sampling_date_from_options" className="form-select" onChange={onChange}>
+                            {booking_dropdown.common_options2.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-2">
                             <label>Sampling Date To</label>
-                            <input className="form-control" type="date" id="example-date-input" name="sampling_date_to" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="date" id="example-date-input" name="sampling_date_to" onChange={onChange} />
                           </div>
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>Sampling To</label>
-                            <select name="sampling_date_to_options" className="form-select" onChange={onChangeProductSamples}>
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            <select name="sampling_date_to_options" className="form-select" onChange={onChange}>
+                            {booking_dropdown.common_options2.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-2">
                             <label>Sample Received Through</label>
-                            <select name="sample_received_through" className="form-select" onChange={onChangeProductSamples}>
-                              <option value="By Courier">By Courier</option>
-                              <option value="By Hand">By Hand</option>
-                              <option value="By Collection">By Collection</option>
+                            <select name="sample_received_through" className="form-select" onChange={onChange}>
+                            {booking_dropdown.sample_received_through.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-1">
                             <label>Chemist</label>
-                            <select name="chemist" className="form-select" onChange={onChangeProductSamples}>
-                              <option value="1">Yes</option>
+                            <select name="chemist" className="form-select" onChange={onChange}>
+                            {booking_dropdown.chemist.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-2">
                             <label>Sample Condition</label>
-                            <input className="form-control" type="text" name="sample_condition" placeholder="Enter Sample Condition" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="sample_condition" placeholder="Enter Sample Condition" onChange={onChange} />
                           </div>
 
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>sampleconoption</label>
-                            <select name="is_sample_condition" className="form-select" onChange={onChangeProductSamples}>
-                              <option value="0">No</option>
-                              <option value="1">Yes</option>
+                            <select name="is_sample_condition" className="form-select" onChange={onChange}>
+                            {booking_dropdown.yes_no_options.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
@@ -1253,17 +1089,17 @@ function AddBooking(props) {
 
                           <div className="col-md-2">
                             <label>Batch Size/ Qty Received</label>
-                            <input className="form-control" type="text" name="batch_size_qty_rec" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="batch_size_qty_rec" onChange={onChange} />
                           </div>
 
                           <div className="col-md-7">
                             <label>Notes</label>
-                            <input className="form-control" type="text" name="notes" placeholder="Enter Note" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="notes" placeholder="Enter Note" onChange={onChange} />
                           </div>
 
                           <div className="col-md-3">
                             <label>Sample Drawn By</label>
-                            <input className="form-control" type="text" name="sample_drawn_by" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="sample_drawn_by" onChange={onChange} />
                           </div>
 
                         </div>
@@ -1302,20 +1138,36 @@ function AddBooking(props) {
                                       {/*<td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
                                                                     <td><input type="checkbox"/></td>*/}
                                       <td><select name="parent_child" onChange={e => handleInputChange(e, i)} style={my_style} id={'parent_child_' + i} className="form-select">
-                                        <option value="Parent">Parent</option>
-                                        <option value="Child">Child</option>
+                                      {booking_dropdown.parent_child.map((option, key) => <option value={option.id} key={key} >
+                                        {option.label}</option>)}
                                       </select></td>
                                       <td><input value={x.p_sr_no} type="text" onChange={e => handleInputChange(e, i)} name="p_sr_no" className="form-control" readOnly /></td>
-                                      <td><select value={x.by_pass} onChange={e => handleInputChange(e, i)} style={my_style} className="form-select" name="by_pass"><option value="2">No</option><option value="1">Yes</option></select></td>
-                                      <td><select value={x.parent_id} onChange={e => handleInputChange(e, i)} name="parent_id" className="form-select" style={{ width: '100px !important' }}>
+                                      <td><select value={x.by_pass} onChange={e => handleInputChange(e, i)} style={my_style} className="form-select" name="by_pass">
+                                      {booking_dropdown.yes_no_options.map((option, key) => <option value={option.id} key={key} >
+                                        {option.label}</option>)}
+                                      </select></td>
+                                      <td>
+
+                                      <select value={x.parent_id} onChange={e => handleInputChange(e, i)} name="parent_id" className="form-select" style={{ width: '100px !important' }}>
                                         <option value="">Select Parent</option>
                                         {data5.map((option, key) => <option value={option.id} key={key} >
-                                          {option.parent_name}</option>)}
+                                          {option.procedure_name}</option>)}
                                       </select></td>
 
                                       <td><textarea value={x.product_details} name="product_details" onChange={e => handleInputChange(e, i)} className="form-control" style={{ width: '120px !important' }}></textarea></td>
 
-                                      <td><input value={x.test_name} className="form-control" onChange={e => handleInputChange(e, i)} name="test_name" style={{ width: '150px !important' }} />
+                                      <td>
+                                      <input class="form-control" value={x.test_name} name="test_name" list="sample_name" id="product_list"  placeholder="Type to Test Name..." onChange={e => handleInputChange(e, i)}/>
+                                         <datalist id="sample_name">
+                                         {data6.map((option, key) => <option value={option.id+" - "+option.procedure_name}>
+                                           </option>)}
+                                         </datalist>
+                                    {/*  <select value={x.test_id} onChange={e => handleInputChange(e, i)} name="test_id" className="form-select" style={{ width: '150px !important' }}>
+                                        <option value="">Select Test</option>
+                                        {data6.map((option, key) => <option value={option.id} key={key} >
+                                          {option.procedure_name}</option>)}
+                                      </select>*/}
+
                                       </td>
                                       <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       <td><input value={x.min_limit} type="text" name="min_limit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
@@ -1359,33 +1211,6 @@ function AddBooking(props) {
 
                             </div>
                           </center>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/*Test Section End*/}
-                    <h5 className="audit_details" style={{ display: 'none' }}> <Alert color="danger" role="alert">
-                      <i className="fa fa-comment">&nbsp;Audit Details</i>
-                    </Alert></h5>
-                    <div className="mb-3 row audit_details" style={{ display: 'none' }}>
-                      <div className="form-group">
-                        <div className="row">
-
-                          <div className="col-md-4">
-                            <label>Audit Remarks</label>
-                            <textarea name="audit_reamrks" id="audit_reamrks" className="form-control" placeholder="Enter Remarks" onChange={onChange}></textarea>
-                          </div>
-
-                          <div className="col-md-4">
-                            <label>Reason</label>
-                            <textarea name="reason" id="reason" className="form-control" placeholder="Enter Reason" onChange={onChange}></textarea>
-                          </div>
-
-                          <div className="col-md-4">
-                            <label>Comments</label>
-                            <textarea name="comments" id="comments" className="form-control" placeholder="Enter Comments" onChange={onChange}></textarea>
-                          </div>
-
                         </div>
                       </div>
                     </div>

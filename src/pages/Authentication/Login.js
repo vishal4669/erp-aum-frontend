@@ -149,11 +149,11 @@ render() {
                         <ToastContainer autoClose={1500}/>
         <Container>
           <Row>
-            <Col lg={6}>
-              <div className="text-center">
-                <Link to="/" className="mb-5 d-block auth-logo" style={{marginLeft : '395px'}}>
-                  <img src={logo} alt="" height="50" className="logo logo-dark" />
-                  <img src={logolight} alt="" height="50" className="logo logo-light" />
+            <Col lg={12}>
+              <div className="text-center logo-align">
+                <Link to="/" className="mb-5 d-block auth-logo">
+                  <img src={logo} alt="" height="109" width="250" className="logo logo-dark"/>
+                  <img src={logolight} alt="" height="109" width="250" className="logo logo-light"/>
                 </Link>
               </div>
             </Col>

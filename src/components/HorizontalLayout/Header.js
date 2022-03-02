@@ -132,19 +132,19 @@ const del_headers = {
             <div className="navbar-brand-box">
               <Link to="/dashboard" className="logo logo-dark">
                 <span className="logo-sm">
-                  <img src={logoLight} alt="" height="40" />
+                  <img src={logoLight} alt="" height="50" width="115" style={{marginTop: '13px',marginLeft:'10px'}}/>
                 </span>
                 <span className="logo-lg">
-                  <img src={logoLight} alt="" height="40" />
+                  <img src={logoLight} alt="" height="50" width="115" style={{marginTop: '13px',marginLeft:'10px'}}/>
                 </span>
               </Link>
 
               <Link to="/dashboard" className="logo logo-light">
                 <span className="logo-sm">
-                  <img src={logoLight} alt="" height="40" />
+                  <img src={logoLight} alt="" height="50" width="115" style={{marginTop: '13px',marginLeft:'10px'}}/>
                 </span>
                 <span className="logo-lg">
-                  <img src={logoLight} alt="" height="40" />
+                  <img src={logoLight} alt="" height="50" width="115" style={{marginTop: '13px',marginLeft:'10px'}}/>
                 </span>
               </Link>
             </div>

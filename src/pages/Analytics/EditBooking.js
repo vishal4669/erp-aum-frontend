@@ -28,78 +28,81 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import Select from 'react-select';
 import $ from 'jquery'
-import { decode as base64_decode, encode as base64_encode } from 'base-64';
-import moment from 'moment'
+import { parse } from '@babel/core';
+import { PassThrough } from 'stream';
+
+import {booking_dropdown} from '../constant'
 
 function EditBooking(props) {
   const headers = {
     'Authorization': "Bearer " + localStorage.getItem('token')
   }
-  const url = window.location.href
-  const booking_id = base64_decode(url.substring(url.lastIndexOf('/') + 1))
-  const edit_booking_id = url.substring(url.lastIndexOf('/') + 1)
-
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
 
-  const [customer, setCustomer] = useState({ customer_id: '' })
-  const [manufacturer, setManufacturer] = useState({ manufacturer_name: '' })
-  const [supplier, setSupplier] = useState({ supplier_name: '' })
-  const [product, setProduct] = useState({ product_id: '' })
-
-  const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
   const [data2, setData2] = useState([]);
   const [data3, setData3] = useState([]);
   const [data4, setData4] = useState([]);
   const [data5, setData5] = useState([]);
-  const [chemist, setChemist] = useState([]);
-  const [unitList, setUnitData] = useState([]);
-  const [resultList, setResultData] = useState([]);
-
-  var date1 = new Date(Date.UTC(2012, 11, 12, 3, 0, 0));
-  var dateString1 = date1.toLocaleTimeString();
+  const [data6, setData6] = useState([]);
 
   const [booking1, setBooking1] = useState({
-    booking_type: 'Entry', report_type: '', receipte_date: '',
-    booking_no: '', aum_serial_no: '', reference_no: '', remarks: '', mfg_date: '', mfg_options: 'N/S', exp_date: '', exp_options: 'N/S',
-    analysis_date: '', d_format: '', d_format_options: 'N/S', grade: '', grade_options: 'N/S', project_name: '',
-    project_options: 'N/S', mfg_lic_no: '', is_report_dispacthed: '0', signature: '0', verified_by: 'None', nabl_scope: '0',
-    cancel: 'None', cancel_remarks: '', priority: 'High', discipline: 'Chemical', booking_group: 'Drugs and Pharmaceuticals',
-    statement_ofconformity: 'PASS', dispatch_mode: '', dispatch_date_time: '', dispatch_details: '', invoice_date: '', invoice_no: '',
-    audit_reamrks: '', remark: '', comments: '', coa_release_date: '', block: '0'
-  });
-
-  const [bookingSamples, setBookingSamples] = useState({
-    batch_no: '',
-    packsize: '', request_quantity: '', sample_code: '', sample_description: '', sample_quantity: '', sample_location: '',
-    sample_packaging: '', sample_type: '', sampling_date_from: '', sampling_date_from_options: 'N/S',
-    sampling_date_to: '', sampling_date_to_options: 'N/S', sample_received_through: 'By Courier', chemist: '1', sample_condition: '',
+    booking_type: '0',reference_no: '', remarks: '', mfg_date: '', mfg_options: '0', exp_date: '', exp_options: '0',
+    analysis_date: '', d_format: '', d_format_options: '0', grade: '', grade_options: '0', project_name: '',
+    project_options: '0', mfg_lic_no: '', is_report_dispacthed: '0', signature: '0', verified_by: '0', nabl_scope: '0',
+    cancel: '0', cancel_remarks: '', priority: '0', discipline: '0', booking_group: '0',
+    statement_ofconformity: '0', dispatch_mode: '', dispatch_date_time: '', dispatch_details: '',
+    aum_serial_no : '',report_type:'',receipte_date:'', booking_no:'',ulr_no:'',generic_name: '', product_generic: '', pharmacopeia_name: ''
+    ,customer_id: '',manufacturer_name:'',supplier_name:'',product_id:''
+    // Samples details,
+    ,batch_no: '',packsize: '', request_quantity: '', sample_code: '', sample_description: '', sample_quantity: '', sample_location: '',
+    sample_packaging: '', sample_type: '', sampling_date_from: '', sampling_date_from_options: '0',
+    sampling_date_to: '', sampling_date_to_options: '0', sample_received_through: '0', chemist: '0', sample_condition: '',
     is_sample_condition: '0', batch_size_qty_rec: '', notes: '', sample_drawn_by: ''
   });
 
-  const [bookingSamples1, setBookingSamples1] = useState({ generic_name: '', product_type: '', pharmacopeia_name: '' });
-
   const [testData, setTestData] = useState([{
-    parent_child: 'Parent', p_sr_no: '', by_pass: '2', parent_id: '', product_details: '',
-    test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
-    label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-    division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: '',
-    assigned_date:''
+    parent_child: '0', p_sr_no: '1', by_pass: '0', parent_id: '', product_details: '',
+    test_id: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'0',assigned_date:''
   }])
 
   useEffect(() => {
-    // fetchCustomerData();
-    //   fetchManufacturerData();
-    // fetchSupplierData();
-    //fetchProduct();
-    fetchPharamcopiea();
-    fetchparentList();
-    GetBookingData();
-    UnitList();
-    // chemist_data();
-  }, []);
+    { setLoading1(true) };
+
+    const axiosrequest1 = axios.get(`${process.env.REACT_APP_BASE_APIURL}listCustomer?contact_type_customer=1&customer_type=Customer`,{headers});
+    const axiosrequest2 = axios.get(`${process.env.REACT_APP_BASE_APIURL}listCustomer?contact_type_customer=1&customer_type=Manufacturer`,{headers});
+    const axiosrequest3 = axios.get(`${process.env.REACT_APP_BASE_APIURL}listCustomer?contact_type_customer=1&customer_type=Supplier`,{headers});
+    const axiosrequest4 = axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_dropdown=1`,{headers});
+    const axiosrequest5 = axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest?is_parent=1`,{headers});
+    const axiosrequest6 = axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no`,{headers});
+    const axiosrequest7 = axios.get(`${process.env.REACT_APP_BASE_APIURL}listTest?is_parameter=1`,{headers});
+
+    axios.all([axiosrequest1,axiosrequest2,axiosrequest3,axiosrequest4,axiosrequest5,axiosrequest6,axiosrequest7])
+      .then(axios.spread(function(res1, res2, res3, res4, res5, res6, res7) {
+    if(res1){
+      const options = res1.data.data.map(d => ({
+        "value": d.id,
+        "label": d.company_name
+      }))
+      setData1(options);
+    }
+    setData2(res2.data.data);
+    setData3(res3.data.data);
+    if(res4){
+      const product_option = res4.data.data.map(d => ({
+        "value": d.id,
+        "label": d.product_name
+      }))
+      setData4(product_option);
+    }
+    setData5(res5.data.data);
+    setBooking1(prevState => ({ ...prevState, aum_serial_no: res6.data.data.aum_serial_no}));
+    setData6(res7.data.data)
+    { setLoading1(false) };
+    }));
+        }, []);
 
 
   const my_style = {
@@ -107,132 +110,90 @@ function EditBooking(props) {
 
   }
 
-  const table_th_style = {
-    minWidth: '120px',
+  const ResetBooking = () => {
+    document.getElementById("AddBooking").reset();
   }
 
-  const table_textarea_th_style = {
-    minWidth: '140px',
-  }
+  const handleAddClick = (e,index) => {
 
-  const handleAddClick = () => {
-
-     setTestData([...testData, {
-      parent_child: 'Parent', p_sr_no: 1, by_pass: '2', parent_id: '', product_details: '',
-      test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
-      label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-      division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: '',
-      assigned_date:''
+    setTestData([...testData, {
+      parent_child: '0', p_sr_no: '1', by_pass: '0', parent_id: '', product_details: '',
+      test_id: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'0',assigned_date:''
     }]);
-    /*let setdata = () => {
-      setTestData([...testData, {
-        parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
-        test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
-        label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-        division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: 'Pending', chemist_name: ''
-      }]);
 
-    }*/
     let arr_len = testData.length;
     for (let i = 0; i < arr_len; i++) {
       var parent;
       if (i == 0) {
-        if (testData[i]['parent_child'] == 'Parent') {
+        if (testData[i]['parent_child'] == '0') {
           parent = 2;
           //setdata();
           setTestData([...testData, {
-            parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
-            label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: '',
-            assigned_date:''
+            parent_child: '0', p_sr_no: parent, by_pass: '0', parent_id: '', product_details: '',
+            test_id: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'0',assigned_date:''
           }]);
 
         }
         else {
           testData[i]['p_sr_no'] = '';
           setTestData([...testData, {
-            parent_child: 'Parent', p_sr_no: '', by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
-            label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: '',
-            assigned_date:''
+            parent_child: '0', p_sr_no: '', by_pass: '0', parent_id: '', product_details: '',
+            test_id: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'0',assigned_date:''
           }]);
         }
       }
       if (i >= 1) {
-        if (testData[i]['parent_child'] == 'Parent') {
+        if (testData[i]['parent_child'] == '0') {
           parent = parent + 1;
-          setTestData([...testData, {
-            parent_child: 'Parent', p_sr_no: parent, by_pass: '2', parent_id: '', product_details: '',
-            test_name: '', label_claim: '', percentage_of_label_claim: '', min_limit: '', max_limit: '', result: '', label_claim_result: '',
-            label_claim_unit: '', result2: '', mean: '', na_content: '', final_na_content: '', unit: '', expanded_uncertanity: '', amount: '',
-            division: '', method: '', test_time: '', test_date_time: '', approval_date_time: '', approved: '', chemist_name: '',
-            assigned_date:''
-          }]);
           //setdata();
+          setTestData([...testData, {
+            parent_child: '0', p_sr_no: parent, by_pass: '0', parent_id: '', product_details: '',
+            test_id: '', label_claim: '', min_limit: '', max_limit: '', amount: '',approved:'0',assigned_date:''
+          }]);
         }
       }
 
 
     }
+
+
   };
 
   // handle input change for Degree Details
   const handleInputChange = (e, index) => {
-    var set_label_claim_unit = ''
-    var set_mean = ''
-    var set_label_claim_unit = ''
-    var set_label_claim_result = ''
-  /*  if(e.target.name == "label_claim" && e.target.value !== ''){
-        //Taking alphabetic values form label claim and showing into label claim unit
-        set_label_claim_unit =  testData[index].label_claim.replace(/[^A-Z]+/gi,'')
-    } else {
-      set_label_claim_unit = testData[index].label_claim_unit
-    }*/
-
-
-    if(e.target.name == 'unit'){
-        if(testData[index].label_claim !== '' && testData[index].result !== ''){
-            if(testData[index].result.match(/^[0-9.]+$/) && testData[index].label_claim.match(/[0-9.]+/)){
-              set_label_claim_result = multiply(testData[index].result.match(/^[0-9.]+$/),testData[index].label_claim.match(/[0-9.]+/))
-              set_mean = set_label_claim_result / 10
-            }
-        }
-    }
-    const { name, value } = e.target;
     const list = [...testData];
-    list[index][name] = value;
-    list[index]['label_claim_result'] = set_label_claim_result
-    list[index]['label_claim_unit'] = testData[index].label_claim.replace(/[^A-Z]+/gi,'')
-    list[index]['mean'] = set_mean
+    if(e.target.name == "test_name"){
+      list[index]["test_name"] = e.target.value;
+      list[index]["test_id"] = e.target.value.split(/[ -]+/)[0];
+    } else {
+      const { name, value } = e.target;
+      list[index][name] = value;
+    }
     setTestData(list);
-    console.log(testData)
-    // ========================
     if ($.isEmptyObject(testData[index + 1])) {
       console.log("No Child Available");
     }
     else {
       let x = document.getElementById(`parent_child_${index}`);
-      if (x.value == "Parent") {
-        // let is_disable = $(`#parent_child_${index}`).is(':disabled');
+      if (x.value == "0") {
+        let is_disable = $(`#parent_child_${index}`).is(':disabled');
         // console.log("target",testData.index.p_sr_no);
         if(e.target.name == 'parent_child')
         {
           toastr.error("Please delete all the Childs before changing the Child");
-          $(`#parent_child_${index}`).val("Child");
-          testData[index]['parent_child'] = "Child";
+          $(`#parent_child_${index}`).val("1");
+          testData[index]['parent_child'] = "1";
           // $(`#parent_child_${index}`).prop("disabled", true);
         }
 
       }
       else {
-        // let is_disable = $(`#parent_child_${index}`).is(':disabled');
+        let is_disable = $(`#parent_child_${index}`).is(':disabled');
         if(e.target.name == 'parent_child')
         {
           toastr.error("Please delete all the Childs before changing the parent");
-          $(`#parent_child_${index}`).val("Parent");
-          testData[index]['parent_child'] = "Parent";
+          $(`#parent_child_${index}`).val("0");
+          testData[index]['parent_child'] = "0";
           // $(`#parent_child_${index}`).prop("disabled", true);
         }
       }
@@ -242,7 +203,7 @@ function EditBooking(props) {
     for (let i = 0; i < arr_len; i++) {
       var parent;
       if (i == 0) {
-        if (testData[i]['parent_child'] == 'Parent') {
+        if (testData[i]['parent_child'] == '0') {
           parent = 1;
           testData[i]['p_sr_no'] = parent;
         }
@@ -262,16 +223,16 @@ function EditBooking(props) {
         }
         return -1;
       };
-      var last_index_parent = lastIndexOf(testData, "Parent");
-      var last_index_child = lastIndexOf(testData, "Child");
+      var last_index_parent = lastIndexOf(testData, "0");
+      var last_index_child = lastIndexOf(testData, "1");
       if (i >= 1) {
-        if (testData[i]['parent_child'] == 'Parent') {
+        if (testData[i]['parent_child'] == '0') {
           parent = parent + 1;
           testData[i]['p_sr_no'] = parent;
         }
         else {
-          if (testData[i]['parent_child'] == 'Child') {
-            if (testData[i - 1]['parent_child'] == 'Parent') {
+          if (testData[i]['parent_child'] == '1') {
+            if (testData[i - 1]['parent_child'] == '0') {
               testData[i]['p_sr_no'] = testData[i - 1]['p_sr_no'] + 0.1;
             }
             else {
@@ -290,37 +251,6 @@ function EditBooking(props) {
       }
     }
     setTestData(list);
-    // ===========================
-    /*  var getSecondLastData = testData.slice(-2,-1).pop();
-      var getLastData = testData.slice(-1).pop();
-
-      if(testData.length >= 2) {
-        if(getLastData.parent_child === "Child"){
-          var get_p_sr_no = getSecondLastData.p_sr_no;
-          console.log(get_p_sr_no)
-
-          if(get_p_sr_no.includes('.')){
-            console.log(get_p_sr_no.split(".").pop())
-          }
-
-          var final_cr_no = get_p_sr_no+"."+ 1
-          getLastData.p_sr_no = final_cr_no;
-          document.BookingData.p_sr_no.value = final_cr_no;
-
-          //console.log(getLastData)
-
-          //console.log(final_cr_no)
-        }
-
-        if(getLastData.parent_child === "Parent"){
-          var get_p_sr_no = getSecondLastData.p_sr_no;
-          console.log(get_p_sr_no)
-        }
-      } else {
-        getLastData.p_sr_no = "1";
-        document.BookingData.p_sr_no.value = "1";
-        //console.log(get_p_sr_no)
-      }*/
   };
 
   // handle click event of the Remove button
@@ -329,10 +259,10 @@ function EditBooking(props) {
     if ($.isEmptyObject(testData[index + 1])) {
       const list = [...testData];
       let x = document.getElementById(`parent_child_${index}`);
-      if (x.value == "Parent") {
+      if (x.value == "0") {
         toastr.success("Parent Element Deleted Successfully.");
-        $(`#parent_child_${index}`).val("Child");
-        testData[index]['parent_child'] = "Child";
+        $(`#parent_child_${index}`).val("1");
+        testData[index]['parent_child'] = "1";
         // $(`#parent_child_${testData.length - 2}`).removeAttr('disabled');
       }
       else {
@@ -348,141 +278,30 @@ function EditBooking(props) {
     }
   };
 
-  const GetBookingData = (e,i) => {
-    { setLoading1(true) }
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}getBooking/` + booking_id, { headers })
-      .then(response => {
-        setBooking1(response.data.data);
-        setCustomer(response.data.data.customer_id)
-        setManufacturer(response.data.data.manufacturer_id)
-        setSupplier(response.data.data.supplier_id)
-        setProduct(response.data.data.samples[0].product_id)
-        setBookingSamples(response.data.data.samples[0])
-        setBookingSamples1({
-          product_type: response.data.data.samples[0].get_product.product_generic,
-          pharmacopeia_name: response.data.data.samples[0].get_product.pharmacopeia_id.pharmacopeia_name,
-          generic_name: response.data.data.samples[0].get_product.generic_product_name
-        })
+  const onChangeNABL = (e) => {
 
-        if (response.data.data.dispatch_date_time !== null || response.data.data.dispatch_date_time !== '') {
-
-          var date = new Date(Date.UTC(2012, 11, 12, 3, 0, 0));
-          var dateString = date.toLocaleTimeString();
-
-          //apparently toLocaleTimeString() has a bug in Chrome. toString() however returns 12/24 hour formats. If one of two contains AM/PM execute 12 hour coding.
-          if (dateString.match(/am|pm/i) || date.toString().match(/am|pm/i)) {
-            setBooking1(prevState => ({
-              ...prevState,
-              dispatch_date_time: moment(response.data.data.dispatch_date_time).format('YYYY-MM-DDTHH:mm')
-            }))
-            //12 hour clock
-            //console.log("12 hour");
-            //  console.log(moment(response.data.data.dispatch_date_time).format('YYYY-MM-DDTHH:mm:SS'))
-          }
-          else {
-            //24 hour clock
-            //console.log(moment(booking1.dispatch_date_time).format('YYYY-MM-DDTHH:MM:SS'))
-            setBooking1(prevState => ({
-              ...prevState,
-              dispatch_date_time: moment(response.data.data.dispatch_date_time).format('YYYY-MM-DDTHH:MM')
-            }))
-            //  console.log("24 hour");
-          }
-        } else {
-          setBooking1(prevState => ({
-            ...prevState,
-            dispatch_date_time: ''
-          }))
-        }
-
-        if (response.data.data.booking_type == "Report") {
-          if(Array. isArray(response.data.data.audit) && response.data.data.audit. length){
-            setBooking1(prevState => ({
-              ...prevState,
-              audit_reamrks: response.data.data.audit[0].audit_remarks,
-              reason: response.data.data.audit[0].reason,
-              comments: response.data.data.audit[0].comments
-            }))
-          } else {
-            setBooking1(prevState => ({
-              ...prevState,
-              audit_reamrks: '',
-              reason: '',
-              comments: ''
-            }))
-          }
-        }
-        if(response.data.data.tests !== null || response.data.data.tests !== ''){
-          setTestData(response.data.data.tests)
-          /*var label_claim_unit_data = response.data.data.tests.map((d,index) => ({
-            "label_claim_unit": d.label_claim !== null ? d.label_claim.replace(/[^A-Z]+/gi,'') : d.label_claim_unit
-
-          }))
-          var i = ""
-          setTestData(prevState => ({
-            ...prevState,
-            label_claim_unit: label_claim_unit_data[i].label_claim_unit,
-          }))
-          console.log(label_claim_unit_data)*/
-        }
-
-        if(response.data.data.result_dropdown !== null || response.data.data.result_dropdown !== ''){
-          setResultData(response.data.data.result_dropdown)
-        }
-
-        //set customer dropdown data
-        const options = response.data.data.contact_type_Customer.map(d => ({
-          "value": d.id,
-          "label": d.company_name
-        }))
-        setData1(options);
-        //set manufacturer dropdown data
-        /*const options1 = response.data.data.contact_type_Manufacturer.map(d => ({
-          "value": d.id,
-          "label": d.company_name
-        }))*/
-
-        setData2(response.data.data.contact_type_Manufacturer);
-        //set supplier dropdown data
-        /*const options2 = response.data.data.contact_type_Supplier.map(d => ({
-          "value": d.id,
-          "label": d.company_name
-        }))*/
-        setData3(response.data.data.contact_type_Supplier);
-
-        //set product dropdown data
-
-        const product_option = response.data.data.products.map(d => ({
-          "value": d.id,
-          "label": d.product_name
-        }))
-        setData4(product_option);
-        if(response.data.data.chemist_dropdown.id !== null || response.data.data.chemist_dropdown.id !== ''){
-          setChemist(response.data.data.chemist_dropdown);
-        }
-
-        { setLoading1(false) };
-
-      })
-      .catch((error) => {
-        console.log(error)
-        { setLoading1(false) }
-        toastr.error(error.response.data.message);
-      })
+    if(e.target.value == "1"){
+      axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no`, { headers })
+          .then(response => {
+            setBooking1(prevState => ({ ...prevState, ulr_no: response.data.data.ulr_no,
+              nabl_scope:e.target.value}))
+            $("#ulr_no").css("display","block")
+          })
+    } else {
+      setBooking1(prevState => ({ ...prevState, nabl_scope:e.target.value}))
+      $("#ulr_no").css("display","none")
+    }
   }
 
   const onChange = (e) => {
-    setBooking1({ ...booking1, [e.target.name]: e.target.value });
+    setBooking1(prevState => ({ ...prevState, [e.target.name]: e.target.value }));
 
     booking1.is_report_dispacthed = document.BookingData.is_report_dispacthed.value;
     var report_dispatch_count = booking1.is_report_dispacthed
 
-    booking1.booking_type = document.BookingData.booking_type.value;
-    var chnage_booking_type = booking1.booking_type
-
     if (report_dispatch_count !== null) {
       {
-        if (report_dispatch_count == 1) {
+        if (report_dispatch_count == "1") {
           $(".report_dispatch_yes").css("display", "block");
         } else {
           $("#dispatch_date_time").val("");
@@ -493,291 +312,124 @@ function EditBooking(props) {
         }
       }
     }
+  }
 
-    if (chnage_booking_type !== null) {
-      if (chnage_booking_type == 'Invoice') {
-        //  $("#invoice_date").val("");
-        //$("#invoice_no").val("");
-        //$(".invoice_data").remove();
-        $(".invoice_data").css("display", "block");
-        //  setBooking1(prevState => ({...prevState,invoice_date: "",invoice_no: ""}))
-      } else {
-        $("#invoice_date").val("");
-        $("#invoice_no").val("");
-        $(".invoice_data").css("display", "none");
-        setBooking1(prevState => ({ ...prevState, invoice_date: "", invoice_no: "" }))
-      }
+  const reporttypeonChange = (e) => {
+    setBooking1(prevState => ({ ...prevState, [e.target.name]: e.target.value }));
 
-      if (chnage_booking_type == 'Report') {
-        $(".audit_details").css("display", "block");
-      } else {
-        $("#audit_reamrks").val("");
-        $("#reason").val("");
-        $("#comments").val("");
-        setBooking1(prevState => ({ ...prevState, audit_reamrks: "", reason: "", comments: "" }))
-        $(".audit_details").css("display", "none");
-      }
+    booking1.report_type = document.BookingData.report_type.value;
+    var report_type_value = booking1.report_type
+
+    booking1.receipte_date = document.BookingData.receipte_date.value;
+    var receipte_date_value = booking1.receipte_date
+
+    booking1.booking_type = document.BookingData.booking_type.value;
+    var booking_type_value = booking1.booking_type
+
+    if (report_type_value !== '' && receipte_date_value !== '' && booking_type_value !== '') {
+      getBookingNo(booking_dropdown.report_type[booking1.report_type].label, receipte_date_value,booking_dropdown.booking_type[booking1.booking_type].label);
     }
+
   }
 
-  const onChangeProductSamples = (e) => {
-    setBookingSamples({ ...bookingSamples, [e.target.name]: e.target.value });
-  }
+  const getBookingNo = (report_type_value, receipte_date_value, booking_type_value) => {
 
-  const onChangeProductSamplesFromDB = (e) => {
-    setBookingSamples1({ ...bookingSamples1, [e.target.name]: e.target.value });
+    axios.get(`${process.env.REACT_APP_BASE_APIURL}booking_no/` + report_type_value + "/" + receipte_date_value + "/" + booking_type_value, { headers })
+      .then(response => {
+        setBooking1(prevState => ({ ...prevState, booking_no: response.data.data.booking_no }));
+        { setLoading1(false) }
+      })
+      .catch((error) => {
+        toastr.error(error.response.data.message);
+        { setLoading1(false) }
+      })
+
   }
 
   const changeCustomer = (e) => {
-
-    if (e !== null) {
-      if (e.value) {
-        setCustomer({ id: e.value, company_name: e.label });
-      } else {
-        setCustomer({ customer_id: e });
-      }
-    } else {
-      setCustomer({ customer_id: e });
-    }
-
+    setBooking1(prevState => ({ ...prevState, customer_id: e}));
   }
 
   const changeManufacturer = (e) => {
-    //  setManufacturer({manufacturer_id: e });
-
-  /*  if (e !== null) {
-      if (e.value) {
-        setManufacturer({ id: e.value, company_name: e.label });
-      } else {
-        setManufacturer({ customer_id: e });
-      }
-    } else {
-      setManufacturer({ customer_id: e });
-    }*/
-
-    setManufacturer({ ...manufacturer, [e.target.name]: e.target.value });
-
+    setBooking1(prevState => ({ ...prevState, manufacturer_name: e.target.value}));
   }
 
   const changeSupplier = (e) => {
-    //setSupplier({supplier_id: e });
-
-    /*if (e !== null) {
-      if (e.value) {
-        setSupplier({ id: e.value, company_name: e.label });
-      } else {
-        setSupplier({ customer_id: e });
-      }
-    } else {
-      setSupplier({ customer_id: e });
-    }*/
-
-    setSupplier({ ...supplier, [e.target.name]: e.target.value });
+    //setSupplier({ supplier_id: e });
+    setBooking1(prevState => ({ ...prevState, supplier_name: e.target.value}));
   }
 
   const changeProductID = (e) => {
-    //setProduct({product_id: e });
-
-    if (e !== null) {
-      if (e.value) {
-        setProduct({ id: e.value });
-      } else {
-        setProduct({ product_id: e });
-      }
-      getProductData(e);
-    } else {
-      setProduct({ product_id: e });
-    }
+    setBooking1(prevState => ({ ...prevState, product_id: e}));
+    getProductData(e);
   }
 
   const getProductData = (e) => {
-    var final_product_id = e.value
-    var index = 0
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/` + final_product_id, { headers })
-      .then(response => {
-        const sample_description = response.data.data.sample_description
-        //deleting current sample and setting selected product sample data
-        const list = [...testData];
-        list.splice(index, 1);
-        setTestData(list);
-        const tests_data = response.data.data.samples.map((d, index) => ({
-          "parent_child": "Parent",
-          "p_sr_no": index + 1,
-          "by_pass": d.by_pass,
-          "parent_id": d.parent.id,
-          "product_details": d.description == '' && d.parameter.procedure_name.toLowerCase() == "description" ?
-          sample_description : d.description,
-          "test_name": d.parameter.procedure_name,
-          "label_claim": d.label_claim,
-          "min_limit": d.min_limit,
-          "max_limit": d.max_limit,
-          "amount": d.amount,
-          "approved": "Pending",
-          "method" : d.method,
-          "label_claim_unit" : d.label_claim !== '' ? d.label_claim.replace(/[^A-Z]+/gi,'') : '',
-          "assigned_date" : ''
+    if(e !== null){
+          var final_product_id = e.value
+        var index = 0
+        axios.get(`${process.env.REACT_APP_BASE_APIURL}getproduct/` + final_product_id, { headers })
+          .then(response => {
+            const sample_description = response.data.data[0].sample_description
+            const tests_data = response.data.data[0].samples.map((d, index) => ({
+              "parent_child": "0",
+              "p_sr_no": index + 1,
+              "by_pass": d.by_pass == 2 ? '0' : '1',
+              "parent_id": d.parent,
+              "product_details": d.description == '' &&  d.parameter_name && d.parameter_name.toLowerCase() == "description" ? sample_description : d.description,
+              "test_id": d.mst_sample_parameter_id,
+              "test_name": d.parameter_name && d.mst_sample_parameter_id ? d.mst_sample_parameter_id+" - "+ d.parameter_name : '',
+              "label_claim": d.label_claim,
+              "min_limit": d.min_limit,
+              "max_limit": d.max_limit,
+              "amount": d.amount,
+              "approved":'Pending',
+              "assigned_date":''
 
-        }))
-        setTestData(tests_data)
-        setBookingSamples1({
-          product_type: response.data.data.product_generic,
-          generic_name: response.data.data.generic_product_id.generic_product_name,
-          pharmacopeia_name: response.data.data.pharmacopeia.pharmacopeia_name
-        })
-
-      })
-      .catch((error) => {
-        console.log(error)
-        toastr.error(error.response.data.message);
-      })
-  }
-
-  const UnitList = ()=>{
-
-      {setLoading1(true)};
-            axios.get(`${process.env.REACT_APP_BASE_APIURL}listUnit?is_dropdown=1`,{headers})
-              .then(response => {
-                       setUnitData(response.data.data);
-                       {setLoading1(false)}
-                 })
-                .catch((error) => {
-                    toastr.error(error.response.data.message);
-                    {setLoading1(false)}
-                })
-  }
-
-  /*  const fetchCustomerData = () => {
-                 {setLoading1(true)};
-              axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Customer`,{headers})
-                .then(response => {
-                         const options = response.data.data.map(d => ({
-                            "value" : d.id,
-                            "label" : d.company_name
-                         }))
-                         setData1(options);
-                         {setLoading1(false)}
-                   })
-                  .catch((error) => {
-                      toastr.error(error.response.data.message);
-                       {setLoading1(false)}
-                  })
-    }*/
-
-  /*const fetchManufacturerData = () => {
-               {setLoading1(true)};
-            axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Manufacturer`,{headers})
-              .then(response => {
-                       const options1 = response.data.data.map(d => ({
-                          "value" : d.id,
-                          "label" : d.company_name
-                       }))
-
-                       setData2(options1);
-                       {setLoading1(false)}
-                 })
-                .catch((error) => {
-                    toastr.error(error.response.data.message);
-                     {setLoading1(false)}
-                })
-  }
-
-  const fetchSupplierData = () => {
-               {setLoading1(true)};
-            axios.get(`${process.env.REACT_APP_BASE_APIURL}contact_type/Supplier`,{headers})
-              .then(response => {
-                       const options2 = response.data.data.map(d => ({
-                          "value" : d.id,
-                          "label" : d.company_name
-                       }))
-                       setData3(options2);
-                       {setLoading1(false)}
-                 })
-                .catch((error) => {
-                    toastr.error(error.response.data.message);
-                     {setLoading1(false)}
-                })
-  }*/
-
-  /*const fetchProduct = () => {
-                 {setLoading1(true)};
-              axios.get(`${process.env.REACT_APP_BASE_APIURL}listproduct?is_dropdown=1`,{headers})
-                .then(response => {
-                         const product_option = response.data.data.map(d => ({
-                            "value" : d.id,
-                            "label" : d.product_name
-                         }))
-                         setData4(product_option);
-                         {setLoading1(false)}
-                         console.log(response.data.data)
-                   })
-                  .catch((error) => {
-                      toastr.error(error.response.data.message);
-                       {setLoading1(false)}
-                  })
-            }*/
-
-  const fetchPharamcopiea = () => {
-    { setLoading1(true) };
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}listPharmacopeia?is_dropdown=1`, { headers })
-      .then(response => {
-        setData(response.data.data);
-        { setLoading1(false) }
+            }))
+            setTestData(tests_data)
+            setBooking1(prevState => ({ ...prevState, product_generic: response.data.data[0].product_generic,
+            pharmacopeia_name: response.data.data[0].pharmacopeia_name,
+            generic_name: response.data.data[0].generic_product_name }))
       })
       .catch((error) => {
         toastr.error(error.response.data.message);
-
-        { setLoading1(false) }
       })
+    }
   }
 
-  const fetchparentList = () => {
-    { setLoading1(true) };
-    axios.get(`${process.env.REACT_APP_BASE_APIURL}parentList`, { headers })
-      .then(response => {
-        setData5(response.data.data);
-        { setLoading1(false) }
-      })
-      .catch((error) => {
-        toastr.error(error.response.data.message);
-        { setLoading1(false) }
-      })
-  }
-
-
-  // const chemist_data = () => {
-  //   { setLoading1(true) };
-  //   axios.get(`${process.env.REACT_APP_BASE_APIURL}listEmployee?is_chemist=1`, { headers })
-  //     .then(response => {
-  //       setChemist(response.data.data);
-  //       { setLoading1(false) }
-  //     })
-  //     .catch((error) => {
-  //       toastr.error(error.response.data.message);
-  //       { setLoading1(false) }
-  //     })
-  // }
-
-  const multiply = (num1, num2) => {
-    return num1.join("") * num2.join("") / 100;
-  };
-  const UpdateBooking = (e) => {
+  const InsertBooking = (e) => {
     e.preventDefault();
-    { setLoading(true) };
-    var final_customer_id = customer;
-  //  var final_supplier_id = supplier;
-  //  var final_manufacturer_id = manufacturer;
-    var final_product_id = product;
+   { setLoading(true) };
+
+    var final_customer_id = booking1.customer_id;
+    //var final_supplier_id = supplier;
+    //var final_manufacturer_id = manufacturer;
+    var final_product_id = booking1.product_id;
+
     // Customer ID
 
-    if (typeof customer == "number") {
-      final_customer_id = customer.id
-    } else if (typeof customer == "object") {
-      if (customer.customer_id !== null) {
-        final_customer_id = customer.id;
-      }
-      else {
+    /*var dispatch_date_time_final = '';
+
+    if(booking1.dispatch_date_time !== null || booking1.dispatch_date_time !== ''){
+
+      dispatch_date_time_final = moment(booking1.dispatch_date_time).format("YYYY-MM-DDTHH:mm");
+
+    } else {
+      dispatch_date_time_final = '';
+    }*/
+
+    //console.log(moment(booking1.dispatch_date_time).format("YYYY-MM-DDTHH:mm:ss"))
+
+    if (typeof booking1.customer_id == "number") {
+      final_customer_id = booking1.customer_id
+    } else if (typeof booking1.customer_id == "object") {
+      if (booking1.customer_id !== null) {
+        final_customer_id = booking1.customer_id.value;
+      } else {
         final_customer_id = '';
       }
+
     } else {
       final_customer_id = '';
     }
@@ -785,40 +437,43 @@ function EditBooking(props) {
 
   /*  //Supplier ID
     if (typeof supplier == "number") {
-      final_supplier_id = supplier.id
+      final_supplier_id = supplier.supplier_id
     } else if (typeof supplier == "object") {
-      if (supplier.id !== null) {
-        final_supplier_id = supplier.id;
+      if (supplier.supplier_id !== null) {
+        final_supplier_id = supplier.supplier_id.value;
       } else {
         final_supplier_id = '';
       }
 
     } else {
       final_supplier_id = '';
-    }
+    }*/
 
-    // Manufacturer ID
+   // Manufacturer ID
 
-    if (typeof manufacturer == "number") {
-      final_manufacturer_id = manufacturer.id
+  /*  if (typeof manufacturer == "number") {
+      final_manufacturer_id = manufacturer.manufacturer_name
     } else if (typeof manufacturer == "object") {
-      if (manufacturer.id !== null) {
-        final_manufacturer_id = manufacturer.id;
+      if (manufacturer.manufacturer_name !== null) {
+        final_manufacturer_id = manufacturer.manufacturer_name.value;
       } else {
         final_manufacturer_id = '';
       }
 
     } else {
       final_manufacturer_id = '';
-    }*/
+    }
+
+    console.log(manufacturer)*/
 
 
     // Product ID
-    if (typeof product == "number") {
-      final_product_id = product
-    } else if (typeof product == "object") {
-      if (product.product_id !== null) {
-        final_product_id = product.id;
+
+    if (typeof booking1.product_id == "number") {
+      final_product_id = booking1.product_id
+    } else if (typeof booking1.product_id == "object") {
+      if (booking1.product_id !== null) {
+        final_product_id = booking1.product_id.value;
       } else {
         final_product_id = '';
       }
@@ -827,31 +482,32 @@ function EditBooking(props) {
       final_product_id = '';
     }
 
+    var final_booking_no = ''
+    if (booking1.booking_no == undefined) {
+      final_booking_no = ''
+    } else if (booking1.booking_no == null) {
+      final_booking_no = ''
+    } else {
+      final_booking_no = booking1.booking_no
+    }
 
     const test_details = testData;
 
-    if(booking1.booking_type == 'Report'){
-      if(booking1.audit_reamrks == '' ||  booking1.comments == '' || booking1.reason == ''){
-        toastr.error("Audit Details is required when Booking type is Report")
-        { setLoading(false) };
-        return
-      }
-    }
 
     const data = {
       booking_type: booking1.booking_type,
       report_type: booking1.report_type,
       invoice_date: booking1.invoice_date,
-      invoice_no: booking1.invoice_no,
+      invoice_no: booking1.invoice_number,
       receipte_date: booking1.receipte_date,
-      booking_no: booking1.booking_no,
+      booking_no: final_booking_no,
       customer_id: final_customer_id,
       reference_no: booking1.reference_no,
       remarks: booking1.remarks,
-    //  manufacturer_id: final_manufacturer_id,
+      //manufacturer_name: final_manufacturer_id,
+      manufacturer_id: booking1.manufacturer_name,
       //supplier_id: final_supplier_id,
-      manufacturer_name:manufacturer.manufacturer_name,
-      supplier_name:supplier.supplier_name,
+      supplier_id: booking1.supplier_name,
       mfg_date: booking1.mfg_date,
       mfg_options: booking1.mfg_options,
       exp_date: booking1.exp_date,
@@ -878,42 +534,34 @@ function EditBooking(props) {
       discipline: booking1.discipline,
       booking_group: booking1.booking_group,
       statement_ofconformity: booking1.statement_ofconformity,
-      coa_release_date: booking1.coa_release_date,
-      block: booking1.block,
-      "booking_sample_details": [{
+      ulr_no : booking1.ulr_no,
+      "booking_sample_details": {
         product_id: final_product_id,
-        // product_type: bookingSamples1.product_type,
-        // pharmacopiea_id:bookingSamples1.pharmacopeia_id,
-        batch_no: bookingSamples.batch_no,
-        packsize: bookingSamples.packsize,
-        request_quantity: bookingSamples.request_quantity,
-        sample_code: bookingSamples.sample_code,
-        sample_description: bookingSamples.sample_description,
-        sample_quantity: bookingSamples.sample_quantity,
-        sample_location: bookingSamples.sample_location,
-        sample_packaging: bookingSamples.sample_packaging,
-        sample_type: bookingSamples.sample_type,
-        sampling_date_from: bookingSamples.sampling_date_from,
-        sampling_date_from_options: bookingSamples.sampling_date_from_options,
-        sampling_date_to: bookingSamples.sampling_date_to,
-        sampling_date_to_options: bookingSamples.sampling_date_to_options,
-        sample_received_through: bookingSamples.sample_received_through,
-        chemist: bookingSamples.chemist,
-        sample_condition: bookingSamples.sample_condition,
-        is_sample_condition: bookingSamples.is_sample_condition,
-        batch_size_qty_rec: bookingSamples.batch_size_qty_rec,
-        notes: bookingSamples.notes,
-        sample_drawn_by: bookingSamples.sample_drawn_by,
-      }],
+        batch_no: booking1.batch_no,
+        packsize: booking1.packsize,
+        request_quantity: booking1.request_quantity,
+        sample_code: booking1.sample_code,
+        sample_description: booking1.sample_description,
+        sample_quantity: booking1.sample_quantity,
+        sample_location: booking1.sample_location,
+        sample_packaging: booking1.sample_packaging,
+        sample_type: booking1.sample_type,
+        sampling_date_from: booking1.sampling_date_from,
+        sampling_date_from_options: booking1.sampling_date_from_options,
+        sampling_date_to: booking1.sampling_date_to,
+        sampling_date_to_options: booking1.sampling_date_to_options,
+        sample_received_through: booking1.sample_received_through,
+        chemist: booking1.chemist,
+        sample_condition: booking1.sample_condition,
+        is_sample_condition: booking1.is_sample_condition,
+        batch_size_qty_rec: booking1.batch_size_qty_rec,
+        notes: booking1.notes,
+        sample_drawn_by: booking1.sample_drawn_by,
+      },
       "booking_tests": test_details,
-      "booking_audit_details": {
-        audit_remarks: booking1.audit_reamrks,
-        reason: booking1.reason,
-        comments: booking1.comments
-      }
     }
-
-    axios.post(`${process.env.REACT_APP_BASE_APIURL}editBooking/` + booking_id, data, { headers })
+    console.log(data)
+    axios.post(`${process.env.REACT_APP_BASE_APIURL}addBooking`, data, { headers })
 
       .then(response => {
         if (response.data && response.data.success == true) {
@@ -921,7 +569,7 @@ function EditBooking(props) {
           toastr.success(response.data.message);
           { setLoading(false) };
         } else {
-          props.history.push('/edit-booking/' + edit_booking_id);
+          props.history.push('/add-booking');
           toastr.error(response.data.message);
           { setLoading(false) };
         }
@@ -937,9 +585,7 @@ function EditBooking(props) {
       <HorizontalLayout />
       <div className="page-content">
         <Container fluid={true}>
-          <Form onSubmit={(e) => {
-            UpdateBooking(e)
-          }} method="POST" id="AddBooking" name="BookingData">
+          <Form onSubmit={InsertBooking} method="POST" id="AddBooking" name="BookingData">
             <div className="page-title-box d-flex align-items-center justify-content-between">
 
               <div className="page-title">
@@ -954,9 +600,11 @@ function EditBooking(props) {
               <div className="page-title-right">
                 <ol className="breadcrumb m-0">
                   <li><Link to="/booking" className="btn btn-primary btn-sm"><i className="fa fa-chevron-right">&nbsp;Back</i></Link></li>&nbsp;
+                  <li><button type="reset" onClick={ResetBooking} className="btn btn-primary btn-sm"><i className="fa fa-reply">&nbsp;Reset</i></button></li>
+                  &nbsp;
                   {loading ? <center><LoadingSpinner /></center> :
                     <li>
-                      <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Update</i></button>
+                      <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Submit</i></button>
                     </li>
                   }
                 </ol>
@@ -977,30 +625,22 @@ function EditBooking(props) {
                         <div className="row">
                           <div className="col-md-3">
                             <label>Booking Type</label>
-                            <select className="form-select" value={booking1.booking_type} name="booking_type" onChange={onChange}>
-                              <option value="Entry">Entry</option>
-                              <option value="Testing">Testing</option>
-                              <option value="Report">Report</option>
-                              <option value="Dispatched">Dispatched</option>
-                              <option value="Invoice">Invoice</option>
-                              <option value="Cancel">Cancel</option>
+                            <select className="form-select" name="booking_type" onChange={reporttypeonChange}>
+                            {booking_dropdown.booking_type.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
                           <div className="col-md-3">
                             <label className="required-field">Report Type</label>
-                            <select className="form-select" value={booking1.report_type} name="report_type" isOptionDisabled={(option) => option.disabled}>
+                            <select className="form-select" name="report_type" onChange={reporttypeonChange}>
                               <option value="">None</option>
-                              <option value="FP">FP</option>
-                              <option value="RM">RM</option>
-                              <option value="OT">OT</option>
-                              <option value="TP">TP</option>
-                              <option value="ADL">ADL</option>
-                              <option value="AYUSH">AYUSH</option>
+                              {booking_dropdown.report_type.map((option, key) => <option value={option.id} key={key} >
+                                {option.label}</option>)}
                             </select>
                           </div>
                           <div className="col-md-3">
                             <label className="required-field">Receipt Date</label>
-                            <input className="form-control" value={booking1.receipte_date} type="date" id="example-date-input" name="receipte_date" onChange={onChange} readOnly />
+                            <input className="form-control" type="date" id="example-date-input" name="receipte_date" onChange={reporttypeonChange} />
                           </div>
                           <div className="col-md-3">
                             <label>Booking No</label>
@@ -1010,63 +650,23 @@ function EditBooking(props) {
                       </div>
                     </div>
 
-                    {/*<div className="mb-3 row invoice_data" style={{display:'none'}}>
-                                          <div className="form-group">
-                                            <div className="row">
-
-                                              <div className="col-md-6">
-                                                <label>Invoice Date</label>
-                                                <input id="invoice_date" onChange={ onChange } className="form-control" type="date" name="invoice_date" placeholder="Enter Invoice Date"/>
-                                              </div>
-
-                                              <div className="col-md-6">
-                                                <label>Invoice Number</label>
-                                                <input id="invoice_no" onChange={ onChange } className="form-control" type="text" name="invoice_no" placeholder="Enter Invoice Number"/>
-                                              </div>
-
-                                            </div>
-                                          </div>
-                                      </div>*/}
-
-                    {booking1.booking_type == "Invoice" ?
-                      <div className="mb-3 row invoice_data">
-                        <div className="form-group">
-                          <div className="row">
-
-                            <div className="col-md-6">
-                              <label>Invoice Date</label>
-                              <input id="invoice_date" value={booking1.invoice_date} onChange={onChange} className="form-control" type="date" name="invoice_date" placeholder="Enter Invoice Date" />
-                            </div>
-
-                            <div className="col-md-6">
-                              <label>Invoice Number</label>
-                              <input id="invoice_no" value={booking1.invoice_no} onChange={onChange} className="form-control" type="text" name="invoice_no" placeholder="Enter Invoice Number" />
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-                      : ''
-                    }
-
-
                     <div className="mb-3 row">
                       <div className="form-group">
                         <div className="row">
                           <div className="col-md-3">
                             <label className="required-field">Customer</label>
-                            {loading1 ? <LoadingSpinner /> : <Select value={data1.find(obj => obj.value === customer.id)} onChange={changeCustomer} options={data1} name="customer_id"
+                            {loading1 ? <LoadingSpinner /> : <Select onChange={changeCustomer} options={data1} name="customer_id"
                               placeholder="Select Customer" isClearable />}
                           </div>
 
                           <div className="col-md-4">
                             <label>Reference No</label>
-                            <input className="form-control" type="text" name="reference_no" value={booking1.reference_no} placeholder="Enter Reference No" onChange={onChange} />
+                            <input className="form-control" type="text" name="reference_no" placeholder="Enter Reference No" onChange={onChange} />
                           </div>
 
                           <div className="col-md-5">
                             <label>Remarks</label>
-                            <textarea name="remarks" className="form-control" value={booking1.remarks} placeholder="Enter Remarks" onChange={onChange}></textarea>
+                            <textarea name="remarks" className="form-control" placeholder="Enter Remarks" onChange={onChange}></textarea>
                           </div>
 
                         </div>
@@ -1079,22 +679,23 @@ function EditBooking(props) {
                         <div className="row">
                           <div className="col-md-3">
                             <label>Manufacturer</label>
-                            {/*{loading1 ? <LoadingSpinner /> : <Select value={data2.find(obj => obj.value === manufacturer.id)} onChange={changeManufacturer} options={data2} name="manufacturer_id"
-                              placeholder="Select Manufacturer" isClearable />}*/}
 
-                              <input value={manufacturer.manufacturer_name} onChange={changeManufacturer} name="manufacturer_name" className="form-control"
+                          {/*{loading1 ? <LoadingSpinner /> : <Select onChange={changeManufacturer} options={data2} name="manufacturer_id"
+                              placeholder="Select Manufacturer" isClearable />}*/}
+                              <input value={booking1.manufacturer_name} onChange={changeManufacturer} name="manufacturer_name" className="form-control"
                                list="manufacturer_name" id="exampleDataList" placeholder="Type to search For Manufacturer..." autoComplete="off"/>
                                <datalist id="manufacturer_name">
-                                   { data2.map((option, key) => <option data-value={option.id} value={option.manufacturer_name} key={key} >
+                                   { data2.map((option, key) => <option data-value={option.id} value={option.company_name} key={key} >
                                      </option>) }
                                 </datalist>
+
                           </div>
                           <div className="col-md-3">
                             <label>Supplier</label>
-                            {/*{loading1 ? <LoadingSpinner /> : <Select value={data3.find(obj => obj.value === supplier.id)} onChange={changeSupplier} options={data3} name="supplier_id"
+                            {/*{loading1 ? <LoadingSpinner /> : <Select onChange={changeSupplier} options={data3} name="supplier_id"
                               placeholder="Select Supplier" isClearable />}*/}
 
-                              <input value={supplier.supplier_name} onChange={changeSupplier} name="supplier_name" className="form-control"
+                              <input value={booking1.supplier_name} onChange={changeSupplier} name="supplier_name" className="form-control"
                                list="supplier_name" id="exampleDataList" placeholder="Type to search For Supplier..." autoComplete="off"/>
                                <datalist id="supplier_name">
                                    { data3.map((option, key) => <option data-value={option.id} value={option.company_name} key={key} >
@@ -1104,28 +705,26 @@ function EditBooking(props) {
 
                           <div className="col-md-2">
                             <label className="required-field">Mfg Date</label>
-                            <input className="form-control" value={booking1.mfg_date} type="date" id="example-date-input" name="mfg_date" onChange={onChange} />
+                            <input className="form-control" type="date" id="example-date-input" name="mfg_date" onChange={onChange} />
                           </div>
 
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>Mfg</label>
-                            <select name="mfg_options" value={booking1.mfg_options} className="form-select" onChange={onChange}>
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            <select name="mfg_options" className="form-select" onChange={onChange}>
+                            {booking_dropdown.common_options1.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-2">
                             <label className="required-field">Exp Date</label>
-                            <input className="form-control" value={booking1.exp_date} type="date" id="example-date-input" name="exp_date" onChange={onChange} />
+                            <input className="form-control" type="date" id="example-date-input" name="exp_date" onChange={onChange} />
                           </div>
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>Exp</label>
-                            <select name="exp_options" value={booking1.exp_options} className="form-select" onChange={onChange}>
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            <select name="exp_options" className="form-select" onChange={onChange}>
+                            {booking_dropdown.common_options1.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
                         </div>
@@ -1137,38 +736,36 @@ function EditBooking(props) {
                         <div className="row">
                           <div className="col-md-3">
                             <label>Date of Analysis</label>
-                            <input onChange={onChange} value={booking1.analysis_date} className="form-control" type="date" id="example-date-input" name="analysis_date" />
+                            <input onChange={onChange} className="form-control" type="date" id="example-date-input" name="analysis_date" />
                           </div>
                           <div className="col-md-3">
                             <label>Aum Sr. No</label>
-                            <input value={booking1.aum_serial_no} type="text" className="form-control" name="aum_serial_no" readOnly />
-
+                            {loading1 ? <LoadingSpinner /> : <input value={booking1.aum_serial_no} type="text" className="form-control" name="aum_serial_no" readOnly />
+                            }
                           </div>
 
                           <div className="col-md-2">
                             <label>D Formate</label>
-                            <input value={booking1.d_format} onChange={onChange} className="form-control" type="text" name="d_format" placeholder="Enter D Formate" />
+                            <input onChange={onChange} className="form-control" type="text" name="d_format" placeholder="Enter D Formate" />
                           </div>
 
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>Formate</label>
-                            <select value={booking1.d_format_options} name="d_format_options" className="form-select" onChange={onChange}>
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            <select name="d_format_options" className="form-select" onChange={onChange}>
+                            {booking_dropdown.common_options2.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-2">
                             <label>Grade</label>
-                            <input value={booking1.grade} onChange={onChange} className="form-control" type="text" name="grade" placeholder="Enter Grade" />
+                            <input onChange={onChange} className="form-control" type="text" name="grade" placeholder="Enter Grade" />
                           </div>
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>Grade</label>
-                            <select value={booking1.grade_options} onChange={onChange} name="grade_options" className="form-select">
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            <select onChange={onChange} name="grade_options" className="form-select">
+                            {booking_dropdown.common_options2.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
                         </div>
@@ -1181,37 +778,36 @@ function EditBooking(props) {
 
                           <div className="col-md-2">
                             <label>Project Name</label>
-                            <input value={booking1.project_name} onChange={onChange} className="form-control" type="text" name="project_name" placeholder="Enter Project Name" />
+                            <input onChange={onChange} className="form-control" type="text" name="project_name" placeholder="Enter Project Name" />
                           </div>
 
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>ProName</label>
-                            <select value={booking1.project_options} onChange={onChange} name="project_options" className="form-select">
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            <select onChange={onChange} name="project_options" className="form-select">
+                            {booking_dropdown.common_options2.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-3">
                             <label> Mfg. Lic. No</label>
-                            <input value={booking1.mfg_lic_no} onChange={onChange} className="form-control" type="text" placeholder="Enter Mfg Lic No" name="mfg_lic_no" />
+                            <input onChange={onChange} className="form-control" type="text" placeholder="Enter Mfg Lic No" name="mfg_lic_no" />
                           </div>
 
                           <div className="col-md-3">
                             <label>Is Report Dispacthed?</label>
-                            <select value={booking1.is_report_dispacthed} onChange={onChange} name="is_report_dispacthed" className="form-select">
-                              <option value="0">No</option>
-                              <option value="1">Yes</option>
+                            <select onChange={onChange} name="is_report_dispacthed" className="form-select">
+                            {booking_dropdown.yes_no_options.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
 
                           </div>
 
                           <div className="col-md-3">
                             <label>Signature?</label>
-                            <select value={booking1.signature} onChange={onChange} name="signature" className="form-select">
-                              <option value="0">No</option>
-                              <option value="1">Yes</option>
+                            <select onChange={onChange} name="signature" className="form-select">
+                            {booking_dropdown.yes_no_options.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
@@ -1219,68 +815,34 @@ function EditBooking(props) {
                       </div>
                     </div>
 
-                    {/*<div className="mb-3 row report_dispatch_yes" style={{display:'none'}}>
-                                          <div className="form-group">
-                                            <div className="row">
+                    <div className="mb-3 row report_dispatch_yes" style={{ display: 'none' }}>
+                      <div className="form-group">
+                        <div className="row">
 
-                                              <div className="col-md-4">
-                                                <label>Dispatch Date Time</label>
-                                                <input value={booking1.dispatch_date_time} id="dispatch_date_time" onChange={ onChange } className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time"/>
-                                              </div>
-
-                                              <div className="col-md-4">
-                                                <label>Dispatch Mode</label>
-                                                <select value={booking1.dispatch_mode} onChange={ onChange } name="dispatch_mode" className="form-select" id="dispatch_mode">
-                                                  <option value="">Select Dispatch Mode</option>
-                                                  <option value="By Courier">By Courier</option>
-                                                  <option value="By Hand Delivery">By Hand Delivery</option>
-                                                  <option value="Collect by Party">Collect by Party</option>
-                                                </select>
-
-                                              </div>
-
-                                              <div className="col-md-4">
-                                                <label>Dispatch Details</label>
-                                                <input value={booking1.dispatch_details} id="dispatch_details" onChange={ onChange } className="form-control" type="text" name="dispatch_details" placeholder="Enter Dispatch Details"/>
-                                              </div>
-
-                                            </div>
-                                          </div>
-                                      </div>*/}
-
-                    {booking1.is_report_dispacthed == "1" ?
-                      <div className="mb-3 row report_dispatch_yes">
-                        <div className="form-group">
-                          <div className="row">
-
-                            <div className="col-md-4">
-                              <label>Dispatch Date Time</label>
-                              {booking1.dispatch_date_time ?
-                                <input value={booking1.dispatch_date_time} id="dispatch_date_time" onChange={onChange} className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time" />
-                                : <input value={booking1.dispatch_date_time} id="dispatch_date_time" onChange={onChange} className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time" />}
-                            </div>
-
-                            <div className="col-md-4">
-                              <label>Dispatch Mode</label>
-                              <select value={booking1.dispatch_mode} onChange={onChange} name="dispatch_mode" className="form-select" id="dispatch_mode">
-                                <option value="">Select Dispatch Mode</option>
-                                <option value="By Courier">By Courier</option>
-                                <option value="By Hand Delivery">By Hand Delivery</option>
-                                <option value="Collect by Party">Collect by Party</option>
-                              </select>
-
-                            </div>
-
-                            <div className="col-md-4">
-                              <label>Dispatch Details</label>
-                              <input value={booking1.dispatch_details} id="dispatch_details" onChange={onChange} className="form-control" type="text" name="dispatch_details" placeholder="Enter Dispatch Details" />
-                            </div>
+                          <div className="col-md-4">
+                            <label>Dispatch Date Time</label>
+                            <input id="dispatch_date_time" onChange={onChange} className="form-control" type="datetime-local" name="dispatch_date_time" placeholder="Enter Dispatch Date Time" />
 
                           </div>
+
+                          <div className="col-md-4">
+                            <label>Dispatch Mode</label>
+                            <select onChange={onChange} name="dispatch_mode" className="form-select" id="dispatch_mode">
+                              <option value="">Select Dispatch Mode</option>
+                              {booking_dropdown.dispatch_mode.map((option, key) => <option value={option} key={key} >
+                                {option}</option>)}
+                            </select>
+
+                          </div>
+
+                          <div className="col-md-4">
+                            <label>Dispatch Details</label>
+                            <input id="dispatch_details" onChange={onChange} className="form-control" type="text" name="dispatch_details" placeholder="Enter Dispatch Details" />
+                          </div>
+
                         </div>
                       </div>
-                      : ''
-                    }
+                    </div>
 
                     <div className="mb-3 row">
                       <div className="form-group">
@@ -1288,34 +850,33 @@ function EditBooking(props) {
 
                           <div className="col-md-2">
                             <label>Verified By</label>
-                            <select value={booking1.verified_by} onChange={onChange} name="verified_by" className="form-select">
-                              <option value="None">None</option>
-                              <option value="QA">QA</option>
+                            <select onChange={onChange} name="verified_by" className="form-select">
+                            {booking_dropdown.verified_by.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
 
                           </div>
 
                           <div className="col-md-2">
                             <label>NABL Scope?</label>
-                            <select value={booking1.nabl_scope} onChange={onChange} name="nabl_scope" className="form-select">
-                              <option value="0">No</option>
-                              <option value="1">Yes</option>
+                            <select onChange={onChangeNABL} name="nabl_scope" className="form-select">
+                            {booking_dropdown.yes_no_options.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
-
+                            <div style={{display:'none'}} id="ulr_no"><label>ULR No : {booking1.ulr_no}</label></div>
                           </div>
 
                           <div className="col-md-2">
                             <label>Cancel</label>
-                            <select value={booking1.cancel} onChange={onChange} name="cancel" className="form-select">
-                              <option value="None">None</option>
-                              <option value="No">No</option>
-                              <option value="Yes">Yes</option>
+                            <select onChange={onChange} name="cancel" className="form-select">
+                            {booking_dropdown.cancel.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-6">
                             <label>Cancel Remarks</label>
-                            <textarea value={booking1.cancel_remarks} onChange={onChange} name="cancel_remarks" className="form-control" placeholder="Enter Cancel Remarks"></textarea>
+                            <textarea onChange={onChange} name="cancel_remarks" className="form-control" placeholder="Enter Cancel Remarks"></textarea>
                           </div>
 
                         </div>
@@ -1328,59 +889,35 @@ function EditBooking(props) {
 
                           <div className="col-md-3">
                             <label>Priority</label>
-                            <select value={booking1.priority} onChange={onChange} name="priority" className="form-select">
-                              <option value="High">High</option>
-                              <option value="Medium">Medium</option>
-                              <option value="Low">Low</option>
+                            <select onChange={onChange} name="priority" className="form-select">
+                            {booking_dropdown.priority.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
 
                           </div>
 
                           <div className="col-md-3">
                             <label>Discipline</label>
-                            <select value={booking1.discipline} onChange={onChange} name="discipline" className="form-select">
-                              <option value="Chemical">Chemical</option>
-                              <option value="Biological">Biological</option>
+                            <select onChange={onChange} name="discipline" className="form-select">
+                            {booking_dropdown.discipline.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
 
                           </div>
 
                           <div className="col-md-3">
                             <label>Group</label>
-                            <select value={booking1.booking_group} onChange={onChange} name="booking_group" className="form-select">
-                              <option value="Drugs and Pharmaceuticals">Drugs and Pharmaceuticals</option>
-                              <option value="Food of Agriculture Product">Food of Agriculture Product</option>
+                            <select onChange={onChange} name="booking_group" className="form-select">
+                            {booking_dropdown.group.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-3">
                             <label>Statement Of Conformity</label>
-                            <select value={booking1.statement_ofconformity} onChange={onChange} name="statement_ofconformity" className="form-select">
-                              <option value="PASS">PASS</option>
-                              <option value="INDETERMINATE">INDETERMINATE</option>
-                              <option value="FAIL">FAIL</option>
-                            </select>
-
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mb-3 row">
-                      <div className="form-group">
-                        <div className="row">
-
-                          <div className="col-md-6">
-                            <label>COA Release Date</label>
-                            <input value={booking1.coa_release_date} id="coa_release_date" onChange={onChange} className="form-control" type="date" name="coa_release_date" placeholder="Enter COA Release Date" />
-                          </div>
-
-                          <div className="col-md-6">
-                            <label>Block</label>
-                            <select value={booking1.block} onChange={onChange} name="block" className="form-select">
-                              <option value="0">No</option>
-                              <option value="1">Yes</option>
+                            <select onChange={onChange} name="statement_ofconformity" className="form-select">
+                            {booking_dropdown.statement_confirmity.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
 
                           </div>
@@ -1399,18 +936,17 @@ function EditBooking(props) {
                         <div className="row">
                           <div className="col-md-4">
                             <label className="required-field">Product</label>
-                            {loading1 ? <LoadingSpinner /> : <Select value={data4.find(obj => obj.value === product)} options={data4} name="product_id"
+                            {loading1 ? <LoadingSpinner /> : <Select options={data4} name="product_id"
                               placeholder="Select Product" onChange={changeProductID} isClearable />}
                           </div>
                           <div className="col-md-4">
                             <label>Generic Name</label>
-                            {loading1 ? <LoadingSpinner /> : <input className="form-control" value={bookingSamples1.generic_name} type="text" name="generic_name" readOnly />}
+                            {loading1 ? <LoadingSpinner /> : <input className="form-control" value={booking1.generic_name} type="text" name="generic_name" readOnly />}
                           </div>
 
                           <div className="col-md-4">
                             <label>Product Type</label>
-                            <input type="text" name="product_type" className="form-control" value={bookingSamples1.product_type} />
-
+                            <input type="text" name="product_type" className="form-control" value={booking1.product_generic} readOnly />
                           </div>
 
                         </div>
@@ -1423,32 +959,32 @@ function EditBooking(props) {
 
                           <div className="col-md-2">
                             <label>Pharmacopiea</label>
-                            <input type="text" name="pharmacopeia_name" className="form-control" value={bookingSamples1.pharmacopeia_name} />
+                            <input type="text" className="form-control" value={booking1.pharmacopeia_name} id="pharmocopiea" name="pharmacopeia_name" readOnly />
                           </div>
 
                           <div className="col-md-2">
                             <label>Batch No</label>
-                            <input className="form-control" type="text" name="batch_no" onChange={onChangeProductSamples} value={bookingSamples.batch_no} />
+                            <input className="form-control" type="text" name="batch_no" onChange={onChange} />
                           </div>
 
                           <div className="col-md-1">
                             <label>Pack Size</label>
-                            <input className="form-control" type="text" name="packsize" onChange={onChangeProductSamples} value={bookingSamples.packsize} />
+                            <input className="form-control" type="text" name="packsize" onChange={onChange} />
                           </div>
 
                           <div className="col-md-1">
                             <label>Req Qty</label>
-                            <input className="form-control" type="text" name="request_quantity" onChange={onChangeProductSamples} value={bookingSamples.request_quantity} />
+                            <input className="form-control" type="text" name="request_quantity" onChange={onChange} />
                           </div>
 
                           <div className="col-md-2">
                             <label>Sample Code</label>
-                            <input className="form-control" type="text" name="sample_code" onChange={onChangeProductSamples} value={bookingSamples.sample_code} />
+                            <input className="form-control" type="text" name="sample_code" onChange={onChange} />
                           </div>
 
                           <div className="col-md-4">
                             <label>Sample Desc</label>
-                            <input className="form-control" type="text" name="sample_description" onChange={onChangeProductSamples} value={bookingSamples.sample_description} />
+                            <input className="form-control" type="text" name="sample_description" onChange={onChange} />
                           </div>
 
                         </div>
@@ -1461,22 +997,22 @@ function EditBooking(props) {
 
                           <div className="col-md-3">
                             <label>Sample Qty</label>
-                            <input className="form-control" type="text" name="sample_quantity" onChange={onChangeProductSamples} value={bookingSamples.sample_quantity} />
+                            <input className="form-control" type="text" name="sample_quantity" onChange={onChange} />
                           </div>
 
                           <div className="col-md-3">
                             <label>Sample Location</label>
-                            <input className="form-control" type="text" name="sample_location" onChange={onChangeProductSamples} value={bookingSamples.sample_location} />
+                            <input className="form-control" type="text" name="sample_location" onChange={onChange} />
                           </div>
 
                           <div className="col-md-3">
                             <label>Sample Packaging</label>
-                            <input className="form-control" type="text" name="sample_packaging" onChange={onChangeProductSamples} value={bookingSamples.sample_packaging} />
+                            <input className="form-control" type="text" name="sample_packaging" onChange={onChange} />
                           </div>
 
                           <div className="col-md-3">
                             <label>Sample Type</label>
-                            <input className="form-control" type="text" name="sample_type" onChange={onChangeProductSamples} value={bookingSamples.sample_type} />
+                            <input className="form-control" type="text" name="sample_type" onChange={onChange} />
                           </div>
 
 
@@ -1490,57 +1026,55 @@ function EditBooking(props) {
 
                           <div className="col-md-2">
                             <label>Sampling Date From</label>
-                            <input className="form-control" type="date" id="example-date-input" name="sampling_date_from" onChange={onChangeProductSamples} value={bookingSamples.sampling_date_from} />
+                            <input className="form-control" type="date" id="example-date-input" name="sampling_date_from" onChange={onChange} />
                           </div>
 
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>SamplingFrom</label>
-                            <select name="sampling_date_from_options" className="form-select" onChange={onChangeProductSamples} value={bookingSamples.sampling_date_from_options}>
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            <select name="sampling_date_from_options" className="form-select" onChange={onChange}>
+                            {booking_dropdown.common_options2.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-2">
                             <label>Sampling Date To</label>
-                            <input className="form-control" type="date" id="example-date-input" name="sampling_date_to" onChange={onChangeProductSamples} value={bookingSamples.sampling_date_to} />
+                            <input className="form-control" type="date" id="example-date-input" name="sampling_date_to" onChange={onChange} />
                           </div>
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>Sampling To</label>
-                            <select name="sampling_date_to_options" className="form-select" onChange={onChangeProductSamples} value={bookingSamples.sampling_date_to_options}>
-                              <option value="N/S">N/S</option>
-                              <option value="None">None</option>
-                              <option value="N/A">N/A</option>
+                            <select name="sampling_date_to_options" className="form-select" onChange={onChange}>
+                            {booking_dropdown.common_options2.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-2">
                             <label>Sample Received Through</label>
-                            <select name="sample_received_through" className="form-select" onChange={onChangeProductSamples} value={bookingSamples.sample_received_through}>
-                              <option value="By Courier">By Courier</option>
-                              <option value="By Hand">By Hand</option>
-                              <option value="By Collection">By Collection</option>
+                            <select name="sample_received_through" className="form-select" onChange={onChange}>
+                            {booking_dropdown.sample_received_through.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-1">
                             <label>Chemist</label>
-                            <select name="chemist" className="form-select" onChange={onChangeProductSamples} value={bookingSamples.chemist}>
-                              <option value="1">Yes</option>
+                            <select name="chemist" className="form-select" onChange={onChange}>
+                            {booking_dropdown.chemist.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
                           <div className="col-md-2">
                             <label>Sample Condition</label>
-                            <input className="form-control" type="text" name="sample_condition" value={bookingSamples.sample_condition} placeholder="Enter Sample Condition" onChange={onChangeProductSamples} />
+                            <input className="form-control" type="text" name="sample_condition" placeholder="Enter Sample Condition" onChange={onChange} />
                           </div>
 
                           <div className="col-md-1">
                             <label style={{ visibility: 'hidden' }}>sampleconoption</label>
-                            <select name="is_sample_condition" className="form-select" onChange={onChangeProductSamples} value={bookingSamples.is_sample_condition}>
-                              <option value="0">No</option>
-                              <option value="1">Yes</option>
+                            <select name="is_sample_condition" className="form-select" onChange={onChange}>
+                            {booking_dropdown.yes_no_options.map((option, key) => <option value={option.id} key={key} >
+                              {option.label}</option>)}
                             </select>
                           </div>
 
@@ -1554,17 +1088,17 @@ function EditBooking(props) {
 
                           <div className="col-md-2">
                             <label>Batch Size/ Qty Received</label>
-                            <input className="form-control" type="text" name="batch_size_qty_rec" onChange={onChangeProductSamples} value={bookingSamples.batch_size_qty_rec} />
+                            <input className="form-control" type="text" name="batch_size_qty_rec" onChange={onChange} />
                           </div>
 
                           <div className="col-md-7">
                             <label>Notes</label>
-                            <input className="form-control" type="text" name="notes" placeholder="Enter Note" onChange={onChangeProductSamples} value={bookingSamples.notes} />
+                            <input className="form-control" type="text" name="notes" placeholder="Enter Note" onChange={onChange} />
                           </div>
 
                           <div className="col-md-3">
                             <label>Sample Drawn By</label>
-                            <input className="form-control" type="text" name="sample_drawn_by" onChange={onChangeProductSamples} value={bookingSamples.sample_drawn_by} />
+                            <input className="form-control" type="text" name="sample_drawn_by" onChange={onChange} />
                           </div>
 
                         </div>
@@ -1577,43 +1111,24 @@ function EditBooking(props) {
                     </Alert></h5>
 
                     {testData.map((x, i) => (
-
-
                       <React.Fragment key={x}>
                         <div className="mb-3 row">
                           <div className="form-group">
                             <div className="row">
                               <div className="table-responsive">
-                                <Table className="table mb-0 border" style={{ width: '100%' }}>
+                                <Table className="table mb-0 border">
                                   <thead className="table-light">
                                     <tr>
-                                      <th style={table_th_style}>Parent Child</th>
-                                      <th style={table_th_style}>P Sr No</th>
-                                      <th style={table_th_style}>By Pass</th>
-                                      <th style={table_th_style}>Parent</th>
-                                      <th style={table_textarea_th_style}>Product Details</th>
-                                      <th style={table_textarea_th_style}>Test Name</th>
-                                      <th style={table_th_style}>Label Claim</th>
-                                      {/*<th style={table_th_style}>% of Label Claim</th>*/}
-                                      <th style={table_th_style}>Min. Limit</th>
-                                      <th style={table_th_style}>Max. Limit</th>
-                                      <th style={table_th_style}>Result</th>
-                                      <th style={table_th_style}>Label Claim Result</th>
-                                      <th style={table_th_style}>Label Claim Unit</th>
-                                      {/*<th style={table_th_style}>Result2</th>*/}
-                                      <th style={table_th_style}>Mean</th>
-                                      {/*<th style={table_th_style}>Na Content</th>
-                                      <th style={table_th_style}>Final Na Content</th>*/}
-                                      <th style={table_th_style}>Unit</th>
-                                      {/*<th style={table_th_style}>Expanded Uncertainty</th>*/}
-                                      <th style={table_th_style}>Amount</th>
-                                      {/*<th style={table_th_style}>Division</th>*/}
-                                      <th style={table_th_style}>Method</th>
-                                      {/*<th style={table_th_style}>Test Time</th>*/}
-                                      <th style={table_th_style}>Test Date Time</th>
-                                      <th style={table_th_style}>Approval Date Time</th>
-                                      <th style={table_th_style}>Approved</th>
-                                      <th style={table_textarea_th_style}>Chemist Name</th>
+                                      <th>Parent Child</th>
+                                      <th>P Sr No</th>
+                                      <th>By Pass</th>
+                                      <th>Parent</th>
+                                      <th>Product Details</th>
+                                      <th>Test Name</th>
+                                      <th>Label Claim</th>
+                                      <th>Min.Limit</th>
+                                      <th>Max.Limit</th>
+                                      <th>Amount</th>
                                       <th style={{ textAlign: 'center' }}><i className="fa fa-trash"></i></th>
                                     </tr>
                                   </thead>
@@ -1621,120 +1136,42 @@ function EditBooking(props) {
                                     <tr>
                                       {/*<td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
                                                                     <td><input type="checkbox"/></td>*/}
-                                      <td>
-                                      <select name="parent_child" value={x.parent_child} onChange={e => handleInputChange(e, i)} style={my_style} id={'parent_child_' + i} className="form-select">
-                                        <option value="Parent">Parent</option>
-                                        <option value="Child">Child</option>
+                                      <td><select name="parent_child" onChange={e => handleInputChange(e, i)} style={my_style} id={'parent_child_' + i} className="form-select">
+                                      {booking_dropdown.parent_child.map((option, key) => <option value={option.id} key={key} >
+                                        {option.label}</option>)}
                                       </select></td>
-                                      <td><input value={x.p_sr_no} type="text" onChange={e => handleInputChange(e, i)} name="p_sr_no" className="form-control" /></td>
-                                      <td><select value={x.by_pass} onChange={e => handleInputChange(e, i)} style={my_style} className="form-select" name="by_pass"><option value="2">No</option><option value="1">Yes</option></select></td>
-                                      <td><select value={x.parent_id} onChange={e => handleInputChange(e, i)} name="parent_id" className="form-select" style={{ width: '100px !important' }}>
+                                      <td><input value={x.p_sr_no} type="text" onChange={e => handleInputChange(e, i)} name="p_sr_no" className="form-control" readOnly /></td>
+                                      <td><select value={x.by_pass} onChange={e => handleInputChange(e, i)} style={my_style} className="form-select" name="by_pass">
+                                      {booking_dropdown.yes_no_options.map((option, key) => <option value={option.id} key={key} >
+                                        {option.label}</option>)}
+                                      </select></td>
+                                      <td>
+
+                                      <select value={x.parent_id} onChange={e => handleInputChange(e, i)} name="parent_id" className="form-select" style={{ width: '100px !important' }}>
                                         <option value="">Select Parent</option>
                                         {data5.map((option, key) => <option value={option.id} key={key} >
-                                          {option.parent_name}</option>)}
+                                          {option.procedure_name}</option>)}
                                       </select></td>
 
-                                      <td><textarea name="product_details" onChange={e => handleInputChange(e, i)} className="form-control" style={{ width: '120px !important' }} value={x.product_details}></textarea></td>
+                                      <td><textarea value={x.product_details} name="product_details" onChange={e => handleInputChange(e, i)} className="form-control" style={{ width: '120px !important' }}></textarea></td>
 
-                                      <td><input value={x.test_name} className="form-control" onChange={e => handleInputChange(e, i)} name="test_name" style={{ width: '150px !important' }} />
+                                      <td>
+                                      <input class="form-control" value={x.test_name} name="test_name" list="sample_name" id="product_list"  placeholder="Type to Test Name..." onChange={e => handleInputChange(e, i)}/>
+                                         <datalist id="sample_name">
+                                         {data6.map((option, key) => <option value={option.id+" - "+option.procedure_name}>
+                                           </option>)}
+                                         </datalist>
+                                    {/*  <select value={x.test_id} onChange={e => handleInputChange(e, i)} name="test_id" className="form-select" style={{ width: '150px !important' }}>
+                                        <option value="">Select Test</option>
+                                        {data6.map((option, key) => <option value={option.id} key={key} >
+                                          {option.procedure_name}</option>)}
+                                      </select>*/}
+
                                       </td>
                                       <td><input value={x.label_claim} type="text" name="label_claim" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-
-                                      {/*<td><input value={x.percentage_of_label_claim} type="text"
-                                      name="percentage_of_label_claim" onChange={e => handleInputChange(e, i)}
-                                      className="form-control" /></td>*/}
-
-
                                       <td><input value={x.min_limit} type="text" name="min_limit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       <td><input value={x.max_limit} type="text" name="max_limit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-
-                                      <td>
-                                        <input value={x.result} onChange={e => handleInputChange(e, i)} name="result" className="form-control"
-                                        list="result" placeholder="Type to search For Result..." autoComplete="off"/>
-                                        <datalist id="result">
-                                          { resultList.length ? resultList.map((option, key) => <option data-value={option.result} value={option.result} key={key} >
-                                        </option>)  : ''}
-                                        </datalist>
-                                      </td>
-                                      <td>
-                                  <input value={x.label_claim_result} type="text" name="label_claim_result" className="form-control"
-                                  onChange={e => handleInputChange(e, i)}/></td>
-
-                                  <td><input value={x.label_claim_unit} type="text" name="label_claim_unit" className="form-control"
-                                  onChange={e => handleInputChange(e, i)}/>
-                                  </td>
-                                  {/*<td><input value={x.result2} type="text" name="result2"
-                                  onChange={e => handleInputChange(e, i)} className="form-control" /></td>*/}
-                                  <td><input value={x.mean} type="text" name="mean" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      {/*<td><input value={x.na_content} type="text" name="na_content"
-                                      onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      <td><input value={x.final_na_content} type="text" name="final_na_content"
-                                      onChange={e => handleInputChange(e, i)} className="form-control" /></td>*/}
-                                      <td>
-                                      {loading1 ? <LoadingSpinner /> : <select className="form-select" name="unit" value={x.unit} onChange={e => handleInputChange(e, i)}>
-                                            <option value="">Select Unit</option>
-                                           { unitList.map((option, key) => <option value={option.id} key={key} >{option.unit_name}</option>) }
-
-                                        </select>}
-                                      {/*<input value={} type="text" name="unit" onChange={e => handleInputChange(e, i)} className="form-control" />*/}
-                                      </td>
-                                      {/*<td><input value={x.expanded_uncertanity} type="text" name="expanded_uncertanity"
-                                      onChange={e => handleInputChange(e, i)} className="form-control" /></td>*/}
-
-                                      <td>
-                                      <input value={x.amount} type="text" name="amount" onChange={e => handleInputChange(e, i)} className="form-control" />
-                                      <input type="hidden" value={x.assigned_date}/>
-                                      </td>
-
-                                      {//
-                                      }
-                                      {/*<td><input value={x.division} type="text" name="division" onChange={e => handleInputChange(e, i)}
-                                       className="form-control" /></td>*/}
-                                      <td><input value={x.method} type="text" name="method" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
-                                      {/*<td><input value={x.test_time} type="text" name="test_time" onChange={e => handleInputChange(e, i)}
-                                      className="form-control" /></td>*/}
-                                      <td> {loading1 ? <LoadingSpinner /> : x.test_date_time !== null || x.test_date_time !== '' ?
-                                        (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
-                                          <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control" />
-                                          : <input value={moment(x.test_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>)
-                                        :
-                                        <input value={x.test_date_time} type="datetime-local" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>
-                                      }
-                                      </td>
-                                      <td> {x.approval_date_time !== null || x.approval_date_time !== '' ?
-                                        (dateString1.match(/am|pm/i) || date1.toString().match(/am|pm/i) ?
-                                          <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:mm')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" />
-                                          : <input value={moment(x.approval_date_time).format('YYYY-MM-DDTHH:MM')} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/>)
-                                        :
-                                        <input value={x.approval_date_time} type="datetime-local" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control" />
-                                      }
-                                      </td>
-                                      {/*<td><input value={x.test_date_time} type="text" name="test_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                     <td><input value={x.approval_date_time} type="text" name="approval_date_time" onChange={e => handleInputChange(e, i)} className="form-control"/></td>
-                                                                     */}
-                                      <td>
-                                      <b><u>{x.approved}</u></b>
-                                        <select name="approved" className="form-select" onChange={e => handleInputChange(e, i)} value={x.approved}>
-                                          {x.approved !== '' ? <option value="">Select Status</option> : ''}
-                                          {x.approved == '' ? <option value="Pending">Pending</option> : ''}
-                                          {x.approved == "Pending" ? <option value="Assigned">Assigned</option> : ''}
-                                          {x.approved == "Assigned" ? <option value="ForApproval">ForApproval</option> : ''}
-                                          {x.approved == "ForApproval" ? <option value="Approved">Approved</option> : ''}
-                                          {x.approved == "ForApproval" ? <option value="Rejected">Rejected</option> : ''}
-                                        </select>
-                                      </td>
-
-                                      <td>
-                                        {loading1 ? <LoadingSpinner /> :
-                                          <select className="form-select" value={x.chemist_name} name="chemist_name" onChange={e => handleInputChange(e, i)}>
-                                            <option value="">Select Chemist</option>
-                                            {chemist && chemist.length ? chemist.map((option, key) => <option value={option.id} key={key} >
-                                              {option.first_name + " " + option.middle_name + " " + option.last_name}</option>) : <option>None</option>}
-                                          </select>
-                                        }
-                                      </td>
-                                      {//end
-                                      }
+                                      <td><input value={x.amount} type="text" name="amount" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
 
                                       <td>{testData.length >= 1 && <button
                                         className="mr10"
@@ -1755,7 +1192,7 @@ function EditBooking(props) {
                               <center>
                                 <div className="col-md-2">
 
-                                  {testData.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={handleAddClick}>Add More</button>}
+                                  {testData.length - 1 === i && <button className="btn btn-success mt-3 mt-lg-0" onClick={e => handleAddClick(e,i)}>Add More</button>}
                                 </div>
                               </center>
                             </div>
@@ -1776,64 +1213,6 @@ function EditBooking(props) {
                         </div>
                       </div>
                     </div>
-
-                    {/*Test Section End*/}
-                    {/*<h5 className="audit_details" style={{display:'none'}}> <Alert color="danger" role="alert">
-          <i className="fa fa-comment">&nbsp;Audit Details</i>
-      </Alert></h5>
-      <div className="mb-3 row audit_details" style={{display:'none'}}>
-          <div className="form-group">
-            <div className="row">
-
-              <div className="col-md-4">
-                <label>Audit Remarks</label>
-                <textarea name="audit_reamrks" id="audit_reamrks" className="form-control" placeholder="Enter Remarks" onChange={ onChange }></textarea>
-              </div>
-
-              <div className="col-md-4">
-                <label>Reason</label>
-                <textarea name="reason" id="reason" className="form-control" placeholder="Enter Reason" onChange={ onChange }></textarea>
-              </div>
-
-              <div className="col-md-4">
-                <label>Comments</label>
-                <textarea name="comments" id="comments" className="form-control" placeholder="Enter Comments" onChange={ onChange }></textarea>
-              </div>
-
-            </div>
-          </div>
-      </div>*/}
-
-                    {booking1.booking_type == "Report" ?
-                      <div className="audit_details">
-                        <h5> <Alert color="danger" role="alert">
-                          <i className="fa fa-comment">&nbsp;Audit Details</i>
-                        </Alert></h5>
-                        <div className="mb-3 row audit_details">
-                          <div className="form-group">
-                            <div className="row">
-
-                              <div className="col-md-4">
-                                <label className="required-field">Audit Remarks</label>
-                                <textarea name="audit_reamrks" value={booking1.audit_reamrks} id="audit_reamrks" className="form-control" placeholder="Enter Remarks" onChange={onChange}></textarea>
-                              </div>
-
-                              <div className="col-md-4">
-                                <label className="required-field">Reason</label>
-                                <textarea name="reason" id="reason" value={booking1.reason} className="form-control" placeholder="Enter Reason" onChange={onChange}></textarea>
-                              </div>
-
-                              <div className="col-md-4">
-                                <label className="required-field">Comments</label>
-                                <textarea name="comments" id="comments" value={booking1.comments} className="form-control" placeholder="Enter Comments" onChange={onChange}></textarea>
-                              </div>
-
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      : ''
-                    }
 
                   </CardBody>
                 </Card>

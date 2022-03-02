@@ -116,13 +116,27 @@ this.deleteCustomer = async(customer_id) =>{
    window.print()
  }
  this.ExportToExcel = () => {
+   // export to excel customer list
    this.setState({ loading1: true }, () => {
    axios.get(`${process.env.REACT_APP_BASE_APIURL}listCustomer`, { headers: headers})
 
    .then(response => {
        if(response.data.success == true){
-          var customer_data = response.data.data.map((post,index) =>({
-             "SR No" : index+1,
+          var customer_data = response.data.data.map((post,index) =>{
+            let other_street1 = post.other_street_1 !== null ? post.other_street_1 : '';
+            let other_street_2 = post.other_street_2 !== null ? post.other_street_2 : '';
+            let other_city = post.other_city !== null ? post.other_city : '';
+            let other_state = post.other_state !== null ? post.other_state : '';
+            let other_country = post.other_country !== null ? post.other_country : '';
+
+            let home_street1 = post.home_street_1 !== null ? post.home_street_1 : '';
+            let home_street_2 = post.home_street_2 !== null ? post.home_street_2 : '';
+            let home_city = post.home_city !== null ? post.home_city : '';
+            let home_state = post.home_state !== null ? post.home_state : '';
+            let home_country = post.home_country !== null ? post.home_country : '';
+
+            return ({
+            "SR No" : index+1,
              "Name" : post.company_name,
              "Contact Person" : post.contact_person_name,
              "Tally Alias Name" : post.tally_alias_name,
@@ -133,10 +147,19 @@ this.deleteCustomer = async(customer_id) =>{
              "Account/Admin E-mail" : post.home_email,
              "QC Email" : post.other_qc_email,
              "QA E-mail" : post.other_email,
-             "Corporate Address" : post.home_street_1+","+post.home_street_2+","+post.home_city+","+post.home_state+","+post.home_country,
-             "Correspondence Address" : post.other_street_1+","+post.other_street_2+","+post.other_city+","+post.other_state+","+post.other_country,
+             "Corporate Address" :   home_street1+","+
+               home_street_2 +","+
+               home_city+","+
+               home_state +","+
+               home_country,
+             "Correspondence Address" : other_street1 +","+
+             other_street_2+","+
+             other_city+","+
+             other_state+","+
+             other_country,
              "GST No" : post.gst_number,
-           }))
+          })
+           })
          const sheet = XLSX.utils.json_to_sheet(customer_data);
          const workbook = XLSX.utils.book_new();
          XLSX.utils.book_append_sheet(workbook, sheet, 'Sheet 1');
@@ -186,12 +209,17 @@ this.deleteCustomer = async(customer_id) =>{
       });
 
       let is_active = post.is_active == 1 ? ("Active") : ("Inactive");
-      let other_street1 = post.other_street_1 !== null || post.other_street_1 !== "null" || post.other_street_1 !== '' || post.other_street_1 !== undefined || post.other_street_1 !== "undefined"  ? post.other_street_1 : '';
-      let other_street_2 = post.other_street_2 !== null || post.other_street_2 !== "null" || post.other_street_2 !== '' || post.other_street_2 !== undefined || post.other_street_2 !== "undefined" ? post.other_street_2 : '';
-      let other_city = post.other_city !== null || post.other_city !== "null" || post.other_city !== '' || post.other_city !== undefined || post.other_city !== "undefined" ? post.other_city : '';
-      let other_state = post.other_state !== null || post.other_state !== "null" || post.other_state !== '' || post.other_state !== undefined || post.other_state !== "undefined" ? post.other_state : '';
-      let other_country = post.other_country !== null || post.other_country !== "null" || post.other_country !== '' || post.other_country !== undefined || post.other_country !== "undefined" ? post.other_country : '';
-      console.log(other_street1)
+      let other_street1 = post.other_street_1 !== null ? post.other_street_1 : '';
+      let other_street_2 = post.other_street_2 !== null ? post.other_street_2 : '';
+      let other_city = post.other_city !== null ? post.other_city : '';
+      let other_state = post.other_state !== null ? post.other_state : '';
+      let other_country = post.other_country !== null ? post.other_country : '';
+
+      let home_street1 = post.home_street_1 !== null ? post.home_street_1 : '';
+      let home_street_2 = post.home_street_2 !== null ? post.home_street_2 : '';
+      let home_city = post.home_city !== null ? post.home_city : '';
+      let home_state = post.home_state !== null ? post.home_state : '';
+      let home_country = post.home_country !== null ? post.home_country : '';
             return (
 
               {
@@ -217,13 +245,13 @@ this.deleteCustomer = async(customer_id) =>{
                 other_qc_email:post.other_qc_email,
                 other_email:post.other_email,
                 corporate_address:
-                      post.home_street_1+","+
-                      post.home_street_2 +","+
-                      post.home_city+","+
-                      post.home_state +","+
-                      post.home_country,
+                      home_street1+","+
+                      home_street_2 +","+
+                      home_city+","+
+                      home_state +","+
+                      home_country,
                 correspondence_address:
-                      other_street1 +
+                      other_street1 +","+
                       other_street_2+","+
                       other_city+","+
                       other_state+","+

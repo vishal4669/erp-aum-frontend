@@ -186,6 +186,9 @@ useEffect(() => {
         const copy_state_id = customer.state_id;
         const copy_country_id = customer.country_id;
 
+        setCustomer(prevState => ({...prevState,street: copy_street1,street2:copy_street2,area1:copy_area,city1:copy_city,
+        pincode1:copy_pincode,corr_state_id:copy_state_id,corr_country_id:copy_country_id}))
+
         //show data in textboxes / field
         document.CustomerData.street.value = copy_street1;
         document.CustomerData.street2.value = copy_street2;
@@ -196,13 +199,13 @@ useEffect(() => {
         document.CustomerData.corr_country_id.value = copy_country_id;
         // set value
 
-        customer.street = document.CustomerData.street.value;
+        /*customer.street = document.CustomerData.street.value;
         customer.street2 = document.CustomerData.street2.value;
         customer.area1 = document.CustomerData.area1.value;
         customer.city1 = document.CustomerData.city1.value;
         customer.pincode1 = document.CustomerData.pincode1.value;
         customer.corr_state_id =  document.CustomerData.corr_state_id.value;
-        customer.corr_country_id = document.CustomerData.corr_country_id.value;
+        customer.corr_country_id = document.CustomerData.corr_country_id.value;*/
         {setLoading3(false)};
        }
 
@@ -315,32 +318,32 @@ const InsertCustomer = (e)=>{
         data1.append('company_vat_no', customer.company_vat_no);
 
         //Home Address Details
-        data1.append('customer_contact_info[home_contact_info][0][street_1]', customer.homestreet && customer.homestreet !== null ? customer.homestreet : '');
-        data1.append('customer_contact_info[home_contact_info][0][street_2]', customer.homestreet2 && customer.homestreet2 !== null ? customer.homestreet2 : '');
-        data1.append('customer_contact_info[home_contact_info][0][area]', customer.area && customer.area !== null ? customer.area : '');
-        data1.append('customer_contact_info[home_contact_info][0][city]', customer.city && customer.city !== null ? customer.city : '');
-        data1.append('customer_contact_info[home_contact_info][0][pin]', customer.pincode && customer.pincode !== null ? customer.pincode : '');
-        data1.append('customer_contact_info[home_contact_info][0][state]', customer.state_id && customer.state_id !== null ? customer.state_id : '');
-        data1.append('customer_contact_info[home_contact_info][0][country]', customer.country_id && customer.country_id !== null ? customer.country_id : '');
-        data1.append('customer_contact_info[home_contact_info][0][home_landline]', customer.landline && customer.landline !== null ? customer.landline : '');
-        data1.append('customer_contact_info[home_contact_info][0][contact_no]', customer.admin_contact && customer.admin_contact !== null ? customer.admin_contact : '');
-        data1.append('customer_contact_info[home_contact_info][0][home_qc_contact_no]', customer.qc_contact && customer.qc_contact !== null ? customer.qc_contact : '');
-        data1.append('customer_contact_info[home_contact_info][0][email]', customer.admin_email && customer.admin_email !== null ? customer.admin_email : '');
-        data1.append('customer_contact_info[home_contact_info][0][home_pan_card]', customer.pancard_no && customer.pancard_no !== null ? customer.pancard_no : '');
+        data1.append('customer_contact_info[home_contact_info][0][street_1]', customer.homestreet);
+        data1.append('customer_contact_info[home_contact_info][0][street_2]', customer.homestreet2);
+        data1.append('customer_contact_info[home_contact_info][0][area]', customer.area);
+        data1.append('customer_contact_info[home_contact_info][0][city]', customer.city);
+        data1.append('customer_contact_info[home_contact_info][0][pin]', customer.pincode);
+        data1.append('customer_contact_info[home_contact_info][0][state]', customer.state_id);
+        data1.append('customer_contact_info[home_contact_info][0][country]', customer.country_id);
+        data1.append('customer_contact_info[home_contact_info][0][home_landline]', customer.landline);
+        data1.append('customer_contact_info[home_contact_info][0][contact_no]', customer.admin_contact);
+        data1.append('customer_contact_info[home_contact_info][0][home_qc_contact_no]', customer.qc_contact);
+        data1.append('customer_contact_info[home_contact_info][0][email]', customer.admin_email);
+        data1.append('customer_contact_info[home_contact_info][0][home_pan_card]', customer.pancard_no);
         data1.append('customer_contact_info[home_contact_info][0][contact_info_type]', 1);
 
         //Correspondence Address Details
-        data1.append('customer_contact_info[other_contact_info][0][street_1]', customer.street && customer.street !== null ? customer.street : '');
-        data1.append('customer_contact_info[other_contact_info][0][street_2]', customer.street2 && customer.street2 !== null ? customer.street2 : '');
-        data1.append('customer_contact_info[other_contact_info][0][area]', customer.area1 && customer.area1 !== null ? customer.area1 : '');
-        data1.append('customer_contact_info[other_contact_info][0][city]', customer.city1 && customer.city1 !== null ? customer.city1 : '');
-        data1.append('customer_contact_info[other_contact_info][0][pin]', customer.pincode1 && customer.pincode1 !== null ? customer.pincode1 : '');
-        data1.append('customer_contact_info[other_contact_info][0][state]', customer.corr_state_id && customer.corr_state_id !== null ? customer.corr_state_id : '');
-        data1.append('customer_contact_info[other_contact_info][0][country]', customer.corr_country_id && customer.corr_country_id !== null ? customer.corr_country_id : '');
-        data1.append('customer_contact_info[other_contact_info][0][other_website]', customer.website && customer.website !== null ? customer.website : '');
-        data1.append('customer_contact_info[other_contact_info][0][contact_no]', customer.qa_contact && customer.qa_contact !== null ? customer.qa_contact : '');
-        data1.append('customer_contact_info[other_contact_info][0][other_qc_email]', customer.qc_email && customer.qc_email !== null ? customer.qc_email : '');
-        data1.append('customer_contact_info[other_contact_info][0][email]', customer.qa_email && customer.qa_email !== null ? customer.qa_email : '');
+        data1.append('customer_contact_info[other_contact_info][0][street_1]', customer.street);
+        data1.append('customer_contact_info[other_contact_info][0][street_2]', customer.street2);
+        data1.append('customer_contact_info[other_contact_info][0][area]', customer.area1);
+        data1.append('customer_contact_info[other_contact_info][0][city]', customer.city1);
+        data1.append('customer_contact_info[other_contact_info][0][pin]', customer.pincode1);
+        data1.append('customer_contact_info[other_contact_info][0][state]', customer.corr_state_id);
+        data1.append('customer_contact_info[other_contact_info][0][country]', customer.corr_country_id);
+        data1.append('customer_contact_info[other_contact_info][0][other_website]', customer.website);
+        data1.append('customer_contact_info[other_contact_info][0][contact_no]', customer.qa_contact);
+        data1.append('customer_contact_info[other_contact_info][0][other_qc_email]', customer.qc_email);
+        data1.append('customer_contact_info[other_contact_info][0][email]', customer.qa_email);
         if(selectedPanFile != false)
         {
             data1.append('customer_contact_info[other_contact_info][0][other_pan_card_copy]', selectedPanFile);

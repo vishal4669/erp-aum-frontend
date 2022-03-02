@@ -224,6 +224,11 @@ this.deleteBooking = async(booking_id) =>{
 
               {
                 srno: this.state.count,
+                action : <div><Link className="btn btn-primary btn-sm" to={"/edit-booking/"+base64_encode(post.id)}>
+                <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-booking/"+base64_encode(post.id)}>
+                <i className="fa fa-eye"></i></Link>&nbsp;&nbsp;{loading ? <a className="btn btn-primary w-100 waves-effect waves-light"
+                             > <LoadingSpinner /> </a>  :
+                <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Booking Data?')){ this.deleteBooking(post.id)}}}><i class="fas fa-trash-alt"></i></button>}</div>,
                 generate_data:<div>
                 {loading ? <LoadingSpinner/> : <button class=" btn btn-secondary btn-sm" onClick={() => this.generate_roa(post.id)}>ROA</button>}&nbsp;&nbsp;
                 {loading ? <LoadingSpinner/> : <button className="btn btn-warning btn-sm" onClick={() => this.generate_coa(post.id)}>
@@ -232,18 +237,26 @@ this.deleteBooking = async(booking_id) =>{
                 <i className="fa fa-barcode"></i></Link></div>,
                 coa_print: post.coa_print_count,
                 aum_serial_no: post.aum_serial_no,
-                booking_type: post.booking_type,
                 booking_no: post.booking_no,
-                product_type: post.product_generic,
+                product_generic : post.samples ? post.samples.product_generic : '',
+                product_name : post.samples ? post.samples.product_name : '',
                 receipte_date: moment(post.receipte_date).format('DD-MM-YYYY'),
-                product_name : post.product_name,
-                action : <div><Link className="btn btn-primary btn-sm" to={"/edit-booking/"+base64_encode(post.id)}>
-                <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-booking/"+base64_encode(post.id)}>
-                <i className="fa fa-eye"></i></Link>&nbsp;&nbsp;{loading ? <a className="btn btn-primary w-100 waves-effect waves-light"
-                             > <LoadingSpinner /> </a>  :
-                <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Booking Data?')){ this.deleteBooking(post.id)}}}><i class="fas fa-trash-alt"></i></button>}</div>
-
-                ,
+                customer_company_name: post.customer_company_name,
+                generic_product_name : post.samples ? post.samples.generic_product_name : '',
+                batch_no : post.samples ? post.samples.batch_no : '',
+                report_no : '',
+                booking_type : post.booking_type,
+                coa_release_date : post.coa_release_date ? moment(post.coa_release_date).format('DD-MM-YYYY') : '',
+                billing_date : '',
+                bill_no : '',
+                amount : '',
+                nabl_scope : post.nabl_scope,
+                entered_by : post.entered_by,
+                created_at : post.created_at ? moment(post.created_at).format('DD-MM-YYYY hh:mm:ss') : '',
+                modified_by : post.modified_by,
+                updated_at : post.updated_at ? moment(post.updated_at).format('DD-MM-YYYY hh:mm:ss') : '',
+                list_of_tests : post.list_of_tests ? post.list_of_tests : '',
+                list_of_chemists : post.list_of_chemists ? post.list_of_chemists : '',
 
               }
 
@@ -269,6 +282,10 @@ this.deleteBooking = async(booking_id) =>{
                     field:'srno',
                   },
                   {
+                    label:'Action',
+                    field: 'action',
+                  },
+                  {
                     label:'Generate',
                     field:'generate_data',
                   },
@@ -281,16 +298,12 @@ this.deleteBooking = async(booking_id) =>{
                     field:'aum_serial_no',
                   },
                   {
-                    label:'Booking Type',
+                    label:'Booking No',
                     field:'booking_type',
                   },
                   {
-                    label:'Booking No',
-                    field:'booking_no',
-                  },
-                  {
-                    label:'Product Type',
-                    field:'product_type',
+                    label:'Type',
+                    field:'product_generic',
                   },
                   {
                     label:'Receipt Date',
@@ -301,8 +314,68 @@ this.deleteBooking = async(booking_id) =>{
                     field:'product_name',
                   },
                   {
-                    label:'Action',
-                    field: 'action',
+                    label:'Company',
+                    field:'customer_company_name',
+                  },
+                  {
+                    label:'Generic Name',
+                    field:'generic_product_name',
+                  },
+                  {
+                    label:'Batch No',
+                    field:'batch_no',
+                  },
+                  {
+                    label:'Report No',
+                    field:'report_no',
+                  },
+                  {
+                    label:'Status',
+                    field:'booking_type',
+                  },
+                  {
+                    label:'Release Date',
+                    field:'coa_release_date',
+                  },
+
+                  {
+                    label:'Billing Date',
+                    field:'billing_date',
+                  },
+                  {
+                    label:'Bill No',
+                    field:'bill_no',
+                  },{
+                    label:'Amount',
+                    field:'amount',
+                  },
+                  {
+                    label:'NABL Scope',
+                    field:'nabl_scope',
+                  },
+                  {
+                    label:'Enter By',
+                    field:'entered_by',
+                  },
+                  {
+                    label:'Enter Datetime',
+                    field:'created_at',
+                  },
+                  {
+                    label:'Modified By',
+                    field:'modified_by',
+                  },
+                  {
+                    label:'Modified Datetime',
+                    field:'updated_at',
+                  },
+                  {
+                    label:'List of Test',
+                    field:'list_of_tests',
+                  },
+                  {
+                    label:'List of Chemist',
+                    field:'list_of_chemists',
                   },
 
                 ],
@@ -329,17 +402,6 @@ this.deleteBooking = async(booking_id) =>{
                     <li>
                       <Link to="/add-booking" color="primary" className="btn btn-primary"><i className="fa fa-plus"></i>&nbsp;New Booking</Link>
                     </li>&nbsp;
-                    {/*<li>
-                        <div className="btn-group">
-                          <DropdownButton  title="Actions" drop="left">
-                            <DropdownItem><i class="fa fa-barcode"></i> &nbsp;Generate Barcode</DropdownItem>
-                            <DropdownItem><i class="fa fa-file"></i> &nbsp;Generate ROA</DropdownItem>
-                            <DropdownItem><i class="fas fa-file"></i> &nbsp;Generate COA</DropdownItem>
-                            <DropdownItem onClick={this.ExportToExcel}><i class="fas fa-file-export"></i> &nbsp;Export To Excel</DropdownItem>
-                          </DropdownButton>
-
-                        </div>
-                    </li>*/}
                    {loading1 ?  <center><LoadingSpinner /></center> :
                      <li><Link to="#" className="btn btn-primary"><i class="fas fa-file-export"></i> &nbsp;Export To Excel</Link></li>
                     }
@@ -351,7 +413,7 @@ this.deleteBooking = async(booking_id) =>{
               <Card>
                 <CardBody>
                   { loading ? <center><LoadingSpinner /></center> :
-                    <MDBDataTable striped bordered data={data1} />
+                    <MDBDataTable striped bordered data={data1} responsive style={{whiteSpace:'nowrap',border:'1px solid #e4e5e5'}}/>
                   }
                 </CardBody>
               </Card>

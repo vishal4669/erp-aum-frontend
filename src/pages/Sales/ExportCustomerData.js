@@ -18,6 +18,7 @@ import autoTable from 'jspdf-autotable'
 import { ToastContainer} from "react-toastr";
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
+import $ from 'jquery'
 
 class ExportCustomerData extends Component {
     constructor(props) {
@@ -56,6 +57,7 @@ class ExportCustomerData extends Component {
                 props.history.push('/customer');
               } else {
                 this.setState({ loading1: false });
+                $("#my-table1").css("display","block");
                 // initialize jsPDF
                 const doc = new jsPDF('l', '', '','');
                 // define the columns we want and their titles
@@ -146,6 +148,7 @@ didParseCell: function (table) {
             //  autoTable(doc, { html: '#my-table',tableWidth:'auto',cellWidth:'auto' })
               doc.save(`CustomerData.pdf`);
                 // define an empty array of rows
+                $("#my-table1").css("display","none");
                 toastr.info("PDF for Customer Data is Generated Successfully")
                 props.history.push('/customer');
               }
@@ -196,6 +199,17 @@ render(){
             <tbody>
               {
                 this.state.CustomerData.map((post, index) => {
+                  let other_street1 = post.other_street_1 !== null ? post.other_street_1 : '';
+                  let other_street_2 = post.other_street_2 !== null ? post.other_street_2 : '';
+                  let other_city = post.other_city !== null ? post.other_city : '';
+                  let other_state = post.other_state !== null ? post.other_state : '';
+                  let other_country = post.other_country !== null ? post.other_country : '';
+
+                  let home_street1 = post.home_street_1 !== null ? post.home_street_1 : '';
+                  let home_street_2 = post.home_street_2 !== null ? post.home_street_2 : '';
+                  let home_city = post.home_city !== null ? post.home_city : '';
+                  let home_state = post.home_state !== null ? post.home_state : '';
+                  let home_country = post.home_country !== null ? post.home_country : '';
                   return <tr key={index}>
                     <td style={td_th_style}>{index+1}</td>
                     <td style={td_th_style}>{post.company_name}</td>
@@ -208,8 +222,8 @@ render(){
                     <td style={td_th_style}>{post.home_email}</td>
                     <td style={td_th_style}>{post.other_qc_email}</td>
                     <td style={td_th_style}>{post.other_email}</td>
-                    <td style={td_th_style}>{post.home_street_1+","+post.home_street_2+","+post.home_city+","+post.home_state+","+post.home_country}</td>
-                    <td style={td_th_style}>{post.other_street_1+","+post.other_street_2+","+post.other_city+","+post.other_state+","+post.other_country}</td>
+                    <td style={td_th_style}>{home_street1+","+home_street_2+","+home_city+","+home_state+","+home_country}</td>
+                    <td style={td_th_style}>{other_street1+","+other_street_2+","+other_city+","+other_state+","+other_country}</td>
                     <td style={td_th_style}>{post.gst_number}</td>
                   </tr>
                 })
@@ -218,7 +232,7 @@ render(){
           </Table>
 
           <Table border="1" stickyHeader aria-label="sticky table" style={{'border': '1px solid black',
-    'borderCollapse': 'collapse',marginLeft:'auto',marginRight:'auto',fontSize:'16px',color:'#000000',textAlign:'center'}} id="my-table1">
+    'borderCollapse': 'collapse',marginLeft:'auto',marginRight:'auto',fontSize:'16px',color:'#000000',textAlign:'center',display:'none'}} id="my-table1">
             <thead>
               <tr>
                 <th style={td_th_style}>SR No</th>
