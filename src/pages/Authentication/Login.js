@@ -164,7 +164,7 @@ render() {
                 <CardBody className="p-4">
                   <div className="text-center mt-2">
                     <h5 className="text-primary">Welcome Back !</h5>
-                    <p className="text-muted">Sign in to continue to Intervin Research Labs.</p>
+                    <p className="text-muted">Sign in to continue to Intervein Research Labs.</p>
                   </div>
                   <div className="p-2 mt-4">
                     <AvForm
@@ -224,7 +224,7 @@ render() {
                 </CardBody>
               </Card>
               <div className="mt-3 text-center">
-                <p>© {new Date().getFullYear()} Intervin Research Labs. Crafted with <i
+                <p>© {new Date().getFullYear()} Intervein Research Labs. Crafted with <i
                   className="mdi mdi-heart text-danger"></i> by Divine Infosys
                 </p>
               </div>
