@@ -220,15 +220,25 @@ this.deleteBooking = async(booking_id) =>{
               this.setState({
         count: this.state.count + 1
       });
+
             return (
 
               {
                 srno: this.state.count,
-                action : <div><Link className="btn btn-primary btn-sm" to={"/edit-booking/"+base64_encode(post.id)}>
+                action : <div>
+                <DropdownButton variant="primary btn-sm" title="Actions">
+                  <DropdownItem><Link to={"/edit-booking/"+base64_encode(post.id)} style={{color:'black'}}><i class="fa fa-edit"></i> &nbsp;Edit</Link></DropdownItem><br/>
+                  <DropdownItem><Link to={"/view-booking/"+base64_encode(post.id)} style={{color:'black'}}><i class="fa fa-eye"></i> &nbsp;View</Link></DropdownItem><br/>
+                  <DropdownItem><i class="fa fa-trash"></i> &nbsp;Delete</DropdownItem><br/>
+                  <DropdownItem><i class="fa fa-clone"></i> &nbsp;Copy Record</DropdownItem><br/>
+                  <DropdownItem><i class="fa fa-percent"></i> &nbsp;Booking Rate</DropdownItem>
+                </DropdownButton>
+                {/*<Link className="btn btn-primary btn-sm" to={"/edit-booking/"+base64_encode(post.id)}>
                 <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-booking/"+base64_encode(post.id)}>
                 <i className="fa fa-eye"></i></Link>&nbsp;&nbsp;{loading ? <a className="btn btn-primary w-100 waves-effect waves-light"
                              > <LoadingSpinner /> </a>  :
-                <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Booking Data?')){ this.deleteBooking(post.id)}}}><i class="fas fa-trash-alt"></i></button>}</div>,
+                <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Booking Data?')){ this.deleteBooking(post.id)}}}><i class="fas fa-trash-alt"></i></button>}*/}
+                </div>,
                 generate_data:<div>
                 {loading ? <LoadingSpinner/> : <button class=" btn btn-secondary btn-sm" onClick={() => this.generate_roa(post.id)}>ROA</button>}&nbsp;&nbsp;
                 {loading ? <LoadingSpinner/> : <button className="btn btn-warning btn-sm" onClick={() => this.generate_coa(post.id)}>
@@ -299,7 +309,7 @@ this.deleteBooking = async(booking_id) =>{
                   },
                   {
                     label:'Booking No',
-                    field:'booking_type',
+                    field:'booking_no',
                   },
                   {
                     label:'Type',
@@ -411,7 +421,7 @@ this.deleteBooking = async(booking_id) =>{
           <Row id="pdfdiv">
             <Col className="col-12">
               <Card>
-                <CardBody>
+                <CardBody className="btn-sm">
                   { loading ? <center><LoadingSpinner /></center> :
                     <MDBDataTable striped bordered data={data1} responsive style={{whiteSpace:'nowrap',border:'1px solid #e4e5e5'}}/>
                   }

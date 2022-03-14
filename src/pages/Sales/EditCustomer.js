@@ -159,7 +159,6 @@ const GetCustomerData=async()=>{
                   cust_data.other_country_id : '';
 
                   if(fetch_country_id > 0){
-                    console.log("here")
                     axios.get(`${process.env.REACT_APP_BASE_APIURL}countriesWiseStates/`+fetch_country_id,{headers})
                     .then(response => {
                       if(response.data.success == true){

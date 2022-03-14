@@ -55,7 +55,7 @@ function AddBooking(props) {
     cancel: '0', cancel_remarks: '', priority: '0', discipline: '0', booking_group: '0',
     statement_ofconformity: '0', dispatch_mode: '', dispatch_date_time: '', dispatch_details: '',
     aum_serial_no : '',report_type:'',receipte_date:'', booking_no:'',ulr_no:'',generic_name: '', product_generic: '', pharmacopeia_name: ''
-    ,customer_id: '',manufacturer_name:'',supplier_name:'',product_id:''
+    ,customer_id: '',manufacturer_name:'',supplier_name:'',product_id:'',check_customer_active:'1'
     // Samples details,
     ,batch_no: '',packsize: '', request_quantity: '', sample_code: '', sample_description: '', sample_quantity: '', sample_location: '',
     sample_packaging: '', sample_type: '', sampling_date_from: '', sampling_date_from_options: '0',
@@ -288,7 +288,7 @@ function AddBooking(props) {
             $("#ulr_no").css("display","block")
           })
     } else {
-      setBooking1(prevState => ({ ...prevState, nabl_scope:e.target.value}))
+      setBooking1(prevState => ({ ...prevState, ulr_no: '',nabl_scope:e.target.value}))
       $("#ulr_no").css("display","none")
     }
   }
@@ -348,6 +348,29 @@ function AddBooking(props) {
 
   const changeCustomer = (e) => {
     setBooking1(prevState => ({ ...prevState, customer_id: e}));
+    var customer_id = '';
+    if(e !== null){
+      customer_id = e.value
+    }
+
+    if(customer_id == ''){
+      if($("#submit-btn").prop('disabled')){
+        // it enables submit button if already disabled and customer is active
+        $("#submit-btn").prop("disabled",null)
+      }
+    }
+    axios.get(`${process.env.REACT_APP_BASE_APIURL}getCustomer/`+customer_id,{headers})
+     .then(response => {
+              setBooking1(prevState => ({ ...prevState, check_customer_active: response.data.data[0].is_active }));
+              if(response.data.data[0].is_active == '0'){
+                alert("You can't Take Booking for the Inactive Customer.")
+                $("#submit-btn").attr("disabled","true")
+              } if(response.data.data[0].is_active == null || response.data.data[0].is_active == '1') {
+                if($("#submit-btn").prop('disabled')){
+                  $("#submit-btn").prop("disabled",null)
+                }
+              }
+        })
   }
 
   const changeManufacturer = (e) => {
@@ -498,16 +521,12 @@ function AddBooking(props) {
     const data = {
       booking_type: booking1.booking_type,
       report_type: booking1.report_type,
-      invoice_date: booking1.invoice_date,
-      invoice_no: booking1.invoice_number,
       receipte_date: booking1.receipte_date,
       booking_no: final_booking_no,
-      customer_id: final_customer_id,
+      customer_id: final_customer_id,// need to add some conditions beacuse used react-select2
       reference_no: booking1.reference_no,
       remarks: booking1.remarks,
-      //manufacturer_name: final_manufacturer_id,
       manufacturer_id: booking1.manufacturer_name,
-      //supplier_id: final_supplier_id,
       supplier_id: booking1.supplier_name,
       mfg_date: booking1.mfg_date,
       mfg_options: booking1.mfg_options,
@@ -534,10 +553,11 @@ function AddBooking(props) {
       priority: booking1.priority,
       discipline: booking1.discipline,
       booking_group: booking1.booking_group,
-      statement_ofconformity: booking1.statement_ofconformity,
+      statement_of_conformity: booking1.statement_ofconformity,
       ulr_no : booking1.ulr_no,
+      check_customer_active : booking1.check_customer_active,
       "booking_sample_details": {
-        product_id: final_product_id,
+        product_id: final_product_id,// need to add some conditions beacuse used react-select2
         batch_no: booking1.batch_no,
         packsize: booking1.packsize,
         request_quantity: booking1.request_quantity,
@@ -605,7 +625,7 @@ function AddBooking(props) {
                   &nbsp;
                   {loading ? <center><LoadingSpinner /></center> :
                     <li>
-                      <button type="submit" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Submit</i></button>
+                      <button type="submit" className="btn btn-primary btn-sm" id="submit-btn"><i className="fa fa-check">&nbsp;Submit</i></button>
                     </li>
                   }
                 </ol>
@@ -1130,14 +1150,14 @@ function AddBooking(props) {
                                       <th>Min.Limit</th>
                                       <th>Max.Limit</th>
                                       <th>Amount</th>
-                                      <th style={{ textAlign: 'center' }}><i className="fa fa-trash"></i></th>
+                                      {testData.length > 1 ? <th style={{ textAlign: 'center' }}><i className="fa fa-trash"></i></th> : '' }
                                     </tr>
                                   </thead>
                                   <tbody>
                                     <tr>
                                       {/*<td><i className="fa fa-arrow-down" aria-hidden="true"></i><i className="fa fa-arrow-up" aria-hidden="true"></i></td>
                                                                     <td><input type="checkbox"/></td>*/}
-                                      <td><select name="parent_child" onChange={e => handleInputChange(e, i)} style={my_style} id={'parent_child_' + i} className="form-select">
+                                      <td><select name="parent_child" onChange={e => handleInputChange(e, i)} style={my_style} id={'parent_child_' + i} className="form-select" disabled={i == 0 ?  true : false}>
                                       {booking_dropdown.parent_child.map((option, key) => <option value={option.id} key={key} >
                                         {option.label}</option>)}
                                       </select></td>
@@ -1174,9 +1194,9 @@ function AddBooking(props) {
                                       <td><input value={x.max_limit} type="text" name="max_limit" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
                                       <td><input value={x.amount} type="text" name="amount" onChange={e => handleInputChange(e, i)} className="form-control" /></td>
 
-                                      <td>{testData.length >= 1 && <button
+                                      {testData.length > 1 && <td><button
                                         className="mr10"
-                                        onClick={e => handleRemoveClick(e, i)} className="btn btn-danger"><i class="fa fa-trash"></i></button>}</td>
+                                        onClick={e => handleRemoveClick(e, i)} className="btn btn-danger"><i class="fa fa-trash"></i></button></td>}
                                     </tr>
 
                                   </tbody>

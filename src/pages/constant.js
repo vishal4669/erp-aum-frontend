@@ -24,7 +24,9 @@ const booking_dropdown = {
   sample_received_through : [{id:"0",label:"By Courier"},{id:"1",label:"By Hand"},{id:"2",label:"By Collection"}],
   dispatch_mode : ["By Courier","By Hand Delivery","Collect By Party"],
   chemist : [{id:"0",label:"Yes"}],
-  parent_child : [{id:"0",label:"Parent"},{id:"1",label:"Child"}]
+  parent_child : [{id:"0",label:"Parent"},{id:"1",label:"Child"}],
+  test_status : [{id:"0",label:"Pending"},{id:"1",label:"Assign"},{id:"2",label:"Reassign"},{id:"3",label:"ForApproval"},
+  {id:"4",label:"Approve"},{id:"5",label:"Reject"}],
 };
 
 export { quotation_dropdown, booking_dropdown };
