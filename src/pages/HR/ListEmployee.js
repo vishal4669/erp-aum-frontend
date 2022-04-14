@@ -28,6 +28,7 @@ import $ from 'jquery';
           tableRows: [],
           tableRows1: [],
           loading: false,
+          employee_id : null,
           count :0
         };
 
@@ -126,6 +127,10 @@ import $ from 'jquery';
      })
     }
 
+    this.setEmployeeId = (e) =>{
+      this.setState({ employee_id: e.target.value });
+    }
+
       this.assemblePosts= () => {
 
         let posts = this.state.posts.map((post) => {
@@ -135,12 +140,12 @@ import $ from 'jquery';
     const { data, loading } = this.state;
           return (
             {
-
+              select_id: <div><input type="radio" value={post.id} name="employee_id" onChange={this.setEmployeeId}/></div>,
               srno: this.state.count,
               approved: post.is_approved == "Pending" || post.is_approved == "Rejected" ?
               <span className={post.is_approved == "Pending" ? "btn btn-warning btn-sm" : "btn btn-danger btn-sm"} style={{width:'100%'}}>
               {post.is_approved}</span> : <span className="btn btn-success btn-sm" style={{width:'100%'}}>{post.is_approved}</span>,
-              print_action : <div>
+              /*print_action : <div>
                           <DropdownButton variant="success btn-sm" title="Print Actions">
                             <DropdownItem><i class="fa fa-print"></i> &nbsp;Print Offer Letter</DropdownItem><br/>
                             <DropdownItem><i class="fa fa-print"></i> &nbsp;Print Appointment Letter</DropdownItem><br/>
@@ -155,7 +160,7 @@ import $ from 'jquery';
               <i className="fa fa-eye"></i></Link>&nbsp;&nbsp;{loading ? <a className="btn btn-primary w-100 waves-effect waves-light"
                            > <LoadingSpinner /> </a>  :
               <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Employee Data?')){ this.deleteEmployee(post.id)}}}><i class="fas fa-trash-alt"></i></button>}
-                        </div>,
+                        </div>,*/
               company: post.company.company_name ? post.company.company_name : '',
               name: post.first_name+" "+post.middle_name+" "+post.last_name,
               username: post.company.username ? post.company.username : '',
@@ -186,15 +191,15 @@ import $ from 'jquery';
   const { data, loading } = this.state;
         return (
           {
-
+            select_id: <div><input type="radio" value={post.id} name="employee_id" onChange={this.setEmployeeId}/></div>,
             srno: this.state.count,
-            action : <div>
+            /*action : <div>
             <Link className="btn btn-primary btn-sm" to={"/edit-employee/"+base64_encode(post.id)}>
             <i className="fa fa-edit"></i></Link>&nbsp;&nbsp;<Link className="btn btn-info btn-sm" to={"/view-employee/"+base64_encode(post.id)}>
             <i className="fa fa-eye"></i></Link>&nbsp;&nbsp;{loading ? <a className="btn btn-primary w-100 waves-effect waves-light"
                          > <LoadingSpinner /> </a>  :
             <button class=" btn btn-danger btn-sm" onClick={() => {if(window.confirm('Are you sure to Delete this Employee Data?')){ this.deleteEmployee(post.id)}}}><i class="fas fa-trash-alt"></i></button>}
-                      </div>,
+                      </div>,*/
             name: post.first_name+" "+post.middle_name+" "+post.last_name,
             username: post.company.username ? post.company.username : '',
             machine_code: post.machine_code,
@@ -222,17 +227,21 @@ import $ from 'jquery';
         const data1 = {
           columns: [
             {
+              label:'',
+              field:'select_id',
+            },
+            {
               label:'SR No',
               field:'srno',
             },
-            {
+            /*{
               label:'Action',
               field: 'action',
             },
             {
               label:'Print',
               field: 'print_action',
-            },
+            },*/
             {
               label:'Approved',
               field:'approved',
@@ -293,13 +302,17 @@ import $ from 'jquery';
         const data2 = {
           columns: [
             {
+              label:'',
+              field:'select_id',
+            },
+            {
               label:'SR No',
               field:'srno',
             },
-            {
+            /*{
               label:'Action',
               field: 'action',
-            },
+            },*/
             {
               label:'Name',
               field:'name',
@@ -355,30 +368,33 @@ import $ from 'jquery';
               <HorizontalLayout/>
             <div className="page-content">
               <div className="container-fluid">
-                  <div class="page-title-box d-flex align-items-center justify-content-between">
-                  <div className="page-title">
-                      <ol className="breadcrumb m-0">
-                          <li className="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
-                          <li className="breadcrumb-item">HR</li>
-                          <li className="breadcrumb-item active">Employee</li>
-                      </ol>
-                  </div>
-                  <div className="page-title-right">
-                      <ol className="breadcrumb m-0">
-                          <li><label style={{verticalAlign:'sub'}}>Please Select List</label></li> &nbsp;&nbsp;
-                          <li>
-                            <select className='form-control btn-sm' onChange={e => this.showGrid(e)}>
-                              <option value="employee_grid">Employee List Table</option>
-                              <option value="resigned_employee_grid">Resigned Employee List Table</option>
-                            </select>
-                          </li> &nbsp;&nbsp;
-                          <li><a href="/assign-right" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Assign Rights</i></a></li>&nbsp;
-                          <li><a href="/add-employee" color="primary" className="btn btn-primary btn-sm"><i className="fa fa-plus"></i>
-                         &nbsp;New Employee</a></li>
-                      </ol>
-                  </div>
-              </div>
-
+              <div class="page-title-box d-flex align-items-center justify-content-between">
+                <div className="page-title">
+                    <ol className="breadcrumb m-0">
+                        <li className="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
+                        <li className="breadcrumb-item">HR</li>
+                        <li className="breadcrumb-item active">Employee</li>
+                    </ol>
+                </div>
+                <div className="page-title-right">
+                    <ol className="breadcrumb m-0">
+                        <li><label style={{verticalAlign:'sub'}}>Please Select List</label></li> &nbsp;&nbsp;
+                        <li>
+                          <select className='form-control btn-sm' onChange={e => this.showGrid(e)}>
+                            <option value="employee_grid">Employee List Table</option>
+                            <option value="resigned_employee_grid">Resigned Employee List Table</option>
+                          </select>
+                        </li> &nbsp;&nbsp;
+                        <li><a href="" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Print Offer Letter</i></a></li>&nbsp;
+                        <li><a href="" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Print Appointment Letter</i></a></li>&nbsp;
+                        <li><a href="" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Print Experience Letter</i></a></li>&nbsp;
+                        <li><a href="/assign-right" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;Assign Rights</i></a></li>&nbsp;
+                        <li><a href="" className="btn btn-primary btn-sm"><i className="fa fa-check">&nbsp;All Rights Print</i></a></li>&nbsp;
+                        <li><a href="/add-employee" color="primary" className="btn btn-primary btn-sm"><i className="fa fa-plus"></i>
+                       &nbsp;New Employee</a></li>
+                    </ol>
+                </div>
+            </div>
                 <Row id="bydefault_employee_list">
                   <Col className="col-12">
                     <Card>
@@ -403,6 +419,24 @@ import $ from 'jquery';
                       }
                       </CardBody>
                     </Card>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col className="col-12">
+                  <div className="page-title-right mb-3 btn btn-primary w-100" style={{height:'40px',opacity:'0.9'}}>
+                      <ol className="breadcrumb m-0">
+
+                          <li title="Edit"><Link className="btn btn-light btn-sm font-size-10" to={this.state.employee_id ? "/edit-employee/"+base64_encode(this.state.employee_id) : 'employee'}>
+                          <i className="fa fa-edit"></i></Link></li>&nbsp;
+                          <li title="View"><Link className="btn btn-light btn-sm font-size-10" to={this.state.employee_id ? "/view-employee/"+base64_encode(this.state.employee_id) : 'employee'}>
+                          <i className="fa fa-eye"></i></Link></li>&nbsp;
+                          <li title="Delete"><button class=" btn btn-light btn-sm font-size-10"
+                                        onClick={this.state.employee_id ? () => {if(window.confirm('Are you sure to Delete this Employee Data?')){ this.deleteEmployee(this.state.employee_id)}} : 'employee'}><i class="fas fa-trash-alt"></i></button></li>&nbsp;
+                          <li title="Search"><a href="" className="btn btn-light btn-sm font-size-10"><i className="fa fa-search"></i></a></li>&nbsp;
+                          <li title="Reload Grid<"><a href="" className="btn btn-light btn-sm font-size-10"><i className="fa fa-undo"></i></a></li>&nbsp;
+                          <li title="Print Grid"><a href="" className="btn btn-light btn-sm font-size-10"><i className="fa fa-print"></i></a></li>
+                      </ol>
+                  </div>
                   </Col>
                 </Row>
               </div>
