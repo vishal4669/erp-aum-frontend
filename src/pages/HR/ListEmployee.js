@@ -131,6 +131,12 @@ import $ from 'jquery';
       this.setState({ employee_id: e.target.value });
     }
 
+    this.checkEmployeeIDSet = (e) => {
+      if(!this.state.employee_id){
+        alert("Please Select Row");
+      }
+    }
+
       this.assemblePosts= () => {
 
         let posts = this.state.posts.map((post) => {
@@ -368,7 +374,7 @@ import $ from 'jquery';
               <HorizontalLayout/>
             <div className="page-content">
               <div className="container-fluid">
-              <div class="page-title-box d-flex align-items-center justify-content-between">
+              <div class="page-title-box d-flex align-items-center justify-content-between" style={{opacity:0.9}}>
                 <div className="page-title">
                     <ol className="breadcrumb m-0">
                         <li className="breadcrumb-item"><a href="javascript: void(0);">Home</a></li>
@@ -426,12 +432,12 @@ import $ from 'jquery';
                   <div className="page-title-right mb-3 btn btn-primary w-100" style={{height:'40px',opacity:'0.9'}}>
                       <ol className="breadcrumb m-0">
 
-                          <li title="Edit"><Link className="btn btn-light btn-sm font-size-10" to={this.state.employee_id ? "/edit-employee/"+base64_encode(this.state.employee_id) : 'employee'}>
+                          <li title="Edit"><Link className="btn btn-light btn-sm font-size-10" to={this.state.employee_id ? "/edit-employee/"+base64_encode(this.state.employee_id) : 'employee'} onClick={this.checkEmployeeIDSet}>
                           <i className="fa fa-edit"></i></Link></li>&nbsp;
-                          <li title="View"><Link className="btn btn-light btn-sm font-size-10" to={this.state.employee_id ? "/view-employee/"+base64_encode(this.state.employee_id) : 'employee'}>
+                          <li title="View"><Link className="btn btn-light btn-sm font-size-10" to={this.state.employee_id ? "/view-employee/"+base64_encode(this.state.employee_id) : 'employee'} onClick={this.checkEmployeeIDSet}>
                           <i className="fa fa-eye"></i></Link></li>&nbsp;
                           <li title="Delete"><button class=" btn btn-light btn-sm font-size-10"
-                                        onClick={this.state.employee_id ? () => {if(window.confirm('Are you sure to Delete this Employee Data?')){ this.deleteEmployee(this.state.employee_id)}} : 'employee'}><i class="fas fa-trash-alt"></i></button></li>&nbsp;
+                                        onClick={this.state.employee_id ? () => {if(window.confirm('Are you sure to Delete this Employee Data?')){ this.deleteEmployee(this.state.employee_id)}} : this.checkEmployeeIDSet}><i class="fas fa-trash-alt"></i></button></li>&nbsp;
                           <li title="Search"><a href="" className="btn btn-light btn-sm font-size-10"><i className="fa fa-search"></i></a></li>&nbsp;
                           <li title="Reload Grid<"><a href="" className="btn btn-light btn-sm font-size-10"><i className="fa fa-undo"></i></a></li>&nbsp;
                           <li title="Print Grid"><a href="" className="btn btn-light btn-sm font-size-10"><i className="fa fa-print"></i></a></li>
